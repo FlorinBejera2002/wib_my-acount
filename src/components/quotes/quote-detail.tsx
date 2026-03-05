@@ -1,5 +1,12 @@
-import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, Calendar, Building2, Car, Banknote } from "lucide-react";
+﻿import { useParams, Link } from "react-router-dom";
+import {
+  ArrowLeft,
+  Calendar,
+  Building2,
+  Car,
+  Banknote,
+  FileText,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -10,7 +17,6 @@ import {
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
-import { QuoteStatusBadge } from "./quote-status-badge";
 import { QuoteDocuments } from "./quote-documents";
 import { useQuote } from "@/hooks/use-quotes";
 import { formatCurrency, formatDate } from "@/lib/utils";
@@ -68,7 +74,6 @@ export function QuoteDetail() {
             Cotație {typeLabels[quote.type]}
           </p>
         </div>
-        <QuoteStatusBadge status={quote.status} />
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
@@ -77,52 +82,53 @@ export function QuoteDetail() {
             <CardTitle className="text-lg">Detalii cotație</CardTitle>
             <CardDescription>Informații generale despre ofertă</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center gap-3">
-              <Building2 className="h-4 w-4 text-muted-foreground" />
-              <div>
-                <p className="text-sm text-muted-foreground">Asigurător</p>
-                <p className="font-medium">{quote.insurerName}</p>
+          <CardContent className="space-y-6">
+            <div className="grid gap-6 sm:grid-cols-2">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100">
+                  <Building2 className="h-5 w-5 text-blue-900" />
+                </div>
+                <div>
+                  <p className="text-xs font-medium text-gray-500">Asigurător</p>
+                  <p className="text-sm font-semibold text-gray-900">{quote.insurerName}</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100">
+                  <Banknote className="h-5 w-5 text-blue-900" />
+                </div>
+                <div>
+                  <p className="text-xs font-medium text-gray-500">Prima de asigurare</p>
+                  <p className="text-lg font-bold text-gray-900">{formatCurrency(quote.premium)}</p>
+                </div>
               </div>
             </div>
 
             {quote.vehicleOrProperty && (
               <div className="flex items-center gap-3">
-                <Car className="h-4 w-4 text-muted-foreground" />
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100">
+                  <Car className="h-5 w-5 text-blue-900" />
+                </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">
-                    Obiect asigurat
-                  </p>
-                  <p className="font-medium">{quote.vehicleOrProperty}</p>
+                  <p className="text-xs font-medium text-gray-500">Obiect asigurat</p>
+                  <p className="text-sm font-semibold text-gray-900">{quote.vehicleOrProperty}</p>
                 </div>
               </div>
             )}
 
-            <div className="flex items-center gap-3">
-              <Banknote className="h-4 w-4 text-muted-foreground" />
-              <div>
-                <p className="text-sm text-muted-foreground">Prima de asigurare</p>
-                <p className="text-lg font-bold text-primary">
-                  {formatCurrency(quote.premium)}
-                </p>
+            <Separator className="bg-gray-200" />
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100">
+                  <FileText className="h-5 w-5 text-blue-900" />
+                </div>
+                <div>
+                  <p className="text-xs font-medium text-gray-500">Data creare</p>
+                  <p className="text-sm font-semibold text-gray-900">{formatDate(quote.createdAt)}</p>
+                </div>
               </div>
-            </div>
-
-            <Separator />
-
-            <div className="flex items-center gap-3">
-              <Calendar className="h-4 w-4 text-muted-foreground" />
-              <div>
-                <p className="text-sm text-muted-foreground">Valabilitate</p>
-                <p className="font-medium">
-                  {formatDate(quote.validFrom)} — {formatDate(quote.validUntil)}
-                </p>
-              </div>
-            </div>
-
-            <div>
-              <p className="text-sm text-muted-foreground">Dată creare</p>
-              <p className="text-sm">{formatDate(quote.createdAt)}</p>
             </div>
           </CardContent>
         </Card>

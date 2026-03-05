@@ -1,4 +1,4 @@
-import { QuotesTable } from "@/components/quotes/quotes-table";
+﻿import { QuotesTable } from "@/components/quotes/quotes-table";
 
 export default function QuotesPage() {
   return (

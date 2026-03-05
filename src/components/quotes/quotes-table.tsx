@@ -7,7 +7,6 @@ import { DataTable } from "@/components/data-table/data-table";
 import { DataTablePagination } from "@/components/data-table/data-table-pagination";
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar";
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
-import { QuoteStatusBadge } from "./quote-status-badge";
 import { useQuotes } from "@/hooks/use-quotes";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import type { Quote, TableParams } from "@/api/types";
@@ -21,16 +20,6 @@ const typeLabels: Record<string, string> = {
 };
 
 const filterConfigs = [
-  {
-    key: "status",
-    label: "Status",
-    options: [
-      { label: "Activă", value: "ACTIVE" },
-      { label: "Expirată", value: "EXPIRED" },
-      { label: "Acceptată", value: "CONVERTED" },
-      { label: "Schiță", value: "DRAFT" },
-    ],
-  },
   {
     key: "type",
     label: "Tip",
@@ -91,11 +80,6 @@ export function QuotesTable() {
         <DataTableColumnHeader column={column} title="Primă" />
       ),
       cell: ({ row }) => formatCurrency(row.original.premium),
-    },
-    {
-      accessorKey: "status",
-      header: "Status",
-      cell: ({ row }) => <QuoteStatusBadge status={row.original.status} />,
     },
     {
       accessorKey: "createdAt",

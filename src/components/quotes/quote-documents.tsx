@@ -1,11 +1,11 @@
-import { FileDown, FileText } from "lucide-react";
+﻿import { FileDown, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { formatFileSize } from "@/lib/utils";
 import type { QuoteDocument } from "@/api/types";
 
 const typeLabels: Record<QuoteDocument["type"], string> = {
   OFFER: "Ofertă",
-  COMPARISON: "Comparație",
+  COMPARISON: "Comparare",
   TERMS: "Termeni și condiții",
 };
 

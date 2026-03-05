@@ -1,4 +1,4 @@
-import { PoliciesTable } from "@/components/policies/policies-table";
+﻿import { PoliciesTable } from "@/components/policies/policies-table";
 
 export default function PoliciesPage() {
   return (

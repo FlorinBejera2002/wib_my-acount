@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { ColumnDef } from "@tanstack/react-table";
 import { Eye } from "lucide-react";
@@ -26,9 +26,9 @@ const filterConfigs = [
     key: "status",
     label: "Status",
     options: [
-      { label: "Activă", value: "ACTIVE" },
-      { label: "Expirată", value: "EXPIRED" },
-      { label: "Anulată", value: "CANCELLED" },
+      { label: "Activ", value: "ACTIVE" },
+      { label: "Expirat", value: "EXPIRED" },
+      { label: "Anulat", value: "CANCELLED" },
       { label: "În așteptare", value: "PENDING" },
     ],
   },
