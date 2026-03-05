@@ -30,7 +30,9 @@ export function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="email">Adresă de email</Label>
+        <Label htmlFor="email" className="text-gray-900">
+          Adresă de email
+        </Label>
         <Input
           id="email"
           type="email"
@@ -45,7 +47,9 @@ export function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="password">Parolă</Label>
+        <Label htmlFor="password" className="text-gray-900">
+          Parolă
+        </Label>
         <div className="relative">
           <Input
             id="password"
@@ -58,7 +62,7 @@ export function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-900 transition-colors"
             tabIndex={-1}
           >
             {showPassword ? (
@@ -73,7 +77,11 @@ export function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
         )}
       </div>
 
-      <Button type="submit" className="w-full" disabled={isLoading}>
+      <Button
+        type="submit"
+        className="w-full bg-accent-green hover:bg-accent-green-hover text-white"
+        disabled={isLoading}
+      >
         {isLoading ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />

@@ -13,6 +13,7 @@ import { TwoFactorForm } from "@/components/auth/two-factor-form";
 import { LoginProgress } from "@/components/auth/login-progress";
 import { useLogin, useVerifyTwoFactor } from "@/hooks/use-auth";
 import { useAuthStore } from "@/stores/auth-store";
+import logo from "@/assets/logo.svg";
 import type { LoginFormValues } from "@/lib/validators";
 
 type LoginStep = "credentials" | "two-factor" | "success";
@@ -55,42 +56,50 @@ export default function LoginPage() {
     step === "credentials" ? 0 : step === "two-factor" ? 1 : 2;
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 via-white to-blue-50 px-4">
+    <div className="flex min-h-screen items-center justify-center bg-zinc-100 px-4">
       <div className="w-full max-w-md space-y-6">
         <div className="text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground font-bold text-xl">
-            A
-          </div>
-          <h1 className="text-2xl font-bold text-foreground">asigurari.ro</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Autentifică-te în contul tău
+          <img
+            src={logo}
+            alt="asigurari.ro"
+            className="mx-auto mb-4 h-10"
+          />
+          <h1 className="text-xl font-bold text-gray-900">
+            Bine ai venit!
+          </h1>
+          <p className="mt-1 text-sm text-gray-400">
+            Autentifică-te în contul tău de asigurări
           </p>
         </div>
 
         <LoginProgress currentStep={stepIndex} />
 
-        <Card className="shadow-lg">
+        <Card className="shadow-sm">
           <CardHeader className="text-center">
             {step === "credentials" && (
               <>
-                <CardTitle>Bine ai venit!</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-gray-900">Autentificare</CardTitle>
+                <CardDescription className="text-gray-400">
                   Introdu adresa de email și parola pentru a continua
                 </CardDescription>
               </>
             )}
             {step === "two-factor" && (
               <>
-                <CardTitle>Verificare în doi pași</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-gray-900">
+                  Verificare în doi pași
+                </CardTitle>
+                <CardDescription className="text-gray-400">
                   Am trimis un cod de verificare pe adresa ta de email
                 </CardDescription>
               </>
             )}
             {step === "success" && (
               <>
-                <CardTitle>Autentificare reușită!</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-gray-900">
+                  Autentificare reușită!
+                </CardTitle>
+                <CardDescription className="text-gray-400">
                   Vei fi redirecționat către panoul principal...
                 </CardDescription>
               </>
@@ -114,8 +123,8 @@ export default function LoginPage() {
 
             {step === "success" && (
               <div className="flex flex-col items-center gap-3 py-6">
-                <CheckCircle2 className="h-16 w-16 text-green-500 animate-bounce" />
-                <p className="text-sm text-muted-foreground">
+                <CheckCircle2 className="h-16 w-16 text-accent-green animate-bounce" />
+                <p className="text-sm text-gray-400">
                   Pregătim panoul tău de control...
                 </p>
               </div>
@@ -123,7 +132,7 @@ export default function LoginPage() {
           </CardContent>
         </Card>
 
-        <p className="text-center text-xs text-muted-foreground">
+        <p className="text-center text-xs text-gray-400">
           © 2025 asigurari.ro — Toate drepturile rezervate
         </p>
       </div>

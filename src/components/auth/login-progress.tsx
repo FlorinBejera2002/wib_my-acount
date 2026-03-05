@@ -20,10 +20,10 @@ export function LoginProgress({ currentStep }: LoginProgressProps) {
               className={cn(
                 "flex h-6 w-6 items-center justify-center rounded-full text-xs font-medium transition-colors",
                 index < currentStep
-                  ? "bg-primary text-primary-foreground"
+                  ? "bg-accent-green text-white"
                   : index === currentStep
-                    ? "bg-primary text-primary-foreground ring-2 ring-primary/30 ring-offset-2"
-                    : "bg-muted text-muted-foreground"
+                    ? "bg-accent-green text-white ring-2 ring-accent-green/30 ring-offset-2"
+                    : "bg-gray-100 text-gray-400"
               )}
             >
               {index < currentStep ? "✓" : index + 1}
@@ -32,8 +32,8 @@ export function LoginProgress({ currentStep }: LoginProgressProps) {
               className={cn(
                 "hidden text-xs sm:inline",
                 index <= currentStep
-                  ? "font-medium text-foreground"
-                  : "text-muted-foreground"
+                  ? "font-medium text-gray-900"
+                  : "text-gray-400"
               )}
             >
               {step.label}
@@ -43,7 +43,7 @@ export function LoginProgress({ currentStep }: LoginProgressProps) {
             <div
               className={cn(
                 "h-px w-8 transition-colors",
-                index < currentStep ? "bg-primary" : "bg-muted"
+                index < currentStep ? "bg-accent-green" : "bg-gray-200"
               )}
             />
           )}

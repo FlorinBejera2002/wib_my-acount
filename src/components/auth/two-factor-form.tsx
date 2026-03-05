@@ -99,8 +99,8 @@ export function TwoFactorForm({ onSubmit, isLoading }: TwoFactorFormProps) {
   return (
     <div className="space-y-6">
       <div className="space-y-2 text-center">
-        <Label>Cod de verificare</Label>
-        <p className="text-sm text-muted-foreground">
+        <Label className="text-gray-900">Cod de verificare</Label>
+        <p className="text-sm text-gray-400">
           Introdu codul de 6 cifre trimis pe email
         </p>
       </div>
@@ -118,7 +118,7 @@ export function TwoFactorForm({ onSubmit, isLoading }: TwoFactorFormProps) {
             value={digit}
             onChange={(e) => handleChange(index, e.target.value)}
             onKeyDown={(e) => handleKeyDown(index, e)}
-            className="h-12 w-12 text-center text-lg font-semibold"
+            className="h-12 w-12 text-center text-lg font-semibold focus-visible:ring-accent-green"
             disabled={isLoading}
             aria-label={`Cifra ${index + 1}`}
           />
@@ -126,19 +126,24 @@ export function TwoFactorForm({ onSubmit, isLoading }: TwoFactorFormProps) {
       </div>
 
       {isLoading && (
-        <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-          <Loader2 className="h-4 w-4 animate-spin" />
+        <div className="flex items-center justify-center gap-2 text-sm text-gray-400">
+          <Loader2 className="h-4 w-4 animate-spin text-accent-green" />
           Se verifică codul...
         </div>
       )}
 
       <div className="text-center">
         {resendTimer > 0 ? (
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-gray-400">
             Retrimite cod în {formatTimer(resendTimer)}
           </p>
         ) : (
-          <Button variant="ghost" size="sm" onClick={handleResend}>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleResend}
+            className="text-accent-green hover:text-accent-green-hover hover:bg-accent-green/10"
+          >
             Retrimite codul
           </Button>
         )}
