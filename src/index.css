@@ -1,0 +1,237 @@
+@import "tailwindcss";
+
+/*
+ * ============================================================
+ *  DESIGN TOKENS – schimbă culorile DOAR aici
+ * ============================================================
+ *  Toate valorile sunt culori CSS valide (hex, hsl, oklch etc.).
+ *  Tailwind v4 le preia prin @theme inline – bg-primary, text-foreground etc.
+ *  Opacity modifiers (bg-primary/50) funcționează automat prin color-mix().
+ * ============================================================
+ */
+
+:root {
+  /* —— Brand / Accent —————————————————————————— */
+  --accent-green: #7fc341;
+  --accent-green-hover: #6ba935;
+
+  /* —— Radius —————————————————————————————————— */
+  --radius: 0.5rem;
+
+  /* —— Surfaces ———————————————————————————————— */
+  --background: #ffffff;
+  --foreground: #020817;
+
+  --card: #ffffff;
+  --card-foreground: #020817;
+
+  --popover: #ffffff;
+  --popover-foreground: #020817;
+
+  /* —— Primary (dark navy – CTA-uri, focus rings) — */
+  --primary: #0f172a;
+  --primary-foreground: #f8fafc;
+
+  /* —— Secondary —————————————————————————————— */
+  --secondary: #f1f5f9;
+  --secondary-foreground: #0f172a;
+
+  /* —— Muted —————————————————————————————————— */
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+
+  /* —— Accent ————————————————————————————————— */
+  --accent: #f1f5f9;
+  --accent-foreground: #0f172a;
+
+  /* —— Destructive ———————————————————————————— */
+  --destructive: #ef4444;
+  --destructive-foreground: #f8fafc;
+
+  /* —— Borders & Inputs ————————————————————— */
+  --border: #e2e8f0;
+  --input: #e2e8f0;
+  --ring: #020817;
+
+  /* —— Sidebar (light, gradient via component) —— */
+  --sidebar: #fafafa;
+  --sidebar-foreground: #3f3f46;
+  --sidebar-primary: #18181b;
+  --sidebar-primary-foreground: #fafafa;
+  --sidebar-accent: #f4f4f5;
+  --sidebar-accent-foreground: #18181b;
+  --sidebar-border: #e4e4e7;
+  --sidebar-ring: #3b82f6;
+
+  /* —— Charts ————————————————————————————————— */
+  --chart-1: #0f172a;
+  --chart-2: #334155;
+  --chart-3: #64748b;
+  --chart-4: #94a3b8;
+  --chart-5: #cbd5e1;
+}
+
+/*
+ * —— Dark mode ————————————————————————————————
+ *    Activată prin clasa .dark pe <html> sau <body>.
+ */
+.dark {
+  --background: #020817;
+  --foreground: #f8fafc;
+
+  --card: #020817;
+  --card-foreground: #f8fafc;
+
+  --popover: #020817;
+  --popover-foreground: #f8fafc;
+
+  --primary: #f8fafc;
+  --primary-foreground: #0f172a;
+
+  --secondary: #1e293b;
+  --secondary-foreground: #f8fafc;
+
+  --muted: #1e293b;
+  --muted-foreground: #94a3b8;
+
+  --accent: #1e293b;
+  --accent-foreground: #f8fafc;
+
+  --destructive: #7f1d1d;
+  --destructive-foreground: #f8fafc;
+
+  --border: #1e293b;
+  --input: #1e293b;
+  --ring: #cbd5e1;
+
+  --sidebar: #18181b;
+  --sidebar-foreground: #f4f4f5;
+  --sidebar-primary: #2563eb;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #27272a;
+  --sidebar-accent-foreground: #f4f4f5;
+  --sidebar-border: #3f3f46;
+  --sidebar-ring: #3b82f6;
+
+  --chart-1: #3b82f6;
+  --chart-2: #60a5fa;
+  --chart-3: #93c5fd;
+  --chart-4: #bfdbfe;
+  --chart-5: #dbeafe;
+}
+
+/*
+ * —— Dark mode custom variant for Tailwind v4 ————
+ */
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * —— Map CSS vars → Tailwind design tokens ————————
+ *    Acesta e singurul loc care leagă variabilele
+ *    la clasele utilitare (bg-primary, text-muted etc.).
+ */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --color-accent-green: var(--accent-green);
+  --color-accent-green-hover: var(--accent-green-hover);
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+}
+
+/*
+ * —— Base layer ———————————————————————————————
+ */
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html,
+  body {
+    @apply h-full overflow-hidden bg-background text-foreground antialiased;
+    font-family: "Inter", system-ui, -apple-system, sans-serif;
+  }
+}
+
+/*
+ * —— Hide scrollbar utility ———————————————————
+ */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/*
+ * —— Custom scrollbar (green accent) ——————————
+ */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--accent-green);
+  border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-green-hover);
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent-green) transparent;
+}
