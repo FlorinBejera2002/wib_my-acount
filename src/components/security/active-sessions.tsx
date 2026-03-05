@@ -31,7 +31,7 @@ export function ActiveSessions() {
 
   if (isLoading) {
     return (
-      <Card>
+      <Card className="shadow-sm">
         <CardHeader>
           <Skeleton className="h-6 w-40" />
           <Skeleton className="h-4 w-64" />
@@ -46,7 +46,7 @@ export function ActiveSessions() {
   }
 
   return (
-    <Card>
+    <Card className="shadow-sm">
       <CardHeader className="flex flex-row items-start justify-between">
         <div>
           <CardTitle>Sesiuni active</CardTitle>

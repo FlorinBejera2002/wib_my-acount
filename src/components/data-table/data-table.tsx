@@ -42,7 +42,7 @@ export function DataTable<TData, TValue>({
 
   if (isLoading) {
     return (
-      <div className="rounded-md border">
+      <div className="rounded-xl border border-gray-100 bg-white shadow-sm">
         <Table>
           <TableHeader>
             <TableRow>
@@ -71,7 +71,7 @@ export function DataTable<TData, TValue>({
 
   if (isError) {
     return (
-      <div className="flex flex-col items-center justify-center gap-4 rounded-md border py-16">
+      <div className="flex flex-col items-center justify-center gap-4 rounded-xl border border-gray-100 bg-white shadow-sm py-16">
         <AlertCircle className="h-12 w-12 text-destructive" />
         <div className="text-center">
           <p className="font-medium text-foreground">
@@ -91,7 +91,7 @@ export function DataTable<TData, TValue>({
   }
 
   return (
-    <div className="rounded-md border">
+    <div className="rounded-xl border border-gray-100 bg-white shadow-sm">
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (

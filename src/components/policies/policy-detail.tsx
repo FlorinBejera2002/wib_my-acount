@@ -72,8 +72,8 @@ export function PolicyDetail() {
           </Link>
         </Button>
         <div className="flex-1">
-          <h1 className="text-2xl font-bold">{policy.policyNumber}</h1>
-          <p className="text-sm text-muted-foreground">
+          <h1 className="text-xl font-bold text-gray-900">{policy.policyNumber}</h1>
+          <p className="text-sm text-gray-400">
             Poliță {typeLabels[policy.type]}
           </p>
         </div>
@@ -81,7 +81,7 @@ export function PolicyDetail() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
-        <Card>
+        <Card className="shadow-sm">
           <CardHeader>
             <CardTitle className="text-lg">Detalii poliță</CardTitle>
             <CardDescription>
@@ -172,7 +172,7 @@ export function PolicyDetail() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="shadow-sm">
           <CardHeader>
             <CardTitle className="text-lg">Documente</CardTitle>
             <CardDescription>Fișiere asociate acestei polițe</CardDescription>

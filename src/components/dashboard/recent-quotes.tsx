@@ -24,7 +24,7 @@ const statusConfig: Record<QuoteStatus, { label: string; dot: string; text: stri
       text: "text-purple-600",
     },
     DRAFT: {
-      label: "Ciornă",
+      label: "Schiță",
       dot: "bg-gray-400",
       text: "text-gray-500",
     },
@@ -102,7 +102,7 @@ export function RecentQuotes() {
               );
             })}
           </ul>
-        )}
+        )}  
       </CardContent>
     </Card>
   );

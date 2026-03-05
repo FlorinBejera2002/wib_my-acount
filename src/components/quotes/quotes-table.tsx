@@ -28,7 +28,7 @@ const filterConfigs = [
       { label: "Activă", value: "ACTIVE" },
       { label: "Expirată", value: "EXPIRED" },
       { label: "Convertită", value: "CONVERTED" },
-      { label: "Ciornă", value: "DRAFT" },
+      { label: "Schiță", value: "DRAFT" },
     ],
   },
   {

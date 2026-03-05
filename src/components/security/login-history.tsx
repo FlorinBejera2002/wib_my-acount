@@ -15,7 +15,7 @@ export function LoginHistory() {
 
   if (isLoading) {
     return (
-      <Card>
+      <Card className="shadow-sm">
         <CardHeader>
           <Skeleton className="h-6 w-48" />
           <Skeleton className="h-4 w-64" />
@@ -30,7 +30,7 @@ export function LoginHistory() {
   }
 
   return (
-    <Card>
+    <Card className="shadow-sm">
       <CardHeader>
         <CardTitle>Informații securitate</CardTitle>
         <CardDescription>

@@ -42,7 +42,7 @@ export function PreferencesForm() {
 
   if (isLoading) {
     return (
-      <Card>
+      <Card className="shadow-sm">
         <CardHeader>
           <Skeleton className="h-6 w-40" />
           <Skeleton className="h-4 w-64" />
@@ -56,7 +56,7 @@ export function PreferencesForm() {
   }
 
   return (
-    <Card>
+    <Card className="shadow-sm">
       <CardHeader>
         <CardTitle>Preferințe</CardTitle>
         <CardDescription>

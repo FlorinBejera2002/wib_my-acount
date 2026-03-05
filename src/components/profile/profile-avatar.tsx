@@ -21,7 +21,7 @@ export function ProfileAvatar({
 
   return (
     <Avatar className={sizeClasses[size]}>
-      <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+      <AvatarFallback className="bg-accent-green text-white font-semibold">
         {initials}
       </AvatarFallback>
     </Avatar>

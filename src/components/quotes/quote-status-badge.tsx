@@ -16,7 +16,7 @@ const statusConfig: Record<QuoteStatus, { label: string; className: string }> = 
     className: "bg-purple-100 text-purple-800 hover:bg-purple-100",
   },
   DRAFT: {
-    label: "Ciornă",
+    label: "Schiță",
     className: "bg-blue-100 text-blue-800 hover:bg-blue-100",
   },
 };

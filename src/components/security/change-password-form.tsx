@@ -48,7 +48,7 @@ export function ChangePasswordForm() {
   };
 
   return (
-    <Card>
+    <Card className="shadow-sm">
       <CardHeader>
         <CardTitle>Schimbă parola</CardTitle>
         <CardDescription>

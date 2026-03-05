@@ -21,12 +21,12 @@ export default function ProfilePage() {
           <Skeleton className="h-24 w-24 rounded-full" />
         )}
         <div>
-          <h1 className="text-2xl font-bold">
+          <h1 className="text-xl font-bold text-gray-900">
             {profile
               ? `${profile.firstName} ${profile.lastName}`
               : ""}
           </h1>
-          <p className="text-sm text-muted-foreground">{profile?.email}</p>
+          <p className="text-sm text-gray-400">{profile?.email}</p>
           {profile && (
             <p className="text-xs text-muted-foreground">
               Client din {formatDate(profile.createdAt, "MMMM yyyy")} · ID:{" "}

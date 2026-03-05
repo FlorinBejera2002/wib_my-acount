@@ -34,7 +34,7 @@ export function NotificationSettings() {
 
   if (isLoading) {
     return (
-      <Card>
+      <Card className="shadow-sm">
         <CardHeader>
           <Skeleton className="h-6 w-48" />
           <Skeleton className="h-4 w-64" />
@@ -49,7 +49,7 @@ export function NotificationSettings() {
   }
 
   return (
-    <Card>
+    <Card className="shadow-sm">
       <CardHeader>
         <CardTitle>Notificări</CardTitle>
         <CardDescription>

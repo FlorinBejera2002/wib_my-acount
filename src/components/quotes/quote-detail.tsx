@@ -63,8 +63,8 @@ export function QuoteDetail() {
           </Link>
         </Button>
         <div className="flex-1">
-          <h1 className="text-2xl font-bold">{quote.quoteNumber}</h1>
-          <p className="text-sm text-muted-foreground">
+          <h1 className="text-xl font-bold text-gray-900">{quote.quoteNumber}</h1>
+          <p className="text-sm text-gray-400">
             Cotație {typeLabels[quote.type]}
           </p>
         </div>
@@ -72,7 +72,7 @@ export function QuoteDetail() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
-        <Card>
+        <Card className="shadow-sm">
           <CardHeader>
             <CardTitle className="text-lg">Detalii cotație</CardTitle>
             <CardDescription>Informații generale despre ofertă</CardDescription>
@@ -127,7 +127,7 @@ export function QuoteDetail() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="shadow-sm">
           <CardHeader>
             <CardTitle className="text-lg">Documente</CardTitle>
             <CardDescription>

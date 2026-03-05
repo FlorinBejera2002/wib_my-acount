@@ -5,8 +5,8 @@ export default function SettingsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Setări</h1>
-        <p className="text-sm text-muted-foreground">
+        <h1 className="text-xl font-bold text-gray-900">Setări</h1>
+        <p className="text-sm text-gray-400">
           Configurează notificările și confidențialitatea contului
         </p>
       </div>

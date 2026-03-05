@@ -43,7 +43,7 @@ export function ProfileForm() {
 
   if (isLoading) {
     return (
-      <Card>
+      <Card className="shadow-sm">
         <CardHeader>
           <Skeleton className="h-6 w-40" />
           <Skeleton className="h-4 w-64" />
@@ -58,7 +58,7 @@ export function ProfileForm() {
   }
 
   return (
-    <Card>
+    <Card className="shadow-sm">
       <CardHeader>
         <CardTitle>Informații personale</CardTitle>
         <CardDescription>

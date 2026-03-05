@@ -6,8 +6,8 @@ export default function SecurityPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Securitate</h1>
-        <p className="text-sm text-muted-foreground">
+        <h1 className="text-xl font-bold text-gray-900">Securitate</h1>
+        <p className="text-sm text-gray-400">
           Gestionează parola și sesiunile contului tău
         </p>
       </div>

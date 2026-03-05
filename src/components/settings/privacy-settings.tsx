@@ -18,7 +18,7 @@ export function PrivacySettings() {
   };
 
   return (
-    <Card>
+    <Card className="shadow-sm">
       <CardHeader>
         <CardTitle>Confidențialitate</CardTitle>
         <CardDescription>
