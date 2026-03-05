@@ -1,24 +1,25 @@
 @import "tailwindcss";
+@import url("../fonts/roboto.css");
 
 /*
  * ============================================================
- *  DESIGN TOKENS – schimbă culorile DOAR aici
+ *  DESIGN TOKENS ? schimb? culorile DOAR aici
  * ============================================================
  *  Toate valorile sunt culori CSS valide (hex, hsl, oklch etc.).
- *  Tailwind v4 le preia prin @theme inline – bg-primary, text-foreground etc.
- *  Opacity modifiers (bg-primary/50) funcționează automat prin color-mix().
+ *  Tailwind v4 le preia prin @theme inline ? bg-primary, text-foreground etc.
+ *  Opacity modifiers (bg-primary/50) func?ioneaz? automat prin color-mix().
  * ============================================================
  */
 
 :root {
-  /* —— Brand / Accent —————————————————————————— */
+  /* ?? Brand / Accent ?????????????????????????? */
   --accent-green: #7fc341;
   --accent-green-hover: #6ba935;
 
-  /* —— Radius —————————————————————————————————— */
+  /* ?? Radius ?????????????????????????????????? */
   --radius: 0.5rem;
 
-  /* —— Surfaces ———————————————————————————————— */
+  /* ?? Surfaces ???????????????????????????????? */
   --background: #ffffff;
   --foreground: #020817;
 
@@ -28,32 +29,32 @@
   --popover: #ffffff;
   --popover-foreground: #020817;
 
-  /* —— Primary (dark navy – CTA-uri, focus rings) — */
+  /* ?? Primary (dark navy ? CTA-uri, focus rings) ? */
   --primary: #0f172a;
   --primary-foreground: #f8fafc;
 
-  /* —— Secondary —————————————————————————————— */
+  /* ?? Secondary ?????????????????????????????? */
   --secondary: #f1f5f9;
   --secondary-foreground: #0f172a;
 
-  /* —— Muted —————————————————————————————————— */
+  /* ?? Muted ?????????????????????????????????? */
   --muted: #f1f5f9;
   --muted-foreground: #64748b;
 
-  /* —— Accent ————————————————————————————————— */
+  /* ?? Accent ????????????????????????????????? */
   --accent: #f1f5f9;
   --accent-foreground: #0f172a;
 
-  /* —— Destructive ———————————————————————————— */
+  /* ?? Destructive ???????????????????????????? */
   --destructive: #ef4444;
   --destructive-foreground: #f8fafc;
 
-  /* —— Borders & Inputs ————————————————————— */
+  /* ?? Borders & Inputs ????????????????????? */
   --border: #e2e8f0;
   --input: #e2e8f0;
   --ring: #020817;
 
-  /* —— Sidebar (light, gradient via component) —— */
+  /* ?? Sidebar (light, gradient via component) ?? */
   --sidebar: #fafafa;
   --sidebar-foreground: #3f3f46;
   --sidebar-primary: #18181b;
@@ -63,7 +64,7 @@
   --sidebar-border: #e4e4e7;
   --sidebar-ring: #3b82f6;
 
-  /* —— Charts ————————————————————————————————— */
+  /* ?? Charts ????????????????????????????????? */
   --chart-1: #0f172a;
   --chart-2: #334155;
   --chart-3: #64748b;
@@ -72,8 +73,8 @@
 }
 
 /*
- * —— Dark mode ————————————————————————————————
- *    Activată prin clasa .dark pe <html> sau <body>.
+ * ?? Dark mode ????????????????????????????????
+ *    Activat? prin clasa .dark pe <html> sau <body>.
  */
 .dark {
   --background: #020817;
@@ -121,13 +122,13 @@
 }
 
 /*
- * —— Dark mode custom variant for Tailwind v4 ————
+ * ?? Dark mode custom variant for Tailwind v4 ????
  */
 @custom-variant dark (&:is(.dark *));
 
 /*
- * —— Map CSS vars → Tailwind design tokens ————————
- *    Acesta e singurul loc care leagă variabilele
+ * ?? Map CSS vars ? Tailwind design tokens ????????
+ *    Acesta e singurul loc care leag? variabilele
  *    la clasele utilitare (bg-primary, text-muted etc.).
  */
 @theme inline {
@@ -183,7 +184,7 @@
 }
 
 /*
- * —— Base layer ———————————————————————————————
+ * ?? Base layer ???????????????????????????????
  */
 @layer base {
   * {
@@ -193,12 +194,12 @@
   html,
   body {
     @apply h-full overflow-hidden bg-background text-foreground antialiased;
-    font-family: "Inter", system-ui, -apple-system, sans-serif;
+    font-family: "Roboto", system-ui, -apple-system, sans-serif;
   }
 }
 
 /*
- * —— Hide scrollbar utility ———————————————————
+ * ?? Hide scrollbar utility ???????????????????
  */
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
@@ -210,7 +211,7 @@
 }
 
 /*
- * —— Custom scrollbar (green accent) ——————————
+ * ?? Custom scrollbar (green accent) ??????????
  */
 ::-webkit-scrollbar {
   width: 6px;
