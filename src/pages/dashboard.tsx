@@ -36,10 +36,6 @@ export default function DashboardPage() {
 
       <StatsCards stats={stats} isLoading={statsLoading} />
 
-      {expiringPolicies.length > 0 && (
-        <ExpiringAlert policies={expiringPolicies} />
-      )}
-
       <div className="grid gap-6 lg:grid-cols-2">
         <RecentQuotes />
         <RecentPolicies />

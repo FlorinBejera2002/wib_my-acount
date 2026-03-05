@@ -57,7 +57,7 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-100 px-4">
-      <div className="w-full max-w-md space-y-6">
+      <div className="w-full max-w-xl space-y-6 rounded-lg bg-white p-12">
         <div className="text-center">
           <img
             src={logo}
@@ -133,7 +133,7 @@ export default function LoginPage() {
         </Card>
 
         <p className="text-center text-xs text-gray-400">
-          © 2025 asigurari.ro — Toate drepturile rezervate
+          © Copyright 2026 Asigurari.ro - A Trading Style of Wilson Insurance Broker SRL
         </p>
       </div>
     </div>

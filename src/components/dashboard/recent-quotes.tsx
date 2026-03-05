@@ -19,7 +19,7 @@ const statusConfig: Record<QuoteStatus, { label: string; dot: string; text: stri
       text: "text-red-600",
     },
     CONVERTED: {
-      label: "Convertită",
+      label: "Acceptată",
       dot: "bg-purple-500",
       text: "text-purple-600",
     },
@@ -29,6 +29,29 @@ const statusConfig: Record<QuoteStatus, { label: string; dot: string; text: stri
       text: "text-gray-500",
     },
   };
+
+const typeConfig: Record<string, { label: string; className: string }> = {
+  RCA: {
+    label: "RCA",
+    className: "bg-blue-100 text-blue-700",
+  },
+  CASCO: {
+    label: "CASCO",
+    className: "bg-green-100 text-green-700",
+  },
+  LOCUINTA: {
+    label: "Locuință",
+    className: "bg-orange-100 text-orange-700",
+  },
+  CALATORIE: {
+    label: "Călătorie",
+    className: "bg-purple-100 text-purple-700",
+  },
+  VIATA: {
+    label: "Viață",
+    className: "bg-pink-100 text-pink-700",
+  },
+};
 
 export function RecentQuotes() {
   const { data, isLoading } = useQuotes({
@@ -67,6 +90,7 @@ export function RecentQuotes() {
           <ul>
             {data?.data.map((quote, i) => {
               const status = statusConfig[quote.status];
+              const type = typeConfig[quote.type] || { label: quote.type, className: "bg-gray-100 text-gray-600" };
               const isLast = i === (data?.data.length ?? 0) - 1;
 
               return (
@@ -78,8 +102,8 @@ export function RecentQuotes() {
                       !isLast && "border-b border-gray-100"
                     )}
                   >
-                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gray-100 text-xs font-semibold text-gray-600">
-                      {quote.type.slice(0, 3)}
+                    <span className={cn("flex h-8 w-fit px-2 shrink-0 items-center justify-center rounded-lg text-xs font-semibold", type.className)}>
+                      {type.label}
                     </span>
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-medium text-gray-900">

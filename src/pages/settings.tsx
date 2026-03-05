@@ -1,4 +1,4 @@
-import { NotificationSettings } from "@/components/settings/notification-settings";
+﻿import { NotificationSettings } from "@/components/settings/notification-settings";
 import { PrivacySettings } from "@/components/settings/privacy-settings";
 
 export default function SettingsPage() {

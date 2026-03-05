@@ -96,25 +96,6 @@ export function NotificationSettings() {
                 )}
               />
             </div>
-
-            <div className="flex items-center justify-between">
-              <div>
-                <Label>Marketing</Label>
-                <p className="text-sm text-muted-foreground">
-                  Oferte speciale, promoții și noutăți
-                </p>
-              </div>
-              <Controller
-                control={control}
-                name="marketing"
-                render={({ field }) => (
-                  <Switch
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                )}
-              />
-            </div>
           </div>
 
           <div className="flex justify-end">

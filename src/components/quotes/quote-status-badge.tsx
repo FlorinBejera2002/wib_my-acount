@@ -12,7 +12,7 @@ const statusConfig: Record<QuoteStatus, { label: string; className: string }> = 
     className: "bg-red-100 text-red-800 hover:bg-red-100",
   },
   CONVERTED: {
-    label: "Convertită",
+    label: "Acceptată",
     className: "bg-purple-100 text-purple-800 hover:bg-purple-100",
   },
   DRAFT: {
