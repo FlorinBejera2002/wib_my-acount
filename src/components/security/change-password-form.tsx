@@ -1,51 +1,51 @@
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff, Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { PasswordStrength } from "./password-strength";
-import { useChangePassword } from "@/hooks/use-password";
+  CardTitle
+} from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { useChangePassword } from '@/hooks/use-password'
 import {
-  changePasswordSchema,
   type ChangePasswordFormValues,
-} from "@/lib/validators";
+  changePasswordSchema
+} from '@/lib/validators'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Eye, EyeOff, Loader2 } from 'lucide-react'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { PasswordStrength } from './password-strength'
 
 export function ChangePasswordForm() {
-  const [showOld, setShowOld] = useState(false);
-  const [showNew, setShowNew] = useState(false);
-  const changePassword = useChangePassword();
+  const [showOld, setShowOld] = useState(false)
+  const [showNew, setShowNew] = useState(false)
+  const changePassword = useChangePassword()
 
   const {
     register,
     handleSubmit,
     watch,
     reset,
-    formState: { errors },
+    formState: { errors }
   } = useForm<ChangePasswordFormValues>({
     resolver: zodResolver(changePasswordSchema),
     defaultValues: {
-      oldPassword: "",
-      newPassword: "",
-      confirmPassword: "",
-    },
-  });
+      oldPassword: '',
+      newPassword: '',
+      confirmPassword: ''
+    }
+  })
 
-  const newPassword = watch("newPassword");
+  const newPassword = watch('newPassword')
 
   const onSubmit = (data: ChangePasswordFormValues) => {
     changePassword.mutate(data, {
-      onSuccess: () => reset(),
-    });
-  };
+      onSuccess: () => reset()
+    })
+  }
 
   return (
     <Card className="shadow-sm">
@@ -62,9 +62,9 @@ export function ChangePasswordForm() {
             <div className="relative">
               <Input
                 id="oldPassword"
-                type={showOld ? "text" : "password"}
+                type={showOld ? 'text' : 'password'}
                 className="pr-10"
-                {...register("oldPassword")}
+                {...register('oldPassword')}
               />
               <button
                 type="button"
@@ -91,9 +91,9 @@ export function ChangePasswordForm() {
             <div className="relative">
               <Input
                 id="newPassword"
-                type={showNew ? "text" : "password"}
+                type={showNew ? 'text' : 'password'}
                 className="pr-10"
-                {...register("newPassword")}
+                {...register('newPassword')}
               />
               <button
                 type="button"
@@ -121,7 +121,7 @@ export function ChangePasswordForm() {
             <Input
               id="confirmPassword"
               type="password"
-              {...register("confirmPassword")}
+              {...register('confirmPassword')}
             />
             {errors.confirmPassword && (
               <p className="text-sm text-destructive">
@@ -138,12 +138,12 @@ export function ChangePasswordForm() {
                   Se schimbă...
                 </>
               ) : (
-                "Schimbă parola"
+                'Schimbă parola'
               )}
             </Button>
           </div>
         </form>
       </CardContent>
     </Card>
-  );
+  )
 }

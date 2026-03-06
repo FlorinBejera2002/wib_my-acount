@@ -1,52 +1,59 @@
-﻿import { useLocation, Link } from "react-router-dom";
-import { Bell } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { SidebarTrigger } from "@/components/ui/sidebar";
-import { Separator } from "@/components/ui/separator";
-import { useNotifications } from "@/hooks/use-notifications";
-import { NotificationsSlideOver } from "@/components/notifications/notifications-slide-over";
-import { useState } from "react";
+import { NotificationsSlideOver } from '@/components/notifications/notifications-slide-over'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Separator } from '@/components/ui/separator'
+import { SidebarTrigger } from '@/components/ui/sidebar'
+import { useNotifications } from '@/hooks/use-notifications'
+import { Bell } from 'lucide-react'
+import { useState } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 
 const breadcrumbMap: Record<string, string> = {
-  "/dashboard": "Panou Principal",
-  "/quotes": "Cotații",
-  "/policies": "Polițe",
-  "/profile": "Profil",
-  "/security": "Securitate",
-  "/settings": "Setări",
-};
+  '/dashboard': 'Panou Principal',
+  '/quotes': 'Cotații',
+  '/policies': 'Polițe',
+  '/profile': 'Profil',
+  '/notifications': 'Notificări'
+}
 
 function getBreadcrumbs(pathname: string) {
-  const parts = pathname.split("/").filter(Boolean);
-  const crumbs: Array<{ label: string; href: string }> = [];
+  const parts = pathname.split('/').filter(Boolean)
+  const crumbs: Array<{ label: string; href: string }> = []
 
-  if (parts.length === 0) return crumbs;
+  if (parts.length === 0) return crumbs
 
-  const firstPath = `/${parts[0]}`;
-  const label = breadcrumbMap[firstPath];
+  const firstPath = `/${parts[0]}`
+  const label = breadcrumbMap[firstPath]
   if (label) {
-    crumbs.push({ label, href: firstPath });
+    crumbs.push({ label, href: firstPath })
   }
 
   if (parts.length > 1 && parts[1]) {
-    if (parts[0] === "quotes") {
-      crumbs.push({ label: `Cotație #${parts[1]}`, href: pathname });
-    } else if (parts[0] === "policies") {
-      crumbs.push({ label: `Poliță #${parts[1]}`, href: pathname });
+    if (parts[0] === 'quotes') {
+      crumbs.push({ label: `Cotație #${parts[1]}`, href: pathname })
+    } else if (parts[0] === 'policies') {
+      crumbs.push({ label: `Poliță #${parts[1]}`, href: pathname })
+    } else if (parts[0] === 'profile') {
+      const subMap: Record<string, string> = {
+        security: 'Securitate',
+        settings: 'Setări'
+      }
+      if (subMap[parts[1]]) {
+        crumbs.push({ label: subMap[parts[1]], href: pathname })
+      }
     }
   }
 
-  return crumbs;
+  return crumbs
 }
 
 export function AppHeader() {
-  const location = useLocation();
-  const breadcrumbs = getBreadcrumbs(location.pathname);
-  const { data: notifications } = useNotifications();
-  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const location = useLocation()
+  const breadcrumbs = getBreadcrumbs(location.pathname)
+  const { data: notifications } = useNotifications()
+  const [notificationsOpen, setNotificationsOpen] = useState(false)
 
-  const unreadCount = notifications?.filter((n) => !n.read).length ?? 0;
+  const unreadCount = notifications?.filter((n) => !n.read).length ?? 0
 
   return (
     <>
@@ -65,10 +72,7 @@ export function AppHeader() {
           {breadcrumbs.map((crumb) => (
             <span key={crumb.href} className="flex items-center gap-1.5">
               <span className="text-muted-foreground">/</span>
-              <Link
-                to={crumb.href}
-                className="font-medium text-foreground"
-              >
+              <Link to={crumb.href} className="font-medium text-foreground">
                 {crumb.label}
               </Link>
             </span>
@@ -76,9 +80,9 @@ export function AppHeader() {
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
-          <Button 
-            variant="ghost" 
-            size="icon" 
+          <Button
+            variant="ghost"
+            size="icon"
             className="relative"
             onClick={() => setNotificationsOpen(true)}
           >
@@ -91,11 +95,11 @@ export function AppHeader() {
           </Button>
         </div>
       </header>
-      
-      <NotificationsSlideOver 
-        open={notificationsOpen} 
-        onOpenChange={setNotificationsOpen} 
+
+      <NotificationsSlideOver
+        open={notificationsOpen}
+        onOpenChange={setNotificationsOpen}
       />
     </>
-  );
+  )
 }

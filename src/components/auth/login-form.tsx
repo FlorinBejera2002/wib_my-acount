@@ -1,31 +1,31 @@
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff, Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { loginSchema, type LoginFormValues } from "@/lib/validators";
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { type LoginFormValues, loginSchema } from '@/lib/validators'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Eye, EyeOff, Loader2 } from 'lucide-react'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
 
 interface LoginFormProps {
-  onSubmit: (data: LoginFormValues) => void;
-  isLoading: boolean;
+  onSubmit: (data: LoginFormValues) => void
+  isLoading: boolean
 }
 
 export function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false)
 
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors }
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: "",
-      password: "",
-    },
-  });
+      email: '',
+      password: ''
+    }
+  })
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -38,8 +38,8 @@ export function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
           type="email"
           placeholder="exemplu@email.com"
           autoComplete="email"
-          autoFocus
-          {...register("email")}
+          autoFocus={true}
+          {...register('email')}
         />
         {errors.email && (
           <p className="text-sm text-destructive">{errors.email.message}</p>
@@ -53,11 +53,11 @@ export function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
         <div className="relative">
           <Input
             id="password"
-            type={showPassword ? "text" : "password"}
+            type={showPassword ? 'text' : 'password'}
             placeholder="Introdu parola"
             autoComplete="current-password"
             className="pr-10"
-            {...register("password")}
+            {...register('password')}
           />
           <button
             type="button"
@@ -88,9 +88,9 @@ export function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
             Se verifică...
           </>
         ) : (
-          "Autentifică-te"
+          'Autentifică-te'
         )}
       </Button>
     </form>
-  );
+  )
 }

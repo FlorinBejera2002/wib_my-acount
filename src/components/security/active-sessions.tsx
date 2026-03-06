@@ -1,33 +1,33 @@
-import { Monitor, Smartphone, Globe, Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
+  CardTitle
+} from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
 import {
   useSessions,
-  useTerminateSession,
   useTerminateAllSessions,
-} from "@/hooks/use-sessions";
-import { formatDateTime } from "@/lib/utils";
+  useTerminateSession
+} from '@/hooks/use-sessions'
+import { formatDateTime } from '@/lib/utils'
+import { Globe, Loader2, Monitor, Smartphone } from 'lucide-react'
 
 function getDeviceIcon(deviceInfo: string) {
-  const lower = deviceInfo.toLowerCase();
-  if (lower.includes("iphone") || lower.includes("android")) {
-    return Smartphone;
+  const lower = deviceInfo.toLowerCase()
+  if (lower.includes('iphone') || lower.includes('android')) {
+    return Smartphone
   }
-  return Monitor;
+  return Monitor
 }
 
 export function ActiveSessions() {
-  const { data: sessions, isLoading } = useSessions();
-  const terminateSession = useTerminateSession();
-  const terminateAll = useTerminateAllSessions();
+  const { data: sessions, isLoading } = useSessions()
+  const terminateSession = useTerminateSession()
+  const terminateAll = useTerminateAllSessions()
 
   if (isLoading) {
     return (
@@ -42,7 +42,7 @@ export function ActiveSessions() {
           ))}
         </CardContent>
       </Card>
-    );
+    )
   }
 
   return (
@@ -70,7 +70,7 @@ export function ActiveSessions() {
       </CardHeader>
       <CardContent className="space-y-3">
         {sessions?.map((session) => {
-          const DeviceIcon = getDeviceIcon(session.deviceInfo);
+          const DeviceIcon = getDeviceIcon(session.deviceInfo)
           return (
             <div
               key={session.id}
@@ -108,9 +108,9 @@ export function ActiveSessions() {
                 </Button>
               )}
             </div>
-          );
+          )
         })}
       </CardContent>
     </Card>
-  );
+  )
 }

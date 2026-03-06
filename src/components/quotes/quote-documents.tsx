@@ -1,16 +1,16 @@
-﻿import { FileDown, FileText } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { formatFileSize } from "@/lib/utils";
-import type { QuoteDocument } from "@/api/types";
+import type { QuoteDocument } from '@/api/types'
+import { Button } from '@/components/ui/button'
+import { formatFileSize } from '@/lib/utils'
+import { FileDown, FileText } from 'lucide-react'
 
-const typeLabels: Record<QuoteDocument["type"], string> = {
-  OFFER: "Ofertă",
-  COMPARISON: "Comparare",
-  TERMS: "Termeni și condiții",
-};
+const typeLabels: Record<QuoteDocument['type'], string> = {
+  OFFER: 'Ofertă',
+  COMPARISON: 'Comparare',
+  TERMS: 'Termeni și condiții'
+}
 
 interface QuoteDocumentsProps {
-  documents: QuoteDocument[];
+  documents: QuoteDocument[]
 }
 
 export function QuoteDocuments({ documents }: QuoteDocumentsProps) {
@@ -19,7 +19,7 @@ export function QuoteDocuments({ documents }: QuoteDocumentsProps) {
       <p className="text-sm text-muted-foreground">
         Nu sunt documente disponibile
       </p>
-    );
+    )
   }
 
   return (
@@ -38,13 +38,13 @@ export function QuoteDocuments({ documents }: QuoteDocumentsProps) {
               </p>
             </div>
           </div>
-          <Button variant="ghost" size="icon" asChild>
-            <a href={doc.url} download>
+          <Button variant="ghost" size="icon" asChild={true}>
+            <a href={doc.url} download={true}>
               <FileDown className="h-5 w-5 text-green-500" />
             </a>
           </Button>
         </div>
       ))}
     </div>
-  );
+  )
 }

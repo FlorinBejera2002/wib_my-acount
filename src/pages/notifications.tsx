@@ -1,15 +1,21 @@
-﻿import { useState } from "react";
-import { Bell, Check, CheckCheck, Trash2, Settings } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { useNotifications } from "@/hooks/use-notifications";
-import { formatDate } from "@/lib/utils";
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from '@/components/ui/card'
+import { Separator } from '@/components/ui/separator'
+import { useNotifications } from '@/hooks/use-notifications'
+import { formatDate } from '@/lib/utils'
+import { Bell, Check, CheckCheck, Settings, Trash2 } from 'lucide-react'
+import { useState } from 'react'
 
 export default function NotificationsPage() {
-  const { data: notifications, isLoading } = useNotifications();
-  const [filter, setFilter] = useState<"all" | "unread" | "read">("all");
+  const { data: notifications, isLoading } = useNotifications()
+  const [filter, setFilter] = useState<'all' | 'unread' | 'read'>('all')
 
   if (isLoading) {
     return (
@@ -33,16 +39,17 @@ export default function NotificationsPage() {
           ))}
         </div>
       </div>
-    );
+    )
   }
 
-  const filteredNotifications = notifications?.filter((n) => {
-    if (filter === "unread") return !n.read;
-    if (filter === "read") return n.read;
-    return true;
-  }) ?? [];
+  const filteredNotifications =
+    notifications?.filter((n) => {
+      if (filter === 'unread') return !n.read
+      if (filter === 'read') return n.read
+      return true
+    }) ?? []
 
-  const unreadCount = notifications?.filter((n) => !n.read).length ?? 0;
+  const unreadCount = notifications?.filter((n) => !n.read).length ?? 0
 
   return (
     <div className="space-y-6">
@@ -52,30 +59,32 @@ export default function NotificationsPage() {
           <div>
             <h1 className="text-2xl font-bold">Notificări</h1>
             <p className="text-sm text-gray-500">
-              {unreadCount > 0 ? `${unreadCount} necitite` : "Toate notificările sunt citite"}
+              {unreadCount > 0
+                ? `${unreadCount} necitite`
+                : 'Toate notificările sunt citite'}
             </p>
           </div>
         </div>
-        
+
         <div className="flex items-center gap-2">
           <Button
-            variant={filter === "all" ? "default" : "outline"}
+            variant={filter === 'all' ? 'default' : 'outline'}
             size="sm"
-            onClick={() => setFilter("all")}
+            onClick={() => setFilter('all')}
           >
             Toate
           </Button>
           <Button
-            variant={filter === "unread" ? "default" : "outline"}
+            variant={filter === 'unread' ? 'default' : 'outline'}
             size="sm"
-            onClick={() => setFilter("unread")}
+            onClick={() => setFilter('unread')}
           >
             Necitite
           </Button>
           <Button
-            variant={filter === "read" ? "default" : "outline"}
+            variant={filter === 'read' ? 'default' : 'outline'}
             size="sm"
-            onClick={() => setFilter("read")}
+            onClick={() => setFilter('read')}
           >
             Citite
           </Button>
@@ -86,17 +95,25 @@ export default function NotificationsPage() {
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
             <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              {filter === "unread" ? "Nu există notificări necitite" : 
-               filter === "read" ? "Nu există notificări citite" : 
-               "Nu există notificări"}
+              {filter === 'unread'
+                ? 'Nu există notificări necitite'
+                : filter === 'read'
+                  ? 'Nu există notificări citite'
+                  : 'Nu există notificări'}
             </h3>
             <p className="text-sm text-gray-500 text-center max-w-md">
-              {filter === "unread" ? "Toate notificările tale au fost citite." :
-               filter === "read" ? "Nu ai citit nicio notificare încă." :
-               "Nu ai primit nicio notificare încă."}
+              {filter === 'unread'
+                ? 'Toate notificările tale au fost citite.'
+                : filter === 'read'
+                  ? 'Nu ai citit nicio notificare încă.'
+                  : 'Nu ai primit nicio notificare încă.'}
             </p>
-            {filter !== "all" && (
-              <Button variant="outline" className="mt-4" onClick={() => setFilter("all")}>
+            {filter !== 'all' && (
+              <Button
+                variant="outline"
+                className="mt-4"
+                onClick={() => setFilter('all')}
+              >
                 Vezi toate notificările
               </Button>
             )}
@@ -105,13 +122,18 @@ export default function NotificationsPage() {
       ) : (
         <div className="space-y-4">
           {filteredNotifications.map((notification) => (
-            <Card key={notification.id} className={notification.read ? "opacity-75" : ""}>
+            <Card
+              key={notification.id}
+              className={notification.read ? 'opacity-75' : ''}
+            >
               <CardContent className="p-4">
                 <div className="flex items-start gap-3">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex-1">
-                        <h3 className={`font-semibold text-gray-900 ${!notification.read ? "font-bold" : ""}`}>
+                        <h3
+                          className={`font-semibold text-gray-900 ${!notification.read ? 'font-bold' : ''}`}
+                        >
                           {notification.title}
                         </h3>
                         <p className="text-sm text-gray-600 mt-1">
@@ -128,10 +150,14 @@ export default function NotificationsPage() {
                           )}
                         </div>
                       </div>
-                      
+
                       <div className="flex items-center gap-1 flex-shrink-0">
                         {!notification.read && (
-                          <Button variant="ghost" size="icon" className="h-8 w-8">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                          >
                             <Check className="h-4 w-4" />
                           </Button>
                         )}
@@ -148,5 +174,5 @@ export default function NotificationsPage() {
         </div>
       )}
     </div>
-  );
+  )
 }

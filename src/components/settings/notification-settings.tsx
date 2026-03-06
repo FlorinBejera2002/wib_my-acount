@@ -1,36 +1,39 @@
-import { useForm, Controller } from "react-hook-form";
-import { Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
+import type { NotificationPreferences } from '@/api/types'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useProfile, useUpdatePreferences } from "@/hooks/use-user";
-import type { NotificationPreferences } from "@/api/types";
+  CardTitle
+} from '@/components/ui/card'
+import { Label } from '@/components/ui/label'
+import { Skeleton } from '@/components/ui/skeleton'
+import { Switch } from '@/components/ui/switch'
+import { useProfile, useUpdatePreferences } from '@/hooks/use-user'
+import { Loader2 } from 'lucide-react'
+import { Controller, useForm } from 'react-hook-form'
 
 export function NotificationSettings() {
-  const { data: profile, isLoading } = useProfile();
-  const updatePreferences = useUpdatePreferences();
+  const { data: profile, isLoading } = useProfile()
+  const updatePreferences = useUpdatePreferences()
 
-  const { control, handleSubmit, formState: { isDirty } } =
-    useForm<NotificationPreferences>({
-      values: profile?.preferences.notifications,
-    });
+  const {
+    control,
+    handleSubmit,
+    formState: { isDirty }
+  } = useForm<NotificationPreferences>({
+    values: profile?.preferences.notifications
+  })
 
   const onSubmit = (data: NotificationPreferences) => {
-    if (!profile) return;
+    if (!profile) return
     updatePreferences.mutate({
       language: profile.preferences.language,
       timezone: profile.preferences.timezone,
-      notifications: data,
-    });
-  };
+      notifications: data
+    })
+  }
 
   if (isLoading) {
     return (
@@ -45,7 +48,7 @@ export function NotificationSettings() {
           ))}
         </CardContent>
       </Card>
-    );
+    )
   }
 
   return (
@@ -109,12 +112,12 @@ export function NotificationSettings() {
                   Se salvează...
                 </>
               ) : (
-                "Salvează setările"
+                'Salvează setările'
               )}
             </Button>
           </div>
         </form>
       </CardContent>
     </Card>
-  );
+  )
 }

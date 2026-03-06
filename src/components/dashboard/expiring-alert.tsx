@@ -1,22 +1,22 @@
-import { Link } from "react-router-dom";
-import { AlertTriangle } from "lucide-react";
-import type { Policy } from "@/api/types";
+import type { Policy } from '@/api/types'
+import { AlertTriangle } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
 interface ExpiringAlertProps {
-  policies: Policy[];
+  policies: Policy[]
 }
 
 export function ExpiringAlert({ policies }: ExpiringAlertProps) {
-  if (policies.length === 0) return null;
+  if (policies.length === 0) return null
 
   const label =
     policies.length === 1
-      ? "1 poliță expiră în curând"
-      : `${policies.length} polițe expiră în curând`;
+      ? '1 poliță expiră în curând'
+      : `${policies.length} polițe expiră în curând`
 
   const names = policies
     .map((p) => `${p.type} – ${p.insurerName} (${p.daysUntilExpiry} zile)`)
-    .join(", ");
+    .join(', ')
 
   return (
     <Link
@@ -29,5 +29,5 @@ export function ExpiringAlert({ policies }: ExpiringAlertProps) {
         — {names}
       </span>
     </Link>
-  );
+  )
 }

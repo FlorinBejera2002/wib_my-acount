@@ -1,16 +1,16 @@
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
-import type { UserProfile } from "@/api/types";
+import type { UserProfile } from '@/api/types'
+import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 
 interface AuthState {
-  user: UserProfile | null;
-  accessToken: string | null;
-  refreshToken: string | null;
-  isAuthenticated: boolean;
-  login: (user: UserProfile, accessToken: string, refreshToken: string) => void;
-  logout: () => void;
-  setTokens: (accessToken: string, refreshToken: string) => void;
-  setUser: (user: UserProfile) => void;
+  user: UserProfile | null
+  accessToken: string | null
+  refreshToken: string | null
+  isAuthenticated: boolean
+  login: (user: UserProfile, accessToken: string, refreshToken: string) => void
+  logout: () => void
+  setTokens: (accessToken: string, refreshToken: string) => void
+  setUser: (user: UserProfile) => void
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -26,7 +26,7 @@ export const useAuthStore = create<AuthState>()(
           user,
           accessToken,
           refreshToken,
-          isAuthenticated: true,
+          isAuthenticated: true
         }),
 
       logout: () =>
@@ -34,22 +34,22 @@ export const useAuthStore = create<AuthState>()(
           user: null,
           accessToken: null,
           refreshToken: null,
-          isAuthenticated: false,
+          isAuthenticated: false
         }),
 
       setTokens: (accessToken, refreshToken) =>
         set({ accessToken, refreshToken }),
 
-      setUser: (user) => set({ user }),
+      setUser: (user) => set({ user })
     }),
     {
-      name: "asigurari-auth",
+      name: 'asigurari-auth',
       partialize: (state) => ({
         user: state.user,
         accessToken: state.accessToken,
         refreshToken: state.refreshToken,
-        isAuthenticated: state.isAuthenticated,
-      }),
+        isAuthenticated: state.isAuthenticated
+      })
     }
   )
-);
+)

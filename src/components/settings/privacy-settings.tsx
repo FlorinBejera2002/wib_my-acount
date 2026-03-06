@@ -1,29 +1,29 @@
-﻿import { Download } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { DeleteAccountDialog } from "./delete-account-dialog";
-import { toast } from "sonner";
+  CardTitle
+} from '@/components/ui/card'
+import { Separator } from '@/components/ui/separator'
+import { Download } from 'lucide-react'
+import { toast } from 'sonner'
+import { DeleteAccountDialog } from './delete-account-dialog'
 
 export function PrivacySettings() {
   const handleExportData = () => {
     // TODO: API call pentru export date
-    toast.success("Cererea de export a fost trimisă. Vei primi un email cu datele.");
-  };
+    toast.success(
+      'Cererea de export a fost trimisă. Vei primi un email cu datele.'
+    )
+  }
 
   return (
     <Card className="shadow-sm">
       <CardHeader>
         <CardTitle>Confidențialitate</CardTitle>
-        <CardDescription>
-          Gestionare datele tale personale
-        </CardDescription>
+        <CardDescription>Gestionare datele tale personale</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="flex items-center justify-between">
@@ -52,5 +52,5 @@ export function PrivacySettings() {
         </div>
       </CardContent>
     </Card>
-  );
+  )
 }

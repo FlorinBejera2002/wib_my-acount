@@ -1,32 +1,32 @@
-import { Search, X } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  SelectValue
+} from '@/components/ui/select'
+import { Search, X } from 'lucide-react'
 
 interface FilterOption {
-  label: string;
-  value: string;
+  label: string
+  value: string
 }
 
 interface FilterConfig {
-  key: string;
-  label: string;
-  options: FilterOption[];
+  key: string
+  label: string
+  options: FilterOption[]
 }
 
 interface DataTableToolbarProps {
-  search: string;
-  onSearchChange: (value: string) => void;
-  filters: Record<string, string>;
-  onFilterChange: (key: string, value: string) => void;
-  filterConfigs: FilterConfig[];
-  onClearFilters: () => void;
+  search: string
+  onSearchChange: (value: string) => void
+  filters: Record<string, string>
+  onFilterChange: (key: string, value: string) => void
+  filterConfigs: FilterConfig[]
+  onClearFilters: () => void
 }
 
 export function DataTableToolbar({
@@ -35,10 +35,10 @@ export function DataTableToolbar({
   filters,
   onFilterChange,
   filterConfigs,
-  onClearFilters,
+  onClearFilters
 }: DataTableToolbarProps) {
   const hasActiveFilters =
-    search || Object.values(filters).some((v) => v && v !== "ALL");
+    search || Object.values(filters).some((v) => v && v !== 'ALL')
 
   return (
     <div className="flex flex-col gap-3 pb-4 sm:flex-row sm:items-center">
@@ -56,7 +56,7 @@ export function DataTableToolbar({
         {filterConfigs.map((config) => (
           <Select
             key={config.key}
-            value={filters[config.key] || "ALL"}
+            value={filters[config.key] || 'ALL'}
             onValueChange={(value) => onFilterChange(config.key, value)}
           >
             <SelectTrigger className="h-9 w-[140px]">
@@ -86,5 +86,5 @@ export function DataTableToolbar({
         )}
       </div>
     </div>
-  );
+  )
 }

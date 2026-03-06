@@ -1,57 +1,60 @@
-﻿import { useState } from "react";
-import { Bell, Check, Trash2, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { useNotifications } from "@/hooks/use-notifications";
-import { formatDate } from "@/lib/utils";
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import { Separator } from '@/components/ui/separator'
+import { useNotifications } from '@/hooks/use-notifications'
+import { formatDate } from '@/lib/utils'
+import { Bell, Check, Trash2, X } from 'lucide-react'
+import { useState } from 'react'
 
 interface NotificationsSlideOverProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+  open: boolean
+  onOpenChange: (open: boolean) => void
 }
 
-export function NotificationsSlideOver({ open, onOpenChange }: NotificationsSlideOverProps) {
-  const { data: notifications, isLoading } = useNotifications();
-  const [filter, setFilter] = useState<"all" | "unread" | "read">("all");
+export function NotificationsSlideOver({
+  open,
+  onOpenChange
+}: NotificationsSlideOverProps) {
+  const { data: notifications, isLoading } = useNotifications()
+  const [filter, setFilter] = useState<'all' | 'unread' | 'read'>('all')
 
-  const filteredNotifications = notifications?.filter((n) => {
-    if (filter === "unread") return !n.read;
-    if (filter === "read") return n.read;
-    return true;
-  }) ?? [];
+  const filteredNotifications =
+    notifications?.filter((n) => {
+      if (filter === 'unread') return !n.read
+      if (filter === 'read') return n.read
+      return true
+    }) ?? []
 
-  const unreadCount = notifications?.filter((n) => !n.read).length ?? 0;
+  const unreadCount = notifications?.filter((n) => !n.read).length ?? 0
 
-  const handleMarkAsRead = (id: string) => {
-    // TODO: Implement mark as read functionality
-    console.log("Mark as read:", id);
-  };
+  const handleMarkAsRead = (_id: string) => {
+    // TODO: implementează marcarea ca citită
+  }
 
-  const handleDelete = (id: string) => {
-    // TODO: Implement delete functionality
-    console.log("Delete:", id);
-  };
+  const handleDelete = (_id: string) => {
+    // TODO: implementează ștergerea notificării
+  }
 
   const handleMarkAllAsRead = () => {
-    // TODO: Implement mark all as read functionality
-    console.log("Mark all as read");
-  };
+    // TODO: implementează marcarea tuturor ca citite
+  }
 
   return (
     <>
       {/* Backdrop */}
       {open && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/20 z-40 lg:hidden"
           onClick={() => onOpenChange(false)}
         />
       )}
-      
+
       {/* Slide Over */}
-      <div className={`fixed top-0 right-0 h-full w-full sm:w-96 bg-white shadow-xl z-50 transform transition-transform duration-300 ease-in-out ${
-        open ? "translate-x-0" : "translate-x-full"
-      }`}>
+      <div
+        className={`fixed top-0 right-0 h-full w-full sm:w-96 bg-white shadow-xl z-50 transform transition-transform duration-300 ease-in-out ${
+          open ? 'translate-x-0' : 'translate-x-full'
+        }`}
+      >
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b">
@@ -60,11 +63,15 @@ export function NotificationsSlideOver({ open, onOpenChange }: NotificationsSlid
               <div>
                 <h2 className="font-semibold text-gray-900">Notificări</h2>
                 <p className="text-xs text-gray-500">
-                  {unreadCount > 0 ? `${unreadCount} necitite` : "Toate citite"}
+                  {unreadCount > 0 ? `${unreadCount} necitite` : 'Toate citite'}
                 </p>
               </div>
             </div>
-            <Button variant="ghost" size="icon" onClick={() => onOpenChange(false)}>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => onOpenChange(false)}
+            >
               <X className="h-4 w-4" />
             </Button>
           </div>
@@ -72,25 +79,25 @@ export function NotificationsSlideOver({ open, onOpenChange }: NotificationsSlid
           {/* Filters */}
           <div className="flex items-center gap-2 p-4 border-b">
             <Button
-              variant={filter === "all" ? "default" : "outline"}
+              variant={filter === 'all' ? 'default' : 'outline'}
               size="sm"
-              onClick={() => setFilter("all")}
+              onClick={() => setFilter('all')}
               className="flex-1"
             >
               Toate
             </Button>
             <Button
-              variant={filter === "unread" ? "default" : "outline"}
+              variant={filter === 'unread' ? 'default' : 'outline'}
               size="sm"
-              onClick={() => setFilter("unread")}
+              onClick={() => setFilter('unread')}
               className="flex-1"
             >
               Necitite
             </Button>
             <Button
-              variant={filter === "read" ? "default" : "outline"}
+              variant={filter === 'read' ? 'default' : 'outline'}
               size="sm"
-              onClick={() => setFilter("read")}
+              onClick={() => setFilter('read')}
               className="flex-1"
             >
               Citite
@@ -121,31 +128,39 @@ export function NotificationsSlideOver({ open, onOpenChange }: NotificationsSlid
                 <div className="text-center py-8">
                   <Bell className="h-8 w-8 text-gray-400 mx-auto mb-3" />
                   <p className="text-sm text-gray-500">
-                    {filter === "unread" ? "Nu există notificări necitite" :
-                     filter === "read" ? "Nu există notificări citite" :
-                     "Nu există notificări"}
+                    {filter === 'unread'
+                      ? 'Nu există notificări necitite'
+                      : filter === 'read'
+                        ? 'Nu există notificări citite'
+                        : 'Nu există notificări'}
                   </p>
                 </div>
               ) : (
                 <div className="space-y-3">
                   {filteredNotifications.map((notification) => (
-                    <Card key={notification.id} className={!notification.read ? "bg-blue-50/50" : ""}>
+                    <Card
+                      key={notification.id}
+                      className={!notification.read ? 'bg-blue-50/50' : ''}
+                    >
                       <CardContent className="p-5">
                         <div className="flex items-start gap-3">
                           <div className="flex-1 min-w-0">
                             <div className="flex items-start justify-between gap-2">
                               <div className="flex-1">
-                                <h3 className={`text-sm font-medium ${
-                              !notification.read 
-                                ? "text-blue-900 font-semibold" 
-                                : notification.type === "POLICY_EXPIRY"
-                                  ? "text-red-700"  // Expiry - red (critical)
-                                  : notification.type === "QUOTE_READY"
-                                    ? "text-green-700"  // Ready - green (positive)
-                                    : notification.type === "PASSWORD_CHANGE"
-                                      ? "text-amber-700"  // Security - amber (warning)
-                                      : "text-gray-900"  // Default - gray
-                            }`}>
+                                <h3
+                                  className={`text-sm font-medium ${
+                                    !notification.read
+                                      ? 'text-blue-900 font-semibold'
+                                      : notification.type === 'POLICY_EXPIRY'
+                                        ? 'text-red-700' // Expiry - red (critical)
+                                        : notification.type === 'QUOTE_READY'
+                                          ? 'text-green-700' // Ready - green (positive)
+                                          : notification.type ===
+                                              'PASSWORD_CHANGE'
+                                            ? 'text-amber-700' // Security - amber (warning)
+                                            : 'text-gray-900' // Default - gray
+                                  }`}
+                                >
                                   {notification.title}
                                 </h3>
                                 <p className="text-xs text-gray-600 mt-1 line-clamp-2">
@@ -157,21 +172,23 @@ export function NotificationsSlideOver({ open, onOpenChange }: NotificationsSlid
                                   </span>
                                 </div>
                               </div>
-                              
+
                               <div className="flex items-center gap-1 flex-shrink-0">
                                 {!notification.read && (
-                                  <Button 
-                                    variant="ghost" 
-                                    size="icon" 
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
                                     className="h-6 w-6"
-                                    onClick={() => handleMarkAsRead(notification.id)}
+                                    onClick={() =>
+                                      handleMarkAsRead(notification.id)
+                                    }
                                   >
                                     <Check className="h-3 w-3" />
                                   </Button>
                                 )}
-                                <Button 
-                                  variant="ghost" 
-                                  size="icon" 
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
                                   className="h-6 w-6"
                                   onClick={() => handleDelete(notification.id)}
                                 >
@@ -194,9 +211,9 @@ export function NotificationsSlideOver({ open, onOpenChange }: NotificationsSlid
             <>
               <Separator />
               <div className="p-4">
-                <Button 
-                  variant="outline" 
-                  size="sm" 
+                <Button
+                  variant="outline"
+                  size="sm"
                   onClick={handleMarkAllAsRead}
                   className="w-full"
                 >
@@ -209,5 +226,5 @@ export function NotificationsSlideOver({ open, onOpenChange }: NotificationsSlid
         </div>
       </div>
     </>
-  );
+  )
 }

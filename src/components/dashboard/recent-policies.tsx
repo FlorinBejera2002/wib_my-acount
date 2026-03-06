@@ -1,68 +1,89 @@
-﻿import { Link } from "react-router-dom";
-import { ChevronRight, ArrowRight } from "lucide-react";
-import { usePolicies } from "@/hooks/use-policies";
-import { cn } from "@/lib/utils";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import type { PolicyStatus } from "@/api/types";
+import type { PolicyStatus } from '@/api/types'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
+import { usePolicies } from '@/hooks/use-policies'
+import { cn } from '@/lib/utils'
+import { ArrowRight, ChevronRight } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
 const statusConfig: Record<
   PolicyStatus,
   { label: string; dot: string; text: string }
 > = {
   ACTIVE: {
-    label: "Activă",
-    dot: "bg-accent-green",
-    text: "text-accent-green",
+    label: 'Activă',
+    dot: 'bg-accent-green',
+    text: 'text-accent-green'
   },
   EXPIRED: {
-    label: "Expirată",
-    dot: "bg-red-500",
-    text: "text-red-600",
+    label: 'Expirată',
+    dot: 'bg-red-500',
+    text: 'text-red-600'
   },
   CANCELLED: {
-    label: "Anulată",
-    dot: "bg-red-500",
-    text: "text-red-600",
+    label: 'Anulată',
+    dot: 'bg-red-500',
+    text: 'text-red-600'
   },
   PENDING: {
-    label: "Ãn aÈteptare",
-    dot: "bg-amber-500",
-    text: "text-amber-600",
-  },
-};
+    label: 'În așteptare',
+    dot: 'bg-amber-500',
+    text: 'text-amber-600'
+  }
+}
 
 const typeConfig: Record<string, { label: string; className: string }> = {
-  RCA: { label: "RCA", className: "bg-blue-100 text-blue-700" },
-  CASCO: { label: "CASCO", className: "bg-green-100 text-green-700" },
-  CASCO_ECONOM: { label: "CASCO Econom", className: "bg-emerald-100 text-emerald-700" },
-  LOCUINTA_PAD: { label: "Locuință PAD", className: "bg-orange-100 text-orange-700" },
-  LOCUINTA_FACULTATIVA: { label: "Locuință Facultativă", className: "bg-amber-100 text-amber-700" },
-  CALATORIE: { label: "Călătorie", className: "bg-purple-100 text-purple-700" },
-  VIATA: { label: "Viață", className: "bg-pink-100 text-pink-700" },
-  ASISTENTA_RUTIERA: { label: "Asistență Rutieră", className: "bg-sky-100 text-sky-700" },
-  MALPRAXIS: { label: "Malpraxis", className: "bg-red-100 text-red-700" },
-  SANATATE: { label: "Sănătate", className: "bg-rose-100 text-rose-700" },
-  ACCIDENTE_CALATORI: { label: "Accidente Călători", className: "bg-indigo-100 text-indigo-700" },
-  ACCIDENTE_PERSOANE: { label: "Accidente Persoane", className: "bg-violet-100 text-violet-700" },
-  ACCIDENTE_TAXI: { label: "Accidente Taxi", className: "bg-slate-100 text-slate-700" },
-  CMR: { label: "CMR", className: "bg-cyan-100 text-cyan-700" },
-};
+  RCA: { label: 'RCA', className: 'bg-blue-100 text-blue-700' },
+  CASCO: { label: 'CASCO', className: 'bg-green-100 text-green-700' },
+  CASCO_ECONOM: {
+    label: 'CASCO Econom',
+    className: 'bg-emerald-100 text-emerald-700'
+  },
+  LOCUINTA_PAD: {
+    label: 'Locuință PAD',
+    className: 'bg-orange-100 text-orange-700'
+  },
+  LOCUINTA_FACULTATIVA: {
+    label: 'Locuință Facultativă',
+    className: 'bg-amber-100 text-amber-700'
+  },
+  CALATORIE: { label: 'Călătorie', className: 'bg-purple-100 text-purple-700' },
+  VIATA: { label: 'Viață', className: 'bg-pink-100 text-pink-700' },
+  ASISTENTA_RUTIERA: {
+    label: 'Asistență Rutieră',
+    className: 'bg-sky-100 text-sky-700'
+  },
+  MALPRAXIS: { label: 'Malpraxis', className: 'bg-red-100 text-red-700' },
+  SANATATE: { label: 'Sănătate', className: 'bg-rose-100 text-rose-700' },
+  ACCIDENTE_CALATORI: {
+    label: 'Accidente Călători',
+    className: 'bg-indigo-100 text-indigo-700'
+  },
+  ACCIDENTE_PERSOANE: {
+    label: 'Accidente Persoane',
+    className: 'bg-violet-100 text-violet-700'
+  },
+  ACCIDENTE_TAXI: {
+    label: 'Accidente Taxi',
+    className: 'bg-slate-100 text-slate-700'
+  },
+  CMR: { label: 'CMR', className: 'bg-cyan-100 text-cyan-700' }
+}
 
 function formatDaysUntilExpiry(days: number): string {
-  if (days < 0) return "Expirată";
-  if (days === 0) return "Expiră azi";
-  if (days === 1) return "Expiră mâine";
-  return `${days} zile rămase`;
+  if (days < 0) return 'Expirată'
+  if (days === 0) return 'Expiră azi'
+  if (days === 1) return 'Expiră mâine'
+  return `${days} zile rămase`
 }
 
 export function RecentPolicies() {
   const { data, isLoading } = usePolicies({
     page: 1,
     limit: 5,
-    sort: "createdAt",
-    order: "desc",
-  });
+    sort: 'createdAt',
+    order: 'desc'
+  })
 
   return (
     <Card className="shadow-sm">
@@ -92,20 +113,28 @@ export function RecentPolicies() {
         ) : (
           <ul>
             {data?.data.map((policy, i) => {
-              const status = statusConfig[policy.status];
-              const isLast = i === (data?.data.length ?? 0) - 1;
-              const type = typeConfig[policy.type] || { label: policy.type, className: "bg-gray-100 text-gray-600" };
+              const status = statusConfig[policy.status]
+              const isLast = i === (data?.data.length ?? 0) - 1
+              const type = typeConfig[policy.type] || {
+                label: policy.type,
+                className: 'bg-gray-100 text-gray-600'
+              }
 
               return (
                 <li key={policy.id}>
                   <Link
                     to={`/policies/${policy.id}`}
                     className={cn(
-                      "flex items-center gap-3 px-6 py-3 transition-colors hover:bg-gray-50",
-                      !isLast && "border-b border-gray-100"
+                      'flex items-center gap-3 px-6 py-3 transition-colors hover:bg-gray-50',
+                      !isLast && 'border-b border-gray-100'
                     )}
                   >
-                    <span className={cn("flex h-8 w-fit px-2 shrink-0 items-center justify-center rounded-lg text-xs font-semibold", type.className)}>
+                    <span
+                      className={cn(
+                        'flex h-8 w-fit px-2 shrink-0 items-center justify-center rounded-lg text-xs font-semibold',
+                        type.className
+                      )}
+                    >
                       {type.label}
                     </span>
                     <div className="min-w-0 flex-1">
@@ -119,17 +148,24 @@ export function RecentPolicies() {
                       </p>
                     </div>
                     <div className="flex shrink-0 flex-col items-end gap-1">
-                      <span className={cn("flex items-center gap-1.5 text-xs font-medium", status.text)}>
-                        <span className={cn("h-1.5 w-1.5 rounded-full", status.dot)} />
+                      <span
+                        className={cn(
+                          'flex items-center gap-1.5 text-xs font-medium',
+                          status.text
+                        )}
+                      >
+                        <span
+                          className={cn('h-1.5 w-1.5 rounded-full', status.dot)}
+                        />
                         {status.label}
                       </span>
-                      {policy.status === "ACTIVE" && (
+                      {policy.status === 'ACTIVE' && (
                         <span
                           className={cn(
-                            "text-[11px]",
+                            'text-[11px]',
                             policy.daysUntilExpiry <= 30
-                              ? "font-medium text-amber-600"
-                              : "text-gray-400"
+                              ? 'font-medium text-amber-600'
+                              : 'text-gray-400'
                           )}
                         >
                           {formatDaysUntilExpiry(policy.daysUntilExpiry)}
@@ -139,11 +175,11 @@ export function RecentPolicies() {
                     <ChevronRight className="h-4 w-4 shrink-0 text-gray-300" />
                   </Link>
                 </li>
-              );
+              )
             })}
           </ul>
         )}
       </CardContent>
     </Card>
-  );
+  )
 }

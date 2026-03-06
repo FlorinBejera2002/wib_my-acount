@@ -1,17 +1,17 @@
-import { Shield, ShieldAlert, ShieldCheck } from "lucide-react";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { formatDateTime } from "@/lib/utils";
-import { useProfile } from "@/hooks/use-user";
-import { Skeleton } from "@/components/ui/skeleton";
+  CardTitle
+} from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
+import { useProfile } from '@/hooks/use-user'
+import { formatDateTime } from '@/lib/utils'
+import { Shield, ShieldAlert, ShieldCheck } from 'lucide-react'
 
 export function LoginHistory() {
-  const { data: profile, isLoading } = useProfile();
+  const { data: profile, isLoading } = useProfile()
 
   if (isLoading) {
     return (
@@ -26,7 +26,7 @@ export function LoginHistory() {
           ))}
         </CardContent>
       </Card>
-    );
+    )
   }
 
   return (
@@ -45,7 +45,7 @@ export function LoginHistory() {
             <p className="text-sm text-muted-foreground">
               {profile?.security.lastLogin
                 ? formatDateTime(profile.security.lastLogin)
-                : "—"}
+                : '—'}
             </p>
           </div>
         </div>
@@ -57,7 +57,7 @@ export function LoginHistory() {
             <p className="text-sm text-muted-foreground">
               {profile?.security.passwordChangedAt
                 ? formatDateTime(profile.security.passwordChangedAt)
-                : "—"}
+                : '—'}
             </p>
           </div>
         </div>
@@ -65,7 +65,9 @@ export function LoginHistory() {
         <div className="flex items-center gap-3 rounded-lg border p-4">
           <ShieldAlert className="h-5 w-5 text-amber-600" />
           <div>
-            <p className="text-sm font-medium">Încercări eșuate de autentificare</p>
+            <p className="text-sm font-medium">
+              Încercări eșuate de autentificare
+            </p>
             <p className="text-sm text-muted-foreground">
               {profile?.security.failedAttempts ?? 0} încercări
             </p>
@@ -73,5 +75,5 @@ export function LoginHistory() {
         </div>
       </CardContent>
     </Card>
-  );
+  )
 }

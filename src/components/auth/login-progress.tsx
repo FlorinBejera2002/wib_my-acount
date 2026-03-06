@@ -1,14 +1,14 @@
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils'
 
 interface LoginProgressProps {
-  currentStep: number;
+  currentStep: number
 }
 
 const steps = [
-  { label: "Autentificare" },
-  { label: "Verificare 2FA" },
-  { label: "Conectare" },
-];
+  { label: 'Autentificare' },
+  { label: 'Verificare 2FA' },
+  { label: 'Conectare' }
+]
 
 export function LoginProgress({ currentStep }: LoginProgressProps) {
   return (
@@ -18,22 +18,22 @@ export function LoginProgress({ currentStep }: LoginProgressProps) {
           <div className="flex items-center gap-1.5">
             <div
               className={cn(
-                "flex h-6 w-6 items-center justify-center rounded-full text-xs font-medium transition-colors",
+                'flex h-6 w-6 items-center justify-center rounded-full text-xs font-medium transition-colors',
                 index < currentStep
-                  ? "bg-accent-green text-white"
+                  ? 'bg-accent-green text-white'
                   : index === currentStep
-                    ? "bg-accent-green text-white ring-2 ring-accent-green/30 ring-offset-2"
-                    : "bg-gray-100 text-gray-400"
+                    ? 'bg-accent-green text-white ring-2 ring-accent-green/30 ring-offset-2'
+                    : 'bg-gray-100 text-gray-400'
               )}
             >
-              {index < currentStep ? "✓" : index + 1}
+              {index < currentStep ? '✓' : index + 1}
             </div>
             <span
               className={cn(
-                "hidden text-xs sm:inline",
+                'hidden text-xs sm:inline',
                 index <= currentStep
-                  ? "font-medium text-gray-900"
-                  : "text-gray-400"
+                  ? 'font-medium text-gray-900'
+                  : 'text-gray-400'
               )}
             >
               {step.label}
@@ -42,13 +42,13 @@ export function LoginProgress({ currentStep }: LoginProgressProps) {
           {index < steps.length - 1 && (
             <div
               className={cn(
-                "h-px w-8 transition-colors",
-                index < currentStep ? "bg-accent-green" : "bg-gray-200"
+                'h-px w-8 transition-colors',
+                index < currentStep ? 'bg-accent-green' : 'bg-gray-200'
               )}
             />
           )}
         </div>
       ))}
     </div>
-  );
+  )
 }

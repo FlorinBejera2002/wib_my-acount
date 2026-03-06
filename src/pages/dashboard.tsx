@@ -1,33 +1,33 @@
-import { useDashboardStats } from "@/hooks/use-dashboard-stats";
-import { usePolicies } from "@/hooks/use-policies";
-import { useAuthStore } from "@/stores/auth-store";
-import { StatsCards } from "@/components/dashboard/stats-cards";
-import { ExpiringAlert } from "@/components/dashboard/expiring-alert";
-import { RecentQuotes } from "@/components/dashboard/recent-quotes";
-import { RecentPolicies } from "@/components/dashboard/recent-policies";
-import { ActivityChart } from "@/components/dashboard/activity-chart";
+import { ActivityChart } from '@/components/dashboard/activity-chart'
+import { ExpiringAlert } from '@/components/dashboard/expiring-alert'
+import { RecentPolicies } from '@/components/dashboard/recent-policies'
+import { RecentQuotes } from '@/components/dashboard/recent-quotes'
+import { StatsCards } from '@/components/dashboard/stats-cards'
+import { useDashboardStats } from '@/hooks/use-dashboard-stats'
+import { usePolicies } from '@/hooks/use-policies'
+import { useAuthStore } from '@/stores/auth-store'
 
 export default function DashboardPage() {
-  const { data: stats, isLoading: statsLoading } = useDashboardStats();
-  const user = useAuthStore((s) => s.user);
+  const { data: stats, isLoading: statsLoading } = useDashboardStats()
+  const user = useAuthStore((s) => s.user)
 
   const { data: policiesData } = usePolicies({
     page: 1,
     limit: 100,
-    sort: "daysUntilExpiry",
-    order: "asc",
-  });
+    sort: 'daysUntilExpiry',
+    order: 'asc'
+  })
 
-  const expiringPolicies =
+  const _expiringPolicies =
     policiesData?.data.filter(
       (p) => p.daysUntilExpiry > 0 && p.daysUntilExpiry <= 30
-    ) ?? [];
+    ) ?? []
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-xl font-bold text-gray-900">
-          Bun venit{user ? `, ${user.firstName}` : ""}!
+          Bun venit{user ? `, ${user.firstName}` : ''}!
         </h1>
         <p className="text-sm text-gray-400">
           Privire de ansamblu asupra contului tău de asigurări.
@@ -41,10 +41,7 @@ export default function DashboardPage() {
         <RecentPolicies />
       </div>
 
-      <ActivityChart
-        data={stats?.quotesPerMonth}
-        isLoading={statsLoading}
-      />
+      <ActivityChart data={stats?.quotesPerMonth} isLoading={statsLoading} />
     </div>
-  );
+  )
 }

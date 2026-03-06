@@ -1,25 +1,25 @@
-import {
-  ChevronLeft,
-  ChevronRight,
-  ChevronsLeft,
-  ChevronsRight,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  SelectValue
+} from '@/components/ui/select'
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight
+} from 'lucide-react'
 
 interface DataTablePaginationProps {
-  currentPage: number;
-  totalPages: number;
-  totalItems: number;
-  itemsPerPage: number;
-  onPageChange: (page: number) => void;
-  onPageSizeChange: (size: number) => void;
+  currentPage: number
+  totalPages: number
+  totalItems: number
+  itemsPerPage: number
+  onPageChange: (page: number) => void
+  onPageSizeChange: (size: number) => void
 }
 
 export function DataTablePagination({
@@ -28,7 +28,7 @@ export function DataTablePagination({
   totalItems,
   itemsPerPage,
   onPageChange,
-  onPageSizeChange,
+  onPageSizeChange
 }: DataTablePaginationProps) {
   return (
     <div className="flex flex-col gap-4 px-2 py-4 sm:flex-row sm:items-center sm:justify-between">
@@ -106,5 +106,5 @@ export function DataTablePagination({
         </div>
       </div>
     </div>
-  );
+  )
 }

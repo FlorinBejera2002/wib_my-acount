@@ -1,8 +1,4 @@
-﻿import { useState } from "react";
-import { AlertTriangle, Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -10,29 +6,33 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { toast } from "sonner";
+  DialogTrigger
+} from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { AlertTriangle, Loader2 } from 'lucide-react'
+import { useState } from 'react'
+import { toast } from 'sonner'
 
 export function DeleteAccountDialog() {
-  const [open, setOpen] = useState(false);
-  const [confirmation, setConfirmation] = useState("");
-  const [isDeleting, setIsDeleting] = useState(false);
+  const [open, setOpen] = useState(false)
+  const [confirmation, setConfirmation] = useState('')
+  const [isDeleting, setIsDeleting] = useState(false)
 
-  const canDelete = confirmation === "ȘTERG CONTUL";
+  const canDelete = confirmation === 'ȘTERG CONTUL'
 
   const handleDelete = async () => {
-    setIsDeleting(true);
+    setIsDeleting(true)
     // TODO: API call pentru ștergere cont
-    await new Promise((r) => setTimeout(r, 1000));
-    setIsDeleting(false);
-    setOpen(false);
-    toast.success("Cererea de ștergere a fost trimisă");
-  };
+    await new Promise((r) => setTimeout(r, 1000))
+    setIsDeleting(false)
+    setOpen(false)
+    toast.success('Cererea de ștergere a fost trimisă')
+  }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
+      <DialogTrigger asChild={true}>
         <Button variant="destructive">Șterge contul</Button>
       </DialogTrigger>
       <DialogContent>
@@ -59,7 +59,7 @@ export function DeleteAccountDialog() {
 
           <div className="space-y-2">
             <Label htmlFor="confirmation">
-              Scrie <span className="font-mono font-bold">ȘTERG CONTUL</span>{" "}
+              Scrie <span className="font-mono font-bold">ȘTERG CONTUL</span>{' '}
               pentru a confirma
             </Label>
             <Input
@@ -86,11 +86,11 @@ export function DeleteAccountDialog() {
                 Se procesează...
               </>
             ) : (
-              "Confirmă ștergerea"
+              'Confirmă ștergerea'
             )}
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  );
+  )
 }

@@ -1,15 +1,16 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import icon from '@/assets/Icon.svg'
+import logo from '@/assets/logo.svg'
+import { ProfileAvatar } from '@/components/profile/profile-avatar'
+import { Badge } from '@/components/ui/badge'
 import {
-  LayoutDashboard,
-  FileText,
-  Shield,
-  User,
-  Settings,
-  LogOut,
-  ClipboardList,
-} from "lucide-react";
-import logo from "@/assets/logo.svg";
-import icon from "@/assets/Icon.svg";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu'
+import { Separator } from '@/components/ui/separator'
 import {
   Sidebar,
   SidebarContent,
@@ -21,75 +22,58 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarRail,
-} from "@/components/ui/sidebar";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { useAuthStore } from "@/stores/auth-store";
-import { useDashboardStats } from "@/hooks/use-dashboard-stats";
+  SidebarRail
+} from '@/components/ui/sidebar'
+import { useDashboardStats } from '@/hooks/use-dashboard-stats'
+import { useProfile } from '@/hooks/use-user'
+import { useAuthStore } from '@/stores/auth-store'
+import {
+  ChevronsUpDown,
+  ClipboardList,
+  FileText,
+  LayoutDashboard,
+  LogOut,
+  User
+} from 'lucide-react'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 const navItems = [
   {
-    label: "Panou Principal",
-    href: "/dashboard",
-    icon: LayoutDashboard,
+    label: 'Panou Principal',
+    href: '/dashboard',
+    icon: LayoutDashboard
   },
   {
-    label: "Cotații",
-    href: "/quotes",
+    label: 'Cota?ii',
+    href: '/quotes',
     icon: ClipboardList,
-    countKey: "totalQuotes" as const,
+    countKey: 'totalQuotes' as const
   },
   {
-    label: "Polițe",
-    href: "/policies",
+    label: 'Poli?e',
+    href: '/policies',
     icon: FileText,
-    countKey: "activePolicies" as const,
-  },
-];
-
-const accountItems = [
-  {
-    label: "Profil",
-    href: "/profile",
-    icon: User,
-  },
-  {
-    label: "Securitate",
-    href: "/security",
-    icon: Shield,
-  },
-  {
-    label: "Setări",
-    href: "/settings",
-    icon: Settings,
-  },
-];
+    countKey: 'activePolicies' as const
+  }
+]
 
 export function AppSidebar() {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const user = useAuthStore((s) => s.user);
-  const logout = useAuthStore((s) => s.logout);
-  const { data: stats } = useDashboardStats();
-
-  const initials = user
-    ? `${user.firstName[0]}${user.lastName[0]}`
-    : "??";
+  const location = useLocation()
+  const navigate = useNavigate()
+  const user = useAuthStore((s) => s.user)
+  const logout = useAuthStore((s) => s.logout)
+  const { data: stats } = useDashboardStats()
+  const { data: profile } = useProfile()
 
   const handleLogout = () => {
-    logout();
-    navigate("/login");
-  };
+    logout()
+    navigate('/login')
+  }
 
   return (
-    <Sidebar
-      collapsible="icon"
-      className="border-r border-gray-200 bg-white"
-    >
+    <Sidebar collapsible="icon" className="border-r border-gray-200 bg-white">
       <SidebarHeader className="p-[0.600rem]">
-        <div className="flex items-center group-data-[collapsible=icon]:justify-center" >
+        <div className="flex items-center group-data-[collapsible=icon]:justify-center">
           <img
             src={logo}
             alt="asigurari.ro"
@@ -113,10 +97,9 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu className="space-y-0.5">
               {navItems.map((item) => {
-                const isActive = location.pathname.startsWith(item.href);
-                const count = item.countKey && stats
-                  ? stats[item.countKey]
-                  : undefined;
+                const isActive = location.pathname.startsWith(item.href)
+                const count =
+                  item.countKey && stats ? stats[item.countKey] : undefined
 
                 return (
                   <SidebarMenuItem key={item.href}>
@@ -126,75 +109,73 @@ export function AppSidebar() {
                       tooltip={item.label}
                     >
                       <item.icon className="min-w-5 min-h-5 group-data-[collapsible=icon]:h-5 group-data-[collapsible=icon]:w-5" />
-                      <span className="flex-1 font-medium group-data-[collapsible=icon]:hidden">{item.label}</span>
+                      <span className="flex-1 font-medium group-data-[collapsible=icon]:hidden">
+                        {item.label}
+                      </span>
                       {count !== undefined && (
-                        <Badge
-                          className="ml-auto h-5 min-w-[20px] justify-center rounded-full bg-accent-green/15 px-1.5 text-[11px] font-semibold text-accent-green group-data-[collapsible=icon]:hidden"
-                        >
+                        <Badge className="ml-auto h-5 min-w-[20px] justify-center rounded-full bg-accent-green/15 px-1.5 text-[11px] font-semibold text-accent-green group-data-[collapsible=icon]:hidden">
                           {count}
                         </Badge>
                       )}
                     </SidebarMenuButton>
                   </SidebarMenuItem>
-                );
-              })}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        <SidebarGroup className="space-y-1 p-0">
-          <SidebarGroupLabel className="text-[11px] font-semibold uppercase tracking-wider text-gray-400 px-3 py-2 group-data-[collapsible=icon]:hidden">
-            Cont
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu className="space-y-0.5">
-              {accountItems.map((item) => {
-                const isActive = location.pathname === item.href;
-                return (
-                  <SidebarMenuItem key={item.href}>
-                    <SidebarMenuButton
-                      isActive={isActive}
-                      onClick={() => navigate(item.href)}
-                      tooltip={item.label}
-                    >
-                      <item.icon className="min-w-5 min-h-5 group-data-[collapsible=icon]:h-5 group-data-[collapsible=icon]:w-5" />
-                      <span className="font-medium group-data-[collapsible=icon]:hidden">{item.label}</span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
+                )
               })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="p-4 group-data-[collapsible=icon]:p-3">
+      <SidebarFooter className="p-3 group-data-[collapsible=icon]:p-2">
         <Separator className="mb-3 bg-gray-200" />
-        <div className="flex items-center gap-3 group-data-[collapsible=icon]:justify-center">
-          <Avatar className="h-8 w-8 shrink-0">
-            <AvatarFallback className="bg-accent-green text-white text-xs font-semibold">
-              {initials}
-            </AvatarFallback>
-          </Avatar>
-          <div className="flex flex-1 flex-col overflow-hidden group-data-[collapsible=icon]:hidden">
-            <span className="truncate text-sm font-semibold text-gray-900">
-              {user ? `${user.firstName} ${user.lastName}` : ""}
-            </span>
-            <span className="truncate text-xs text-gray-500">
-              {user?.email}
-            </span>
-          </div>
-          <button
-            onClick={handleLogout}
-            className="rounded-md p-1.5 text-gray-400 hover:bg-red-50 hover:text-red-500 transition-colors group-data-[collapsible=icon]:hidden"
-            title="Deconectare"
-          >
-            <LogOut className="h-4 w-4" />
-          </button>
-        </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild={true}>
+            <button className="flex w-full items-center gap-3 rounded-lg p-2 transition-colors hover:bg-gray-50 group-data-[collapsible=icon]:justify-center">
+              <ProfileAvatar
+                firstName={user?.firstName || ''}
+                lastName={user?.lastName || ''}
+                photoUrl={profile?.photoUrl}
+                size="sm"
+                userId={profile?.id}
+              />
+              <div className="flex flex-1 flex-col overflow-hidden text-left group-data-[collapsible=icon]:hidden">
+                <span className="truncate text-sm font-semibold text-gray-900">
+                  {user ? `${user.firstName} ${user.lastName}` : ''}
+                </span>
+                <span className="truncate text-xs text-gray-500">
+                  {user?.email}
+                </span>
+              </div>
+              <ChevronsUpDown className="h-4 w-4 shrink-0 text-gray-400 group-data-[collapsible=icon]:hidden" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" side="top" className="w-56">
+            <DropdownMenuLabel className="font-normal">
+              <div className="flex flex-col gap-1">
+                <p className="text-sm font-semibold text-gray-900">
+                  {user ? `${user.firstName} ${user.lastName}` : ''}
+                </p>
+                <p className="text-xs text-gray-500">{user?.email}</p>
+              </div>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => navigate('/profile')}>
+              <User className="mr-2 h-4 w-4" />
+              Contul meu
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onClick={handleLogout}
+              className="text-red-600 focus:text-red-600 focus:bg-red-50"
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              Deconectare
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </SidebarFooter>
 
       <SidebarRail className="hover:after:bg-accent-green/30 after:transition-colors after:duration-200" />
     </Sidebar>
-  );
+  )
 }

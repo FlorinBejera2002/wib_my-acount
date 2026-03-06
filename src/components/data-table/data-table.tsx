@@ -1,28 +1,28 @@
-﻿import {
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-  type ColumnDef,
-} from "@tanstack/react-table";
+import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
 import {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Button } from "@/components/ui/button";
-import { AlertCircle, Inbox } from "lucide-react";
+  TableRow
+} from '@/components/ui/table'
+import {
+  type ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  useReactTable
+} from '@tanstack/react-table'
+import { AlertCircle, Inbox } from 'lucide-react'
 
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
-  isLoading?: boolean;
-  isError?: boolean;
-  onRetry?: () => void;
-  onRowClick?: (row: TData) => void;
+  columns: ColumnDef<TData, TValue>[]
+  data: TData[]
+  isLoading?: boolean
+  isError?: boolean
+  onRetry?: () => void
+  onRowClick?: (row: TData) => void
 }
 
 export function DataTable<TData, TValue>({
@@ -31,7 +31,7 @@ export function DataTable<TData, TValue>({
   isLoading,
   isError,
   onRetry,
-  onRowClick,
+  onRowClick
 }: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
@@ -39,8 +39,8 @@ export function DataTable<TData, TValue>({
     getCoreRowModel: getCoreRowModel(),
     manualPagination: true,
     manualSorting: true,
-    manualFiltering: true,
-  });
+    manualFiltering: true
+  })
 
   if (isLoading) {
     return (
@@ -68,7 +68,7 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-    );
+    )
   }
 
   if (isError) {
@@ -89,7 +89,7 @@ export function DataTable<TData, TValue>({
           </Button>
         )}
       </div>
-    );
+    )
   }
 
   return (
@@ -114,9 +114,9 @@ export function DataTable<TData, TValue>({
         <TableBody>
           {table.getRowModel().rows.length > 0 ? (
             table.getRowModel().rows.map((row) => (
-              <TableRow 
+              <TableRow
                 key={row.id}
-                className={onRowClick ? "cursor-pointer hover:bg-gray-50" : ""}
+                className={onRowClick ? 'cursor-pointer hover:bg-gray-50' : ''}
                 onClick={() => onRowClick?.(row.original)}
               >
                 {row.getVisibleCells().map((cell) => (
@@ -141,5 +141,5 @@ export function DataTable<TData, TValue>({
         </TableBody>
       </Table>
     </div>
-  );
+  )
 }

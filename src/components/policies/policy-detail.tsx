@@ -1,50 +1,50 @@
-﻿import { useParams, Link } from "react-router-dom";
-import {
-  ArrowLeft,
-  Building2,
-  Banknote,
-  FileText,
-  Shield,
-  CalendarRange,
-  RefreshCw,
-  Clock,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { PolicyStatusBadge } from "./policy-status-badge";
-import { PolicyDocuments } from "./policy-documents";
-import { usePolicy } from "@/hooks/use-policies";
-import { formatCurrency, formatDate, cn } from "@/lib/utils";
-import { VehicleBrandLogo } from "@/components/ui/vehicle-brand-logo";
+  CardTitle
+} from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
+import { VehicleBrandLogo } from '@/components/ui/vehicle-brand-logo'
+import { usePolicy } from '@/hooks/use-policies'
+import { cn, formatCurrency, formatDate } from '@/lib/utils'
+import {
+  ArrowLeft,
+  Banknote,
+  Building2,
+  CalendarRange,
+  Clock,
+  FileText,
+  RefreshCw,
+  Shield
+} from 'lucide-react'
+import { Link, useParams } from 'react-router-dom'
+import { PolicyDocuments } from './policy-documents'
+import { PolicyStatusBadge } from './policy-status-badge'
 
 const typeLabels: Record<string, string> = {
-  RCA: "RCA",
-  CASCO: "CASCO",
-  CASCO_ECONOM: "CASCO Econom",
-  LOCUINTA_PAD: "Locuință PAD",
-  LOCUINTA_FACULTATIVA: "Locuință Facultativă",
-  CALATORIE: "Călătorie",
-  VIATA: "Viață",
-  ASISTENTA_RUTIERA: "Asistență Rutieră",
-  MALPRAXIS: "Malpraxis",
-  SANATATE: "Sănătate",
-  ACCIDENTE_CALATORI: "Accidente Călători",
-  ACCIDENTE_PERSOANE: "Accidente Persoane",
-  ACCIDENTE_TAXI: "Accidente Taxi",
-  CMR: "CMR",
-};
+  RCA: 'RCA',
+  CASCO: 'CASCO',
+  CASCO_ECONOM: 'CASCO Econom',
+  LOCUINTA_PAD: 'Locuință PAD',
+  LOCUINTA_FACULTATIVA: 'Locuință Facultativă',
+  CALATORIE: 'Călătorie',
+  VIATA: 'Viață',
+  ASISTENTA_RUTIERA: 'Asistență Rutieră',
+  MALPRAXIS: 'Malpraxis',
+  SANATATE: 'Sănătate',
+  ACCIDENTE_CALATORI: 'Accidente Călători',
+  ACCIDENTE_PERSOANE: 'Accidente Persoane',
+  ACCIDENTE_TAXI: 'Accidente Taxi',
+  CMR: 'CMR'
+}
 
 export function PolicyDetail() {
-  const { id } = useParams<{ id: string }>();
-  const { data: policy, isLoading, isError } = usePolicy(id!);
+  const { id } = useParams<{ id: string }>()
+  const { data: policy, isLoading, isError } = usePolicy(id!)
 
   if (isLoading) {
     return (
@@ -77,32 +77,34 @@ export function PolicyDetail() {
           </Card>
         </div>
       </div>
-    );
+    )
   }
 
   if (isError || !policy) {
     return (
       <div className="flex flex-col items-center gap-4 py-16">
         <p className="text-lg font-medium">Polița nu a fost găsită</p>
-        <Button asChild variant="outline">
+        <Button asChild={true} variant="outline">
           <Link to="/policies">Înapoi la polițe</Link>
         </Button>
       </div>
-    );
+    )
   }
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" asChild>
+        <Button variant="ghost" size="icon" asChild={true}>
           <Link to="/policies">
             <ArrowLeft className="h-4 w-4" />
           </Link>
         </Button>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-3">
-            <h1 className="text-xl font-bold text-gray-900">{policy.policyNumber}</h1>
+            <h1 className="text-xl font-bold text-gray-900">
+              {policy.policyNumber}
+            </h1>
             <span className="inline-flex items-center rounded-lg px-2 py-0.5 text-xs font-semibold bg-green-100 text-green-700">
               {typeLabels[policy.type]}
             </span>
@@ -125,8 +127,12 @@ export function PolicyDetail() {
                   <Shield className="h-5 w-5 text-green-600" />
                 </div>
                 <div>
-                  <h3 className="text-base font-semibold text-gray-900">Detalii poliță</h3>
-                  <p className="text-sm text-gray-400">Informații despre polița de asigurare</p>
+                  <h3 className="text-base font-semibold text-gray-900">
+                    Detalii poliță
+                  </h3>
+                  <p className="text-sm text-gray-400">
+                    Informații despre polița de asigurare
+                  </p>
                 </div>
               </div>
 
@@ -136,8 +142,12 @@ export function PolicyDetail() {
                   <Banknote className="h-5 w-5 text-green-600" />
                 </div>
                 <div className="flex-1">
-                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Primă de asigurare</p>
-                  <p className="text-xl font-bold text-gray-900 mt-0.5">{formatCurrency(policy.premium)}</p>
+                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Primă de asigurare
+                  </p>
+                  <p className="text-xl font-bold text-gray-900 mt-0.5">
+                    {formatCurrency(policy.premium)}
+                  </p>
                 </div>
               </div>
 
@@ -148,19 +158,30 @@ export function PolicyDetail() {
                     <Building2 className="h-5 w-5 text-gray-500" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Asigurător</p>
-                    <p className="text-sm font-semibold text-gray-900 mt-0.5 truncate">{policy.insurerName}</p>
+                    <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Asigurător
+                    </p>
+                    <p className="text-sm font-semibold text-gray-900 mt-0.5 truncate">
+                      {policy.insurerName}
+                    </p>
                   </div>
                 </div>
 
                 {policy.vehicleOrProperty && (
                   <div className="flex items-center gap-4 p-4 rounded-lg bg-gray-50/50">
                     <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white shadow-sm">
-                      <VehicleBrandLogo vehicleText={policy.vehicleOrProperty} size="md" />
+                      <VehicleBrandLogo
+                        vehicleText={policy.vehicleOrProperty}
+                        size="md"
+                      />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Obiect asigurat</p>
-                      <p className="text-sm font-semibold text-gray-900 mt-0.5 truncate">{policy.vehicleOrProperty}</p>
+                      <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Obiect asigurat
+                      </p>
+                      <p className="text-sm font-semibold text-gray-900 mt-0.5 truncate">
+                        {policy.vehicleOrProperty}
+                      </p>
                     </div>
                   </div>
                 )}
@@ -173,22 +194,29 @@ export function PolicyDetail() {
                     <CalendarRange className="h-5 w-5 text-gray-500" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Perioadă acoperire</p>
+                    <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Perioadă acoperire
+                    </p>
                     <p className="text-sm font-semibold text-gray-900 mt-0.5">
-                      {formatDate(policy.startDate)} — {formatDate(policy.endDate)}
+                      {formatDate(policy.startDate)} —{' '}
+                      {formatDate(policy.endDate)}
                     </p>
                   </div>
                 </div>
 
-                {policy.status === "ACTIVE" && (
+                {policy.status === 'ACTIVE' && (
                   <div className="flex items-center gap-4 p-4 rounded-lg border border-gray-100">
                     <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-50">
                       <Clock className="h-5 w-5 text-gray-500" />
                     </div>
                     <div className="flex-1">
-                      <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Zile până la expirare</p>
+                      <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Zile până la expirare
+                      </p>
                       <div className="flex items-center gap-2 mt-0.5">
-                        <p className="text-sm font-semibold text-gray-900">{policy.daysUntilExpiry} zile</p>
+                        <p className="text-sm font-semibold text-gray-900">
+                          {policy.daysUntilExpiry} zile
+                        </p>
                         {policy.daysUntilExpiry <= 30 && (
                           <Badge className="bg-amber-100 text-amber-800 hover:bg-amber-100 border-0 text-xs">
                             Expiră curând
@@ -204,9 +232,11 @@ export function PolicyDetail() {
                     <RefreshCw className="h-5 w-5 text-gray-500" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Reînnoire automată</p>
+                    <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Reînnoire automată
+                    </p>
                     <p className="text-sm font-semibold text-gray-900 mt-0.5">
-                      {policy.autoRenew ? "Da" : "Nu"}
+                      {policy.autoRenew ? 'Da' : 'Nu'}
                     </p>
                   </div>
                 </div>
@@ -215,7 +245,9 @@ export function PolicyDetail() {
               {/* Source Quote Link */}
               {policy.sourceQuoteId && (
                 <div className="p-4 rounded-lg bg-gray-50/50">
-                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Cotație sursă</p>
+                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">
+                    Cotație sursă
+                  </p>
                   <Link
                     to={`/quotes/${policy.sourceQuoteId}`}
                     className="text-sm font-semibold text-primary hover:underline"
@@ -236,7 +268,9 @@ export function PolicyDetail() {
                 <FileText className="h-5 w-5 text-green-500" />
               </div>
               <div>
-                <CardTitle className="text-base font-semibold">Documente</CardTitle>
+                <CardTitle className="text-base font-semibold">
+                  Documente
+                </CardTitle>
                 <CardDescription>
                   Fișiere asociate acestei polițe
                 </CardDescription>
@@ -249,5 +283,5 @@ export function PolicyDetail() {
         </Card>
       </div>
     </div>
-  );
+  )
 }

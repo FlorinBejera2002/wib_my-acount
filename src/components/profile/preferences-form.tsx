@@ -1,44 +1,48 @@
-import { useForm, Controller } from "react-hook-form";
-import { Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import type { UpdatePreferencesRequest } from '@/api/types'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Separator } from "@/components/ui/separator";
-import { useProfile, useUpdatePreferences } from "@/hooks/use-user";
-import type { UpdatePreferencesRequest } from "@/api/types";
+  CardTitle
+} from '@/components/ui/card'
+import { Label } from '@/components/ui/label'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select'
+import { Separator } from '@/components/ui/separator'
+import { Skeleton } from '@/components/ui/skeleton'
+import { Switch } from '@/components/ui/switch'
+import { useProfile, useUpdatePreferences } from '@/hooks/use-user'
+import { Loader2 } from 'lucide-react'
+import { Controller, useForm } from 'react-hook-form'
 
 export function PreferencesForm() {
-  const { data: profile, isLoading } = useProfile();
-  const updatePreferences = useUpdatePreferences();
+  const { data: profile, isLoading } = useProfile()
+  const updatePreferences = useUpdatePreferences()
 
-  const { control, handleSubmit, formState: { isDirty } } = useForm<UpdatePreferencesRequest>({
+  const {
+    control,
+    handleSubmit,
+    formState: { isDirty }
+  } = useForm<UpdatePreferencesRequest>({
     values: profile
       ? {
           language: profile.preferences.language,
           timezone: profile.preferences.timezone,
-          notifications: profile.preferences.notifications,
+          notifications: profile.preferences.notifications
         }
-      : undefined,
-  });
+      : undefined
+  })
 
   const onSubmit = (data: UpdatePreferencesRequest) => {
-    updatePreferences.mutate(data);
-  };
+    updatePreferences.mutate(data)
+  }
 
   if (isLoading) {
     return (
@@ -52,7 +56,7 @@ export function PreferencesForm() {
           <Skeleton className="h-10 w-full" />
         </CardContent>
       </Card>
-    );
+    )
   }
 
   return (
@@ -72,10 +76,7 @@ export function PreferencesForm() {
                 control={control}
                 name="language"
                 render={({ field }) => (
-                  <Select
-                    value={field.value}
-                    onValueChange={field.onChange}
-                  >
+                  <Select value={field.value} onValueChange={field.onChange}>
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -93,10 +94,7 @@ export function PreferencesForm() {
                 control={control}
                 name="timezone"
                 render={({ field }) => (
-                  <Select
-                    value={field.value}
-                    onValueChange={field.onChange}
-                  >
+                  <Select value={field.value} onValueChange={field.onChange}>
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -191,12 +189,12 @@ export function PreferencesForm() {
                   Se salvează...
                 </>
               ) : (
-                "Salvează preferințele"
+                'Salvează preferințele'
               )}
             </Button>
           </div>
         </form>
       </CardContent>
     </Card>
-  );
+  )
 }

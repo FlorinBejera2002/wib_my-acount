@@ -1,4 +1,4 @@
-﻿import { QuotesTable } from "@/components/quotes/quotes-table";
+import { QuotesTable } from '@/components/quotes/quotes-table'
 
 export default function QuotesPage() {
   return (
@@ -11,5 +11,5 @@ export default function QuotesPage() {
       </div>
       <QuotesTable />
     </div>
-  );
+  )
 }

@@ -1,17 +1,17 @@
-import { FileDown, FileText } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { formatFileSize } from "@/lib/utils";
-import type { PolicyDocument } from "@/api/types";
+import type { PolicyDocument } from '@/api/types'
+import { Button } from '@/components/ui/button'
+import { formatFileSize } from '@/lib/utils'
+import { FileDown, FileText } from 'lucide-react'
 
-const typeLabels: Record<PolicyDocument["type"], string> = {
-  POLICY: "Poliță",
-  CERTIFICATE: "Certificat",
-  GREEN_CARD: "Carte Verde",
-  RECEIPT: "Chitanță",
-};
+const typeLabels: Record<PolicyDocument['type'], string> = {
+  POLICY: 'Poliță',
+  CERTIFICATE: 'Certificat',
+  GREEN_CARD: 'Carte Verde',
+  RECEIPT: 'Chitanță'
+}
 
 interface PolicyDocumentsProps {
-  documents: PolicyDocument[];
+  documents: PolicyDocument[]
 }
 
 export function PolicyDocuments({ documents }: PolicyDocumentsProps) {
@@ -20,7 +20,7 @@ export function PolicyDocuments({ documents }: PolicyDocumentsProps) {
       <p className="text-sm text-muted-foreground">
         Nu sunt documente disponibile
       </p>
-    );
+    )
   }
 
   return (
@@ -39,13 +39,13 @@ export function PolicyDocuments({ documents }: PolicyDocumentsProps) {
               </p>
             </div>
           </div>
-          <Button variant="ghost" size="icon" asChild>
-            <a href={doc.url} download>
+          <Button variant="ghost" size="icon" asChild={true}>
+            <a href={doc.url} download={true}>
               <FileDown className="h-4 w-4" />
             </a>
           </Button>
         </div>
       ))}
     </div>
-  );
+  )
 }

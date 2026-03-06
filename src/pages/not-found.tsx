@@ -1,6 +1,6 @@
-import { Link } from "react-router-dom";
-import { Home } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button'
+import { Home } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
 export default function NotFoundPage() {
   return (
@@ -15,7 +15,7 @@ export default function NotFoundPage() {
         </p>
       </div>
       <Button
-        asChild
+        asChild={true}
         className="bg-accent-green hover:bg-accent-green-hover text-white"
       >
         <Link to="/dashboard">
@@ -24,5 +24,5 @@ export default function NotFoundPage() {
         </Link>
       </Button>
     </div>
-  );
+  )
 }
