@@ -30,7 +30,7 @@ export function QuoteDocuments({ documents }: QuoteDocumentsProps) {
           className="flex items-center justify-between rounded-lg border p-3"
         >
           <div className="flex items-center gap-3">
-            <FileText className="h-5 w-5 text-muted-foreground" />
+            <FileText className="h-7 w-7 text-blue-900" />
             <div>
               <p className="text-sm font-medium">{doc.name}</p>
               <p className="text-xs text-muted-foreground">
@@ -40,7 +40,7 @@ export function QuoteDocuments({ documents }: QuoteDocumentsProps) {
           </div>
           <Button variant="ghost" size="icon" asChild>
             <a href={doc.url} download>
-              <FileDown className="h-4 w-4" />
+              <FileDown className="h-5 w-5 text-green-500" />
             </a>
           </Button>
         </div>

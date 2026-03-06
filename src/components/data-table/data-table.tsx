@@ -1,4 +1,4 @@
-import {
+﻿import {
   flexRender,
   getCoreRowModel,
   useReactTable,
@@ -22,6 +22,7 @@ interface DataTableProps<TData, TValue> {
   isLoading?: boolean;
   isError?: boolean;
   onRetry?: () => void;
+  onRowClick?: (row: TData) => void;
 }
 
 export function DataTable<TData, TValue>({
@@ -30,6 +31,7 @@ export function DataTable<TData, TValue>({
   isLoading,
   isError,
   onRetry,
+  onRowClick,
 }: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
@@ -44,7 +46,7 @@ export function DataTable<TData, TValue>({
     return (
       <div className="rounded-xl border border-gray-100 bg-white shadow-sm">
         <Table>
-          <TableHeader>
+          <TableHeader className="bg-green-50">
             <TableRow>
               {columns.map((_, i) => (
                 <TableHead key={i}>
@@ -93,7 +95,7 @@ export function DataTable<TData, TValue>({
   return (
     <div className="rounded-xl border border-gray-100 bg-white shadow-sm">
       <Table>
-        <TableHeader>
+        <TableHeader className="bg-green-50">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
@@ -112,7 +114,11 @@ export function DataTable<TData, TValue>({
         <TableBody>
           {table.getRowModel().rows.length > 0 ? (
             table.getRowModel().rows.map((row) => (
-              <TableRow key={row.id}>
+              <TableRow 
+                key={row.id}
+                className={onRowClick ? "cursor-pointer hover:bg-gray-50" : ""}
+                onClick={() => onRowClick?.(row.original)}
+              >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}

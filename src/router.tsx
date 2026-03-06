@@ -11,6 +11,7 @@ import ProfilePage from "@/pages/profile";
 import SecurityPage from "@/pages/security";
 import SettingsPage from "@/pages/settings";
 import NotFoundPage from "@/pages/not-found";
+import NotificationsPage from "./pages/notifications";
 
 export const router = createBrowserRouter([
   {
@@ -46,6 +47,10 @@ export const router = createBrowserRouter([
           {
             path: "/policies/:id",
             element: <PolicyDetailPage />,
+          },
+          {
+            path: "/notifications",
+            element: <NotificationsPage />,
           },
           {
             path: "/profile",

@@ -5,21 +5,14 @@ import { Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { DataTable } from "@/components/data-table/data-table";
-import { DataTablePagination } from "@/components/data-table/data-table-pagination";
+
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar";
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
+import { InsuranceTypeBadge } from "@/components/ui/insurance-type-badge";
 import { PolicyStatusBadge } from "./policy-status-badge";
 import { usePolicies } from "@/hooks/use-policies";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import type { Policy, TableParams } from "@/api/types";
-
-const typeLabels: Record<string, string> = {
-  RCA: "RCA",
-  CASCO: "CASCO",
-  LOCUINTA: "Locuință",
-  CALATORIE: "Călătorie",
-  VIATA: "Viață",
-};
 
 const filterConfigs = [
   {
@@ -38,8 +31,17 @@ const filterConfigs = [
     options: [
       { label: "RCA", value: "RCA" },
       { label: "CASCO", value: "CASCO" },
-      { label: "Locuință", value: "LOCUINTA" },
+      { label: "CASCO Econom", value: "CASCO_ECONOM" },
+      { label: "Locuință PAD", value: "LOCUINTA_PAD" },
+      { label: "Locuință Facultativă", value: "LOCUINTA_FACULTATIVA" },
       { label: "Călătorie", value: "CALATORIE" },
+      { label: "Asistență Rutieră", value: "ASISTENTA_RUTIERA" },
+      { label: "Malpraxis", value: "MALPRAXIS" },
+      { label: "Sănătate", value: "SANATATE" },
+      { label: "Accidente Călători", value: "ACCIDENTE_CALATORI" },
+      { label: "Accidente Persoane", value: "ACCIDENTE_PERSOANE" },
+      { label: "Accidente Taxi", value: "ACCIDENTE_TAXI" },
+      { label: "CMR", value: "CMR" },
       { label: "Viață", value: "VIATA" },
     ],
   },
@@ -68,7 +70,7 @@ export function PoliciesTable() {
   const navigate = useNavigate();
   const [params, setParams] = useState<TableParams>({
     page: 1,
-    limit: 10,
+    limit: 9999,
     sort: "createdAt",
     order: "desc",
     search: "",
@@ -90,7 +92,7 @@ export function PoliciesTable() {
     {
       accessorKey: "type",
       header: "Tip",
-      cell: ({ row }) => typeLabels[row.original.type] || row.original.type,
+      cell: ({ row }) => <InsuranceTypeBadge type={row.original.type} />,
     },
     {
       accessorKey: "insurerName",
@@ -123,29 +125,15 @@ export function PoliciesTable() {
         return <ExpiryBadge days={row.original.daysUntilExpiry} />;
       },
     },
-    {
-      id: "actions",
-      cell: ({ row }) => (
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => navigate(`/policies/${row.original.id}`)}
-          aria-label="Vezi detalii"
-        >
-          <Eye className="h-4 w-4" />
-        </Button>
-      ),
-    },
   ];
 
   const handleSearchChange = (search: string) => {
-    setParams((prev) => ({ ...prev, search, page: 1 }));
+    setParams((prev) => ({ ...prev, search }));
   };
 
   const handleFilterChange = (key: string, value: string) => {
     setParams((prev) => ({
       ...prev,
-      page: 1,
       filters: {
         ...prev.filters,
         [key]: value === "ALL" ? "" : value,
@@ -156,7 +144,6 @@ export function PoliciesTable() {
   const handleClearFilters = () => {
     setParams((prev) => ({
       ...prev,
-      page: 1,
       search: "",
       filters: {},
     }));
@@ -175,24 +162,12 @@ export function PoliciesTable() {
 
       <DataTable
         columns={columns}
-        data={data?.data ?? []}
+        data={data?.data || []}
         isLoading={isLoading}
         isError={isError}
-        onRetry={() => refetch()}
+        onRowClick={(row: Policy) => navigate(`/policies/${row.id}`)}
       />
 
-      {data?.meta && (
-        <DataTablePagination
-          currentPage={data.meta.currentPage}
-          totalPages={data.meta.totalPages}
-          totalItems={data.meta.totalItems}
-          itemsPerPage={data.meta.itemsPerPage}
-          onPageChange={(page) => setParams((prev) => ({ ...prev, page }))}
-          onPageSizeChange={(limit) =>
-            setParams((prev) => ({ ...prev, limit, page: 1 }))
-          }
-        />
-      )}
     </div>
   );
 }

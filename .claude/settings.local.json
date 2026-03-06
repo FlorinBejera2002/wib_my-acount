@@ -3,7 +3,22 @@
     "allow": [
       "Bash(xxd:*)",
       "Bash(head:*)",
-      "Bash(cp:*)"
+      "Bash(cp:*)",
+      "Bash(grep quote-detail:*)",
+      "WebSearch",
+      "WebFetch(domain:www.npmjs.com)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(cd /c/Users/flori/Documents/projects/wib_my-acount && npm install node-vehicle-logos 2>&1)",
+      "Bash(grep:*)",
+      "Bash(tail:*)",
+      "WebFetch(domain:www.svgrepo.com)",
+      "Bash(cd:*)",
+      "WebFetch(domain:worldvectorlogo.com)",
+      "Bash(cd /c/Users/flori/Documents/projects/wib_my-acount && npm install @avto-dev/vehicle-logotypes 2>&1)",
+      "Bash(curl:*)",
+      "WebFetch(domain:1000logos.net)",
+      "Bash(cd /c/Users/flori/Documents/projects/wib_my-acount && npm uninstall @avto-dev/vehicle-logotypes 2>&1)"
     ]
   }
 }

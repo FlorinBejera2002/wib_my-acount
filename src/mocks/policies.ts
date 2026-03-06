@@ -75,7 +75,7 @@ export const mockPolicies: Policy[] = [
   {
     id: "pol_003",
     policyNumber: "POL-2025-005680",
-    type: "LOCUINTA",
+    type: "LOCUINTA_FACULTATIVA",
     status: "ACTIVE",
     insurerName: "Groupama",
     vehicleOrProperty: "Casă P+1, Brașov",
@@ -204,7 +204,7 @@ export const mockPolicies: Policy[] = [
   {
     id: "pol_008",
     policyNumber: "POL-2025-005685",
-    type: "LOCUINTA",
+    type: "LOCUINTA_PAD",
     status: "CANCELLED",
     insurerName: "Allianz",
     vehicleOrProperty: "Ap. 2 camere, Iași",

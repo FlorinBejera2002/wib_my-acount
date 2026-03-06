@@ -1,10 +1,11 @@
-import { useParams, Link } from "react-router-dom";
+﻿import { useParams, Link } from "react-router-dom";
 import {
   ArrowLeft,
-  Calendar,
   Building2,
-  Car,
   Banknote,
+  FileText,
+  Shield,
+  CalendarRange,
   RefreshCw,
   Clock,
 } from "lucide-react";
@@ -18,18 +19,27 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Separator } from "@/components/ui/separator";
 import { PolicyStatusBadge } from "./policy-status-badge";
 import { PolicyDocuments } from "./policy-documents";
 import { usePolicy } from "@/hooks/use-policies";
-import { formatCurrency, formatDate } from "@/lib/utils";
+import { formatCurrency, formatDate, cn } from "@/lib/utils";
+import { VehicleBrandLogo } from "@/components/ui/vehicle-brand-logo";
 
 const typeLabels: Record<string, string> = {
   RCA: "RCA",
   CASCO: "CASCO",
-  LOCUINTA: "Locuință",
+  CASCO_ECONOM: "CASCO Econom",
+  LOCUINTA_PAD: "Locuință PAD",
+  LOCUINTA_FACULTATIVA: "Locuință Facultativă",
   CALATORIE: "Călătorie",
   VIATA: "Viață",
+  ASISTENTA_RUTIERA: "Asistență Rutieră",
+  MALPRAXIS: "Malpraxis",
+  SANATATE: "Sănătate",
+  ACCIDENTE_CALATORI: "Accidente Călători",
+  ACCIDENTE_PERSOANE: "Accidente Persoane",
+  ACCIDENTE_TAXI: "Accidente Taxi",
+  CMR: "CMR",
 };
 
 export function PolicyDetail() {
@@ -39,15 +49,33 @@ export function PolicyDetail() {
   if (isLoading) {
     return (
       <div className="space-y-6">
-        <Skeleton className="h-8 w-64" />
-        <Card>
-          <CardContent className="space-y-4 p-6">
+        <div className="flex items-center gap-4">
+          <Skeleton className="h-9 w-9 rounded-lg" />
+          <div className="flex-1 space-y-2">
             <Skeleton className="h-6 w-48" />
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-3/4" />
-            <Skeleton className="h-4 w-1/2" />
-          </CardContent>
-        </Card>
+            <Skeleton className="h-4 w-32" />
+          </div>
+        </div>
+        <div className="grid gap-6 md:grid-cols-2">
+          <Card className="shadow-sm">
+            <CardContent className="space-y-4 p-6">
+              <Skeleton className="h-12 w-full rounded-lg" />
+              <div className="grid gap-4 sm:grid-cols-2">
+                <Skeleton className="h-20 w-full rounded-lg" />
+                <Skeleton className="h-20 w-full rounded-lg" />
+              </div>
+              <Skeleton className="h-20 w-full rounded-lg" />
+              <Skeleton className="h-16 w-full rounded-lg" />
+            </CardContent>
+          </Card>
+          <Card className="shadow-sm">
+            <CardContent className="space-y-3 p-6">
+              <Skeleton className="h-6 w-32" />
+              <Skeleton className="h-14 w-full rounded-lg" />
+              <Skeleton className="h-14 w-full rounded-lg" />
+            </CardContent>
+          </Card>
+        </div>
       </div>
     );
   }
@@ -65,14 +93,20 @@ export function PolicyDetail() {
 
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="icon" asChild>
           <Link to="/policies">
             <ArrowLeft className="h-4 w-4" />
           </Link>
         </Button>
-        <div className="flex-1">
-          <h1 className="text-xl font-bold text-gray-900">{policy.policyNumber}</h1>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-3">
+            <h1 className="text-xl font-bold text-gray-900">{policy.policyNumber}</h1>
+            <span className="inline-flex items-center rounded-lg px-2 py-0.5 text-xs font-semibold bg-green-100 text-green-700">
+              {typeLabels[policy.type]}
+            </span>
+          </div>
           <p className="text-sm text-gray-400">
             Poliță {typeLabels[policy.type]}
           </p>
@@ -81,101 +115,133 @@ export function PolicyDetail() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
+        {/* Details Card */}
         <Card className="shadow-sm">
-          <CardHeader>
-            <CardTitle className="text-lg">Detalii poliță</CardTitle>
-            <CardDescription>
-              Informații despre polița de asigurare
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center gap-3">
-              <Building2 className="h-4 w-4 text-muted-foreground" />
-              <div>
-                <p className="text-sm text-muted-foreground">Asigurător</p>
-                <p className="font-medium">{policy.insurerName}</p>
-              </div>
-            </div>
-
-            {policy.vehicleOrProperty && (
+          <CardContent className="p-6">
+            <div className="space-y-6">
+              {/* Section Header */}
               <div className="flex items-center gap-3">
-                <Car className="h-4 w-4 text-muted-foreground" />
+                <div className="flex h-10 w-10 items-center justify-center rounded-md bg-green-50">
+                  <Shield className="h-5 w-5 text-green-600" />
+                </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">
-                    Obiect asigurat
-                  </p>
-                  <p className="font-medium">{policy.vehicleOrProperty}</p>
+                  <h3 className="text-base font-semibold text-gray-900">Detalii poliță</h3>
+                  <p className="text-sm text-gray-400">Informații despre polița de asigurare</p>
                 </div>
               </div>
-            )}
 
-            <div className="flex items-center gap-3">
-              <Banknote className="h-4 w-4 text-muted-foreground" />
-              <div>
-                <p className="text-sm text-muted-foreground">Prima de asigurare</p>
-                <p className="text-lg font-bold text-primary">
-                  {formatCurrency(policy.premium)}
-                </p>
-              </div>
-            </div>
-
-            <Separator />
-
-            <div className="flex items-center gap-3">
-              <Calendar className="h-4 w-4 text-muted-foreground" />
-              <div>
-                <p className="text-sm text-muted-foreground">Perioadă acoperire</p>
-                <p className="font-medium">
-                  {formatDate(policy.startDate)} — {formatDate(policy.endDate)}
-                </p>
-              </div>
-            </div>
-
-            {policy.status === "ACTIVE" && (
-              <div className="flex items-center gap-3">
-                <Clock className="h-4 w-4 text-muted-foreground" />
-                <div>
-                  <p className="text-sm text-muted-foreground">Zile până la expirare</p>
-                  <p className="font-medium">
-                    {policy.daysUntilExpiry} zile
-                    {policy.daysUntilExpiry <= 30 && (
-                      <Badge className="ml-2 bg-amber-100 text-amber-800 hover:bg-amber-100 border-0">
-                        Expiră curând
-                      </Badge>
-                    )}
-                  </p>
+              {/* Premium - Hero Metric */}
+              <div className="flex items-center gap-4 rounded-xl p-4 border border-transparent bg-green-100">
+                <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-white shadow-sm">
+                  <Banknote className="h-5 w-5 text-green-600" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Primă de asigurare</p>
+                  <p className="text-xl font-bold text-gray-900 mt-0.5">{formatCurrency(policy.premium)}</p>
                 </div>
               </div>
-            )}
 
-            <div className="flex items-center gap-3">
-              <RefreshCw className="h-4 w-4 text-muted-foreground" />
-              <div>
-                <p className="text-sm text-muted-foreground">Reînnoire automată</p>
-                <p className="font-medium">
-                  {policy.autoRenew ? "Da" : "Nu"}
-                </p>
+              {/* Info Grid */}
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div className="flex items-center gap-4 p-4 rounded-lg bg-gray-50/50">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white shadow-sm">
+                    <Building2 className="h-5 w-5 text-gray-500" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Asigurător</p>
+                    <p className="text-sm font-semibold text-gray-900 mt-0.5 truncate">{policy.insurerName}</p>
+                  </div>
+                </div>
+
+                {policy.vehicleOrProperty && (
+                  <div className="flex items-center gap-4 p-4 rounded-lg bg-gray-50/50">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white shadow-sm">
+                      <VehicleBrandLogo vehicleText={policy.vehicleOrProperty} size="md" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Obiect asigurat</p>
+                      <p className="text-sm font-semibold text-gray-900 mt-0.5 truncate">{policy.vehicleOrProperty}</p>
+                    </div>
+                  </div>
+                )}
               </div>
+
+              {/* Dates & Info */}
+              <div className="space-y-3">
+                <div className="flex items-center gap-4 p-4 rounded-lg border border-gray-100">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-50">
+                    <CalendarRange className="h-5 w-5 text-gray-500" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Perioadă acoperire</p>
+                    <p className="text-sm font-semibold text-gray-900 mt-0.5">
+                      {formatDate(policy.startDate)} — {formatDate(policy.endDate)}
+                    </p>
+                  </div>
+                </div>
+
+                {policy.status === "ACTIVE" && (
+                  <div className="flex items-center gap-4 p-4 rounded-lg border border-gray-100">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-50">
+                      <Clock className="h-5 w-5 text-gray-500" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Zile până la expirare</p>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <p className="text-sm font-semibold text-gray-900">{policy.daysUntilExpiry} zile</p>
+                        {policy.daysUntilExpiry <= 30 && (
+                          <Badge className="bg-amber-100 text-amber-800 hover:bg-amber-100 border-0 text-xs">
+                            Expiră curând
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                <div className="flex items-center gap-4 p-4 rounded-lg border border-gray-100">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-50">
+                    <RefreshCw className="h-5 w-5 text-gray-500" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Reînnoire automată</p>
+                    <p className="text-sm font-semibold text-gray-900 mt-0.5">
+                      {policy.autoRenew ? "Da" : "Nu"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Source Quote Link */}
+              {policy.sourceQuoteId && (
+                <div className="p-4 rounded-lg bg-gray-50/50">
+                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Cotație sursă</p>
+                  <Link
+                    to={`/quotes/${policy.sourceQuoteId}`}
+                    className="text-sm font-semibold text-primary hover:underline"
+                  >
+                    Vezi cotația originală
+                  </Link>
+                </div>
+              )}
             </div>
-
-            {policy.sourceQuoteId && (
-              <div>
-                <p className="text-sm text-muted-foreground">Cotație sursă</p>
-                <Link
-                  to={`/quotes/${policy.sourceQuoteId}`}
-                  className="text-sm text-primary hover:underline"
-                >
-                  Vezi cotația originală
-                </Link>
-              </div>
-            )}
           </CardContent>
         </Card>
 
+        {/* Documents Card */}
         <Card className="shadow-sm">
           <CardHeader>
-            <CardTitle className="text-lg">Documente</CardTitle>
-            <CardDescription>Fișiere asociate acestei polițe</CardDescription>
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-md bg-green-50">
+                <FileText className="h-5 w-5 text-green-500" />
+              </div>
+              <div>
+                <CardTitle className="text-base font-semibold">Documente</CardTitle>
+                <CardDescription>
+                  Fișiere asociate acestei polițe
+                </CardDescription>
+              </div>
+            </div>
           </CardHeader>
           <CardContent>
             <PolicyDocuments documents={policy.documents} />

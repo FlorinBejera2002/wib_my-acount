@@ -107,7 +107,7 @@ export interface ChangePasswordRequest {
 
 // ==================== Quotes ====================
 
-export type QuoteType = "RCA" | "CASCO" | "LOCUINTA" | "CALATORIE" | "VIATA";
+export type QuoteType = "RCA" | "CASCO" | "CASCO_ECONOM" | "LOCUINTA_PAD" | "LOCUINTA_FACULTATIVA" | "CALATORIE" | "VIATA" | "ASISTENTA_RUTIERA" | "MALPRAXIS" | "SANATATE" | "ACCIDENTE_CALATORI" | "ACCIDENTE_PERSOANE" | "ACCIDENTE_TAXI" | "CMR";
 export type QuoteStatus = "ACTIVE" | "EXPIRED" | "CONVERTED" | "DRAFT";
 
 export interface QuoteDocument {
@@ -136,7 +136,7 @@ export interface Quote {
 
 // ==================== Policies ====================
 
-export type PolicyType = "RCA" | "CASCO" | "LOCUINTA" | "CALATORIE" | "VIATA";
+export type PolicyType = "RCA" | "CASCO" | "CASCO_ECONOM" | "LOCUINTA_PAD" | "LOCUINTA_FACULTATIVA" | "CALATORIE" | "VIATA" | "ASISTENTA_RUTIERA" | "MALPRAXIS" | "SANATATE" | "ACCIDENTE_CALATORI" | "ACCIDENTE_PERSOANE" | "ACCIDENTE_TAXI" | "CMR";
 export type PolicyStatus = "ACTIVE" | "EXPIRED" | "CANCELLED" | "PENDING";
 
 export interface PolicyDocument {
