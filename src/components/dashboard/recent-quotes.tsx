@@ -4,31 +4,21 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { useQuotes } from '@/hooks/use-quotes'
 import { cn, formatCurrency } from '@/lib/utils'
 import { ArrowRight, ChevronRight } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 
-const statusConfig: Record<
-  QuoteStatus,
-  { label: string; dot: string; text: string }
-> = {
-  ACTIVE: {
+const getSimplifiedQuoteStatus = (status: QuoteStatus) => {
+  if (status === 'EXPIRED') {
+    return {
+      label: 'Expirată',
+      dot: 'bg-red-500',
+      text: 'text-red-600'
+    }
+  }
+  return {
     label: 'Activă',
     dot: 'bg-accent-green',
     text: 'text-accent-green'
-  },
-  EXPIRED: {
-    label: 'Expirată',
-    dot: 'bg-red-500',
-    text: 'text-red-600'
-  },
-  CONVERTED: {
-    label: 'Acceptată',
-    dot: 'bg-purple-500',
-    text: 'text-purple-600'
-  },
-  DRAFT: {
-    label: 'Schiță',
-    dot: 'bg-gray-400',
-    text: 'text-gray-500'
   }
 }
 
@@ -71,6 +61,7 @@ const typeConfig: Record<string, { label: string; className: string }> = {
 }
 
 export function RecentQuotes() {
+  const { t } = useTranslation()
   const { data, isLoading } = useQuotes({
     page: 1,
     limit: 5,
@@ -82,13 +73,13 @@ export function RecentQuotes() {
     <Card className="shadow-sm">
       <CardHeader className="flex flex-row items-center justify-between pb-3">
         <CardTitle className="text-base font-semibold text-gray-900">
-          Cotații Recente
+          {t('dashboard.recentQuotes')}
         </CardTitle>
         <Link
           to="/quotes"
           className="flex items-center gap-1 text-xs font-medium text-accent-green hover:text-accent-green-hover transition-colors"
         >
-          Vezi toate
+          {t('common.viewAll')}
           <ArrowRight className="h-3.5 w-3.5" />
         </Link>
       </CardHeader>
@@ -101,12 +92,12 @@ export function RecentQuotes() {
           </div>
         ) : data?.data.length === 0 ? (
           <p className="px-6 py-8 text-center text-sm text-gray-400">
-            Nu există cotații.
+            {t('dashboard.noQuotes')}
           </p>
         ) : (
           <ul>
             {data?.data.map((quote, i) => {
-              const status = statusConfig[quote.status]
+              const status = getSimplifiedQuoteStatus(quote.status)
               const type = typeConfig[quote.type] || {
                 label: quote.type,
                 className: 'bg-gray-100 text-gray-600'

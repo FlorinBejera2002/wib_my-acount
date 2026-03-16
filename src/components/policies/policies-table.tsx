@@ -33,6 +33,7 @@ import {
 } from 'lucide-react'
 import { Fragment, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 import type { Policy, TableParams } from '@/api/types'
 import { PolicyStatusBadge } from './policy-status-badge'
@@ -43,59 +44,65 @@ const EXPANDABLE_TYPES = [
   'LOCUINTA_FACULTATIVA'
 ]
 
+const getPolicyDetailsDisplay = (policy: Policy): string => {
+  // Travel insurance
+  if (policy.type === 'CALATORIE') {
+    const parts = []
+    if (policy.travelDestination) parts.push(policy.travelDestination)
+    if (policy.travelPurpose) parts.push(policy.travelPurpose)
+    if (policy.transportationType) parts.push(policy.transportationType)
+    return parts.length > 0 ? parts.join(', ') : policy.policyDetails || '—'
+  }
+
+  // Home insurance (PAD and Facultativa)
+  if (policy.type === 'LOCUINTA_PAD' || policy.type === 'LOCUINTA_FACULTATIVA') {
+    const parts = []
+    if (policy.propertyType) parts.push(policy.propertyType)
+    if (policy.propertyArea) parts.push(`${policy.propertyArea} mp`)
+    if (policy.insuredAmount) parts.push(`${policy.insuredAmount.toLocaleString()} EUR`)
+    if (policy.padNumber && policy.type === 'LOCUINTA_PAD') parts.push(`PAD: ${policy.padNumber}`)
+    return parts.length > 0 ? parts.join(', ') : policy.policyDetails || '—'
+  }
+
+  // Default for other types
+  return policy.policyDetails || '—'
+}
+
 const filterConfigs = [
   {
     key: 'status',
-    label: 'Status',
+    labelKey: 'policies.filterStatus',
     options: [
-      { label: 'Activ', value: 'ACTIVE' },
-      { label: 'Expirat', value: 'EXPIRED' },
-      { label: 'Anulat', value: 'CANCELLED' },
-      { label: 'În așteptare', value: 'PENDING' }
+      { labelKey: 'policies.statusActive', value: 'ACTIVE' },
+      { labelKey: 'policies.statusExpired', value: 'EXPIRED' },
+      { labelKey: 'policies.statusCancelled', value: 'CANCELLED' },
+      { labelKey: 'policies.statusTerminated', value: 'TERMINATED' }
     ]
   },
   {
     key: 'type',
-    label: 'Tip',
+    labelKey: 'policies.filterType',
     options: [
-      { label: 'RCA', value: 'RCA' },
-      { label: 'CASCO', value: 'CASCO' },
-      { label: 'CASCO Econom', value: 'CASCO_ECONOM' },
-      { label: 'Locuință PAD', value: 'LOCUINTA_PAD' },
-      { label: 'Locuință Facultativă', value: 'LOCUINTA_FACULTATIVA' },
-      { label: 'Călătorie', value: 'CALATORIE' },
-      { label: 'Asistență Rutieră', value: 'ASISTENTA_RUTIERA' },
-      { label: 'Malpraxis', value: 'MALPRAXIS' },
-      { label: 'Sănătate', value: 'SANATATE' },
-      { label: 'Accidente Călători', value: 'ACCIDENTE_CALATORI' },
-      { label: 'Accidente Persoane', value: 'ACCIDENTE_PERSOANE' },
-      { label: 'Accidente Taxi', value: 'ACCIDENTE_TAXI' },
-      { label: 'CMR', value: 'CMR' },
-      { label: 'Viață', value: 'VIATA' }
+      { labelKey: 'insuranceType.RCA', value: 'RCA' },
+      { labelKey: 'insuranceType.CASCO', value: 'CASCO' },
+      { labelKey: 'insuranceType.CASCO_ECONOM', value: 'CASCO_ECONOM' },
+      { labelKey: 'insuranceType.LOCUINTA_PAD', value: 'LOCUINTA_PAD' },
+      { labelKey: 'insuranceType.LOCUINTA_FACULTATIVA', value: 'LOCUINTA_FACULTATIVA' },
+      { labelKey: 'insuranceType.CALATORIE', value: 'CALATORIE' },
+      { labelKey: 'insuranceType.ASISTENTA_RUTIERA', value: 'ASISTENTA_RUTIERA' },
+      { labelKey: 'insuranceType.MALPRAXIS', value: 'MALPRAXIS' },
+      { labelKey: 'insuranceType.SANATATE', value: 'SANATATE' },
+      { labelKey: 'insuranceType.ACCIDENTE_CALATORI', value: 'ACCIDENTE_CALATORI' },
+      { labelKey: 'insuranceType.ACCIDENTE_PERSOANE', value: 'ACCIDENTE_PERSOANE' },
+      { labelKey: 'insuranceType.ACCIDENTE_TAXI', value: 'ACCIDENTE_TAXI' },
+      { labelKey: 'insuranceType.CMR', value: 'CMR' },
+      { labelKey: 'insuranceType.VIATA', value: 'VIATA' }
     ]
   }
 ]
 
-function ExpiryBadge({ days }: { days: number }) {
-  if (days < 0) return null
-  if (days <= 7) {
-    return (
-      <Badge className="bg-red-100 text-red-800 hover:bg-red-100 border-0">
-        {days} zile
-      </Badge>
-    )
-  }
-  if (days <= 30) {
-    return (
-      <Badge className="bg-amber-100 text-amber-800 hover:bg-amber-100 border-0">
-        {days} zile
-      </Badge>
-    )
-  }
-  return <span className="text-sm text-muted-foreground">{days} zile</span>
-}
-
 export function PoliciesTable() {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const [params, setParams] = useState<TableParams>({
     page: 1,
@@ -214,10 +221,10 @@ export function PoliciesTable() {
         <AlertCircle className="h-12 w-12 text-destructive" />
         <div className="text-center">
           <p className="font-medium text-foreground">
-            A apărut o eroare la încărcarea datelor
+            {t('common.error')}
           </p>
           <p className="text-sm text-muted-foreground">
-            Te rugăm să încerci din nou
+            {t('common.tryAgain')}
           </p>
         </div>
       </div>
@@ -230,7 +237,7 @@ export function PoliciesTable() {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="Caută..."
+            placeholder={t('common.search')}
             value={params.search || ''}
             onChange={(e) => handleSearchChange(e.target.value)}
             className="pl-9"
@@ -245,13 +252,13 @@ export function PoliciesTable() {
               onValueChange={(value) => handleFilterChange(config.key, value)}
             >
               <SelectTrigger className="h-9 w-[140px]">
-                <SelectValue placeholder={config.label} />
+                <SelectValue placeholder={t(config.labelKey)} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="ALL">Toate ({config.label})</SelectItem>
+                <SelectItem value="ALL">{t('policies.allFilter', { label: t(config.labelKey) })}</SelectItem>
                 {config.options.map((opt) => (
                   <SelectItem key={opt.value} value={opt.value}>
-                    {opt.label}
+                    {t(opt.labelKey)}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -259,7 +266,7 @@ export function PoliciesTable() {
           ))}
 
           <div className="flex items-center gap-1.5">
-            <span className="text-sm text-muted-foreground whitespace-nowrap">Expirare de la</span>
+            <span className="text-sm text-muted-foreground whitespace-nowrap">{t('policies.expiryFrom')}</span>
             <Input
               type="date"
               value={dateFrom}
@@ -269,7 +276,7 @@ export function PoliciesTable() {
           </div>
 
           <div className="flex items-center gap-1.5">
-            <span className="text-sm text-muted-foreground whitespace-nowrap">Până la</span>
+            <span className="text-sm text-muted-foreground whitespace-nowrap">{t('policies.expiryTo')}</span>
             <Input
               type="date"
               value={dateTo}
@@ -286,7 +293,7 @@ export function PoliciesTable() {
               className="h-9 px-2"
             >
               <X className="mr-1 h-4 w-4" />
-              Șterge filtre
+              {t('policies.clearFilters')}
             </Button>
           )}
         </div>
@@ -297,15 +304,15 @@ export function PoliciesTable() {
           <TableHeader className="bg-green-50">
             <TableRow>
               <TableHead className="w-10" />
-              <TableHead>Referință poliță</TableHead>
-              <TableHead>Tip</TableHead>
-              <TableHead>Asigurător</TableHead>
-              <TableHead>Detalii poliță</TableHead>
-              <TableHead>Primă</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Expirare</TableHead>
-              <TableHead>Zile rămase</TableHead>
-              <TableHead>PDF</TableHead>
+              <TableHead>{t('policies.policyRef')}</TableHead>
+              <TableHead>{t('policies.type')}</TableHead>
+              <TableHead>{t('policies.insurer')}</TableHead>
+              <TableHead>{t('policies.policyDetails')}</TableHead>
+              <TableHead>{t('policies.premium')}</TableHead>
+              <TableHead>{t('policies.status')}</TableHead>
+              <TableHead>{t('policies.expiry')}</TableHead>
+              <TableHead>{t('policies.daysLeft')}</TableHead>
+              <TableHead>{t('policies.pdf')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -360,7 +367,7 @@ export function PoliciesTable() {
                       <TableCell>{policy.insurerName}</TableCell>
                       <TableCell>
                         <span className="max-w-[220px] truncate block">
-                          {policy.policyDetails || '—'}
+                          {getPolicyDetailsDisplay(policy)}
                         </span>
                       </TableCell>
                       <TableCell>{formatCurrency(policy.premium)}</TableCell>
@@ -370,7 +377,7 @@ export function PoliciesTable() {
                       <TableCell>{formatDate(policy.endDate)}</TableCell>
                       <TableCell>
                         {policy.status === 'ACTIVE' ? (
-                          <ExpiryBadge days={policy.daysUntilExpiry} />
+                          <ExpiryBadge days={policy.daysUntilExpiry} t={t} />
                         ) : (
                           '—'
                         )}
@@ -483,7 +490,7 @@ export function PoliciesTable() {
                   <div className="flex flex-col items-center gap-2">
                     <Inbox className="h-10 w-10 text-muted-foreground/50" />
                     <p className="text-muted-foreground">
-                      Nu au fost găsite rezultate
+                      {t('common.noResults')}
                     </p>
                   </div>
                 </TableCell>
@@ -494,4 +501,24 @@ export function PoliciesTable() {
       </div>
     </div>
   )
+}
+
+function ExpiryBadge({ days, t }: { days: number; t: (key: string, opts?: Record<string, unknown>) => string }) {
+  if (days < 0) return null
+  const label = t('policies.daysCount', { days })
+  if (days <= 7) {
+    return (
+      <Badge className="bg-red-100 text-red-800 hover:bg-red-100 border-0">
+        {label}
+      </Badge>
+    )
+  }
+  if (days <= 30) {
+    return (
+      <Badge className="bg-amber-100 text-amber-800 hover:bg-amber-100 border-0">
+        {label}
+      </Badge>
+    )
+  }
+  return <span className="text-sm text-muted-foreground">{label}</span>
 }

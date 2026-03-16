@@ -6,6 +6,7 @@ import type {
   VerifyResetCodeRequest,
   VerifyResetCodeResponse
 } from '@/api/types'
+import i18n from '@/lib/i18n'
 import { delay } from '@/lib/utils'
 import { useMutation } from '@tanstack/react-query'
 import { toast } from 'sonner'
@@ -20,7 +21,7 @@ const forgotPasswordFn = async (
   await delay(800)
 
   return {
-    message: 'Codul de verificare a fost trimis pe email',
+    message: i18n.t('toast.verificationCodeSent'),
     tempToken: `reset_temp_token_${data.email}`
   }
 }
@@ -40,7 +41,7 @@ const verifyResetCodeFn = async (
     }
   }
 
-  throw new Error('Codul introdus nu este valid')
+  throw new Error(i18n.t('toast.codeInvalid'))
 }
 
 const resetPasswordFn = async (
@@ -53,7 +54,7 @@ const resetPasswordFn = async (
   await delay(800)
 
   return {
-    message: 'Parola a fost resetată cu succes!'
+    message: i18n.t('toast.passwordResetSuccess')
   }
 }
 

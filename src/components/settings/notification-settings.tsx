@@ -13,8 +13,10 @@ import { Switch } from '@/components/ui/switch'
 import { useProfile, useUpdatePreferences } from '@/hooks/use-user'
 import { Loader2 } from 'lucide-react'
 import { Controller, useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 
 export function NotificationSettings() {
+  const { t } = useTranslation()
   const { data: profile, isLoading } = useProfile()
   const updatePreferences = useUpdatePreferences()
 
@@ -54,9 +56,9 @@ export function NotificationSettings() {
   return (
     <Card className="shadow-sm">
       <CardHeader>
-        <CardTitle>Notificări</CardTitle>
+        <CardTitle>{t('settings.notifications')}</CardTitle>
         <CardDescription>
-          Alege ce notificări dorești să primești
+          {t('settings.notificationsSubtitle')}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -64,9 +66,9 @@ export function NotificationSettings() {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <Label>Cotații noi</Label>
+                <Label>{t('settings.newQuotes')}</Label>
                 <p className="text-sm text-muted-foreground">
-                  Notificări despre cotații noi și actualizări
+                  {t('settings.newQuotesDesc')}
                 </p>
               </div>
               <Controller
@@ -83,9 +85,9 @@ export function NotificationSettings() {
 
             <div className="flex items-center justify-between">
               <div>
-                <Label>Expirare polițe</Label>
+                <Label>{t('settings.policyExpiry')}</Label>
                 <p className="text-sm text-muted-foreground">
-                  Alerte înainte de expirarea polițelor
+                  {t('settings.policyExpiryDesc')}
                 </p>
               </div>
               <Controller
@@ -109,10 +111,10 @@ export function NotificationSettings() {
               {updatePreferences.isPending ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Se salvează...
+                  {t('settings.saving')}
                 </>
               ) : (
-                'Salvează setările'
+                t('settings.saveSettings')
               )}
             </Button>
           </div>

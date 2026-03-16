@@ -1,20 +1,23 @@
 import { cn } from '@/lib/utils'
+import { useTranslation } from 'react-i18next'
 
 interface LoginProgressProps {
   currentStep: number
 }
 
-const steps = [
-  { label: 'Autentificare' },
-  { label: 'Verificare 2FA' },
-  { label: 'Conectare' }
-]
-
 export function LoginProgress({ currentStep }: LoginProgressProps) {
+  const { t } = useTranslation()
+
+  const steps = [
+    { labelKey: 'auth.loginStep' },
+    { labelKey: 'auth.twoFactorStep' },
+    { labelKey: 'auth.connectStep' }
+  ]
+
   return (
     <div className="flex items-center justify-center gap-2">
       {steps.map((step, index) => (
-        <div key={step.label} className="flex items-center gap-2">
+        <div key={step.labelKey} className="flex items-center gap-2">
           <div className="flex items-center gap-1.5">
             <div
               className={cn(
@@ -36,7 +39,7 @@ export function LoginProgress({ currentStep }: LoginProgressProps) {
                   : 'text-gray-400'
               )}
             >
-              {step.label}
+              {t(step.labelKey)}
             </span>
           </div>
           {index < steps.length - 1 && (

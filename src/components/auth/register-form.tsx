@@ -5,8 +5,9 @@ import { Label } from '@/components/ui/label'
 import { type RegisterFormValues, registerSchema } from '@/lib/validators'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 
 interface RegisterFormProps {
   onSubmit: (data: RegisterFormValues) => void
@@ -14,8 +15,11 @@ interface RegisterFormProps {
 }
 
 export function RegisterForm({ onSubmit, isLoading }: RegisterFormProps) {
+  const { t } = useTranslation()
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+
+  const schema = useMemo(() => registerSchema(t), [t])
 
   const {
     register,
@@ -23,7 +27,7 @@ export function RegisterForm({ onSubmit, isLoading }: RegisterFormProps) {
     watch,
     formState: { errors }
   } = useForm<RegisterFormValues>({
-    resolver: zodResolver(registerSchema),
+    resolver: zodResolver(schema),
     defaultValues: {
       firstName: '',
       lastName: '',
@@ -41,7 +45,7 @@ export function RegisterForm({ onSubmit, isLoading }: RegisterFormProps) {
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label htmlFor="firstName" className="text-gray-900">
-            Prenume
+            {t('auth.firstName')}
           </Label>
           <Input
             id="firstName"
@@ -59,7 +63,7 @@ export function RegisterForm({ onSubmit, isLoading }: RegisterFormProps) {
 
         <div className="space-y-2">
           <Label htmlFor="lastName" className="text-gray-900">
-            Nume
+            {t('auth.lastName')}
           </Label>
           <Input
             id="lastName"
@@ -77,12 +81,12 @@ export function RegisterForm({ onSubmit, isLoading }: RegisterFormProps) {
 
       <div className="space-y-2">
         <Label htmlFor="email" className="text-gray-900">
-          Adresă de email
+          {t('auth.emailLabel')}
         </Label>
         <Input
           id="email"
           type="email"
-          placeholder="exemplu@email.com"
+          placeholder={t('auth.emailPlaceholder')}
           autoComplete="email"
           {...register('email')}
         />
@@ -93,7 +97,7 @@ export function RegisterForm({ onSubmit, isLoading }: RegisterFormProps) {
 
       <div className="space-y-2">
         <Label htmlFor="phone" className="text-gray-900">
-          Telefon
+          {t('auth.phone')}
         </Label>
         <Input
           id="phone"
@@ -109,13 +113,13 @@ export function RegisterForm({ onSubmit, isLoading }: RegisterFormProps) {
 
       <div className="space-y-2">
         <Label htmlFor="password" className="text-gray-900">
-          Parolă
+          {t('auth.passwordLabel')}
         </Label>
         <div className="relative">
           <Input
             id="password"
             type={showPassword ? 'text' : 'password'}
-            placeholder="Minimum 12 caractere"
+            placeholder={t('auth.minChars')}
             autoComplete="new-password"
             className="pr-10"
             {...register('password')}
@@ -141,13 +145,13 @@ export function RegisterForm({ onSubmit, isLoading }: RegisterFormProps) {
 
       <div className="space-y-2">
         <Label htmlFor="confirmPassword" className="text-gray-900">
-          Confirmă parola
+          {t('auth.confirmPassword')}
         </Label>
         <div className="relative">
           <Input
             id="confirmPassword"
             type={showConfirmPassword ? 'text' : 'password'}
-            placeholder="Repetă parola"
+            placeholder={t('auth.repeatPassword')}
             autoComplete="new-password"
             className="pr-10"
             {...register('confirmPassword')}
@@ -180,10 +184,10 @@ export function RegisterForm({ onSubmit, isLoading }: RegisterFormProps) {
         {isLoading ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Se creează contul...
+            {t('auth.creatingAccount')}
           </>
         ) : (
-          'Creează cont'
+          t('auth.createAccount')
         )}
       </Button>
     </form>

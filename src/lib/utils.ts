@@ -1,15 +1,21 @@
 import type { PaginatedResponse, TableParams } from '@/api/types'
 import { type ClassValue, clsx } from 'clsx'
 import { format, parseISO } from 'date-fns'
-import { ro } from 'date-fns/locale'
+import { enUS, ro } from 'date-fns/locale'
 import { twMerge } from 'tailwind-merge'
+import i18n from './i18n'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+function getDateLocale() {
+  return i18n.language === 'ro' ? ro : enUS
+}
+
 export function formatCurrency(amount: number, currency = 'RON'): string {
-  return new Intl.NumberFormat('ro-RO', {
+  const locale = i18n.language === 'ro' ? 'ro-RO' : 'en-US'
+  return new Intl.NumberFormat(locale, {
     style: 'currency',
     currency,
     minimumFractionDigits: 2,
@@ -18,11 +24,11 @@ export function formatCurrency(amount: number, currency = 'RON'): string {
 }
 
 export function formatDate(dateStr: string, pattern = 'dd MMM yyyy'): string {
-  return format(parseISO(dateStr), pattern, { locale: ro })
+  return format(parseISO(dateStr), pattern, { locale: getDateLocale() })
 }
 
 export function formatDateTime(dateStr: string): string {
-  return format(parseISO(dateStr), 'dd MMM yyyy, HH:mm', { locale: ro })
+  return format(parseISO(dateStr), 'dd MMM yyyy, HH:mm', { locale: getDateLocale() })
 }
 
 export function formatFileSize(bytes: number): string {

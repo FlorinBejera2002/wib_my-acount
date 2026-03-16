@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { NotificationsSlideOver } from '@/components/notifications/notifications-slide-over'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -9,37 +10,37 @@ import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 
 const breadcrumbMap: Record<string, string> = {
-  '/dashboard': 'Panou Principal',
-  '/quotes': 'Cotații',
-  '/policies': 'Polițe',
-  '/profile': 'Profil',
-  '/notifications': 'Notificări'
+  '/dashboard': 'nav.dashboard',
+  '/quotes': 'nav.quotes',
+  '/policies': 'nav.policies',
+  '/profile': 'nav.profile',
+  '/notifications': 'nav.notifications'
 }
 
-function getBreadcrumbs(pathname: string) {
+function getBreadcrumbs(pathname: string, t: (key: string, options?: Record<string, string>) => string) {
   const parts = pathname.split('/').filter(Boolean)
   const crumbs: Array<{ label: string; href: string }> = []
 
   if (parts.length === 0) return crumbs
 
   const firstPath = `/${parts[0]}`
-  const label = breadcrumbMap[firstPath]
-  if (label) {
-    crumbs.push({ label, href: firstPath })
+  const labelKey = breadcrumbMap[firstPath]
+  if (labelKey) {
+    crumbs.push({ label: t(labelKey), href: firstPath })
   }
 
   if (parts.length > 1 && parts[1]) {
     if (parts[0] === 'quotes') {
-      crumbs.push({ label: `Cotație #${parts[1]}`, href: pathname })
+      crumbs.push({ label: t('nav.quoteDetail', { id: parts[1] }), href: pathname })
     } else if (parts[0] === 'policies') {
-      crumbs.push({ label: `Poliță #${parts[1]}`, href: pathname })
+      crumbs.push({ label: t('nav.policyDetail', { id: parts[1] }), href: pathname })
     } else if (parts[0] === 'profile') {
       const subMap: Record<string, string> = {
-        security: 'Securitate',
-        settings: 'Setări'
+        security: 'nav.security',
+        settings: 'nav.settings'
       }
       if (subMap[parts[1]]) {
-        crumbs.push({ label: subMap[parts[1]], href: pathname })
+        crumbs.push({ label: t(subMap[parts[1]]), href: pathname })
       }
     }
   }
@@ -48,8 +49,9 @@ function getBreadcrumbs(pathname: string) {
 }
 
 export function AppHeader() {
+  const { t } = useTranslation()
   const location = useLocation()
-  const breadcrumbs = getBreadcrumbs(location.pathname)
+  const breadcrumbs = getBreadcrumbs(location.pathname, t)
   const { data: notifications } = useNotifications()
   const [notificationsOpen, setNotificationsOpen] = useState(false)
 
@@ -67,7 +69,7 @@ export function AppHeader() {
             to="/dashboard"
             className="text-muted-foreground hover:text-foreground"
           >
-            Acasă
+            {t('common.home')}
           </Link>
           {breadcrumbs.map((crumb) => (
             <span key={crumb.href} className="flex items-center gap-1.5">

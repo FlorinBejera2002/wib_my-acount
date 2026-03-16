@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { ProfileAvatar } from '@/components/profile/profile-avatar'
 import { Card } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -9,12 +10,13 @@ import { NavLink, Outlet } from 'react-router-dom'
 import { toast } from 'sonner'
 
 const profileTabs = [
-  { label: 'Informații personale', href: '/profile', icon: User, end: true },
-  { label: 'Securitate', href: '/profile/security', icon: Shield },
-  { label: 'Setări', href: '/profile/settings', icon: Settings }
+  { labelKey: 'profile.tabs.personal', href: '/profile', icon: User, end: true },
+  { labelKey: 'profile.tabs.security', href: '/profile/security', icon: Shield },
+  { labelKey: 'profile.tabs.settings', href: '/profile/settings', icon: Settings }
 ]
 
 export function ProfileLayout() {
+  const { t } = useTranslation()
   const { data: profile } = useProfile()
   const uploadPhoto = useUploadProfilePhoto()
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -23,7 +25,7 @@ export function ProfileLayout() {
     const file = e.target.files?.[0]
     if (!file) return
     if (file.size > 5 * 1024 * 1024) {
-      toast.error('Fișierul trebuie să fie mai mic de 5MB')
+      toast.error(t('profile.fileTooLarge'))
       return
     }
     uploadPhoto.mutate(file)
@@ -79,8 +81,7 @@ export function ProfileLayout() {
                   </h1>
                   <p className="text-sm text-gray-500">{profile.email}</p>
                   <p className="text-xs text-gray-400 mt-0.5">
-                    Client din {formatDate(profile.createdAt, 'MMMM yyyy')} -
-                    ID: {profile.legacyCustomerId}
+                    {t('profile.clientSince', { date: formatDate(profile.createdAt, 'MMMM yyyy'), id: profile.legacyCustomerId })}
                   </p>
                 </>
               ) : (
@@ -110,7 +111,7 @@ export function ProfileLayout() {
               }
             >
               <tab.icon className="h-4 w-4" />
-              {tab.label}
+              {t(tab.labelKey)}
             </NavLink>
           ))}
         </nav>

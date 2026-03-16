@@ -1,24 +1,25 @@
 import type { PolicyStatus } from '@/api/types'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
+import { useTranslation } from 'react-i18next'
 
-const statusConfig: Record<PolicyStatus, { label: string; className: string }> =
+const statusConfig: Record<PolicyStatus, { labelKey: string; className: string }> =
   {
     ACTIVE: {
-      label: 'Activă',
+      labelKey: 'policyStatus.ACTIVE',
       className: 'bg-green-100 text-green-800 hover:bg-green-100'
     },
     EXPIRED: {
-      label: 'Expirată',
+      labelKey: 'policyStatus.EXPIRED',
       className: 'bg-red-100 text-red-800 hover:bg-red-100'
     },
     CANCELLED: {
-      label: 'Anulată',
-      className: 'bg-red-100 text-red-800 hover:bg-red-100'
+      labelKey: 'policyStatus.CANCELLED',
+      className: 'bg-gray-100 text-gray-800 hover:bg-gray-100'
     },
-    PENDING: {
-      label: 'În așteptare',
-      className: 'bg-yellow-100 text-yellow-800 hover:bg-yellow-100'
+    TERMINATED: {
+      labelKey: 'policyStatus.TERMINATED',
+      className: 'bg-orange-100 text-orange-800 hover:bg-orange-100'
     }
   }
 
@@ -27,13 +28,14 @@ interface PolicyStatusBadgeProps {
 }
 
 export function PolicyStatusBadge({ status }: PolicyStatusBadgeProps) {
+  const { t } = useTranslation()
   const config = statusConfig[status]
   return (
     <Badge
       variant="outline"
       className={cn('border-0 font-medium', config.className)}
     >
-      {config.label}
+      {t(config.labelKey)}
     </Badge>
   )
 }

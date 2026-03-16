@@ -22,7 +22,9 @@
       "Bash(cd /c/Users/flori/Documents/projects/wib_my-acount && npx vite build 2>&1)",
       "Bash(cd /c/Users/flori/Documents/projects/wib_my-acount && yarn add -D @biomejs/biome@1.9.4 2>&1)",
       "Bash(cd /c/Users/flori/Documents/projects/wib_my-acount && npm install -D @biomejs/biome@1.9.4 2>&1)",
-      "Bash(cd /c/Users/flori/Documents/projects/wib_my-acount && npx biome check ./src 2>&1)"
+      "Bash(cd /c/Users/flori/Documents/projects/wib_my-acount && npx biome check ./src 2>&1)",
+      "Bash(true:*)",
+      "Bash(cat:*)"
     ]
   }
 }

@@ -22,27 +22,12 @@ import {
   Shield
 } from 'lucide-react'
 import { Link, useParams } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { PolicyDocuments } from './policy-documents'
 import { PolicyStatusBadge } from './policy-status-badge'
 
-const typeLabels: Record<string, string> = {
-  RCA: 'RCA',
-  CASCO: 'CASCO',
-  CASCO_ECONOM: 'CASCO Econom',
-  LOCUINTA_PAD: 'Locuință PAD',
-  LOCUINTA_FACULTATIVA: 'Locuință Facultativă',
-  CALATORIE: 'Călătorie',
-  VIATA: 'Viață',
-  ASISTENTA_RUTIERA: 'Asistență Rutieră',
-  MALPRAXIS: 'Malpraxis',
-  SANATATE: 'Sănătate',
-  ACCIDENTE_CALATORI: 'Accidente Călători',
-  ACCIDENTE_PERSOANE: 'Accidente Persoane',
-  ACCIDENTE_TAXI: 'Accidente Taxi',
-  CMR: 'CMR'
-}
-
 export function PolicyDetail() {
+  const { t } = useTranslation()
   const { id } = useParams<{ id: string }>()
   const { data: policy, isLoading, isError } = usePolicy(id!)
 
@@ -83,13 +68,15 @@ export function PolicyDetail() {
   if (isError || !policy) {
     return (
       <div className="flex flex-col items-center gap-4 py-16">
-        <p className="text-lg font-medium">Polița nu a fost găsită</p>
+        <p className="text-lg font-medium">{t('policies.notFound')}</p>
         <Button asChild={true} variant="outline">
-          <Link to="/policies">Înapoi la polițe</Link>
+          <Link to="/policies">{t('policies.backToPolicies')}</Link>
         </Button>
       </div>
     )
   }
+
+  const typeLabel = t(`insuranceType.${policy.type}`)
 
   return (
     <div className="space-y-6">
@@ -106,11 +93,11 @@ export function PolicyDetail() {
               {policy.policyNumber}
             </h1>
             <span className="inline-flex items-center rounded-lg px-2 py-0.5 text-xs font-semibold bg-green-100 text-green-700">
-              {typeLabels[policy.type]}
+              {typeLabel}
             </span>
           </div>
           <p className="text-sm text-gray-400">
-            Poliță {typeLabels[policy.type]}
+            {t('policies.policyType', { type: typeLabel })}
           </p>
         </div>
         <PolicyStatusBadge status={policy.status} />
@@ -128,10 +115,10 @@ export function PolicyDetail() {
                 </div>
                 <div>
                   <h3 className="text-base font-semibold text-gray-900">
-                    Detalii poliță
+                    {t('policies.detailsTitle')}
                   </h3>
                   <p className="text-sm text-gray-400">
-                    Informații despre polița de asigurare
+                    {t('policies.detailsSubtitle')}
                   </p>
                 </div>
               </div>
@@ -143,7 +130,7 @@ export function PolicyDetail() {
                 </div>
                 <div className="flex-1">
                   <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Primă de asigurare
+                    {t('policies.insurancePremium')}
                   </p>
                   <p className="text-xl font-bold text-gray-900 mt-0.5">
                     {formatCurrency(policy.premium)}
@@ -159,7 +146,7 @@ export function PolicyDetail() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Asigurător
+                      {t('policies.insurer')}
                     </p>
                     <p className="text-sm font-semibold text-gray-900 mt-0.5 truncate">
                       {policy.insurerName}
@@ -177,7 +164,7 @@ export function PolicyDetail() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Obiect asigurat
+                        {t('policies.insuredObject')}
                       </p>
                       <p className="text-sm font-semibold text-gray-900 mt-0.5 truncate">
                         {policy.vehicleOrProperty}
@@ -195,7 +182,7 @@ export function PolicyDetail() {
                   </div>
                   <div className="flex-1">
                     <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Perioadă acoperire
+                      {t('policies.coveragePeriod')}
                     </p>
                     <p className="text-sm font-semibold text-gray-900 mt-0.5">
                       {formatDate(policy.startDate)} —{' '}
@@ -211,15 +198,15 @@ export function PolicyDetail() {
                     </div>
                     <div className="flex-1">
                       <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Zile până la expirare
+                        {t('policies.daysUntilExpiry')}
                       </p>
                       <div className="flex items-center gap-2 mt-0.5">
                         <p className="text-sm font-semibold text-gray-900">
-                          {policy.daysUntilExpiry} zile
+                          {t('policies.daysCount', { days: policy.daysUntilExpiry })}
                         </p>
                         {policy.daysUntilExpiry <= 30 && (
                           <Badge className="bg-amber-100 text-amber-800 hover:bg-amber-100 border-0 text-xs">
-                            Expiră curând
+                            {t('policies.expiresSoon')}
                           </Badge>
                         )}
                       </div>
@@ -232,13 +219,13 @@ export function PolicyDetail() {
               {policy.sourceQuoteId && (
                 <div className="p-4 rounded-lg bg-gray-50/50">
                   <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">
-                    Cotație sursă
+                    {t('policies.sourceQuote')}
                   </p>
                   <Link
                     to={`/quotes/${policy.sourceQuoteId}`}
                     className="text-sm font-semibold text-primary hover:underline"
                   >
-                    Vezi cotația originală
+                    {t('policies.viewOriginalQuote')}
                   </Link>
                 </div>
               )}
@@ -255,10 +242,10 @@ export function PolicyDetail() {
               </div>
               <div>
                 <CardTitle className="text-base font-semibold">
-                  Documente
+                  {t('policies.documents')}
                 </CardTitle>
                 <CardDescription>
-                  Fișiere asociate acestei polițe
+                  {t('policies.documentsSubtitle')}
                 </CardDescription>
               </div>
             </div>

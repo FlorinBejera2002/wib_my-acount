@@ -1,21 +1,4 @@
-import type { ReactNode } from 'react'
-
-const typeLabels: Record<string, string> = {
-  RCA: 'RCA',
-  CASCO: 'CASCO',
-  CASCO_ECONOM: 'CASCO Econom',
-  LOCUINTA_PAD: 'Locuință PAD',
-  LOCUINTA_FACULTATIVA: 'Locuință Facultativă',
-  CALATORIE: 'Călătorie',
-  VIATA: 'Viață',
-  ASISTENTA_RUTIERA: 'Asistență Rutieră',
-  MALPRAXIS: 'Malpraxis',
-  SANATATE: 'Sănătate',
-  ACCIDENTE_CALATORI: 'Accidente Călători',
-  ACCIDENTE_PERSOANE: 'Accidente Persoane',
-  ACCIDENTE_TAXI: 'Accidente Taxi',
-  CMR: 'CMR'
-}
+import { useTranslation } from 'react-i18next'
 
 const typeConfig: Record<string, { bg: string; text: string }> = {
   RCA: { bg: 'bg-blue-100', text: 'text-blue-800' },
@@ -43,11 +26,12 @@ export function InsuranceTypeBadge({
   type,
   className = ''
 }: InsuranceTypeBadgeProps) {
+  const { t } = useTranslation()
   const config = typeConfig[type] || {
     bg: 'bg-gray-100',
     text: 'text-gray-600'
   }
-  const label = typeLabels[type] || type
+  const label = t(`insuranceType.${type}`, { defaultValue: type })
 
   return (
     <span
@@ -57,6 +41,3 @@ export function InsuranceTypeBadge({
     </span>
   )
 }
-
-// Export type labels for use in other components
-export { typeLabels }

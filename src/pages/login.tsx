@@ -13,11 +13,13 @@ import type { LoginFormValues } from '@/lib/validators'
 import { useAuthStore } from '@/stores/auth-store'
 import { CheckCircle2 } from 'lucide-react'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Link, Navigate } from 'react-router-dom'
 
 type LoginStep = 'credentials' | 'two-factor' | 'success'
 
 export default function LoginPage() {
+  const { t } = useTranslation()
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
   const [step, setStep] = useState<LoginStep>('credentials')
   const [tempToken, setTempToken] = useState('')
@@ -63,29 +65,29 @@ export default function LoginPage() {
           <CardHeader className="text-center">
             {step === 'credentials' && (
               <>
-                <CardTitle className="text-gray-900">Autentificare</CardTitle>
+                <CardTitle className="text-gray-900">{t('auth.login.title')}</CardTitle>
                 <CardDescription className="text-gray-400">
-                  Introdu adresa de email și parola pentru a continua
+                  {t('auth.login.description')}
                 </CardDescription>
               </>
             )}
             {step === 'two-factor' && (
               <>
                 <CardTitle className="text-gray-900">
-                  Verificare în doi pași
+                  {t('auth.twoFactor.title')}
                 </CardTitle>
                 <CardDescription className="text-gray-400">
-                  Am trimis un cod de verificare pe adresa ta de email
+                  {t('auth.twoFactor.description')}
                 </CardDescription>
               </>
             )}
             {step === 'success' && (
               <>
                 <CardTitle className="text-gray-900">
-                  Autentificare reușită!
+                  {t('auth.login.successTitle')}
                 </CardTitle>
                 <CardDescription className="text-gray-400">
-                  Vei fi redirecționat către panoul principal...
+                  {t('auth.login.successDescription')}
                 </CardDescription>
               </>
             )}
@@ -110,7 +112,7 @@ export default function LoginPage() {
               <div className="flex flex-col items-center gap-3 py-6">
                 <CheckCircle2 className="h-16 w-16 text-accent-green animate-bounce" />
                 <p className="text-sm text-gray-400">
-                  Pregătim panoul tău de control...
+                  {t('auth.login.preparingDashboard')}
                 </p>
               </div>
             )}
@@ -120,12 +122,12 @@ export default function LoginPage() {
         {step === 'credentials' && (
           <div className="space-y-2 text-center">
             <p className="text-sm text-gray-400">
-              Nu ai un cont?{' '}
+              {t('auth.noAccount')}{' '}
               <Link
                 to="/register"
                 className="font-medium text-accent-green hover:text-accent-green-hover transition-colors"
               >
-                Creează un cont
+                {t('auth.createAccountLink')}
               </Link>
             </p>
             <p className="text-sm text-gray-400">
@@ -133,15 +135,14 @@ export default function LoginPage() {
                 to="/forgot-password"
                 className="font-medium text-accent-green hover:text-accent-green-hover transition-colors"
               >
-                Ai uitat parola?
+                {t('auth.forgotPassword')}
               </Link>
             </p>
           </div>
         )}
 
         <p className="text-center text-xs text-gray-400">
-          © Copyright 2026 Asigurari.ro - A Trading Style of Wilson Insurance
-          Broker SRL
+          {t('common.copyright')}
         </p>
       </div>
     </div>

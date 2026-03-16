@@ -210,7 +210,7 @@ export type PolicyType =
   | 'ACCIDENTE_PERSOANE'
   | 'ACCIDENTE_TAXI'
   | 'CMR'
-export type PolicyStatus = 'ACTIVE' | 'EXPIRED' | 'CANCELLED' | 'PENDING'
+export type PolicyStatus = 'ACTIVE' | 'EXPIRED' | 'CANCELLED' | 'TERMINATED'
 
 export interface PolicyDocument {
   id: string
@@ -245,6 +245,18 @@ export interface Policy {
   createdAt: string
   sourceQuoteId?: string
   documents: PolicyDocument[]
+  // Travel insurance specific
+  travelDestination?: string
+  travelPurpose?: string
+  transportationType?: string
+  // Home insurance specific
+  propertyAddress?: string
+  insuredAmount?: number
+  insuredGoods?: number
+  propertyType?: string
+  propertyArea?: number
+  yearOfConstruction?: number
+  padNumber?: string
 }
 
 // ==================== Sessions ====================

@@ -1,43 +1,35 @@
 import { DataTable } from '@/components/data-table/data-table'
 import type { ColumnDef } from '@tanstack/react-table'
 import { useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import type { Quote, QuoteStatus, TableParams } from '@/api/types'
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header'
 import { Input } from '@/components/ui/input'
 import { InsuranceTypeBadge } from '@/components/ui/insurance-type-badge'
 import { useQuotes } from '@/hooks/use-quotes'
-import { formatDateTime } from '@/lib/utils'
+import i18n from '@/lib/i18n'
+import { formatDate, formatDateTime } from '@/lib/utils'
 import { ArrowRight, ExternalLink, Search, X } from 'lucide-react'
 
-const statusConfig: Record<
-  QuoteStatus,
-  { label: string; dot: string; text: string }
-> = {
-  ACTIVE: {
-    label: 'Activă',
+const getSimplifiedStatus = (status: QuoteStatus) => {
+  if (status === 'EXPIRED') {
+    return {
+      labelKey: 'quoteStatus.EXPIRED',
+      dot: 'bg-red-500',
+      text: 'text-red-600'
+    }
+  }
+  return {
+    labelKey: 'quoteStatus.ACTIVE',
     dot: 'bg-accent-green',
     text: 'text-accent-green'
-  },
-  EXPIRED: {
-    label: 'Expirată',
-    dot: 'bg-red-500',
-    text: 'text-red-600'
-  },
-  CONVERTED: {
-    label: 'Acceptată',
-    dot: 'bg-purple-500',
-    text: 'text-purple-600'
-  },
-  DRAFT: {
-    label: 'Schiță',
-    dot: 'bg-gray-400',
-    text: 'text-gray-500'
   }
 }
 
 
 export function QuotesTable() {
+  const { t } = useTranslation()
   const [params, setParams] = useState<TableParams>({
     page: 1,
     limit: 9999,
@@ -73,7 +65,7 @@ export function QuotesTable() {
     {
       accessorKey: 'quoteNumber',
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Referință cotație" />
+        <DataTableColumnHeader column={column} title={t('quotes.quoteRef')} />
       ),
       cell: ({ row }) => (
         <span className="font-medium">{row.original.quoteNumber}</span>
@@ -81,12 +73,12 @@ export function QuotesTable() {
     },
     {
       accessorKey: 'type',
-      header: 'Tip',
+      header: t('policies.type'),
       cell: ({ row }) => <InsuranceTypeBadge type={row.original.type} />
     },
     {
       accessorKey: 'vehicleOrProperty',
-      header: 'Obiect asigurat',
+      header: t('quotes.insuredObject'),
       cell: ({ row }) => (
         <span className="max-w-[200px] truncate block">
           {row.original.vehicleOrProperty || '—'}
@@ -95,7 +87,7 @@ export function QuotesTable() {
     },
     {
       accessorKey: 'insuredDetails',
-      header: 'Detalii asigurat',
+      header: t('quotes.insuredDetails'),
       cell: ({ row }) => (
         <span className="max-w-[220px] truncate block">
           {row.original.insuredDetails || '—'}
@@ -104,14 +96,14 @@ export function QuotesTable() {
     },
     {
       accessorKey: 'status',
-      header: 'Status',
+      header: t('policies.status'),
       cell: ({ row }) => {
-        const config = statusConfig[row.original.status]
+        const config = getSimplifiedStatus(row.original.status)
         return (
           <div className="flex items-center gap-2">
             <span className={`h-2 w-2 rounded-full ${config.dot}`} />
             <span className={`text-sm font-medium ${config.text}`}>
-              {config.label}
+              {t(config.labelKey)}
             </span>
           </div>
         )
@@ -120,17 +112,18 @@ export function QuotesTable() {
     {
       accessorKey: 'createdAt',
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Dată + oră" />
+        <DataTableColumnHeader column={column} title={t('quotes.dateTime')} />
       ),
       cell: ({ row }) => {
+        const locale = i18n.language === 'ro' ? 'ro-RO' : 'en-US'
         const d = new Date(row.original.createdAt)
         return (
           <div className="leading-tight">
             <div className="text-sm text-gray-900">
-              {d.toLocaleDateString('ro-RO', { day: '2-digit', month: 'short', year: 'numeric' })}
+              {d.toLocaleDateString(locale, { day: '2-digit', month: 'short', year: 'numeric' })}
             </div>
             <div className="text-xs text-gray-400">
-              {d.toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' })}
+              {d.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })}
             </div>
           </div>
         )
@@ -147,7 +140,7 @@ export function QuotesTable() {
           className="flex items-center gap-1.5 text-sm font-medium text-accent-green hover:text-accent-green-hover transition-colors"
           onClick={(e) => e.stopPropagation()}
         >
-          Vezi oferta
+          {t('quotes.viewOffer')}
           <ExternalLink className="h-3.5 w-3.5" />
         </a>
       )
@@ -172,7 +165,7 @@ export function QuotesTable() {
         <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
           <Input
-            placeholder="Caută..."
+            placeholder={t('common.search')}
             value={params.search || ''}
             onChange={(e) => handleSearchChange(e.target.value)}
             className="pl-9 h-9"
@@ -200,7 +193,7 @@ export function QuotesTable() {
             className="flex items-center gap-1 text-sm text-gray-400 hover:text-red-500 transition-colors"
           >
             <X className="h-3.5 w-3.5" />
-            Resetează
+            {t('quotes.reset')}
           </button>
         )}
       </div>

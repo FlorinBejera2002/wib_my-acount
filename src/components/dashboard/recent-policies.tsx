@@ -4,6 +4,8 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { usePolicies } from '@/hooks/use-policies'
 import { cn } from '@/lib/utils'
 import { ArrowRight, ChevronRight } from 'lucide-react'
+import type { TFunction } from 'i18next'
+import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 
 const statusConfig: Record<
@@ -22,13 +24,13 @@ const statusConfig: Record<
   },
   CANCELLED: {
     label: 'Anulată',
-    dot: 'bg-red-500',
-    text: 'text-red-600'
+    dot: 'bg-gray-500',
+    text: 'text-gray-600'
   },
-  PENDING: {
-    label: 'În așteptare',
-    dot: 'bg-amber-500',
-    text: 'text-amber-600'
+  TERMINATED: {
+    label: 'Reziliată',
+    dot: 'bg-orange-500',
+    text: 'text-orange-600'
   }
 }
 
@@ -70,14 +72,15 @@ const typeConfig: Record<string, { label: string; className: string }> = {
   CMR: { label: 'CMR', className: 'bg-cyan-100 text-cyan-700' }
 }
 
-function formatDaysUntilExpiry(days: number): string {
-  if (days < 0) return 'Expirată'
-  if (days === 0) return 'Expiră azi'
-  if (days === 1) return 'Expiră mâine'
-  return `${days} zile rămase`
+function formatDaysUntilExpiry(days: number, t: TFunction): string {
+  if (days < 0) return t('dashboard.expired')
+  if (days === 0) return t('dashboard.expiresToday')
+  if (days === 1) return t('dashboard.expiresTomorrow')
+  return t('dashboard.daysRemaining', { days })
 }
 
 export function RecentPolicies() {
+  const { t } = useTranslation()
   const { data, isLoading } = usePolicies({
     page: 1,
     limit: 5,
@@ -89,13 +92,13 @@ export function RecentPolicies() {
     <Card className="shadow-sm">
       <CardHeader className="flex flex-row items-center justify-between pb-3">
         <CardTitle className="text-base font-semibold text-gray-900">
-          Polițe Recente
+          {t('dashboard.recentPolicies')}
         </CardTitle>
         <Link
           to="/policies"
           className="flex items-center gap-1 text-xs font-medium text-accent-green hover:text-accent-green-hover transition-colors"
         >
-          Vezi toate
+          {t('common.viewAll')}
           <ArrowRight className="h-3.5 w-3.5" />
         </Link>
       </CardHeader>
@@ -108,7 +111,7 @@ export function RecentPolicies() {
           </div>
         ) : data?.data.length === 0 ? (
           <p className="px-6 py-8 text-center text-sm text-gray-400">
-            Nu există polițe.
+            {t('dashboard.noPolicies')}
           </p>
         ) : (
           <ul>
@@ -168,7 +171,7 @@ export function RecentPolicies() {
                               : 'text-gray-400'
                           )}
                         >
-                          {formatDaysUntilExpiry(policy.daysUntilExpiry)}
+                          {formatDaysUntilExpiry(policy.daysUntilExpiry, t)}
                         </span>
                       )}
                     </div>

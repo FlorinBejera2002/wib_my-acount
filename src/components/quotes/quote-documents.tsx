@@ -2,11 +2,12 @@ import type { QuoteDocument } from '@/api/types'
 import { Button } from '@/components/ui/button'
 import { formatFileSize } from '@/lib/utils'
 import { FileDown, FileText } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
-const typeLabels: Record<QuoteDocument['type'], string> = {
-  OFFER: 'Ofertă',
-  COMPARISON: 'Comparare',
-  TERMS: 'Termeni și condiții'
+const typeKeys: Record<QuoteDocument['type'], string> = {
+  OFFER: 'quoteDocType.OFFER',
+  COMPARISON: 'quoteDocType.COMPARISON',
+  TERMS: 'quoteDocType.TERMS'
 }
 
 interface QuoteDocumentsProps {
@@ -14,10 +15,12 @@ interface QuoteDocumentsProps {
 }
 
 export function QuoteDocuments({ documents }: QuoteDocumentsProps) {
+  const { t } = useTranslation()
+
   if (documents.length === 0) {
     return (
       <p className="text-sm text-muted-foreground">
-        Nu sunt documente disponibile
+        {t('quotes.noDocuments')}
       </p>
     )
   }
@@ -34,7 +37,7 @@ export function QuoteDocuments({ documents }: QuoteDocumentsProps) {
             <div>
               <p className="text-sm font-medium">{doc.name}</p>
               <p className="text-xs text-muted-foreground">
-                {typeLabels[doc.type]} · {formatFileSize(doc.size)}
+                {t(typeKeys[doc.type])} · {formatFileSize(doc.size)}
               </p>
             </div>
           </div>

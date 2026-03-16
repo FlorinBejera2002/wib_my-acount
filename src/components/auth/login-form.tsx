@@ -4,8 +4,9 @@ import { Label } from '@/components/ui/label'
 import { type LoginFormValues, loginSchema } from '@/lib/validators'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 
 interface LoginFormProps {
   onSubmit: (data: LoginFormValues) => void
@@ -13,14 +14,17 @@ interface LoginFormProps {
 }
 
 export function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
+  const { t } = useTranslation()
   const [showPassword, setShowPassword] = useState(false)
+
+  const schema = useMemo(() => loginSchema(t), [t])
 
   const {
     register,
     handleSubmit,
     formState: { errors }
   } = useForm<LoginFormValues>({
-    resolver: zodResolver(loginSchema),
+    resolver: zodResolver(schema),
     defaultValues: {
       email: '',
       password: ''
@@ -31,12 +35,12 @@ export function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor="email" className="text-gray-900">
-          Adresă de email
+          {t('auth.emailLabel')}
         </Label>
         <Input
           id="email"
           type="email"
-          placeholder="exemplu@email.com"
+          placeholder={t('auth.emailPlaceholder')}
           autoComplete="email"
           autoFocus={true}
           {...register('email')}
@@ -48,13 +52,13 @@ export function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
 
       <div className="space-y-2">
         <Label htmlFor="password" className="text-gray-900">
-          Parolă
+          {t('auth.passwordLabel')}
         </Label>
         <div className="relative">
           <Input
             id="password"
             type={showPassword ? 'text' : 'password'}
-            placeholder="Introdu parola"
+            placeholder={t('auth.passwordPlaceholder')}
             autoComplete="current-password"
             className="pr-10"
             {...register('password')}
@@ -85,10 +89,10 @@ export function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
         {isLoading ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Se verifică...
+            {t('auth.verifying')}
           </>
         ) : (
-          'Autentifică-te'
+          t('auth.loginButton')
         )}
       </Button>
     </form>

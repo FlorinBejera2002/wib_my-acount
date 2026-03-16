@@ -9,8 +9,10 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { useProfile } from '@/hooks/use-user'
 import { formatDateTime } from '@/lib/utils'
 import { Shield, ShieldAlert, ShieldCheck } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 export function LoginHistory() {
+  const { t } = useTranslation()
   const { data: profile, isLoading } = useProfile()
 
   if (isLoading) {
@@ -32,16 +34,16 @@ export function LoginHistory() {
   return (
     <Card className="shadow-sm">
       <CardHeader>
-        <CardTitle>Informații securitate</CardTitle>
+        <CardTitle>{t('security.securityInfo')}</CardTitle>
         <CardDescription>
-          Detalii despre securitatea contului tău
+          {t('security.securityInfoSubtitle')}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex items-center gap-3 rounded-lg border p-4">
           <ShieldCheck className="h-5 w-5 text-green-600" />
           <div>
-            <p className="text-sm font-medium">Ultima autentificare</p>
+            <p className="text-sm font-medium">{t('security.lastLogin')}</p>
             <p className="text-sm text-muted-foreground">
               {profile?.security.lastLogin
                 ? formatDateTime(profile.security.lastLogin)
@@ -53,7 +55,7 @@ export function LoginHistory() {
         <div className="flex items-center gap-3 rounded-lg border p-4">
           <Shield className="h-5 w-5 text-blue-600" />
           <div>
-            <p className="text-sm font-medium">Parola schimbată</p>
+            <p className="text-sm font-medium">{t('security.passwordChanged')}</p>
             <p className="text-sm text-muted-foreground">
               {profile?.security.passwordChangedAt
                 ? formatDateTime(profile.security.passwordChangedAt)
@@ -66,10 +68,10 @@ export function LoginHistory() {
           <ShieldAlert className="h-5 w-5 text-amber-600" />
           <div>
             <p className="text-sm font-medium">
-              Încercări eșuate de autentificare
+              {t('security.failedAttempts')}
             </p>
             <p className="text-sm text-muted-foreground">
-              {profile?.security.failedAttempts ?? 0} încercări
+              {t('security.attemptsCount', { count: profile?.security.failedAttempts ?? 0 })}
             </p>
           </div>
         </div>

@@ -1,4 +1,5 @@
 import type { Notification } from '@/api/types'
+import i18n from '@/lib/i18n'
 import { delay } from '@/lib/utils'
 import { mockNotifications } from '@/mocks/notifications'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -57,7 +58,7 @@ export function useMarkAllNotificationsRead() {
     mutationFn: markAllReadFn,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notifications'] })
-      toast.success('Toate notificările au fost marcate ca citite')
+      toast.success(i18n.t('toast.allNotificationsRead'))
     }
   })
 }

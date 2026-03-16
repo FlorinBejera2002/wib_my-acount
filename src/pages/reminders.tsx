@@ -19,36 +19,22 @@ import {
   useDeleteExpiryAlert,
   useExpiryAlerts
 } from '@/hooks/use-reminders'
+import i18n from '@/lib/i18n'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ArrowLeft, Bell, Check, Plus, X } from 'lucide-react'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 
-const ALERT_TYPE_LABELS: Record<AlertType, string> = {
-  RCA: 'Asigurare Auto Obligatorie (RCA)',
-  ASR: 'Asigurare Rutieră (ASR)',
-  CALATORIE: 'Asigurare de Călătorie',
-  LOCUINTA_PAD: 'Asigurare Locuință (PAD)',
-  LOCUINTA_OPTIONALA: 'Asigurare Locuință Opțională',
-  CASCO: 'Asigurare Auto Opțională (Casco)',
-  ROVINIETA: 'Rovinieta',
-  ITP: 'Inspecție Tehnică Periodică (ITP)',
-  REVIZIE_AUTO: 'Revizie Auto',
-  PERMIS: 'Permis de Conducere',
-  BULETIN: 'Buletin',
-  PASAPORT: 'Pașaport',
-  ZIUA_SOTIEI: 'Ziua Soției'
-}
+const ALERT_TYPE_KEYS: AlertType[] = [
+  'RCA', 'ASR', 'CALATORIE', 'LOCUINTA_PAD', 'LOCUINTA_OPTIONALA',
+  'CASCO', 'ROVINIETA', 'ITP', 'REVIZIE_AUTO', 'PERMIS',
+  'BULETIN', 'PASAPORT', 'ZIUA_SOTIEI'
+]
 
-const NOTIFY_BEFORE_LABELS: Record<NotifyBefore, string> = {
-  '1_DAY': '1 zi înainte',
-  '3_DAYS': '3 zile înainte',
-  '7_DAYS': '7 zile înainte',
-  '1_MONTH': '1 lună înainte',
-  '2_MONTHS': '2 luni înainte',
-  '3_MONTHS': '3 luni înainte',
-  '6_MONTHS': '6 luni înainte'
-}
+const NOTIFY_BEFORE_KEYS: NotifyBefore[] = [
+  '1_DAY', '3_DAYS', '7_DAYS', '1_MONTH', '2_MONTHS', '3_MONTHS', '6_MONTHS'
+]
 
 const VEHICLE_TYPES: AlertType[] = [
   'RCA', 'ASR', 'CASCO', 'ROVINIETA', 'ITP', 'REVIZIE_AUTO'
@@ -62,13 +48,12 @@ const HOUSING_TYPES: AlertType[] = [
   'LOCUINTA_PAD', 'LOCUINTA_OPTIONALA'
 ]
 
-const DATE_LABELS: Partial<Record<AlertType, string>> = {
-  ZIUA_SOTIEI: 'Ziua soției'
-}
+const BIRTHDAY_TYPE: AlertType = 'ZIUA_SOTIEI'
 
-function formatDate(dateStr: string): string {
+function formatDateLocal(dateStr: string): string {
+  const locale = i18n.language === 'ro' ? 'ro-RO' : 'en-US'
   const d = new Date(dateStr)
-  return d.toLocaleDateString('ro-RO', {
+  return d.toLocaleDateString(locale, {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric'
@@ -82,13 +67,19 @@ function AlertCard({
   alert: ExpiryAlert
   onDelete: (id: string) => void
 }) {
+  const { t } = useTranslation()
+
+  const dateLabel = alert.alertType === BIRTHDAY_TYPE
+    ? t('reminders.wifesBirthday')
+    : t('reminders.expiryDate')
+
   return (
     <div className="rounded-xl border border-gray-100 bg-white">
       <div className="flex items-center justify-between border-b border-gray-100 px-5 py-3.5">
         <div className="flex items-center gap-3">
           <div className="h-2 w-2 rounded-full bg-accent-green" />
           <span className="font-semibold text-gray-900">
-            {ALERT_TYPE_LABELS[alert.alertType]}
+            {t(`reminders.alertTypes.${alert.alertType}`)}
           </span>
         </div>
         <button
@@ -96,42 +87,42 @@ function AlertCard({
           onClick={() => onDelete(alert.id)}
           className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-red-500 transition-colors"
         >
-          Stergeti <X className="h-3.5 w-3.5" />
+          {t('reminders.deleteBtn')} <X className="h-3.5 w-3.5" />
         </button>
       </div>
 
       <div className="px-5 py-4 space-y-2.5">
         {alert.licensePlate && (
           <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-400">Numar auto:</span>
+            <span className="text-sm text-gray-400">{t('reminders.licensePlate')}</span>
             <span className="text-sm font-medium text-gray-900">{alert.licensePlate}</span>
           </div>
         )}
         {alert.shortAddress && (
           <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-400">Adresa pe scurt:</span>
+            <span className="text-sm text-gray-400">{t('reminders.shortAddress')}</span>
             <span className="text-sm font-medium text-gray-900">{alert.shortAddress}</span>
           </div>
         )}
         {alert.name && (
           <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-400">Nume:</span>
+            <span className="text-sm text-gray-400">{t('reminders.name')}</span>
             <span className="text-sm font-medium text-gray-900">{alert.name}</span>
           </div>
         )}
         <div className="flex items-center justify-between">
           <span className="text-sm text-gray-400">
-            {DATE_LABELS[alert.alertType] ?? 'Data expirare'}:
+            {dateLabel}
           </span>
           <span className="text-sm font-medium text-gray-900">
-            {formatDate(alert.expiryDate)}
+            {formatDateLocal(alert.expiryDate)}
           </span>
         </div>
         <div className="flex items-center justify-between">
-          <span className="text-sm text-gray-400">Data notificare:</span>
+          <span className="text-sm text-gray-400">{t('reminders.notificationDate')}</span>
           <span className="flex items-center gap-1.5 text-sm font-medium text-accent-green">
             <Bell className="h-3.5 w-3.5" />
-            {formatDate(alert.notificationDate)}
+            {formatDateLocal(alert.notificationDate)}
           </span>
         </div>
       </div>
@@ -140,7 +131,10 @@ function AlertCard({
 }
 
 function AddAlertForm({ onBack }: { onBack: () => void }) {
+  const { t } = useTranslation()
   const createAlert = useCreateExpiryAlert()
+
+  const schema = useMemo(() => createExpiryAlertSchema(t), [t])
 
   const {
     control,
@@ -149,7 +143,7 @@ function AddAlertForm({ onBack }: { onBack: () => void }) {
     watch,
     formState: { errors }
   } = useForm<CreateExpiryAlertFormValues>({
-    resolver: zodResolver(createExpiryAlertSchema),
+    resolver: zodResolver(schema),
     defaultValues: {
       alertType: 'RCA',
       notifyBefore: '1_MONTH',
@@ -164,7 +158,9 @@ function AddAlertForm({ onBack }: { onBack: () => void }) {
   const showLicensePlate = alertType && VEHICLE_TYPES.includes(alertType)
   const showName = alertType && NAME_TYPES.includes(alertType)
   const showAddress = alertType && HOUSING_TYPES.includes(alertType)
-  const dateLabel = DATE_LABELS[alertType] ?? 'Data expirare'
+  const dateLabel = alertType === BIRTHDAY_TYPE
+    ? t('reminders.wifesBirthday')
+    : t('reminders.expiryDate')
 
   const onSubmit = (data: CreateExpiryAlertFormValues) => {
     createAlert.mutate(
@@ -189,32 +185,30 @@ function AddAlertForm({ onBack }: { onBack: () => void }) {
           className="flex items-center gap-1.5 text-sm font-medium text-accent-green hover:text-accent-green-hover transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />
-          Înapoi
+          {t('reminders.backBtn')}
         </button>
-        <h1 className="text-xl font-bold text-gray-900">Adauga alerte</h1>
+        <h1 className="text-xl font-bold text-gray-900">{t('reminders.addAlertTitle')}</h1>
       </div>
 
       <div className="rounded-xl border border-gray-100 bg-white shadow-sm p-6">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <Label>Alerta pentru</Label>
+              <Label>{t('reminders.alertFor')}</Label>
               <Controller
                 control={control}
                 name="alertType"
                 render={({ field }) => (
                   <Select value={field.value} onValueChange={field.onChange}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Selectati" />
+                      <SelectValue placeholder={t('reminders.selectPlaceholder')} />
                     </SelectTrigger>
                     <SelectContent>
-                      {(Object.keys(ALERT_TYPE_LABELS) as AlertType[]).map(
-                        (key) => (
-                          <SelectItem key={key} value={key}>
-                            {ALERT_TYPE_LABELS[key]}
-                          </SelectItem>
-                        )
-                      )}
+                      {ALERT_TYPE_KEYS.map((key) => (
+                        <SelectItem key={key} value={key}>
+                          {t(`reminders.alertTypes.${key}`)}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 )}
@@ -225,23 +219,21 @@ function AddAlertForm({ onBack }: { onBack: () => void }) {
             </div>
 
             <div className="space-y-2">
-              <Label>Cu cat timp va anuntam inainte?</Label>
+              <Label>{t('reminders.notifyBefore')}</Label>
               <Controller
                 control={control}
                 name="notifyBefore"
                 render={({ field }) => (
                   <Select value={field.value} onValueChange={field.onChange}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Selectati" />
+                      <SelectValue placeholder={t('reminders.selectPlaceholder')} />
                     </SelectTrigger>
                     <SelectContent>
-                      {(Object.keys(NOTIFY_BEFORE_LABELS) as NotifyBefore[]).map(
-                        (key) => (
-                          <SelectItem key={key} value={key}>
-                            {NOTIFY_BEFORE_LABELS[key]}
-                          </SelectItem>
-                        )
-                      )}
+                      {NOTIFY_BEFORE_KEYS.map((key) => (
+                        <SelectItem key={key} value={key}>
+                          {t(`reminders.notifyBeforeLabels.${key}`)}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 )}
@@ -255,22 +247,22 @@ function AddAlertForm({ onBack }: { onBack: () => void }) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {showLicensePlate && (
               <div className="space-y-2">
-                <Label>Numar auto</Label>
-                <Input placeholder="Introduceti nr. auto" {...register('licensePlate')} />
+                <Label>{t('reminders.licensePlateLabel')}</Label>
+                <Input placeholder={t('reminders.licensePlatePlaceholder')} {...register('licensePlate')} />
               </div>
             )}
 
             {showAddress && (
               <div className="space-y-2">
-                <Label>Adresa pe scurt</Label>
-                <Input placeholder="Introduceti adresa pe scurt" {...register('shortAddress')} />
+                <Label>{t('reminders.shortAddressLabel')}</Label>
+                <Input placeholder={t('reminders.shortAddressPlaceholder')} {...register('shortAddress')} />
               </div>
             )}
 
             {showName && (
               <div className="space-y-2">
-                <Label>Nume</Label>
-                <Input placeholder="Introduceti numele" {...register('name')} />
+                <Label>{t('reminders.nameLabel')}</Label>
+                <Input placeholder={t('reminders.namePlaceholder')} {...register('name')} />
               </div>
             )}
 
@@ -289,7 +281,7 @@ function AddAlertForm({ onBack }: { onBack: () => void }) {
             className="bg-accent-green hover:bg-accent-green-hover text-white gap-1.5"
           >
             <Check className="h-4 w-4" />
-            {createAlert.isPending ? 'Se salvează...' : 'Salvati'}
+            {createAlert.isPending ? t('common.saving') : t('reminders.saveBtn')}
           </Button>
         </form>
       </div>
@@ -298,6 +290,7 @@ function AddAlertForm({ onBack }: { onBack: () => void }) {
 }
 
 export default function RemindersPage() {
+  const { t } = useTranslation()
   const { data: alerts, isLoading } = useExpiryAlerts()
   const deleteAlert = useDeleteExpiryAlert()
   const [view, setView] = useState<'list' | 'add'>('list')
@@ -330,9 +323,9 @@ export default function RemindersPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-gray-900">Alerte de expirare</h1>
+          <h1 className="text-xl font-bold text-gray-900">{t('reminders.title')}</h1>
           <p className="text-sm text-gray-400">
-            Primește notificări înainte de expirarea documentelor sau polițelor
+            {t('reminders.subtitle')}
           </p>
         </div>
         <Button
@@ -340,7 +333,7 @@ export default function RemindersPage() {
           className="bg-accent-green hover:bg-accent-green-hover text-white gap-1.5"
         >
           <Plus className="h-4 w-4" />
-          Adaugati alerta
+          {t('reminders.addAlert')}
         </Button>
       </div>
 
@@ -351,7 +344,7 @@ export default function RemindersPage() {
               <Bell className="h-6 w-6 text-accent-green" />
             </div>
             <p className="text-sm text-gray-400">
-              Nu există alerte de expirare.
+              {t('reminders.noAlerts')}
             </p>
           </div>
         </div>

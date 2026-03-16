@@ -12,8 +12,10 @@ import { useNotifications } from '@/hooks/use-notifications'
 import { formatDate } from '@/lib/utils'
 import { Bell, Check, CheckCheck, Settings, Trash2 } from 'lucide-react'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 export default function NotificationsPage() {
+  const { t } = useTranslation()
   const { data: notifications, isLoading } = useNotifications()
   const [filter, setFilter] = useState<'all' | 'unread' | 'read'>('all')
 
@@ -21,7 +23,7 @@ export default function NotificationsPage() {
     return (
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold">Notificări</h1>
+          <h1 className="text-2xl font-bold">{t('notifications.title')}</h1>
         </div>
         <div className="space-y-4">
           {[1, 2, 3].map((i) => (
@@ -57,11 +59,11 @@ export default function NotificationsPage() {
         <div className="flex items-center gap-3">
           <Bell className="h-6 w-6" />
           <div>
-            <h1 className="text-2xl font-bold">Notificări</h1>
+            <h1 className="text-2xl font-bold">{t('notifications.title')}</h1>
             <p className="text-sm text-gray-500">
               {unreadCount > 0
-                ? `${unreadCount} necitite`
-                : 'Toate notificările sunt citite'}
+                ? t('notifications.unreadCount', { count: unreadCount })
+                : t('notifications.allNotificationsRead')}
             </p>
           </div>
         </div>
@@ -72,21 +74,21 @@ export default function NotificationsPage() {
             size="sm"
             onClick={() => setFilter('all')}
           >
-            Toate
+            {t('notifications.all')}
           </Button>
           <Button
             variant={filter === 'unread' ? 'default' : 'outline'}
             size="sm"
             onClick={() => setFilter('unread')}
           >
-            Necitite
+            {t('notifications.unread')}
           </Button>
           <Button
             variant={filter === 'read' ? 'default' : 'outline'}
             size="sm"
             onClick={() => setFilter('read')}
           >
-            Citite
+            {t('notifications.read')}
           </Button>
         </div>
       </div>
@@ -96,17 +98,17 @@ export default function NotificationsPage() {
           <CardContent className="flex flex-col items-center justify-center py-12">
             <h3 className="text-lg font-semibold text-gray-900 mb-2">
               {filter === 'unread'
-                ? 'Nu există notificări necitite'
+                ? t('notifications.noUnread')
                 : filter === 'read'
-                  ? 'Nu există notificări citite'
-                  : 'Nu există notificări'}
+                  ? t('notifications.noRead')
+                  : t('notifications.noNotifications')}
             </h3>
             <p className="text-sm text-gray-500 text-center max-w-md">
               {filter === 'unread'
-                ? 'Toate notificările tale au fost citite.'
+                ? t('notifications.allReadMessage')
                 : filter === 'read'
-                  ? 'Nu ai citit nicio notificare încă.'
-                  : 'Nu ai primit nicio notificare încă.'}
+                  ? t('notifications.noReadYet')
+                  : t('notifications.noNotificationsYet')}
             </p>
             {filter !== 'all' && (
               <Button
@@ -114,7 +116,7 @@ export default function NotificationsPage() {
                 className="mt-4"
                 onClick={() => setFilter('all')}
               >
-                Vezi toate notificările
+                {t('notifications.viewAll')}
               </Button>
             )}
           </CardContent>

@@ -15,6 +15,7 @@ import {
 } from '@/hooks/use-sessions'
 import { formatDateTime } from '@/lib/utils'
 import { Globe, Loader2, Monitor, Smartphone } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 function getDeviceIcon(deviceInfo: string) {
   const lower = deviceInfo.toLowerCase()
@@ -25,6 +26,7 @@ function getDeviceIcon(deviceInfo: string) {
 }
 
 export function ActiveSessions() {
+  const { t } = useTranslation()
   const { data: sessions, isLoading } = useSessions()
   const terminateSession = useTerminateSession()
   const terminateAll = useTerminateAllSessions()
@@ -49,9 +51,9 @@ export function ActiveSessions() {
     <Card className="shadow-sm">
       <CardHeader className="flex flex-row items-start justify-between">
         <div>
-          <CardTitle>Sesiuni active</CardTitle>
+          <CardTitle>{t('security.activeSessions')}</CardTitle>
           <CardDescription>
-            Dispozitivele conectate la contul tău
+            {t('security.activeSessionsSubtitle')}
           </CardDescription>
         </div>
         {sessions && sessions.length > 1 && (
@@ -64,7 +66,7 @@ export function ActiveSessions() {
             {terminateAll.isPending ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             ) : null}
-            Încheie toate sesiunile
+            {t('security.terminateAll')}
           </Button>
         )}
       </CardHeader>
@@ -82,7 +84,7 @@ export function ActiveSessions() {
                   <p className="text-sm font-medium">{session.deviceInfo}</p>
                   {session.isCurrent && (
                     <Badge className="bg-green-100 text-green-800 hover:bg-green-100 border-0">
-                      Sesiune curentă
+                      {t('security.currentSession')}
                     </Badge>
                   )}
                 </div>
@@ -94,7 +96,7 @@ export function ActiveSessions() {
                   <span>IP: {session.ipAddress}</span>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Ultima activitate: {formatDateTime(session.lastActivity)}
+                  {t('security.lastActivity', { date: formatDateTime(session.lastActivity) })}
                 </p>
               </div>
               {!session.isCurrent && (
@@ -104,7 +106,7 @@ export function ActiveSessions() {
                   onClick={() => terminateSession.mutate(session.id)}
                   disabled={terminateSession.isPending}
                 >
-                  Încheie
+                  {t('security.terminate')}
                 </Button>
               )}
             </div>

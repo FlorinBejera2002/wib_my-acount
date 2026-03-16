@@ -6,8 +6,10 @@ import { StatsCards } from '@/components/dashboard/stats-cards'
 import { useDashboardStats } from '@/hooks/use-dashboard-stats'
 import { usePolicies } from '@/hooks/use-policies'
 import { useAuthStore } from '@/stores/auth-store'
+import { useTranslation } from 'react-i18next'
 
 export default function DashboardPage() {
+  const { t } = useTranslation()
   const { data: stats, isLoading: statsLoading } = useDashboardStats()
   const user = useAuthStore((s) => s.user)
 
@@ -27,10 +29,10 @@ export default function DashboardPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-xl font-bold text-gray-900">
-          Bun venit{user ? `, ${user.firstName}` : ''}!
+          {t('dashboard.welcome', { name: user ? `, ${user.firstName}` : '' })}
         </h1>
         <p className="text-sm text-gray-400">
-          Privire de ansamblu asupra contului tău de asigurări.
+          {t('dashboard.subtitle')}
         </p>
       </div>
 

@@ -7,7 +7,9 @@ import {
 } from '@/lib/validators'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2 } from 'lucide-react'
+import { useMemo } from 'react'
 import { useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 
 interface ForgotPasswordFormProps {
   onSubmit: (data: ForgotPasswordFormValues) => void
@@ -18,12 +20,15 @@ export function ForgotPasswordForm({
   onSubmit,
   isLoading
 }: ForgotPasswordFormProps) {
+  const { t } = useTranslation()
+  const schema = useMemo(() => forgotPasswordSchema(t), [t])
+
   const {
     register,
     handleSubmit,
     formState: { errors }
   } = useForm<ForgotPasswordFormValues>({
-    resolver: zodResolver(forgotPasswordSchema),
+    resolver: zodResolver(schema),
     defaultValues: {
       email: ''
     }
@@ -33,12 +38,12 @@ export function ForgotPasswordForm({
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor="email" className="text-gray-900">
-          Adresă de email
+          {t('auth.emailLabel')}
         </Label>
         <Input
           id="email"
           type="email"
-          placeholder="exemplu@email.com"
+          placeholder={t('auth.emailPlaceholder')}
           autoComplete="email"
           autoFocus={true}
           {...register('email')}
@@ -56,10 +61,10 @@ export function ForgotPasswordForm({
         {isLoading ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Se trimite...
+            {t('auth.sending')}
           </>
         ) : (
-          'Trimite codul de resetare'
+          t('auth.sendResetCode')
         )}
       </Button>
     </form>

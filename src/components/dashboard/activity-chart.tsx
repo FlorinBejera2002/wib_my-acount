@@ -1,6 +1,7 @@
 import type { MonthlyQuoteStat } from '@/api/types'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useTranslation } from 'react-i18next'
 import {
   Area,
   AreaChart,
@@ -16,39 +17,35 @@ interface ActivityChartProps {
   isLoading: boolean
 }
 
-const monthLabels: Record<string, string> = {
-  '01': 'Ian',
-  '02': 'Feb',
-  '03': 'Mar',
-  '04': 'Apr',
-  '05': 'Mai',
-  '06': 'Iun',
-  '07': 'Iul',
-  '08': 'Aug',
-  '09': 'Sep',
-  '10': 'Oct',
-  '11': 'Noi',
-  '12': 'Dec'
-}
-
-function formatMonthLabel(month: string): string {
-  const monthNum = month.split('-')[1] ?? ''
-  return monthLabels[monthNum] ?? monthNum
-}
+const monthKeys = [
+  '01', '02', '03', '04', '05', '06',
+  '07', '08', '09', '10', '11', '12'
+] as const
 
 export function ActivityChart({ data, isLoading }: ActivityChartProps) {
+  const { t } = useTranslation()
+
+  const formatMonthLabel = (month: string): string => {
+    const monthNum = month.split('-')[1] ?? ''
+    return monthKeys.includes(monthNum as (typeof monthKeys)[number])
+      ? t(`dashboard.months.${monthNum}`)
+      : monthNum
+  }
+
+  const quotesLabel = t('dashboard.quotes')
+
   const chartData = data?.map((item) => ({
     name: formatMonthLabel(item.month),
-    cotații: item.count
+    [quotesLabel]: item.count
   }))
 
   return (
     <Card className="shadow-sm">
       <CardHeader>
         <CardTitle className="text-base font-semibold text-gray-900">
-          Activitate Cotații
+          {t('dashboard.activityTitle')}
           <span className="ml-2 text-xs font-normal text-gray-400">
-            Ultimele 6 luni
+            {t('dashboard.last6Months')}
           </span>
         </CardTitle>
       </CardHeader>
@@ -92,12 +89,15 @@ export function ActivityChart({ data, isLoading }: ActivityChartProps) {
                   fontSize: '13px',
                   padding: '8px 14px'
                 }}
-                labelFormatter={(label) => `Luna: ${label}`}
-                formatter={(value: number) => [`${value} cotații`, 'Total']}
+                labelFormatter={(label) => t('dashboard.month', { label })}
+                formatter={(value: number) => [
+                  t('dashboard.quotesCount', { count: value }),
+                  t('dashboard.total')
+                ]}
               />
               <Area
                 type="monotone"
-                dataKey="cotații"
+                dataKey={quotesLabel}
                 stroke="#7fc341"
                 strokeWidth={2.5}
                 fill="url(#greenGradient)"

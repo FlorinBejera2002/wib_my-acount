@@ -94,6 +94,12 @@ export const mockPolicies: Policy[] = [
     autoRenew: false,
     createdAt: '2025-08-10T09:00:00Z',
     sourceQuoteId: 'qt_008',
+    propertyAddress: 'Str. Republicii nr. 45, Brașov',
+    insuredAmount: 30000,
+    insuredGoods: 10000,
+    propertyType: 'Casă',
+    propertyArea: 185,
+    yearOfConstruction: 1995,
     documents: [
       {
         id: 'pdoc_006',
@@ -157,6 +163,9 @@ export const mockPolicies: Policy[] = [
     autoRenew: false,
     createdAt: '2025-02-05T08:00:00Z',
     sourceQuoteId: 'qt_015',
+    travelDestination: 'Austria',
+    travelPurpose: 'Turism',
+    transportationType: 'Avion',
     documents: [
       {
         id: 'pdoc_009',
@@ -235,6 +244,12 @@ export const mockPolicies: Policy[] = [
     daysUntilExpiry: -1,
     autoRenew: false,
     createdAt: '2024-12-20T15:00:00Z',
+    propertyAddress: 'Str. Păcurari nr. 128, bl. A5, ap. 12, Iași',
+    insuredAmount: 20000,
+    propertyType: 'Apartament',
+    propertyArea: 52,
+    yearOfConstruction: 1985,
+    padNumber: 'RA-06500232137651',
     documents: [
       {
         id: 'pdoc_012',
@@ -296,6 +311,9 @@ export const mockPolicies: Policy[] = [
     autoRenew: false,
     createdAt: '2025-11-01T12:00:00Z',
     sourceQuoteId: 'qt_009',
+    travelDestination: 'Cehia',
+    travelPurpose: 'Turism',
+    transportationType: 'Avion',
     documents: [
       {
         id: 'pdoc_015',
@@ -326,6 +344,12 @@ export const mockPolicies: Policy[] = [
     daysUntilExpiry: 333,
     autoRenew: true,
     createdAt: '2025-09-25T09:30:00Z',
+    propertyAddress: 'Str. Mihai Eminescu nr. 42, bl. C3, ap. 15, București, Sector 2',
+    insuredAmount: 50000,
+    insuredGoods: 15000,
+    propertyType: 'Apartament',
+    propertyArea: 78,
+    yearOfConstruction: 2010,
     documents: [
       {
         id: 'pdoc_016',
@@ -333,6 +357,63 @@ export const mockPolicies: Policy[] = [
         type: 'POLICY',
         url: '#',
         size: 410000
+      }
+    ]
+  },
+  {
+    id: 'pol_012',
+    policyNumber: 'POL-2024-004521',
+    type: 'CASCO',
+    status: 'TERMINATED',
+    insurerName: 'Groupama',
+    vehicleOrProperty: 'Audi A4 2020',
+    policyDetails: 'CASCO Full, Reziliat la cererea clientului',
+    premium: 3850.0,
+    currency: 'RON',
+    startDate: '2024-03-01T00:00:00Z',
+    endDate: '2025-03-01T00:00:00Z',
+    daysUntilExpiry: -248,
+    autoRenew: false,
+    createdAt: '2024-02-20T10:00:00Z',
+    documents: [
+      {
+        id: 'pdoc_017',
+        name: 'Polița_CASCO_POL-2024-004521.pdf',
+        type: 'POLICY',
+        url: '#',
+        size: 495000
+      }
+    ]
+  },
+  {
+    id: 'pol_013',
+    policyNumber: 'POL-2024-004890',
+    type: 'RCA',
+    status: 'TERMINATED',
+    insurerName: 'Allianz',
+    vehicleOrProperty: 'Mercedes-Benz C-Class 2019',
+    policyDetails: 'RCA 12 luni, Reziliat - vânzare vehicul',
+    premium: 1650.0,
+    currency: 'RON',
+    startDate: '2024-06-15T00:00:00Z',
+    endDate: '2025-06-15T00:00:00Z',
+    daysUntilExpiry: -177,
+    autoRenew: false,
+    createdAt: '2024-06-10T14:30:00Z',
+    documents: [
+      {
+        id: 'pdoc_018',
+        name: 'Polița_RCA_POL-2024-004890.pdf',
+        type: 'POLICY',
+        url: '#',
+        size: 445000
+      },
+      {
+        id: 'pdoc_019',
+        name: 'Carte_Verde_POL-2024-004890.pdf',
+        type: 'GREEN_CARD',
+        url: '#',
+        size: 118000
       }
     ]
   }

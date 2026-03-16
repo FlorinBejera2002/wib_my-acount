@@ -2,6 +2,7 @@ import type { DashboardStats } from '@/api/types'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
 import { AlertTriangle, Bell, ClipboardList, FileText } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 interface StatsCardsProps {
   stats: DashboardStats | undefined
@@ -10,25 +11,25 @@ interface StatsCardsProps {
 
 const cards = [
   {
-    label: 'Total Cotații',
+    labelKey: 'dashboard.totalQuotes',
     key: 'totalQuotes' as const,
     icon: ClipboardList,
     iconColor: 'text-accent-green'
   },
   {
-    label: 'Polițe Active',
+    labelKey: 'dashboard.activePolicies',
     key: 'activePolicies' as const,
     icon: FileText,
     iconColor: 'text-blue-500'
   },
   {
-    label: 'Expiră Curând',
+    labelKey: 'dashboard.expiringSoon',
     key: 'expiringSoon' as const,
     icon: AlertTriangle,
     iconColor: 'text-amber-500'
   },
   {
-    label: 'Notificări',
+    labelKey: 'dashboard.notifications',
     key: 'unreadNotifications' as const,
     icon: Bell,
     iconColor: 'text-red-500'
@@ -36,6 +37,8 @@ const cards = [
 ]
 
 export function StatsCards({ stats, isLoading }: StatsCardsProps) {
+  const { t } = useTranslation()
+
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {cards.map((card) => {
@@ -49,7 +52,7 @@ export function StatsCards({ stats, isLoading }: StatsCardsProps) {
             <Icon
               className={cn('absolute right-4 top-4 h-5 w-5', card.iconColor)}
             />
-            <p className="text-xs text-gray-400">{card.label}</p>
+            <p className="text-xs text-gray-400">{t(card.labelKey)}</p>
             {isLoading ? (
               <Skeleton className="mt-1 h-6 w-10" />
             ) : (

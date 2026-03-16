@@ -1,4 +1,5 @@
 import type { PaginatedResponse, Policy, TableParams } from '@/api/types'
+import i18n from '@/lib/i18n'
 import { delay, paginateMock } from '@/lib/utils'
 import { mockPolicies } from '@/mocks/policies'
 import { useQuery } from '@tanstack/react-query'
@@ -21,7 +22,7 @@ const fetchPolicy = async (id: string): Promise<Policy> => {
 
   await delay(400)
   const policy = mockPolicies.find((p) => p.id === id)
-  if (!policy) throw new Error('Polița nu a fost găsită')
+  if (!policy) throw new Error(i18n.t('toast.policyNotFound'))
   return policy
 }
 

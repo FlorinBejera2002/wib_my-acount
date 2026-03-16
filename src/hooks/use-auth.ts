@@ -4,6 +4,7 @@ import type {
   TwoFactorRequest,
   TwoFactorResponse
 } from '@/api/types'
+import i18n from '@/lib/i18n'
 import { delay } from '@/lib/utils'
 import { mockUser } from '@/mocks/user'
 import { useAuthStore } from '@/stores/auth-store'
@@ -28,7 +29,7 @@ const loginFn = async (data: LoginRequest): Promise<LoginResponse> => {
     }
   }
 
-  throw new Error('Adresa de email sau parola este incorectă')
+  throw new Error(i18n.t('toast.emailOrPasswordIncorrect'))
 }
 
 const verifyTwoFactorFn = async (
@@ -48,7 +49,7 @@ const verifyTwoFactorFn = async (
     }
   }
 
-  throw new Error('Codul introdus nu este valid')
+  throw new Error(i18n.t('toast.codeInvalid'))
 }
 
 const logoutFn = async (): Promise<void> => {
@@ -75,7 +76,10 @@ export function useVerifyTwoFactor() {
     mutationFn: verifyTwoFactorFn,
     onSuccess: (data) => {
       login(data.user, data.accessToken, data.refreshToken)
-      toast.success('Autentificare reușită!')
+      if (data.user.preferences?.language) {
+        i18n.changeLanguage(data.user.preferences.language)
+      }
+      toast.success(i18n.t('toast.loginSuccess'))
       setTimeout(() => navigate('/dashboard'), 500)
     },
     onError: (error: Error) => {

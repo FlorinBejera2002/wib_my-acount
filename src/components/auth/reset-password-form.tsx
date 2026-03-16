@@ -8,8 +8,9 @@ import {
 } from '@/lib/validators'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 
 interface ResetPasswordFormProps {
   onSubmit: (data: ResetPasswordFormValues) => void
@@ -20,8 +21,11 @@ export function ResetPasswordForm({
   onSubmit,
   isLoading
 }: ResetPasswordFormProps) {
+  const { t } = useTranslation()
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+
+  const schema = useMemo(() => resetPasswordSchema(t), [t])
 
   const {
     register,
@@ -29,7 +33,7 @@ export function ResetPasswordForm({
     watch,
     formState: { errors }
   } = useForm<ResetPasswordFormValues>({
-    resolver: zodResolver(resetPasswordSchema),
+    resolver: zodResolver(schema),
     defaultValues: {
       newPassword: '',
       confirmPassword: ''
@@ -42,13 +46,13 @@ export function ResetPasswordForm({
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor="newPassword" className="text-gray-900">
-          Parolă nouă
+          {t('auth.newPasswordLabel')}
         </Label>
         <div className="relative">
           <Input
             id="newPassword"
             type={showPassword ? 'text' : 'password'}
-            placeholder="Minimum 12 caractere"
+            placeholder={t('auth.minChars')}
             autoComplete="new-password"
             autoFocus={true}
             className="pr-10"
@@ -77,13 +81,13 @@ export function ResetPasswordForm({
 
       <div className="space-y-2">
         <Label htmlFor="confirmPassword" className="text-gray-900">
-          Confirmă parola nouă
+          {t('auth.confirmNewPassword')}
         </Label>
         <div className="relative">
           <Input
             id="confirmPassword"
             type={showConfirmPassword ? 'text' : 'password'}
-            placeholder="Repetă parola"
+            placeholder={t('auth.repeatPassword')}
             autoComplete="new-password"
             className="pr-10"
             {...register('confirmPassword')}
@@ -116,10 +120,10 @@ export function ResetPasswordForm({
         {isLoading ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Se resetează...
+            {t('auth.resetting')}
           </>
         ) : (
-          'Resetează parola'
+          t('auth.resetPasswordBtn')
         )}
       </Button>
     </form>

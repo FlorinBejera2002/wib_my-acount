@@ -5,6 +5,7 @@ import type {
   UpdateProfileRequest,
   UserProfile
 } from '@/api/types'
+import i18n from '@/lib/i18n'
 import { delay } from '@/lib/utils'
 import { mockUser } from '@/mocks/user'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -54,10 +55,10 @@ export function useUpdateProfile() {
     mutationFn: updateProfileFn,
     onSuccess: (data) => {
       queryClient.setQueryData(['profile'], data)
-      toast.success('Profilul a fost actualizat cu succes')
+      toast.success(i18n.t('toast.profileUpdated'))
     },
     onError: () => {
-      toast.error('Eroare la actualizarea profilului')
+      toast.error(i18n.t('toast.profileUpdateError'))
     }
   })
 }
@@ -69,10 +70,13 @@ export function useUpdatePreferences() {
     mutationFn: updatePreferencesFn,
     onSuccess: (data) => {
       queryClient.setQueryData(['profile'], data)
-      toast.success('Preferințele au fost salvate')
+      if (data.preferences?.language) {
+        i18n.changeLanguage(data.preferences.language)
+      }
+      toast.success(i18n.t('toast.preferencesSaved'))
     },
     onError: () => {
-      toast.error('Eroare la salvarea preferințelor')
+      toast.error(i18n.t('toast.preferencesError'))
     }
   })
 }
@@ -96,10 +100,10 @@ export function useUploadProfilePhoto() {
     mutationFn: uploadProfilePhotoFn,
     onSuccess: (data) => {
       queryClient.setQueryData(['profile'], data)
-      toast.success('Fotografia de profil a fost actualizată')
+      toast.success(i18n.t('toast.photoUpdated'))
     },
     onError: () => {
-      toast.error('Eroare la încărcarea fotografiei')
+      toast.error(i18n.t('toast.photoError'))
     }
   })
 }

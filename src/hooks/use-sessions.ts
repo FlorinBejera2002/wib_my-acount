@@ -1,4 +1,5 @@
 import type { Session } from '@/api/types'
+import i18n from '@/lib/i18n'
 import { delay } from '@/lib/utils'
 import { mockSessions } from '@/mocks/sessions'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -20,7 +21,7 @@ const terminateSessionFn = async (id: string): Promise<void> => {
   await delay(400)
   const session = mockSessions.find((s) => s.id === id)
   if (session?.isCurrent) {
-    throw new Error('Nu poți încheia sesiunea curentă')
+    throw new Error(i18n.t('toast.cannotTerminateCurrent'))
   }
 }
 
@@ -45,7 +46,7 @@ export function useTerminateSession() {
     mutationFn: terminateSessionFn,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['sessions'] })
-      toast.success('Sesiunea a fost încheiată cu succes')
+      toast.success(i18n.t('toast.sessionTerminated'))
     },
     onError: (error: Error) => {
       toast.error(error.message)
@@ -60,10 +61,10 @@ export function useTerminateAllSessions() {
     mutationFn: terminateAllSessionsFn,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['sessions'] })
-      toast.success('Toate sesiunile au fost încheiate')
+      toast.success(i18n.t('toast.allSessionsTerminated'))
     },
     onError: () => {
-      toast.error('Eroare la încheierea sesiunilor')
+      toast.error(i18n.t('toast.sessionsError'))
     }
   })
 }

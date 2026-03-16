@@ -1,4 +1,5 @@
 import type { CreateExpiryAlertRequest, ExpiryAlert } from '@/api/types'
+import i18n from '@/lib/i18n'
 import { delay } from '@/lib/utils'
 import { mockExpiryAlerts } from '@/mocks/reminders'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -72,10 +73,10 @@ export function useCreateExpiryAlert() {
     mutationFn: createAlertFn,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['expiry-alerts'] })
-      toast.success('Alerta a fost creată cu succes')
+      toast.success(i18n.t('toast.alertCreated'))
     },
     onError: () => {
-      toast.error('Eroare la crearea alertei')
+      toast.error(i18n.t('toast.alertCreateError'))
     }
   })
 }
@@ -87,10 +88,10 @@ export function useDeleteExpiryAlert() {
     mutationFn: deleteAlertFn,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['expiry-alerts'] })
-      toast.success('Alerta a fost ștearsă')
+      toast.success(i18n.t('toast.alertDeleted'))
     },
     onError: () => {
-      toast.error('Eroare la ștergerea alertei')
+      toast.error(i18n.t('toast.alertDeleteError'))
     }
   })
 }

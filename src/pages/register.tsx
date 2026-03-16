@@ -12,9 +12,11 @@ import type { RegisterFormValues } from '@/lib/validators'
 import { useAuthStore } from '@/stores/auth-store'
 import { CheckCircle2 } from 'lucide-react'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Link, Navigate } from 'react-router-dom'
 
 export default function RegisterPage() {
+  const { t } = useTranslation()
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
   const [isSuccess, setIsSuccess] = useState(false)
   const registerMutation = useRegister()
@@ -36,9 +38,9 @@ export default function RegisterPage() {
       <div className="w-full max-w-xl space-y-6 rounded-lg bg-white p-12">
         <div className="text-center">
           <img src={logo} alt="asigurari.ro" className="mx-auto mb-4 h-10" />
-          <h1 className="text-xl font-bold text-gray-900">Creează un cont</h1>
+          <h1 className="text-xl font-bold text-gray-900">{t('auth.register.pageTitle')}</h1>
           <p className="mt-1 text-sm text-gray-400">
-            Înregistrează-te pentru a-ți gestiona asigurările
+            {t('auth.register.pageSubtitle')}
           </p>
         </div>
 
@@ -46,18 +48,18 @@ export default function RegisterPage() {
           <CardHeader className="text-center">
             {!isSuccess ? (
               <>
-                <CardTitle className="text-gray-900">Înregistrare</CardTitle>
+                <CardTitle className="text-gray-900">{t('auth.register.title')}</CardTitle>
                 <CardDescription className="text-gray-400">
-                  Completează datele de mai jos pentru a crea un cont nou
+                  {t('auth.register.description')}
                 </CardDescription>
               </>
             ) : (
               <>
                 <CardTitle className="text-gray-900">
-                  Cont creat cu succes!
+                  {t('auth.register.successTitle')}
                 </CardTitle>
                 <CardDescription className="text-gray-400">
-                  Verifică adresa de email pentru a-ți activa contul
+                  {t('auth.register.successDescription')}
                 </CardDescription>
               </>
             )}
@@ -73,14 +75,13 @@ export default function RegisterPage() {
               <div className="flex flex-col items-center gap-3 py-6">
                 <CheckCircle2 className="h-16 w-16 text-accent-green animate-bounce" />
                 <p className="text-sm text-gray-400 text-center">
-                  Am trimis un email de confirmare. Verifică-ți inbox-ul pentru
-                  a activa contul.
+                  {t('auth.register.successMessage')}
                 </p>
                 <Link
                   to="/login"
                   className="mt-2 text-sm font-medium text-accent-green hover:text-accent-green-hover transition-colors"
                 >
-                  Înapoi la autentificare
+                  {t('auth.backToLogin')}
                 </Link>
               </div>
             )}
@@ -89,19 +90,18 @@ export default function RegisterPage() {
 
         {!isSuccess && (
           <p className="text-center text-sm text-gray-400">
-            Ai deja un cont?{' '}
+            {t('auth.hasAccount')}{' '}
             <Link
               to="/login"
               className="font-medium text-accent-green hover:text-accent-green-hover transition-colors"
             >
-              Autentifică-te
+              {t('auth.loginLink')}
             </Link>
           </p>
         )}
 
         <p className="text-center text-xs text-gray-400">
-          © Copyright 2026 Asigurari.ro - A Trading Style of Wilson Insurance
-          Broker SRL
+          {t('common.copyright')}
         </p>
       </div>
     </div>

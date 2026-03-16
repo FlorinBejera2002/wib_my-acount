@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import icon from '@/assets/Icon.svg'
 import logo from '@/assets/logo.svg'
 import { ProfileAvatar } from '@/components/profile/profile-avatar'
@@ -40,30 +41,31 @@ import { useLocation, useNavigate } from 'react-router-dom'
 
 const navItems = [
   {
-    label: 'Panou Principal',
+    labelKey: 'nav.dashboard',
     href: '/dashboard',
     icon: LayoutDashboard
   },
   {
-    label: 'Cotații',
+    labelKey: 'nav.quotes',
     href: '/quotes',
     icon: ClipboardList,
     countKey: 'totalQuotes' as const
   },
   {
-    label: 'Polițe',
+    labelKey: 'nav.policies',
     href: '/policies',
     icon: FileText,
     countKey: 'activePolicies' as const
   },
   {
-    label: 'Alerte expirare',
+    labelKey: 'nav.expiryAlerts',
     href: '/reminders',
     icon: Clock
   }
 ]
 
 export function AppSidebar() {
+  const { t } = useTranslation()
   const location = useLocation()
   const navigate = useNavigate()
   const user = useAuthStore((s) => s.user)
@@ -98,7 +100,7 @@ export function AppSidebar() {
       <SidebarContent className="px-3 group-data-[collapsible=icon]:px-2 overflow-auto hide-scrollbar pt-2">
         <SidebarGroup className="space-y-1 p-0">
           <SidebarGroupLabel className="text-[11px] font-semibold uppercase tracking-wider text-gray-400 px-3 py-2 group-data-[collapsible=icon]:hidden">
-            Navigare
+            {t('nav.navigation')}
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className="space-y-0.5">
@@ -112,11 +114,11 @@ export function AppSidebar() {
                     <SidebarMenuButton
                       isActive={isActive}
                       onClick={() => navigate(item.href)}
-                      tooltip={item.label}
+                      tooltip={t(item.labelKey)}
                     >
                       <item.icon className="min-w-5 min-h-5 group-data-[collapsible=icon]:h-5 group-data-[collapsible=icon]:w-5" />
                       <span className="flex-1 font-medium group-data-[collapsible=icon]:hidden">
-                        {item.label}
+                        {t(item.labelKey)}
                       </span>
                       {count !== undefined && (
                         <Badge className="ml-auto h-5 min-w-[20px] justify-center rounded-full bg-accent-green/15 px-1.5 text-[11px] font-semibold text-accent-green group-data-[collapsible=icon]:hidden">
@@ -167,7 +169,7 @@ export function AppSidebar() {
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => navigate('/profile')}>
               <User className="mr-2 h-4 w-4" />
-              Contul meu
+              {t('nav.myAccount')}
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
@@ -175,7 +177,7 @@ export function AppSidebar() {
               className="text-red-600 focus:text-red-600 focus:bg-red-50"
             >
               <LogOut className="mr-2 h-4 w-4" />
-              Deconectare
+              {t('nav.logout')}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

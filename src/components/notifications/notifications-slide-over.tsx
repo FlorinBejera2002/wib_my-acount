@@ -5,6 +5,7 @@ import { useNotifications } from '@/hooks/use-notifications'
 import { formatDate } from '@/lib/utils'
 import { Bell, Check, Trash2, X } from 'lucide-react'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 interface NotificationsSlideOverProps {
   open: boolean
@@ -15,6 +16,7 @@ export function NotificationsSlideOver({
   open,
   onOpenChange
 }: NotificationsSlideOverProps) {
+  const { t } = useTranslation()
   const { data: notifications, isLoading } = useNotifications()
   const [filter, setFilter] = useState<'all' | 'unread' | 'read'>('all')
 
@@ -61,9 +63,9 @@ export function NotificationsSlideOver({
             <div className="flex items-center gap-3">
               <Bell className="h-5 w-5" />
               <div>
-                <h2 className="font-semibold text-gray-900">Notificări</h2>
+                <h2 className="font-semibold text-gray-900">{t('notifications.title')}</h2>
                 <p className="text-xs text-gray-500">
-                  {unreadCount > 0 ? `${unreadCount} necitite` : 'Toate citite'}
+                  {unreadCount > 0 ? t('notifications.unreadCount', { count: unreadCount }) : t('notifications.allRead')}
                 </p>
               </div>
             </div>
@@ -84,7 +86,7 @@ export function NotificationsSlideOver({
               onClick={() => setFilter('all')}
               className="flex-1"
             >
-              Toate
+              {t('notifications.all')}
             </Button>
             <Button
               variant={filter === 'unread' ? 'default' : 'outline'}
@@ -92,7 +94,7 @@ export function NotificationsSlideOver({
               onClick={() => setFilter('unread')}
               className="flex-1"
             >
-              Necitite
+              {t('notifications.unread')}
             </Button>
             <Button
               variant={filter === 'read' ? 'default' : 'outline'}
@@ -100,7 +102,7 @@ export function NotificationsSlideOver({
               onClick={() => setFilter('read')}
               className="flex-1"
             >
-              Citite
+              {t('notifications.read')}
             </Button>
           </div>
 
@@ -129,10 +131,10 @@ export function NotificationsSlideOver({
                   <Bell className="h-8 w-8 text-gray-400 mx-auto mb-3" />
                   <p className="text-sm text-gray-500">
                     {filter === 'unread'
-                      ? 'Nu există notificări necitite'
+                      ? t('notifications.noUnread')
                       : filter === 'read'
-                        ? 'Nu există notificări citite'
-                        : 'Nu există notificări'}
+                        ? t('notifications.noRead')
+                        : t('notifications.noNotifications')}
                   </p>
                 </div>
               ) : (
@@ -218,7 +220,7 @@ export function NotificationsSlideOver({
                   className="w-full"
                 >
                   <Check className="h-4 w-4 mr-2" />
-                  Marchează toate ca fiind citite
+                  {t('notifications.markAllRead')}
                 </Button>
               </div>
             </>

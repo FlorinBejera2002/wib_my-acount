@@ -1,4 +1,5 @@
 import type { PaginatedResponse, Quote, TableParams } from '@/api/types'
+import i18n from '@/lib/i18n'
 import { delay, paginateMock } from '@/lib/utils'
 import { mockQuotes } from '@/mocks/quotes'
 import { useQuery } from '@tanstack/react-query'
@@ -21,7 +22,7 @@ const fetchQuote = async (id: string): Promise<Quote> => {
 
   await delay(400)
   const quote = mockQuotes.find((q) => q.id === id)
-  if (!quote) throw new Error('Cotația nu a fost găsită')
+  if (!quote) throw new Error(i18n.t('toast.quoteNotFound'))
   return quote
 }
 

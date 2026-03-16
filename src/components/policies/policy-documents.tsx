@@ -2,12 +2,13 @@ import type { PolicyDocument } from '@/api/types'
 import { Button } from '@/components/ui/button'
 import { formatFileSize } from '@/lib/utils'
 import { FileDown, FileText } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
-const typeLabels: Record<PolicyDocument['type'], string> = {
-  POLICY: 'Poliță',
-  CERTIFICATE: 'Certificat',
-  GREEN_CARD: 'Carte Verde',
-  RECEIPT: 'Chitanță'
+const typeKeys: Record<PolicyDocument['type'], string> = {
+  POLICY: 'policyDocType.POLICY',
+  CERTIFICATE: 'policyDocType.CERTIFICATE',
+  GREEN_CARD: 'policyDocType.GREEN_CARD',
+  RECEIPT: 'policyDocType.RECEIPT'
 }
 
 interface PolicyDocumentsProps {
@@ -15,10 +16,12 @@ interface PolicyDocumentsProps {
 }
 
 export function PolicyDocuments({ documents }: PolicyDocumentsProps) {
+  const { t } = useTranslation()
+
   if (documents.length === 0) {
     return (
       <p className="text-sm text-muted-foreground">
-        Nu sunt documente disponibile
+        {t('policies.noDocuments')}
       </p>
     )
   }
@@ -35,7 +38,7 @@ export function PolicyDocuments({ documents }: PolicyDocumentsProps) {
             <div>
               <p className="text-sm font-medium">{doc.name}</p>
               <p className="text-xs text-muted-foreground">
-                {typeLabels[doc.type]} · {formatFileSize(doc.size)}
+                {t(typeKeys[doc.type])} · {formatFileSize(doc.size)}
               </p>
             </div>
           </div>

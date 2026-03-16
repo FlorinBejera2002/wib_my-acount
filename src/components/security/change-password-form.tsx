@@ -15,14 +15,17 @@ import {
 } from '@/lib/validators'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { PasswordStrength } from './password-strength'
 
 export function ChangePasswordForm() {
+  const { t } = useTranslation()
   const [showOld, setShowOld] = useState(false)
   const [showNew, setShowNew] = useState(false)
   const changePassword = useChangePassword()
+  const schema = useMemo(() => changePasswordSchema(t), [t])
 
   const {
     register,
@@ -31,7 +34,7 @@ export function ChangePasswordForm() {
     reset,
     formState: { errors }
   } = useForm<ChangePasswordFormValues>({
-    resolver: zodResolver(changePasswordSchema),
+    resolver: zodResolver(schema),
     defaultValues: {
       oldPassword: '',
       newPassword: '',
@@ -50,15 +53,15 @@ export function ChangePasswordForm() {
   return (
     <Card className="shadow-sm">
       <CardHeader>
-        <CardTitle>Schimbă parola</CardTitle>
+        <CardTitle>{t('security.changePassword')}</CardTitle>
         <CardDescription>
-          Actualizează-ți parola pentru a menține contul securizat
+          {t('security.changePasswordSubtitle')}
         </CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="oldPassword">Parola actuală</Label>
+            <Label htmlFor="oldPassword">{t('security.currentPassword')}</Label>
             <div className="relative">
               <Input
                 id="oldPassword"
@@ -87,7 +90,7 @@ export function ChangePasswordForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="newPassword">Parola nouă</Label>
+            <Label htmlFor="newPassword">{t('security.newPassword')}</Label>
             <div className="relative">
               <Input
                 id="newPassword"
@@ -117,7 +120,7 @@ export function ChangePasswordForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="confirmPassword">Confirmă parola nouă</Label>
+            <Label htmlFor="confirmPassword">{t('security.confirmNewPassword')}</Label>
             <Input
               id="confirmPassword"
               type="password"
@@ -135,10 +138,10 @@ export function ChangePasswordForm() {
               {changePassword.isPending ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Se schimbă...
+                  {t('security.changing')}
                 </>
               ) : (
-                'Schimbă parola'
+                t('security.changePasswordBtn')
               )}
             </Button>
           </div>

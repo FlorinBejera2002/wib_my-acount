@@ -1,133 +1,141 @@
+import type { TFunction } from 'i18next'
 import { z } from 'zod'
 
-export const loginSchema = z.object({
-  email: z
-    .string()
-    .min(1, 'Adresa de email este obligatorie')
-    .email('Adresa de email nu este validă'),
-  password: z.string().min(1, 'Parola este obligatorie')
-})
-
-export type LoginFormValues = z.infer<typeof loginSchema>
-
-export const twoFactorSchema = z.object({
-  code: z
-    .string()
-    .length(6, 'Codul trebuie să aibă 6 cifre')
-    .regex(/^\d{6}$/, 'Codul trebuie să conțină doar cifre')
-})
-
-export type TwoFactorFormValues = z.infer<typeof twoFactorSchema>
-
-export const registerSchema = z
-  .object({
-    firstName: z
-      .string()
-      .min(2, 'Prenumele trebuie să aibă cel puțin 2 caractere')
-      .max(50, 'Prenumele nu poate depăși 50 de caractere'),
-    lastName: z
-      .string()
-      .min(2, 'Numele trebuie să aibă cel puțin 2 caractere')
-      .max(50, 'Numele nu poate depăși 50 de caractere'),
+export const loginSchema = (t: TFunction) =>
+  z.object({
     email: z
       .string()
-      .min(1, 'Adresa de email este obligatorie')
-      .email('Adresa de email nu este validă'),
+      .min(1, t('validation.emailRequired'))
+      .email(t('validation.emailInvalid')),
+    password: z.string().min(1, t('validation.passwordRequired'))
+  })
+
+export type LoginFormValues = z.infer<ReturnType<typeof loginSchema>>
+
+export const twoFactorSchema = (t: TFunction) =>
+  z.object({
+    code: z
+      .string()
+      .length(6, t('validation.codeLength'))
+      .regex(/^\d{6}$/, t('validation.codeDigitsOnly'))
+  })
+
+export type TwoFactorFormValues = z.infer<ReturnType<typeof twoFactorSchema>>
+
+export const registerSchema = (t: TFunction) =>
+  z
+    .object({
+      firstName: z
+        .string()
+        .min(2, t('validation.firstNameMin'))
+        .max(50, t('validation.firstNameMax')),
+      lastName: z
+        .string()
+        .min(2, t('validation.lastNameMin'))
+        .max(50, t('validation.lastNameMax')),
+      email: z
+        .string()
+        .min(1, t('validation.emailRequired'))
+        .email(t('validation.emailInvalid')),
+      phone: z
+        .string()
+        .regex(
+          /^\+40[0-9]{9}$/,
+          t('validation.phoneFormat')
+        ),
+      password: z
+        .string()
+        .min(12, t('validation.passwordMin'))
+        .regex(/[A-Z]/, t('validation.passwordUppercase'))
+        .regex(/[a-z]/, t('validation.passwordLowercase'))
+        .regex(/[0-9]/, t('validation.passwordDigit'))
+        .regex(
+          /[^A-Za-z0-9]/,
+          t('validation.passwordSpecial')
+        ),
+      confirmPassword: z.string().min(1, t('validation.confirmPasswordRequired'))
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: t('validation.passwordsDoNotMatch'),
+      path: ['confirmPassword']
+    })
+
+export type RegisterFormValues = z.infer<ReturnType<typeof registerSchema>>
+
+export const forgotPasswordSchema = (t: TFunction) =>
+  z.object({
+    email: z
+      .string()
+      .min(1, t('validation.emailRequired'))
+      .email(t('validation.emailInvalid'))
+  })
+
+export type ForgotPasswordFormValues = z.infer<ReturnType<typeof forgotPasswordSchema>>
+
+export const resetPasswordSchema = (t: TFunction) =>
+  z
+    .object({
+      newPassword: z
+        .string()
+        .min(12, t('validation.passwordMin'))
+        .regex(/[A-Z]/, t('validation.passwordUppercase'))
+        .regex(/[a-z]/, t('validation.passwordLowercase'))
+        .regex(/[0-9]/, t('validation.passwordDigit'))
+        .regex(
+          /[^A-Za-z0-9]/,
+          t('validation.passwordSpecial')
+        ),
+      confirmPassword: z.string().min(1, t('validation.confirmPasswordRequired'))
+    })
+    .refine((data) => data.newPassword === data.confirmPassword, {
+      message: t('validation.passwordsDoNotMatch'),
+      path: ['confirmPassword']
+    })
+
+export type ResetPasswordFormValues = z.infer<ReturnType<typeof resetPasswordSchema>>
+
+export const changePasswordSchema = (t: TFunction) =>
+  z
+    .object({
+      oldPassword: z.string().min(1, t('validation.currentPasswordRequired')),
+      newPassword: z
+        .string()
+        .min(12, t('validation.newPasswordMin'))
+        .regex(/[A-Z]/, t('validation.passwordUppercase'))
+        .regex(/[a-z]/, t('validation.passwordLowercase'))
+        .regex(/[0-9]/, t('validation.passwordDigit'))
+        .regex(
+          /[^A-Za-z0-9]/,
+          t('validation.passwordSpecial')
+        ),
+      confirmPassword: z.string().min(1, t('validation.confirmPasswordRequired'))
+    })
+    .refine((data) => data.newPassword === data.confirmPassword, {
+      message: t('validation.passwordsDoNotMatch'),
+      path: ['confirmPassword']
+    })
+
+export type ChangePasswordFormValues = z.infer<ReturnType<typeof changePasswordSchema>>
+
+export const updateProfileSchema = (t: TFunction) =>
+  z.object({
+    firstName: z
+      .string()
+      .min(2, t('validation.firstNameMin'))
+      .max(50, t('validation.firstNameMax')),
+    lastName: z
+      .string()
+      .min(2, t('validation.lastNameMin'))
+      .max(50, t('validation.lastNameMax')),
     phone: z
       .string()
       .regex(
         /^\+40[0-9]{9}$/,
-        'Numărul de telefon trebuie să fie în format +40XXXXXXXXX'
-      ),
-    password: z
-      .string()
-      .min(12, 'Parola trebuie să aibă cel puțin 12 caractere')
-      .regex(/[A-Z]/, 'Parola trebuie să conțină cel puțin o majusculă')
-      .regex(/[a-z]/, 'Parola trebuie să conțină cel puțin o minusculă')
-      .regex(/[0-9]/, 'Parola trebuie să conțină cel puțin o cifră')
-      .regex(
-        /[^A-Za-z0-9]/,
-        'Parola trebuie să conțină cel puțin un caracter special'
-      ),
-    confirmPassword: z.string().min(1, 'Confirmarea parolei este obligatorie')
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: 'Parolele nu coincid',
-    path: ['confirmPassword']
+        t('validation.phoneFormat')
+      )
   })
 
-export type RegisterFormValues = z.infer<typeof registerSchema>
-
-export const forgotPasswordSchema = z.object({
-  email: z
-    .string()
-    .min(1, 'Adresa de email este obligatorie')
-    .email('Adresa de email nu este validă')
-})
-
-export type ForgotPasswordFormValues = z.infer<typeof forgotPasswordSchema>
-
-export const resetPasswordSchema = z
-  .object({
-    newPassword: z
-      .string()
-      .min(12, 'Parola trebuie să aibă cel puțin 12 caractere')
-      .regex(/[A-Z]/, 'Parola trebuie să conțină cel puțin o majusculă')
-      .regex(/[a-z]/, 'Parola trebuie să conțină cel puțin o minusculă')
-      .regex(/[0-9]/, 'Parola trebuie să conțină cel puțin o cifră')
-      .regex(
-        /[^A-Za-z0-9]/,
-        'Parola trebuie să conțină cel puțin un caracter special'
-      ),
-    confirmPassword: z.string().min(1, 'Confirmarea parolei este obligatorie')
-  })
-  .refine((data) => data.newPassword === data.confirmPassword, {
-    message: 'Parolele nu coincid',
-    path: ['confirmPassword']
-  })
-
-export type ResetPasswordFormValues = z.infer<typeof resetPasswordSchema>
-
-export const changePasswordSchema = z
-  .object({
-    oldPassword: z.string().min(1, 'Parola actuală este obligatorie'),
-    newPassword: z
-      .string()
-      .min(12, 'Parola nouă trebuie să aibă cel puțin 12 caractere')
-      .regex(/[A-Z]/, 'Parola trebuie să conțină cel puțin o majusculă')
-      .regex(/[a-z]/, 'Parola trebuie să conțină cel puțin o minusculă')
-      .regex(/[0-9]/, 'Parola trebuie să conțină cel puțin o cifră')
-      .regex(
-        /[^A-Za-z0-9]/,
-        'Parola trebuie să conțină cel puțin un caracter special'
-      ),
-    confirmPassword: z.string().min(1, 'Confirmarea parolei este obligatorie')
-  })
-  .refine((data) => data.newPassword === data.confirmPassword, {
-    message: 'Parolele nu coincid',
-    path: ['confirmPassword']
-  })
-
-export type ChangePasswordFormValues = z.infer<typeof changePasswordSchema>
-
-export const updateProfileSchema = z.object({
-  firstName: z
-    .string()
-    .min(2, 'Prenumele trebuie să aibă cel puțin 2 caractere')
-    .max(50, 'Prenumele nu poate depăși 50 de caractere'),
-  lastName: z
-    .string()
-    .min(2, 'Numele trebuie să aibă cel puțin 2 caractere')
-    .max(50, 'Numele nu poate depăși 50 de caractere'),
-  phone: z
-    .string()
-    .regex(
-      /^\+40[0-9]{9}$/,
-      'Numărul de telefon trebuie să fie în format +40XXXXXXXXX'
-    )
-})
-
-export type UpdateProfileFormValues = z.infer<typeof updateProfileSchema>
+export type UpdateProfileFormValues = z.infer<ReturnType<typeof updateProfileSchema>>
 
 export const notificationSettingsSchema = z.object({
   quotes: z.boolean(),
@@ -141,30 +149,31 @@ export type NotificationSettingsFormValues = z.infer<
 
 export const preferencesSchema = z.object({
   language: z.enum(['ro', 'en']),
-  timezone: z.string().min(1, 'Fusul orar este obligatoriu')
+  timezone: z.string().min(1, 'Timezone is required')
 })
 
 export type PreferencesFormValues = z.infer<typeof preferencesSchema>
 
-export const createExpiryAlertSchema = z.object({
-  alertType: z.enum([
-    'RCA', 'ASR', 'CALATORIE', 'LOCUINTA_PAD', 'LOCUINTA_OPTIONALA',
-    'CASCO', 'ROVINIETA', 'ITP', 'REVIZIE_AUTO', 'PERMIS',
-    'BULETIN', 'PASAPORT', 'ZIUA_SOTIEI'
-  ], {
-    required_error: 'Selectați tipul alertei'
-  }),
-  notifyBefore: z.enum([
-    '1_DAY', '3_DAYS', '7_DAYS', '1_MONTH', '2_MONTHS', '3_MONTHS', '6_MONTHS'
-  ], {
-    required_error: 'Selectați intervalul de notificare'
-  }),
-  licensePlate: z.string().optional().or(z.literal('')),
-  name: z.string().optional().or(z.literal('')),
-  shortAddress: z.string().optional().or(z.literal('')),
-  expiryDate: z
-    .string()
-    .min(1, 'Data expirare este obligatorie')
-})
+export const createExpiryAlertSchema = (t: TFunction) =>
+  z.object({
+    alertType: z.enum([
+      'RCA', 'ASR', 'CALATORIE', 'LOCUINTA_PAD', 'LOCUINTA_OPTIONALA',
+      'CASCO', 'ROVINIETA', 'ITP', 'REVIZIE_AUTO', 'PERMIS',
+      'BULETIN', 'PASAPORT', 'ZIUA_SOTIEI'
+    ], {
+      required_error: t('validation.selectAlertType')
+    }),
+    notifyBefore: z.enum([
+      '1_DAY', '3_DAYS', '7_DAYS', '1_MONTH', '2_MONTHS', '3_MONTHS', '6_MONTHS'
+    ], {
+      required_error: t('validation.selectNotifyInterval')
+    }),
+    licensePlate: z.string().optional().or(z.literal('')),
+    name: z.string().optional().or(z.literal('')),
+    shortAddress: z.string().optional().or(z.literal('')),
+    expiryDate: z
+      .string()
+      .min(1, t('validation.expiryDateRequired'))
+  })
 
-export type CreateExpiryAlertFormValues = z.infer<typeof createExpiryAlertSchema>
+export type CreateExpiryAlertFormValues = z.infer<ReturnType<typeof createExpiryAlertSchema>>

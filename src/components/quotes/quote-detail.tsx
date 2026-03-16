@@ -21,24 +21,8 @@ import {
   Shield
 } from 'lucide-react'
 import { Link, useParams } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { QuoteDocuments } from './quote-documents'
-
-const typeLabels: Record<string, string> = {
-  RCA: 'RCA',
-  CASCO: 'CASCO',
-  CASCO_ECONOM: 'CASCO Econom',
-  LOCUINTA_PAD: 'Locuință PAD',
-  LOCUINTA_FACULTATIVA: 'Locuință Facultativă',
-  CALATORIE: 'Călătorie',
-  VIATA: 'Viață',
-  ASISTENTA_RUTIERA: 'Asistență Rutieră',
-  MALPRAXIS: 'Malpraxis',
-  SANATATE: 'Sănătate',
-  ACCIDENTE_CALATORI: 'Accidente Călători',
-  ACCIDENTE_PERSOANE: 'Accidente Persoane',
-  ACCIDENTE_TAXI: 'Accidente Taxi',
-  CMR: 'CMR'
-}
 
 const typeConfig: Record<
   string,
@@ -118,25 +102,25 @@ const typeConfig: Record<
 
 const statusConfig: Record<
   QuoteStatus,
-  { label: string; dot: string; text: string }
+  { labelKey: string; dot: string; text: string }
 > = {
   ACTIVE: {
-    label: 'Activă',
+    labelKey: 'quoteStatus.ACTIVE',
     dot: 'bg-accent-green',
     text: 'text-accent-green'
   },
   EXPIRED: {
-    label: 'Expirată',
+    labelKey: 'quoteStatus.EXPIRED',
     dot: 'bg-red-500',
     text: 'text-red-600'
   },
   CONVERTED: {
-    label: 'Acceptată',
+    labelKey: 'quoteStatus.CONVERTED',
     dot: 'bg-purple-500',
     text: 'text-purple-600'
   },
   DRAFT: {
-    label: 'Schiță',
+    labelKey: 'quoteStatus.DRAFT',
     dot: 'bg-gray-400',
     text: 'text-gray-500'
   }
@@ -149,6 +133,7 @@ const defaultType = {
 }
 
 export function QuoteDetail() {
+  const { t } = useTranslation()
   const { id } = useParams<{ id: string }>()
   const { data: quote, isLoading, isError } = useQuote(id!)
 
@@ -189,9 +174,9 @@ export function QuoteDetail() {
   if (isError || !quote) {
     return (
       <div className="flex flex-col items-center gap-4 py-16">
-        <p className="text-lg font-medium">Cotația nu a fost găsită</p>
+        <p className="text-lg font-medium">{t('quotes.notFound')}</p>
         <Button asChild={true} variant="outline">
-          <Link to="/quotes">Înapoi la cotații</Link>
+          <Link to="/quotes">{t('quotes.backToQuotes')}</Link>
         </Button>
       </div>
     )
@@ -199,6 +184,7 @@ export function QuoteDetail() {
 
   const type = typeConfig[quote.type] || defaultType
   const status = statusConfig[quote.status]
+  const typeLabel = t(`insuranceType.${quote.type}`)
 
   return (
     <div className="space-y-6">
@@ -220,11 +206,11 @@ export function QuoteDetail() {
                 type.badge
               )}
             >
-              {typeLabels[quote.type]}
+              {typeLabel}
             </span>
           </div>
           <p className="text-sm text-gray-400">
-            Cotație {typeLabels[quote.type]}
+            {t('quotes.quoteType', { type: typeLabel })}
           </p>
         </div>
         <span
@@ -234,7 +220,7 @@ export function QuoteDetail() {
           )}
         >
           <span className={cn('h-2 w-2 rounded-full', status.dot)} />
-          {status.label}
+          {t(status.labelKey)}
         </span>
       </div>
 
@@ -255,10 +241,10 @@ export function QuoteDetail() {
                 </div>
                 <div>
                   <h3 className="text-base font-semibold text-gray-900">
-                    Detalii cotație
+                    {t('quotes.detailsTitle')}
                   </h3>
                   <p className="text-sm text-gray-400">
-                    Informații generale despre ofertă
+                    {t('quotes.detailsSubtitle')}
                   </p>
                 </div>
               </div>
@@ -276,7 +262,7 @@ export function QuoteDetail() {
                 </div>
                 <div className="flex-1">
                   <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Primă de asigurare
+                    {t('quotes.insurancePremium')}
                   </p>
                   <p className="text-xl font-bold text-gray-900 mt-0.5">
                     {formatCurrency(quote.premium)}
@@ -292,7 +278,7 @@ export function QuoteDetail() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Asigurător
+                      {t('quotes.insurer')}
                     </p>
                     <p className="text-sm font-semibold text-gray-900 mt-0.5 truncate">
                       {quote.insurerName}
@@ -310,7 +296,7 @@ export function QuoteDetail() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Obiect asigurat
+                        {t('quotes.insuredObjectLabel')}
                       </p>
                       <p className="text-sm font-semibold text-gray-900 mt-0.5 truncate">
                         {quote.vehicleOrProperty}
@@ -328,7 +314,7 @@ export function QuoteDetail() {
                   </div>
                   <div className="flex-1">
                     <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Perioadă valabilitate
+                      {t('quotes.validityPeriod')}
                     </p>
                     <p className="text-sm font-semibold text-gray-900 mt-0.5">
                       {formatDate(quote.validFrom)} —{' '}
@@ -343,7 +329,7 @@ export function QuoteDetail() {
                   </div>
                   <div className="flex-1">
                     <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Data creare
+                      {t('quotes.createdDate')}
                     </p>
                     <p className="text-sm font-semibold text-gray-900 mt-0.5">
                       {formatDate(quote.createdAt)}
@@ -364,10 +350,10 @@ export function QuoteDetail() {
               </div>
               <div>
                 <CardTitle className="text-base font-semibold">
-                  Documente
+                  {t('quotes.documents')}
                 </CardTitle>
                 <CardDescription>
-                  Fișiere asociate acestei cotații
+                  {t('quotes.documentsSubtitle')}
                 </CardDescription>
               </div>
             </div>

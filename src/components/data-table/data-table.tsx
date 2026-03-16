@@ -15,6 +15,7 @@ import {
   useReactTable
 } from '@tanstack/react-table'
 import { AlertCircle, Inbox } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -33,6 +34,7 @@ export function DataTable<TData, TValue>({
   onRetry,
   onRowClick
 }: DataTableProps<TData, TValue>) {
+  const { t } = useTranslation()
   const table = useReactTable({
     data,
     columns,
@@ -77,15 +79,15 @@ export function DataTable<TData, TValue>({
         <AlertCircle className="h-12 w-12 text-destructive" />
         <div className="text-center">
           <p className="font-medium text-foreground">
-            A apărut o eroare la încărcarea datelor
+            {t('common.error')}
           </p>
           <p className="text-sm text-muted-foreground">
-            Te rugăm să încerci din nou
+            {t('common.tryAgain')}
           </p>
         </div>
         {onRetry && (
           <Button variant="outline" onClick={onRetry}>
-            Încearcă din nou
+            {t('common.retry')}
           </Button>
         )}
       </div>
@@ -132,7 +134,7 @@ export function DataTable<TData, TValue>({
                 <div className="flex flex-col items-center gap-2">
                   <Inbox className="h-10 w-10 text-muted-foreground/50" />
                   <p className="text-muted-foreground">
-                    Nu au fost găsite rezultate
+                    {t('common.noResults')}
                   </p>
                 </div>
               </TableCell>
