@@ -15,9 +15,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
-import { Separator } from '@/components/ui/separator'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Switch } from '@/components/ui/switch'
 import { useProfile, useUpdatePreferences } from '@/hooks/use-user'
 import { Loader2 } from 'lucide-react'
 import { Controller, useForm } from 'react-hook-form'
@@ -85,94 +83,6 @@ export function PreferencesForm() {
                       <SelectItem value="en">English</SelectItem>
                     </SelectContent>
                   </Select>
-                )}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>Fus orar</Label>
-              <Controller
-                control={control}
-                name="timezone"
-                render={({ field }) => (
-                  <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Europe/Bucharest">
-                        Europa/București (EET)
-                      </SelectItem>
-                      <SelectItem value="Europe/London">
-                        Europa/Londra (GMT)
-                      </SelectItem>
-                      <SelectItem value="Europe/Berlin">
-                        Europa/Berlin (CET)
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                )}
-              />
-            </div>
-          </div>
-
-          <Separator />
-
-          <div className="space-y-4">
-            <h4 className="text-sm font-medium">Notificări email</h4>
-
-            <div className="flex items-center justify-between">
-              <div>
-                <Label>Cotații noi</Label>
-                <p className="text-sm text-muted-foreground">
-                  Primește notificări când o cotație nouă este disponibilă
-                </p>
-              </div>
-              <Controller
-                control={control}
-                name="notifications.quotes"
-                render={({ field }) => (
-                  <Switch
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                )}
-              />
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div>
-                <Label>Expirare polițe</Label>
-                <p className="text-sm text-muted-foreground">
-                  Primește alerte când o poliță urmează să expire
-                </p>
-              </div>
-              <Controller
-                control={control}
-                name="notifications.policiesExpiry"
-                render={({ field }) => (
-                  <Switch
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                )}
-              />
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div>
-                <Label>Marketing</Label>
-                <p className="text-sm text-muted-foreground">
-                  Primește oferte speciale și noutăți
-                </p>
-              </div>
-              <Controller
-                control={control}
-                name="notifications.marketing"
-                render={({ field }) => (
-                  <Switch
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
                 )}
               />
             </div>

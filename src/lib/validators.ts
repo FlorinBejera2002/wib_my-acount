@@ -19,6 +19,75 @@ export const twoFactorSchema = z.object({
 
 export type TwoFactorFormValues = z.infer<typeof twoFactorSchema>
 
+export const registerSchema = z
+  .object({
+    firstName: z
+      .string()
+      .min(2, 'Prenumele trebuie să aibă cel puțin 2 caractere')
+      .max(50, 'Prenumele nu poate depăși 50 de caractere'),
+    lastName: z
+      .string()
+      .min(2, 'Numele trebuie să aibă cel puțin 2 caractere')
+      .max(50, 'Numele nu poate depăși 50 de caractere'),
+    email: z
+      .string()
+      .min(1, 'Adresa de email este obligatorie')
+      .email('Adresa de email nu este validă'),
+    phone: z
+      .string()
+      .regex(
+        /^\+40[0-9]{9}$/,
+        'Numărul de telefon trebuie să fie în format +40XXXXXXXXX'
+      ),
+    password: z
+      .string()
+      .min(12, 'Parola trebuie să aibă cel puțin 12 caractere')
+      .regex(/[A-Z]/, 'Parola trebuie să conțină cel puțin o majusculă')
+      .regex(/[a-z]/, 'Parola trebuie să conțină cel puțin o minusculă')
+      .regex(/[0-9]/, 'Parola trebuie să conțină cel puțin o cifră')
+      .regex(
+        /[^A-Za-z0-9]/,
+        'Parola trebuie să conțină cel puțin un caracter special'
+      ),
+    confirmPassword: z.string().min(1, 'Confirmarea parolei este obligatorie')
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: 'Parolele nu coincid',
+    path: ['confirmPassword']
+  })
+
+export type RegisterFormValues = z.infer<typeof registerSchema>
+
+export const forgotPasswordSchema = z.object({
+  email: z
+    .string()
+    .min(1, 'Adresa de email este obligatorie')
+    .email('Adresa de email nu este validă')
+})
+
+export type ForgotPasswordFormValues = z.infer<typeof forgotPasswordSchema>
+
+export const resetPasswordSchema = z
+  .object({
+    newPassword: z
+      .string()
+      .min(12, 'Parola trebuie să aibă cel puțin 12 caractere')
+      .regex(/[A-Z]/, 'Parola trebuie să conțină cel puțin o majusculă')
+      .regex(/[a-z]/, 'Parola trebuie să conțină cel puțin o minusculă')
+      .regex(/[0-9]/, 'Parola trebuie să conțină cel puțin o cifră')
+      .regex(
+        /[^A-Za-z0-9]/,
+        'Parola trebuie să conțină cel puțin un caracter special'
+      ),
+    confirmPassword: z.string().min(1, 'Confirmarea parolei este obligatorie')
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: 'Parolele nu coincid',
+    path: ['confirmPassword']
+  })
+
+export type ResetPasswordFormValues = z.infer<typeof resetPasswordSchema>
+
 export const changePasswordSchema = z
   .object({
     oldPassword: z.string().min(1, 'Parola actuală este obligatorie'),
@@ -76,3 +145,26 @@ export const preferencesSchema = z.object({
 })
 
 export type PreferencesFormValues = z.infer<typeof preferencesSchema>
+
+export const createExpiryAlertSchema = z.object({
+  alertType: z.enum([
+    'RCA', 'ASR', 'CALATORIE', 'LOCUINTA_PAD', 'LOCUINTA_OPTIONALA',
+    'CASCO', 'ROVINIETA', 'ITP', 'REVIZIE_AUTO', 'PERMIS',
+    'BULETIN', 'PASAPORT', 'ZIUA_SOTIEI'
+  ], {
+    required_error: 'Selectați tipul alertei'
+  }),
+  notifyBefore: z.enum([
+    '1_DAY', '3_DAYS', '7_DAYS', '1_MONTH', '2_MONTHS', '3_MONTHS', '6_MONTHS'
+  ], {
+    required_error: 'Selectați intervalul de notificare'
+  }),
+  licensePlate: z.string().optional().or(z.literal('')),
+  name: z.string().optional().or(z.literal('')),
+  shortAddress: z.string().optional().or(z.literal('')),
+  expiryDate: z
+    .string()
+    .min(1, 'Data expirare este obligatorie')
+})
+
+export type CreateExpiryAlertFormValues = z.infer<typeof createExpiryAlertSchema>

@@ -1,16 +1,22 @@
 export const ENDPOINTS = {
   AUTH: {
     LOGIN: '/auth/login',
+    REGISTER: '/auth/register',
     TWO_FACTOR: '/auth/two-factor',
     REFRESH: '/auth/refresh',
-    LOGOUT: '/auth/logout'
+    LOGOUT: '/auth/logout',
+    FORGOT_PASSWORD: '/auth/forgot-password',
+    RESET_PASSWORD: '/auth/reset-password',
+    VERIFY_RESET_CODE: '/auth/verify-reset-code'
   },
   USERS: {
     PROFILE: '/user/profile',
     UPDATE_PROFILE: '/user/profile',
     UPDATE_PREFERENCES: '/user/preferences',
     CHANGE_PASSWORD: '/user/password',
-    UPLOAD_PHOTO: '/user/profile/photo'
+    UPLOAD_PHOTO: '/user/profile/photo',
+    EXPORT_DATA: '/user/export-data',
+    DELETE_ACCOUNT: '/user/account'
   },
   QUOTES: {
     LIST: '/user/quotes',
@@ -28,7 +34,14 @@ export const ENDPOINTS = {
   NOTIFICATIONS: {
     LIST: '/user/notifications',
     MARK_READ: (id: string) => `/user/notifications/${id}/read`,
-    MARK_ALL_READ: '/user/notifications/read-all'
+    MARK_ALL_READ: '/user/notifications/read-all',
+    DELETE: (id: string) => `/user/notifications/${id}`
+  },
+  REMINDERS: {
+    LIST: '/user/reminders',
+    CREATE: '/user/reminders',
+    UPDATE: (id: string) => `/user/reminders/${id}`,
+    DELETE: (id: string) => `/user/reminders/${id}`
   },
   DASHBOARD: {
     STATS: '/user/dashboard/stats'

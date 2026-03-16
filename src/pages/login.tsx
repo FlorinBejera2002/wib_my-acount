@@ -1,6 +1,5 @@
 import logo from '@/assets/logo.svg'
 import { LoginForm } from '@/components/auth/login-form'
-import { LoginProgress } from '@/components/auth/login-progress'
 import { TwoFactorForm } from '@/components/auth/two-factor-form'
 import {
   Card,
@@ -14,7 +13,7 @@ import type { LoginFormValues } from '@/lib/validators'
 import { useAuthStore } from '@/stores/auth-store'
 import { CheckCircle2 } from 'lucide-react'
 import { useState } from 'react'
-import { Navigate } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
 
 type LoginStep = 'credentials' | 'two-factor' | 'success'
 
@@ -52,20 +51,13 @@ export default function LoginPage() {
     )
   }
 
-  const stepIndex = step === 'credentials' ? 0 : step === 'two-factor' ? 1 : 2
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-100 px-4">
       <div className="w-full max-w-xl space-y-6 rounded-lg bg-white p-12">
         <div className="text-center">
           <img src={logo} alt="asigurari.ro" className="mx-auto mb-4 h-10" />
-          <h1 className="text-xl font-bold text-gray-900">Bine ai venit!</h1>
-          <p className="mt-1 text-sm text-gray-400">
-            Autentifică-te în contul tău de asigurări
-          </p>
         </div>
-
-        <LoginProgress currentStep={stepIndex} />
 
         <Card className="shadow-sm">
           <CardHeader className="text-center">
@@ -124,6 +116,28 @@ export default function LoginPage() {
             )}
           </CardContent>
         </Card>
+
+        {step === 'credentials' && (
+          <div className="space-y-2 text-center">
+            <p className="text-sm text-gray-400">
+              Nu ai un cont?{' '}
+              <Link
+                to="/register"
+                className="font-medium text-accent-green hover:text-accent-green-hover transition-colors"
+              >
+                Creează un cont
+              </Link>
+            </p>
+            <p className="text-sm text-gray-400">
+              <Link
+                to="/forgot-password"
+                className="font-medium text-accent-green hover:text-accent-green-hover transition-colors"
+              >
+                Ai uitat parola?
+              </Link>
+            </p>
+          </div>
+        )}
 
         <p className="text-center text-xs text-gray-400">
           © Copyright 2026 Asigurari.ro - A Trading Style of Wilson Insurance

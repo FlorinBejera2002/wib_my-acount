@@ -8,6 +8,7 @@ export const mockPolicies: Policy[] = [
     status: 'ACTIVE',
     insurerName: 'Omniasig',
     vehicleOrProperty: 'Toyota Corolla 2021',
+    policyDetails: 'RCA 12 luni, Bonus-Malus B0',
     premium: 1200.0,
     currency: 'RON',
     startDate: '2025-09-01T00:00:00Z',
@@ -47,6 +48,7 @@ export const mockPolicies: Policy[] = [
     status: 'ACTIVE',
     insurerName: 'Groupama',
     vehicleOrProperty: 'Volkswagen Golf 8 2023',
+    policyDetails: 'CASCO Full, Franșiză 500 RON',
     premium: 4200.0,
     currency: 'RON',
     startDate: '2025-10-01T00:00:00Z',
@@ -79,6 +81,11 @@ export const mockPolicies: Policy[] = [
     status: 'ACTIVE',
     insurerName: 'Groupama',
     vehicleOrProperty: 'Casă P+1, Brașov',
+    policyDetails: 'Locuință facultativă, Acoperire integrală',
+    insuredPersons: [
+      { name: 'Daniel Radu', cnp: '1920615890123', role: 'Proprietar', documentUrl: '#' },
+      { name: 'Ana Radu', cnp: '2940720890124', role: 'Co-proprietar', documentUrl: '#' }
+    ],
     premium: 1350.0,
     currency: 'RON',
     startDate: '2025-08-15T00:00:00Z',
@@ -104,6 +111,7 @@ export const mockPolicies: Policy[] = [
     status: 'ACTIVE',
     insurerName: 'Allianz',
     vehicleOrProperty: 'BMW X5 2022',
+    policyDetails: 'RCA 6 luni, Bonus-Malus B2',
     premium: 1850.0,
     currency: 'RON',
     startDate: '2025-05-01T00:00:00Z',
@@ -135,6 +143,12 @@ export const mockPolicies: Policy[] = [
     status: 'EXPIRED',
     insurerName: 'Omniasig',
     vehicleOrProperty: 'Ski Austria, 5 zile',
+    policyDetails: 'Călătorie Europa, Acoperire medicală + bagaje',
+    insuredPersons: [
+      { name: 'Vlad Stoica', cnp: '1940922567890', role: 'Titular', documentUrl: '#' },
+      { name: 'Ioana Stoica', cnp: '2960115567891', role: 'Asigurat', documentUrl: '#' },
+      { name: 'Matei Stoica', cnp: '5180305567892', role: 'Asigurat', documentUrl: '#' }
+    ],
     premium: 180.0,
     currency: 'RON',
     startDate: '2025-02-10T00:00:00Z',
@@ -160,6 +174,7 @@ export const mockPolicies: Policy[] = [
     status: 'EXPIRED',
     insurerName: 'Euroins',
     vehicleOrProperty: 'Dacia Logan 2020',
+    policyDetails: 'RCA 6 luni, Bonus-Malus B4',
     premium: 980.0,
     currency: 'RON',
     startDate: '2024-10-01T00:00:00Z',
@@ -184,6 +199,7 @@ export const mockPolicies: Policy[] = [
     status: 'EXPIRED',
     insurerName: 'Generali',
     vehicleOrProperty: 'Renault Megane 2022',
+    policyDetails: 'CASCO Econom, Franșiză 1000 RON',
     premium: 3200.0,
     currency: 'RON',
     startDate: '2024-07-01T00:00:00Z',
@@ -208,6 +224,10 @@ export const mockPolicies: Policy[] = [
     status: 'CANCELLED',
     insurerName: 'Allianz',
     vehicleOrProperty: 'Ap. 2 camere, Iași',
+    policyDetails: 'PAD obligatoriu, Zona seismică II',
+    insuredPersons: [
+      { name: 'Ioana Barbu', cnp: '2960718456789', role: 'Proprietar', documentUrl: '#' }
+    ],
     premium: 450.0,
     currency: 'RON',
     startDate: '2025-01-01T00:00:00Z',
@@ -231,6 +251,7 @@ export const mockPolicies: Policy[] = [
     type: 'VIATA',
     status: 'ACTIVE',
     insurerName: 'Generali',
+    policyDetails: 'Viață, Sumă asigurată 100.000 EUR',
     premium: 3800.0,
     currency: 'RON',
     startDate: '2025-06-01T00:00:00Z',
@@ -252,6 +273,66 @@ export const mockPolicies: Policy[] = [
         type: 'CERTIFICATE',
         url: '#',
         size: 180000
+      }
+    ]
+  },
+  {
+    id: 'pol_010',
+    policyNumber: 'POL-2025-005687',
+    type: 'CALATORIE',
+    status: 'ACTIVE',
+    insurerName: 'Generali',
+    vehicleOrProperty: 'City break Praga, 4 zile',
+    policyDetails: 'Călătorie Europa, Acoperire medicală',
+    insuredPersons: [
+      { name: 'Simona Popa', cnp: '2930420901234', role: 'Titular', documentUrl: '#' },
+      { name: 'Radu Popa', cnp: '1910315901235', role: 'Asigurat', documentUrl: '#' }
+    ],
+    premium: 85.0,
+    currency: 'RON',
+    startDate: '2025-11-15T00:00:00Z',
+    endDate: '2025-11-19T00:00:00Z',
+    daysUntilExpiry: 10,
+    autoRenew: false,
+    createdAt: '2025-11-01T12:00:00Z',
+    sourceQuoteId: 'qt_009',
+    documents: [
+      {
+        id: 'pdoc_015',
+        name: 'Polița_Călătorie_POL-2025-005687.pdf',
+        type: 'POLICY',
+        url: '#',
+        size: 195000
+      }
+    ]
+  },
+  {
+    id: 'pol_011',
+    policyNumber: 'POL-2025-005688',
+    type: 'LOCUINTA_FACULTATIVA',
+    status: 'ACTIVE',
+    insurerName: 'Omniasig',
+    vehicleOrProperty: 'Ap. 3 camere, Str. Mihai Eminescu 42, București',
+    policyDetails: 'Locuință facultativă, Incendiu + Inundație',
+    insuredPersons: [
+      { name: 'Andrei Vasilescu', cnp: '1780320345678', role: 'Proprietar', documentUrl: '#' },
+      { name: 'Elena Vasilescu', cnp: '2800515345679', role: 'Co-proprietar', documentUrl: '#' },
+      { name: 'Mihai Vasilescu', cnp: '5100210345680', role: 'Membru familie', documentUrl: '#' }
+    ],
+    premium: 780.0,
+    currency: 'RON',
+    startDate: '2025-10-01T00:00:00Z',
+    endDate: '2026-10-01T00:00:00Z',
+    daysUntilExpiry: 333,
+    autoRenew: true,
+    createdAt: '2025-09-25T09:30:00Z',
+    documents: [
+      {
+        id: 'pdoc_016',
+        name: 'Polița_Locuință_POL-2025-005688.pdf',
+        type: 'POLICY',
+        url: '#',
+        size: 410000
       }
     ]
   }

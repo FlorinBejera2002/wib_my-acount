@@ -54,6 +54,48 @@ export interface RefreshTokenResponse {
   refreshToken: string
 }
 
+export interface RegisterRequest {
+  firstName: string
+  lastName: string
+  email: string
+  phone: string
+  password: string
+  confirmPassword: string
+}
+
+export interface RegisterResponse {
+  message: string
+  requiresVerification: boolean
+}
+
+export interface ForgotPasswordRequest {
+  email: string
+}
+
+export interface ForgotPasswordResponse {
+  message: string
+  tempToken: string
+}
+
+export interface VerifyResetCodeRequest {
+  tempToken: string
+  code: string
+}
+
+export interface VerifyResetCodeResponse {
+  resetToken: string
+}
+
+export interface ResetPasswordRequest {
+  resetToken: string
+  newPassword: string
+  confirmPassword: string
+}
+
+export interface ResetPasswordResponse {
+  message: string
+}
+
 // ==================== User ====================
 
 export interface UserProfile {
@@ -141,11 +183,13 @@ export interface Quote {
   insurerName: string
   insurerLogo?: string
   vehicleOrProperty?: string
+  insuredDetails?: string
   premium: number
   currency: 'RON'
   validFrom: string
   validUntil: string
   createdAt: string
+  offerUrl?: string
   documents: QuoteDocument[]
 }
 
@@ -176,6 +220,13 @@ export interface PolicyDocument {
   size: number
 }
 
+export interface PolicyInsuredPerson {
+  name: string
+  cnp?: string
+  role?: string
+  documentUrl?: string
+}
+
 export interface Policy {
   id: string
   policyNumber: string
@@ -183,6 +234,8 @@ export interface Policy {
   status: PolicyStatus
   insurerName: string
   vehicleOrProperty?: string
+  policyDetails?: string
+  insuredPersons?: PolicyInsuredPerson[]
   premium: number
   currency: 'RON'
   startDate: string
@@ -224,6 +277,53 @@ export interface Notification {
   read: boolean
   createdAt: string
   actionUrl?: string
+}
+
+// ==================== Expiry Alerts ====================
+
+export type AlertType =
+  | 'RCA'
+  | 'ASR'
+  | 'CALATORIE'
+  | 'LOCUINTA_PAD'
+  | 'LOCUINTA_OPTIONALA'
+  | 'CASCO'
+  | 'ROVINIETA'
+  | 'ITP'
+  | 'REVIZIE_AUTO'
+  | 'PERMIS'
+  | 'BULETIN'
+  | 'PASAPORT'
+  | 'ZIUA_SOTIEI'
+
+export type NotifyBefore =
+  | '1_DAY'
+  | '3_DAYS'
+  | '7_DAYS'
+  | '1_MONTH'
+  | '2_MONTHS'
+  | '3_MONTHS'
+  | '6_MONTHS'
+
+export interface ExpiryAlert {
+  id: string
+  alertType: AlertType
+  notifyBefore: NotifyBefore
+  licensePlate?: string
+  name?: string
+  shortAddress?: string
+  expiryDate: string
+  notificationDate: string
+  createdAt: string
+}
+
+export interface CreateExpiryAlertRequest {
+  alertType: AlertType
+  notifyBefore: NotifyBefore
+  licensePlate?: string
+  name?: string
+  shortAddress?: string
+  expiryDate: string
 }
 
 // ==================== Dashboard ====================

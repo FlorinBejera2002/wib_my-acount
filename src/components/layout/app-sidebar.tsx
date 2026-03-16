@@ -30,6 +30,7 @@ import { useAuthStore } from '@/stores/auth-store'
 import {
   ChevronsUpDown,
   ClipboardList,
+  Clock,
   FileText,
   LayoutDashboard,
   LogOut,
@@ -44,16 +45,21 @@ const navItems = [
     icon: LayoutDashboard
   },
   {
-    label: 'Cota?ii',
+    label: 'Cotații',
     href: '/quotes',
     icon: ClipboardList,
     countKey: 'totalQuotes' as const
   },
   {
-    label: 'Poli?e',
+    label: 'Polițe',
     href: '/policies',
     icon: FileText,
     countKey: 'activePolicies' as const
+  },
+  {
+    label: 'Alerte expirare',
+    href: '/reminders',
+    icon: Clock
   }
 ]
 

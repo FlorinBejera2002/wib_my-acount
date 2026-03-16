@@ -226,20 +226,6 @@ export function PolicyDetail() {
                     </div>
                   </div>
                 )}
-
-                <div className="flex items-center gap-4 p-4 rounded-lg border border-gray-100">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-50">
-                    <RefreshCw className="h-5 w-5 text-gray-500" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Reînnoire automată
-                    </p>
-                    <p className="text-sm font-semibold text-gray-900 mt-0.5">
-                      {policy.autoRenew ? 'Da' : 'Nu'}
-                    </p>
-                  </div>
-                </div>
               </div>
 
               {/* Source Quote Link */}
