@@ -1,7 +1,7 @@
 import type { PaginatedResponse, TableParams } from '@/api/types'
 import { type ClassValue, clsx } from 'clsx'
 import { format, parseISO } from 'date-fns'
-import { enUS, ro } from 'date-fns/locale'
+import { enUS, hu, ro } from 'date-fns/locale'
 import { twMerge } from 'tailwind-merge'
 import i18n from './i18n'
 
@@ -10,11 +10,14 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 function getDateLocale() {
-  return i18n.language === 'ro' ? ro : enUS
+  if (i18n.language === 'ro') return ro
+  if (i18n.language === 'hu') return hu
+  return enUS
 }
 
 export function formatCurrency(amount: number, currency = 'RON'): string {
-  const locale = i18n.language === 'ro' ? 'ro-RO' : 'en-US'
+  const localeMap: Record<string, string> = { ro: 'ro-RO', hu: 'hu-HU', en: 'en-US' }
+  const locale = localeMap[i18n.language] || 'en-US'
   return new Intl.NumberFormat(locale, {
     style: 'currency',
     currency,

@@ -1,6 +1,7 @@
 import i18n from 'i18next'
 import { initReactI18next } from 'react-i18next'
 import en from '@/locales/en.json'
+import hu from '@/locales/hu.json'
 import ro from '@/locales/ro.json'
 
 function getInitialLanguage(): string {
@@ -9,7 +10,7 @@ function getInitialLanguage(): string {
     if (raw) {
       const parsed = JSON.parse(raw)
       const lang = parsed?.state?.user?.preferences?.language
-      if (lang === 'ro' || lang === 'en') return lang
+      if (lang === 'ro' || lang === 'en' || lang === 'hu') return lang
     }
   } catch {
     // ignore
@@ -20,6 +21,7 @@ function getInitialLanguage(): string {
 i18n.use(initReactI18next).init({
   resources: {
     en: { translation: en },
+    hu: { translation: hu },
     ro: { translation: ro }
   },
   lng: getInitialLanguage(),

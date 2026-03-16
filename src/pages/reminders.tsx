@@ -51,7 +51,8 @@ const HOUSING_TYPES: AlertType[] = [
 const BIRTHDAY_TYPE: AlertType = 'ZIUA_SOTIEI'
 
 function formatDateLocal(dateStr: string): string {
-  const locale = i18n.language === 'ro' ? 'ro-RO' : 'en-US'
+  const localeMap: Record<string, string> = { ro: 'ro-RO', hu: 'hu-HU', en: 'en-US' }
+  const locale = localeMap[i18n.language] || 'en-US'
   const d = new Date(dateStr)
   return d.toLocaleDateString(locale, {
     day: '2-digit',

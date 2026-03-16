@@ -148,7 +148,7 @@ export type NotificationSettingsFormValues = z.infer<
 >
 
 export const preferencesSchema = z.object({
-  language: z.enum(['ro', 'en']),
+  language: z.enum(['ro', 'en', 'hu']),
   timezone: z.string().min(1, 'Timezone is required')
 })
 

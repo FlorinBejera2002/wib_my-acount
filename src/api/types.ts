@@ -113,7 +113,7 @@ export interface UserProfile {
 }
 
 export interface UserPreferences {
-  language: 'ro' | 'en'
+  language: 'ro' | 'en' | 'hu'
   timezone: string
   notifications: NotificationPreferences
 }
@@ -137,7 +137,7 @@ export interface UpdateProfileRequest {
 }
 
 export interface UpdatePreferencesRequest {
-  language: 'ro' | 'en'
+  language: 'ro' | 'en' | 'hu'
   timezone: string
   notifications: NotificationPreferences
 }

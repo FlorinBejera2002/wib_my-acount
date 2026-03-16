@@ -115,7 +115,8 @@ export function QuotesTable() {
         <DataTableColumnHeader column={column} title={t('quotes.dateTime')} />
       ),
       cell: ({ row }) => {
-        const locale = i18n.language === 'ro' ? 'ro-RO' : 'en-US'
+        const localeMap: Record<string, string> = { ro: 'ro-RO', hu: 'hu-HU', en: 'en-US' }
+        const locale = localeMap[i18n.language] || 'en-US'
         const d = new Date(row.original.createdAt)
         return (
           <div className="leading-tight">
