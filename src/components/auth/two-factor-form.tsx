@@ -15,7 +15,9 @@ const RESEND_TIMER = 60
 
 export function TwoFactorForm({ onSubmit, isLoading }: TwoFactorFormProps) {
   const { t } = useTranslation()
-  const [digits, setDigits] = useState<string[]>(Array(CODE_LENGTH).fill(''))
+  const [digits, setDigits] = useState<string[]>(
+    new Array(CODE_LENGTH).fill('')
+  )
   const [resendTimer, setResendTimer] = useState(RESEND_TIMER)
   const inputRefs = useRef<(HTMLInputElement | null)[]>([])
 
@@ -87,7 +89,7 @@ export function TwoFactorForm({ onSubmit, isLoading }: TwoFactorFormProps) {
 
   const handleResend = () => {
     setResendTimer(RESEND_TIMER)
-    setDigits(Array(CODE_LENGTH).fill(''))
+    setDigits(new Array(CODE_LENGTH).fill(''))
     inputRefs.current[0]?.focus()
   }
 

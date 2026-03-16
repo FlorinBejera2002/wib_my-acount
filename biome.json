@@ -1,7 +1,8 @@
 {
   "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
   "files": {
-    "maxSize": 5000
+    "maxSize": 50000,
+    "ignore": ["**/dist/**", "**/public/**"]
   },
   "formatter": {
     "enabled": true,
@@ -85,14 +86,17 @@
         "useValidForDirection": "error",
         "useYield": "error"
       },
-      "security": { "noDangerouslySetInnerHtmlWithChildren": "error" },
       "style": {
         "noDefaultExport": "off",
         "noImplicitBoolean": "error",
         "noNamespace": "error",
         "useAsConstAssertion": "error",
-        "useBlockStatements": "off"
+        "useBlockStatements": "off",
+        "useConsistentArrayType": "error",
+        "useConsistentBuiltinInstantiation": "error",
+        "useShorthandArrayType": "error"
       },
+      "security": { "noDangerouslySetInnerHtmlWithChildren": "error" },
       "suspicious": {
         "noAssignInExpressions": "error",
         "noAsyncPromiseExecutor": "error",
