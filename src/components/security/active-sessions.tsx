@@ -49,7 +49,7 @@ export function ActiveSessions() {
 
   return (
     <Card className="shadow-sm">
-      <CardHeader className="flex flex-row items-start justify-between">
+      <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <CardTitle>{t('security.activeSessions')}</CardTitle>
           <CardDescription>
@@ -76,7 +76,7 @@ export function ActiveSessions() {
           return (
             <div
               key={session.id}
-              className="flex items-center gap-4 rounded-lg border p-4"
+              className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 rounded-lg border p-4"
             >
               <DeviceIcon className="h-8 w-8 text-muted-foreground" />
               <div className="flex-1 space-y-1">

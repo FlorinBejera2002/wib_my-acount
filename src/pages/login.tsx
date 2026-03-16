@@ -56,7 +56,7 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-100 px-4">
-      <div className="w-full max-w-xl space-y-6 rounded-lg bg-white p-12">
+      <div className="w-full max-w-xl space-y-6 rounded-lg bg-white p-6 sm:p-12">
         <div className="text-center">
           <img src={logo} alt="asigurari.ro" className="mx-auto mb-4 h-10" />
         </div>

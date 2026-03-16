@@ -189,15 +189,15 @@ export function QuoteDetail() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" asChild={true}>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+        <Button variant="ghost" size="icon" asChild={true} className="shrink-0 self-start">
           <Link to="/quotes">
             <ArrowLeft className="h-4 w-4" />
           </Link>
         </Button>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-3">
-            <h1 className="text-xl font-bold text-gray-900">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+            <h1 className="text-lg sm:text-xl font-bold text-gray-900">
               {quote.quoteNumber}
             </h1>
             <span
@@ -215,7 +215,7 @@ export function QuoteDetail() {
         </div>
         <span
           className={cn(
-            'flex items-center gap-1.5 text-sm font-medium',
+            'flex items-center gap-1.5 text-sm font-medium shrink-0',
             status.text
           )}
         >
@@ -227,13 +227,13 @@ export function QuoteDetail() {
       <div className="grid gap-6 md:grid-cols-2">
         {/* Details Card */}
         <Card className="shadow-sm">
-          <CardContent className="p-6">
+          <CardContent className="p-4 sm:p-6">
             <div className="space-y-6">
               {/* Section Header */}
               <div className="flex items-center gap-3">
                 <div
                   className={cn(
-                    'flex h-10 w-10 items-center justify-center rounded-md',
+                    'flex h-10 w-10 items-center justify-center rounded-md shrink-0',
                     type.iconBg
                   )}
                 >

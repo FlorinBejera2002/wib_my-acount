@@ -89,7 +89,7 @@ export function RecentPolicies() {
   })
 
   return (
-    <Card className="shadow-sm">
+    <Card className="shadow-sm overflow-hidden">
       <CardHeader className="flex flex-row items-center justify-between pb-3">
         <CardTitle className="text-base font-semibold text-gray-900">
           {t('dashboard.recentPolicies')}
@@ -128,13 +128,13 @@ export function RecentPolicies() {
                   <Link
                     to={`/policies/${policy.id}`}
                     className={cn(
-                      'flex items-center gap-3 px-6 py-3 transition-colors hover:bg-gray-50',
+                      'flex items-center gap-3 px-4 sm:px-6 py-3 transition-colors hover:bg-gray-50',
                       !isLast && 'border-b border-gray-100'
                     )}
                   >
                     <span
                       className={cn(
-                        'flex h-8 w-fit px-2 shrink-0 items-center justify-center rounded-lg text-xs font-semibold',
+                        'flex h-8 max-w-[100px] truncate px-2 shrink-0 items-center justify-center rounded-lg text-xs font-semibold',
                         type.className
                       )}
                     >
@@ -158,14 +158,14 @@ export function RecentPolicies() {
                         )}
                       >
                         <span
-                          className={cn('h-1.5 w-1.5 rounded-full', status.dot)}
+                          className={cn('h-1.5 w-1.5 rounded-full shrink-0', status.dot)}
                         />
-                        {status.label}
+                        <span className="hidden sm:inline">{status.label}</span>
                       </span>
                       {policy.status === 'ACTIVE' && (
                         <span
                           className={cn(
-                            'text-[11px]',
+                            'text-[11px] hidden sm:block',
                             policy.daysUntilExpiry <= 30
                               ? 'font-medium text-amber-600'
                               : 'text-gray-400'
@@ -175,7 +175,7 @@ export function RecentPolicies() {
                         </span>
                       )}
                     </div>
-                    <ChevronRight className="h-4 w-4 shrink-0 text-gray-300" />
+                    <ChevronRight className="h-4 w-4 shrink-0 text-gray-300 hidden sm:block" />
                   </Link>
                 </li>
               )

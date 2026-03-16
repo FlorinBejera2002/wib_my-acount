@@ -322,7 +322,7 @@ export default function RemindersPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-xl font-bold text-gray-900">{t('reminders.title')}</h1>
           <p className="text-sm text-gray-400">
@@ -331,7 +331,7 @@ export default function RemindersPage() {
         </div>
         <Button
           onClick={() => setView('add')}
-          className="bg-accent-green hover:bg-accent-green-hover text-white gap-1.5"
+          className="bg-accent-green hover:bg-accent-green-hover text-white gap-1.5 w-full sm:w-auto"
         >
           <Plus className="h-4 w-4" />
           {t('reminders.addAlert')}

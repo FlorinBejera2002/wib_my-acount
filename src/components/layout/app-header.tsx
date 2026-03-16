@@ -40,7 +40,7 @@ function getBreadcrumbs(pathname: string, t: (key: string, options?: Record<stri
         settings: 'nav.settings'
       }
       if (subMap[parts[1]]) {
-        crumbs.push({ label: t(subMap[parts[1]]), href: pathname })
+        crumbs.push({ label: t(subMap[parts[1]]!), href: pathname })
       }
     }
   }
@@ -64,17 +64,17 @@ export function AppHeader() {
 
         <Separator orientation="vertical" className="h-6" />
 
-        <nav className="flex items-center gap-1.5 text-sm">
+        <nav className="flex items-center gap-1.5 text-sm min-w-0 overflow-hidden">
           <Link
             to="/dashboard"
-            className="text-muted-foreground hover:text-foreground"
+            className="hidden sm:inline text-muted-foreground hover:text-foreground shrink-0"
           >
             {t('common.home')}
           </Link>
           {breadcrumbs.map((crumb) => (
-            <span key={crumb.href} className="flex items-center gap-1.5">
-              <span className="text-muted-foreground">/</span>
-              <Link to={crumb.href} className="font-medium text-foreground">
+            <span key={crumb.href} className="flex items-center gap-1.5 min-w-0">
+              <span className="hidden sm:inline text-muted-foreground">/</span>
+              <Link to={crumb.href} className="font-medium text-foreground truncate">
                 {crumb.label}
               </Link>
             </span>

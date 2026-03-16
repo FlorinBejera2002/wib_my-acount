@@ -1,4 +1,4 @@
-import { Badge } from '@/components/ui/badge'
+﻿import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { InsuranceTypeBadge } from '@/components/ui/insurance-type-badge'
@@ -22,11 +22,11 @@ import { usePolicies } from '@/hooks/use-policies'
 import { cn, formatCurrency, formatDate } from '@/lib/utils'
 import {
   AlertCircle,
+  ArrowRight,
   ChevronDown,
   ChevronRight,
   Download,
   Inbox,
-  Search,
   User,
   Users,
   X
@@ -148,10 +148,6 @@ export function PoliciesTable() {
     })
   }
 
-  const handleSearchChange = (search: string) => {
-    setParams((prev) => ({ ...prev, search }))
-  }
-
   const handleFilterChange = (key: string, value: string) => {
     setParams((prev) => ({
       ...prev,
@@ -163,7 +159,6 @@ export function PoliciesTable() {
   }
 
   const hasActiveFilters =
-    params.search ||
     dateFrom ||
     dateTo ||
     Object.values(params.filters || {}).some((v) => v && v !== 'ALL')
@@ -171,7 +166,6 @@ export function PoliciesTable() {
   const handleClearFilters = () => {
     setParams((prev) => ({
       ...prev,
-      search: '',
       filters: {}
     }))
     setDateFrom('')
@@ -183,12 +177,17 @@ export function PoliciesTable() {
   if (isLoading) {
     return (
       <div>
-        <div className="flex flex-col gap-3 pb-4 sm:flex-row sm:items-center">
-          <Skeleton className="h-9 flex-1" />
-          <Skeleton className="h-9 w-[140px]" />
+        <div className="flex flex-col gap-3 pb-4 sm:flex-row sm:items-center sm:gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <Skeleton className="h-9 w-[140px]" />
+            <Skeleton className="h-9 w-[140px]" />
+            <Skeleton className="h-9 w-[140px]" />
+            <Skeleton className="h-9 w-[140px]" />
+            <Skeleton className="h-9 w-[100px]" />
+          </div>
         </div>
-        <div className="rounded-xl border border-gray-100 bg-white shadow-sm">
-          <Table>
+        <div className="rounded-xl border border-gray-100 bg-white shadow-sm overflow-x-auto hide-scrollbar">
+          <Table className="min-w-[900px]">
             <TableHeader className="bg-green-50">
               <TableRow>
                 {Array.from({ length: colCount }).map((_, i) => (
@@ -233,17 +232,7 @@ export function PoliciesTable() {
 
   return (
     <div>
-      <div className="flex flex-col gap-3 pb-4 sm:flex-row sm:items-center">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder={t('common.search')}
-            value={params.search || ''}
-            onChange={(e) => handleSearchChange(e.target.value)}
-            className="pl-9"
-          />
-        </div>
-
+      <div className="flex flex-col gap-3 pb-4 sm:flex-row sm:items-center sm:gap-2">
         <div className="flex flex-wrap items-center gap-2">
           {filterConfigs.map((config) => (
             <Select
@@ -251,7 +240,7 @@ export function PoliciesTable() {
               value={params.filters?.[config.key] || 'ALL'}
               onValueChange={(value) => handleFilterChange(config.key, value)}
             >
-              <SelectTrigger className="h-9 w-[140px]">
+              <SelectTrigger className="h-9 w-full sm:w-[140px]">
                 <SelectValue placeholder={t(config.labelKey)} />
               </SelectTrigger>
               <SelectContent>
@@ -264,55 +253,55 @@ export function PoliciesTable() {
               </SelectContent>
             </Select>
           ))}
-
-          <div className="flex items-center gap-1.5">
-            <span className="text-sm text-muted-foreground whitespace-nowrap">{t('policies.expiryFrom')}</span>
-            <Input
+          {/* <div className="flex items-center gap-2 w-full">
+            <div className="flex items-center gap-1.5">
+              <span className="text-sm text-gray-400 whitespace-nowrap hidden sm:inline">{t('policies.expiryFrom')}</span>
+              <Input
               type="date"
               value={dateFrom}
               onChange={(e) => setDateFrom(e.target.value)}
-              className="h-9 w-[150px]"
+              className="h-9 w-full sm:w-[140px]"
             />
           </div>
-
+          <ArrowRight className="h-4 w-4 text-gray-300 shrink-0" />
           <div className="flex items-center gap-1.5">
-            <span className="text-sm text-muted-foreground whitespace-nowrap">{t('policies.expiryTo')}</span>
+            <span className="text-sm text-gray-400 whitespace-nowrap hidden sm:inline">{t('policies.expiryTo')}</span>
             <Input
               type="date"
               value={dateTo}
               onChange={(e) => setDateTo(e.target.value)}
-              className="h-9 w-[150px]"
+              className="h-9 w-full sm:w-[140px]"
             />
           </div>
+          </div> */}
 
           {hasActiveFilters && (
-            <Button
-              variant="ghost"
-              size="sm"
+            <button
+              type="button"
               onClick={handleClearFilters}
-              className="h-9 px-2"
+              className="flex items-center gap-1 text-sm text-gray-400 hover:text-red-500 transition-colors"
             >
-              <X className="mr-1 h-4 w-4" />
+              <X className="h-3.5 w-3.5" />
               {t('policies.clearFilters')}
-            </Button>
+            </button>
           )}
         </div>
       </div>
 
-      <div className="rounded-xl border border-gray-100 bg-white shadow-sm">
-        <Table>
+      <div className="rounded-xl border border-gray-100 bg-white shadow-sm overflow-x-auto hide-scrollbar">
+        <Table className="min-w-[900px]">
           <TableHeader className="bg-green-50">
             <TableRow>
               <TableHead className="w-10" />
-              <TableHead>{t('policies.policyRef')}</TableHead>
-              <TableHead>{t('policies.type')}</TableHead>
-              <TableHead>{t('policies.insurer')}</TableHead>
-              <TableHead>{t('policies.policyDetails')}</TableHead>
-              <TableHead>{t('policies.premium')}</TableHead>
-              <TableHead>{t('policies.status')}</TableHead>
-              <TableHead>{t('policies.expiry')}</TableHead>
-              <TableHead>{t('policies.daysLeft')}</TableHead>
-              <TableHead>{t('policies.pdf')}</TableHead>
+              <TableHead className="min-w-[200px]">{t('policies.policyRef')}</TableHead>
+              <TableHead className="min-w-[150px]">{t('policies.type')}</TableHead>
+              <TableHead className="min-w-[150px]">{t('policies.insurer')}</TableHead>
+              <TableHead className="min-w-[200px]">{t('policies.policyDetails')}</TableHead>
+              <TableHead className="min-w-[100px]">{t('policies.premium')}</TableHead>
+              <TableHead className="min-w-[100px]">{t('policies.status')}</TableHead>
+              <TableHead className="min-w-[100px]">{t('policies.expiry')}</TableHead>
+              <TableHead className="min-w-[100px]">{t('policies.daysLeft')}</TableHead>
+              <TableHead >{t('policies.pdf')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

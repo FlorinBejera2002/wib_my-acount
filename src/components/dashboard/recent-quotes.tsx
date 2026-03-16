@@ -70,7 +70,7 @@ export function RecentQuotes() {
   })
 
   return (
-    <Card className="shadow-sm">
+    <Card className="shadow-sm overflow-hidden">
       <CardHeader className="flex flex-row items-center justify-between pb-3">
         <CardTitle className="text-base font-semibold text-gray-900">
           {t('dashboard.recentQuotes')}
@@ -109,13 +109,13 @@ export function RecentQuotes() {
                   <Link
                     to={`/quotes/${quote.id}`}
                     className={cn(
-                      'flex items-center gap-3 px-6 py-3 transition-colors hover:bg-gray-50',
+                      'flex items-center gap-3 px-4 sm:px-6 py-3 transition-colors hover:bg-gray-50',
                       !isLast && 'border-b border-gray-100'
                     )}
                   >
                     <span
                       className={cn(
-                        'flex h-8 w-fit px-2 shrink-0 items-center justify-center rounded-lg text-xs font-semibold',
+                        'flex h-8 max-w-[100px] truncate px-2 shrink-0 items-center justify-center rounded-lg text-xs font-semibold',
                         type.className
                       )}
                     >
@@ -130,7 +130,7 @@ export function RecentQuotes() {
                         {formatCurrency(quote.premium)}
                       </p>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 shrink-0">
                       <span
                         className={cn(
                           'flex items-center gap-1.5 text-xs font-medium',
@@ -138,11 +138,11 @@ export function RecentQuotes() {
                         )}
                       >
                         <span
-                          className={cn('h-1.5 w-1.5 rounded-full', status.dot)}
+                          className={cn('h-1.5 w-1.5 rounded-full shrink-0', status.dot)}
                         />
-                        {status.label}
+                        <span className="hidden sm:inline">{status.label}</span>
                       </span>
-                      <ChevronRight className="h-4 w-4 text-gray-300" />
+                      <ChevronRight className="h-4 w-4 text-gray-300 hidden sm:block" />
                     </div>
                   </Link>
                 </li>

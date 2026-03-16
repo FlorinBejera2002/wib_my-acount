@@ -1,4 +1,4 @@
-import { useTranslation } from 'react-i18next'
+﻿import { useTranslation } from 'react-i18next'
 
 const typeConfig: Record<string, { bg: string; text: string }> = {
   RCA: { bg: 'bg-blue-100', text: 'text-blue-800' },
@@ -35,7 +35,7 @@ export function InsuranceTypeBadge({
 
   return (
     <span
-      className={`inline-flex items-center rounded-lg px-2.5 py-0.5 text-xs font-medium ${config.bg} ${config.text} ${className}`}
+      className={`inline-flex items-center rounded-lg px-2.5 py-0.5 text-xs font-medium text-nowrap ${config.bg} ${config.text} ${className}`}
     >
       {label}
     </span>

@@ -9,7 +9,6 @@ import { Input } from '@/components/ui/input'
 import { InsuranceTypeBadge } from '@/components/ui/insurance-type-badge'
 import { useQuotes } from '@/hooks/use-quotes'
 import i18n from '@/lib/i18n'
-import { formatDate, formatDateTime } from '@/lib/utils'
 import { ArrowRight, ExternalLink, Search, X } from 'lucide-react'
 
 const getSimplifiedStatus = (status: QuoteStatus) => {
@@ -138,7 +137,7 @@ export function QuotesTable() {
           href={row.original.offerUrl || 'https://asigurari.ro'}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-1.5 text-sm font-medium text-accent-green hover:text-accent-green-hover transition-colors"
+          className="flex items-center text-nowrap gap-1.5 text-sm font-medium text-accent-green hover:text-accent-green-hover transition-colors"
           onClick={(e) => e.stopPropagation()}
         >
           {t('quotes.viewOffer')}

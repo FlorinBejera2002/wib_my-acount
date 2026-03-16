@@ -1,13 +1,11 @@
-import { useTranslation } from 'react-i18next'
+﻿import { useTranslation } from 'react-i18next'
 import { ProfileAvatar } from '@/components/profile/profile-avatar'
 import { Card } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import { useProfile, useUploadProfilePhoto } from '@/hooks/use-user'
+import { useProfile } from '@/hooks/use-user'
 import { cn, formatDate } from '@/lib/utils'
-import { Camera, Loader2, Settings, Shield, User } from 'lucide-react'
-import { useRef } from 'react'
+import { Settings, Shield, User } from 'lucide-react'
 import { NavLink, Outlet } from 'react-router-dom'
-import { toast } from 'sonner'
 
 const profileTabs = [
   { labelKey: 'profile.tabs.personal', href: '/profile', icon: User, end: true },
@@ -18,29 +16,15 @@ const profileTabs = [
 export function ProfileLayout() {
   const { t } = useTranslation()
   const { data: profile } = useProfile()
-  const uploadPhoto = useUploadProfilePhoto()
-  const fileInputRef = useRef<HTMLInputElement>(null)
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error(t('profile.fileTooLarge'))
-      return
-    }
-    uploadPhoto.mutate(file)
-    e.target.value = ''
-  }
-
   return (
     <div className="space-y-6">
       {/* Profile Hero Card */}
       <Card className="shadow-sm overflow-hidden">
         <div className="h-24 bg-gradient-to-r from-accent-green/20 via-accent-green/10 to-transparent" />
-        <div className="px-6 pb-6 -mt-12">
-          <div className="flex items-end gap-5">
+        <div className="px-4 sm:px-6 pb-6 -mt-12">
+          <div className="flex flex-col sm:flex-row sm:items-end gap-4 sm:gap-5">
             {profile ? (
-              <div className="relative group">
+              <div className="mx-auto sm:mx-0">
                 <div className="rounded-full border-4 border-white shadow-sm">
                   <ProfileAvatar
                     firstName={profile.firstName}
@@ -50,30 +34,11 @@ export function ProfileLayout() {
                     userId={profile.id}
                   />
                 </div>
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={uploadPhoto.isPending}
-                  className="absolute inset-0 flex items-center justify-center rounded-full bg-black/0 group-hover:bg-black/40 transition-colors cursor-pointer"
-                >
-                  {uploadPhoto.isPending ? (
-                    <Loader2 className="h-6 w-6 text-white animate-spin" />
-                  ) : (
-                    <Camera className="h-6 w-6 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
-                  )}
-                </button>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={handleFileChange}
-                />
               </div>
             ) : (
               <Skeleton className="h-24 w-24 rounded-full border-4 border-white" />
             )}
-            <div className="pb-1 flex-1 min-w-0">
+            <div className="pb-1 flex-1 min-w-0 text-center sm:text-left">
               {profile ? (
                 <>
                   <h1 className="text-xl font-bold text-gray-900 truncate">
@@ -95,7 +60,7 @@ export function ProfileLayout() {
         </div>
 
         {/* Tab Navigation inside card */}
-        <nav className="flex px-6 border-t border-gray-100">
+        <nav className="flex px-4 sm:px-6 border-t border-gray-100 overflow-x-auto hide-scrollbar">
           {profileTabs.map((tab) => (
             <NavLink
               key={tab.href}

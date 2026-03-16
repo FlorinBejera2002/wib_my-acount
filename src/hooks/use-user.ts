@@ -81,29 +81,3 @@ export function useUpdatePreferences() {
   })
 }
 
-const uploadProfilePhotoFn = async (file: File): Promise<UserProfile> => {
-  // TODO: decomentează când API-ul e gata
-  // const formData = new FormData();
-  // formData.append("photo", file);
-  // const { data } = await api.post(ENDPOINTS.USERS.UPLOAD_PHOTO, formData);
-  // return data;
-
-  await delay(800)
-  const photoUrl = URL.createObjectURL(file)
-  return { ...mockUser, photoUrl }
-}
-
-export function useUploadProfilePhoto() {
-  const queryClient = useQueryClient()
-
-  return useMutation({
-    mutationFn: uploadProfilePhotoFn,
-    onSuccess: (data) => {
-      queryClient.setQueryData(['profile'], data)
-      toast.success(i18n.t('toast.photoUpdated'))
-    },
-    onError: () => {
-      toast.error(i18n.t('toast.photoError'))
-    }
-  })
-}
