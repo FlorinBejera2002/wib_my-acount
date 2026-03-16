@@ -120,7 +120,9 @@ export function ChangePasswordForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="confirmPassword">{t('security.confirmNewPassword')}</Label>
+            <Label htmlFor="confirmPassword">
+              {t('security.confirmNewPassword')}
+            </Label>
             <Input
               id="confirmPassword"
               type="password"

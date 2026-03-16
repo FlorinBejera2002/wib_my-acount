@@ -18,8 +18,18 @@ interface ActivityChartProps {
 }
 
 const monthKeys = [
-  '01', '02', '03', '04', '05', '06',
-  '07', '08', '09', '10', '11', '12'
+  '01',
+  '02',
+  '03',
+  '04',
+  '05',
+  '06',
+  '07',
+  '08',
+  '09',
+  '10',
+  '11',
+  '12'
 ] as const
 
 export function ActivityChart({ data, isLoading }: ActivityChartProps) {

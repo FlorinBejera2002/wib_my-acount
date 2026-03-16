@@ -5,7 +5,10 @@ import { mockExpiryAlerts } from '@/mocks/reminders'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
-const NOTIFY_BEFORE_OFFSETS: Record<string, { days?: number; months?: number }> = {
+const NOTIFY_BEFORE_OFFSETS: Record<
+  string,
+  { days?: number; months?: number }
+> = {
   '1_DAY': { days: 1 },
   '3_DAYS': { days: 3 },
   '7_DAYS': { days: 7 },
@@ -15,7 +18,10 @@ const NOTIFY_BEFORE_OFFSETS: Record<string, { days?: number; months?: number }> 
   '6_MONTHS': { months: 6 }
 }
 
-function computeNotificationDate(expiryDate: string, notifyBefore: string): string {
+function computeNotificationDate(
+  expiryDate: string,
+  notifyBefore: string
+): string {
   const date = new Date(expiryDate)
   const offset = NOTIFY_BEFORE_OFFSETS[notifyBefore]
   if (offset?.days) date.setDate(date.getDate() - offset.days)
@@ -43,7 +49,10 @@ const createAlertFn = async (
   const newAlert: ExpiryAlert = {
     id: `alert_${Date.now()}`,
     ...data,
-    notificationDate: computeNotificationDate(data.expiryDate, data.notifyBefore),
+    notificationDate: computeNotificationDate(
+      data.expiryDate,
+      data.notifyBefore
+    ),
     createdAt: new Date().toISOString()
   }
   mockExpiryAlerts.unshift(newAlert)

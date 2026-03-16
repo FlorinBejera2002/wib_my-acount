@@ -83,8 +83,18 @@ export const mockPolicies: Policy[] = [
     vehicleOrProperty: 'Casă P+1, Brașov',
     policyDetails: 'Locuință facultativă, Acoperire integrală',
     insuredPersons: [
-      { name: 'Daniel Radu', cnp: '1920615890123', role: 'Proprietar', documentUrl: '#' },
-      { name: 'Ana Radu', cnp: '2940720890124', role: 'Co-proprietar', documentUrl: '#' }
+      {
+        name: 'Daniel Radu',
+        cnp: '1920615890123',
+        role: 'Proprietar',
+        documentUrl: '#'
+      },
+      {
+        name: 'Ana Radu',
+        cnp: '2940720890124',
+        role: 'Co-proprietar',
+        documentUrl: '#'
+      }
     ],
     premium: 1350.0,
     currency: 'RON',
@@ -151,9 +161,24 @@ export const mockPolicies: Policy[] = [
     vehicleOrProperty: 'Ski Austria, 5 zile',
     policyDetails: 'Călătorie Europa, Acoperire medicală + bagaje',
     insuredPersons: [
-      { name: 'Vlad Stoica', cnp: '1940922567890', role: 'Titular', documentUrl: '#' },
-      { name: 'Ioana Stoica', cnp: '2960115567891', role: 'Asigurat', documentUrl: '#' },
-      { name: 'Matei Stoica', cnp: '5180305567892', role: 'Asigurat', documentUrl: '#' }
+      {
+        name: 'Vlad Stoica',
+        cnp: '1940922567890',
+        role: 'Titular',
+        documentUrl: '#'
+      },
+      {
+        name: 'Ioana Stoica',
+        cnp: '2960115567891',
+        role: 'Asigurat',
+        documentUrl: '#'
+      },
+      {
+        name: 'Matei Stoica',
+        cnp: '5180305567892',
+        role: 'Asigurat',
+        documentUrl: '#'
+      }
     ],
     premium: 180.0,
     currency: 'RON',
@@ -235,7 +260,12 @@ export const mockPolicies: Policy[] = [
     vehicleOrProperty: 'Ap. 2 camere, Iași',
     policyDetails: 'PAD obligatoriu, Zona seismică II',
     insuredPersons: [
-      { name: 'Ioana Barbu', cnp: '2960718456789', role: 'Proprietar', documentUrl: '#' }
+      {
+        name: 'Ioana Barbu',
+        cnp: '2960718456789',
+        role: 'Proprietar',
+        documentUrl: '#'
+      }
     ],
     premium: 450.0,
     currency: 'RON',
@@ -300,8 +330,18 @@ export const mockPolicies: Policy[] = [
     vehicleOrProperty: 'City break Praga, 4 zile',
     policyDetails: 'Călătorie Europa, Acoperire medicală',
     insuredPersons: [
-      { name: 'Simona Popa', cnp: '2930420901234', role: 'Titular', documentUrl: '#' },
-      { name: 'Radu Popa', cnp: '1910315901235', role: 'Asigurat', documentUrl: '#' }
+      {
+        name: 'Simona Popa',
+        cnp: '2930420901234',
+        role: 'Titular',
+        documentUrl: '#'
+      },
+      {
+        name: 'Radu Popa',
+        cnp: '1910315901235',
+        role: 'Asigurat',
+        documentUrl: '#'
+      }
     ],
     premium: 85.0,
     currency: 'RON',
@@ -333,9 +373,24 @@ export const mockPolicies: Policy[] = [
     vehicleOrProperty: 'Ap. 3 camere, Str. Mihai Eminescu 42, București',
     policyDetails: 'Locuință facultativă, Incendiu + Inundație',
     insuredPersons: [
-      { name: 'Andrei Vasilescu', cnp: '1780320345678', role: 'Proprietar', documentUrl: '#' },
-      { name: 'Elena Vasilescu', cnp: '2800515345679', role: 'Co-proprietar', documentUrl: '#' },
-      { name: 'Mihai Vasilescu', cnp: '5100210345680', role: 'Membru familie', documentUrl: '#' }
+      {
+        name: 'Andrei Vasilescu',
+        cnp: '1780320345678',
+        role: 'Proprietar',
+        documentUrl: '#'
+      },
+      {
+        name: 'Elena Vasilescu',
+        cnp: '2800515345679',
+        role: 'Co-proprietar',
+        documentUrl: '#'
+      },
+      {
+        name: 'Mihai Vasilescu',
+        cnp: '5100210345680',
+        role: 'Membru familie',
+        documentUrl: '#'
+      }
     ],
     premium: 780.0,
     currency: 'RON',
@@ -344,7 +399,8 @@ export const mockPolicies: Policy[] = [
     daysUntilExpiry: 333,
     autoRenew: true,
     createdAt: '2025-09-25T09:30:00Z',
-    propertyAddress: 'Str. Mihai Eminescu nr. 42, bl. C3, ap. 15, București, Sector 2',
+    propertyAddress:
+      'Str. Mihai Eminescu nr. 42, bl. C3, ap. 15, București, Sector 2',
     insuredAmount: 50000,
     insuredGoods: 15000,
     propertyType: 'Apartament',

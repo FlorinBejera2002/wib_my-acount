@@ -13,9 +13,7 @@ export default function NotFoundPage() {
         <h2 className="text-xl font-semibold text-gray-900">
           {t('notFound.title')}
         </h2>
-        <p className="text-gray-400">
-          {t('notFound.subtitle')}
-        </p>
+        <p className="text-gray-400">{t('notFound.subtitle')}</p>
       </div>
       <Button
         asChild={true}

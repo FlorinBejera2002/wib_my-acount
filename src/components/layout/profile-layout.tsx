@@ -1,16 +1,29 @@
-﻿import { useTranslation } from 'react-i18next'
-import { ProfileAvatar } from '@/components/profile/profile-avatar'
+﻿import { ProfileAvatar } from '@/components/profile/profile-avatar'
 import { Card } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useProfile } from '@/hooks/use-user'
 import { cn, formatDate } from '@/lib/utils'
 import { Settings, Shield, User } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { NavLink, Outlet } from 'react-router-dom'
 
 const profileTabs = [
-  { labelKey: 'profile.tabs.personal', href: '/profile', icon: User, end: true },
-  { labelKey: 'profile.tabs.security', href: '/profile/security', icon: Shield },
-  { labelKey: 'profile.tabs.settings', href: '/profile/settings', icon: Settings }
+  {
+    labelKey: 'profile.tabs.personal',
+    href: '/profile',
+    icon: User,
+    end: true
+  },
+  {
+    labelKey: 'profile.tabs.security',
+    href: '/profile/security',
+    icon: Shield
+  },
+  {
+    labelKey: 'profile.tabs.settings',
+    href: '/profile/settings',
+    icon: Settings
+  }
 ]
 
 export function ProfileLayout() {
@@ -46,7 +59,10 @@ export function ProfileLayout() {
                   </h1>
                   <p className="text-sm text-gray-500">{profile.email}</p>
                   <p className="text-xs text-gray-400 mt-0.5">
-                    {t('profile.clientSince', { date: formatDate(profile.createdAt, 'MMMM yyyy'), id: profile.legacyCustomerId })}
+                    {t('profile.clientSince', {
+                      date: formatDate(profile.createdAt, 'MMMM yyyy'),
+                      id: profile.legacyCustomerId
+                    })}
                   </p>
                 </>
               ) : (

@@ -3,8 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { usePolicies } from '@/hooks/use-policies'
 import { cn } from '@/lib/utils'
-import { ArrowRight, ChevronRight } from 'lucide-react'
 import type { TFunction } from 'i18next'
+import { ArrowRight, ChevronRight } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 
@@ -158,7 +158,10 @@ export function RecentPolicies() {
                         )}
                       >
                         <span
-                          className={cn('h-1.5 w-1.5 rounded-full shrink-0', status.dot)}
+                          className={cn(
+                            'h-1.5 w-1.5 rounded-full shrink-0',
+                            status.dot
+                          )}
                         />
                         <span className="hidden sm:inline">{status.label}</span>
                       </span>

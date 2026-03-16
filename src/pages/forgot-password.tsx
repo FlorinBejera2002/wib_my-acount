@@ -82,7 +82,9 @@ export default function ForgotPasswordPage() {
       <div className="w-full max-w-xl space-y-6 rounded-lg bg-white p-6 sm:p-12">
         <div className="text-center">
           <img src={logo} alt="asigurari.ro" className="mx-auto mb-4 h-10" />
-          <h1 className="text-xl font-bold text-gray-900">{t('auth.resetPassword.pageTitle')}</h1>
+          <h1 className="text-xl font-bold text-gray-900">
+            {t('auth.resetPassword.pageTitle')}
+          </h1>
           <p className="mt-1 text-sm text-gray-400">
             {t('auth.resetPassword.pageSubtitle')}
           </p>
@@ -112,7 +114,9 @@ export default function ForgotPasswordPage() {
             )}
             {step === 'new-password' && (
               <>
-                <CardTitle className="text-gray-900">{t('auth.newPassword.title')}</CardTitle>
+                <CardTitle className="text-gray-900">
+                  {t('auth.newPassword.title')}
+                </CardTitle>
                 <CardDescription className="text-gray-400">
                   {t('auth.newPassword.description')}
                 </CardDescription>

@@ -7,9 +7,16 @@ import type { Quote, QuoteStatus, TableParams } from '@/api/types'
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header'
 import { Input } from '@/components/ui/input'
 import { InsuranceTypeBadge } from '@/components/ui/insurance-type-badge'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select'
 import { useQuotes } from '@/hooks/use-quotes'
 import i18n from '@/lib/i18n'
-import { ArrowRight, ExternalLink, Search, X } from 'lucide-react'
+import { ArrowRight, ExternalLink, X } from 'lucide-react'
 
 const getSimplifiedStatus = (status: QuoteStatus) => {
   if (status === 'EXPIRED') {
@@ -26,6 +33,29 @@ const getSimplifiedStatus = (status: QuoteStatus) => {
   }
 }
 
+const filterConfigs = [
+  {
+    key: 'type',
+    labelKey: 'policies.type',
+    options: [
+      { value: 'RCA', labelKey: 'insuranceTypes.rca' },
+      { value: 'CASCO', labelKey: 'insuranceTypes.casco' },
+      { value: 'HOME', labelKey: 'insuranceTypes.home' },
+      { value: 'TRAVEL', labelKey: 'insuranceTypes.travel' },
+      { value: 'HEALTH', labelKey: 'insuranceTypes.health' },
+      { value: 'LIFE', labelKey: 'insuranceTypes.life' },
+      { value: 'OTHER', labelKey: 'insuranceTypes.other' }
+    ]
+  },
+  {
+    key: 'status',
+    labelKey: 'policies.status',
+    options: [
+      { value: 'ACTIVE', labelKey: 'quoteStatus.ACTIVE' },
+      { value: 'EXPIRED', labelKey: 'quoteStatus.EXPIRED' }
+    ]
+  }
+]
 
 export function QuotesTable() {
   const { t } = useTranslation()
@@ -114,16 +144,27 @@ export function QuotesTable() {
         <DataTableColumnHeader column={column} title={t('quotes.dateTime')} />
       ),
       cell: ({ row }) => {
-        const localeMap: Record<string, string> = { ro: 'ro-RO', hu: 'hu-HU', en: 'en-US' }
+        const localeMap: Record<string, string> = {
+          ro: 'ro-RO',
+          hu: 'hu-HU',
+          en: 'en-US'
+        }
         const locale = localeMap[i18n.language] || 'en-US'
         const d = new Date(row.original.createdAt)
         return (
           <div className="leading-tight">
             <div className="text-sm text-gray-900">
-              {d.toLocaleDateString(locale, { day: '2-digit', month: 'short', year: 'numeric' })}
+              {d.toLocaleDateString(locale, {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric'
+              })}
             </div>
             <div className="text-xs text-gray-400">
-              {d.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })}
+              {d.toLocaleTimeString(locale, {
+                hour: '2-digit',
+                minute: '2-digit'
+              })}
             </div>
           </div>
         )
@@ -147,14 +188,25 @@ export function QuotesTable() {
     }
   ]
 
-  const handleSearchChange = (search: string) => {
-    setParams((prev) => ({ ...prev, search }))
+  const handleFilterChange = (key: string, value: string) => {
+    setParams((prev) => {
+      const newFilters = { ...prev.filters }
+      if (value === 'ALL') {
+        delete newFilters[key]
+      } else {
+        newFilters[key] = value
+      }
+      return { ...prev, filters: newFilters }
+    })
   }
 
-  const hasActiveFilters = params.search || dateFrom || dateTo
+  const hasActiveFilters =
+    (params.filters && Object.values(params.filters).some(Boolean)) ||
+    dateFrom ||
+    dateTo
 
   const handleClearFilters = () => {
-    setParams((prev) => ({ ...prev, search: '' }))
+    setParams((prev) => ({ ...prev, filters: {} }))
     setDateFrom('')
     setDateTo('')
   }
@@ -162,40 +214,59 @@ export function QuotesTable() {
   return (
     <div>
       <div className="flex flex-wrap items-center gap-2 pb-4">
-        <div className="relative flex-1 min-w-[200px]">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-          <Input
-            placeholder={t('common.search')}
-            value={params.search || ''}
-            onChange={(e) => handleSearchChange(e.target.value)}
-            className="pl-9 h-9"
-          />
+        <div className="flex flex-wrap items-center gap-2">
+          {filterConfigs.map((config) => (
+            <Select
+              key={config.key}
+              value={params.filters?.[config.key] || 'ALL'}
+              onValueChange={(value) => handleFilterChange(config.key, value)}
+            >
+              <SelectTrigger className="h-9 w-[140px]">
+                <SelectValue placeholder={t(config.labelKey)} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ALL">
+                  {t('policies.allFilter', { label: t(config.labelKey) })}
+                </SelectItem>
+                {config.options.map((opt) => (
+                  <SelectItem key={opt.value} value={opt.value}>
+                    {t(opt.labelKey)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          ))}
         </div>
 
-        <Input
-          type="date"
-          value={dateFrom}
-          onChange={(e) => setDateFrom(e.target.value)}
-          className="h-9 w-[140px]"
-        />
-        <ArrowRight className="h-4 w-4 text-gray-300 shrink-0" />
-        <Input
-          type="date"
-          value={dateTo}
-          onChange={(e) => setDateTo(e.target.value)}
-          className="h-9 w-[140px]"
-        />
+        <div className="flex items-center gap-1.5">
+          <span className="text-sm text-gray-400 whitespace-nowrap hidden sm:inline">
+            {t('policies.expiryFrom')}
+          </span>
+          <Input
+            type="date"
+            value={dateFrom}
+            onChange={(e) => setDateFrom(e.target.value)}
+            className="h-9 w-[140px]"
+          />
+          <ArrowRight className="h-4 w-4 text-gray-300 shrink-0" />
+          <Input
+            type="date"
+            value={dateTo}
+            onChange={(e) => setDateTo(e.target.value)}
+            className="h-9 w-[140px]"
+          />
 
-        {hasActiveFilters && (
-          <button
-            type="button"
-            onClick={handleClearFilters}
-            className="flex items-center gap-1 text-sm text-gray-400 hover:text-red-500 transition-colors"
-          >
-            <X className="h-3.5 w-3.5" />
-            {t('quotes.reset')}
-          </button>
-        )}
+          {hasActiveFilters && (
+            <button
+              type="button"
+              onClick={handleClearFilters}
+              className="flex items-center gap-1 text-sm text-gray-400 hover:text-red-500 transition-colors"
+            >
+              <X className="h-3.5 w-3.5" />
+              {t('policies.clearFilters')}
+            </button>
+          )}
+        </div>
       </div>
 
       <DataTable

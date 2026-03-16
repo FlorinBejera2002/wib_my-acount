@@ -38,7 +38,9 @@ export default function RegisterPage() {
       <div className="w-full max-w-xl space-y-6 rounded-lg bg-white p-6 sm:p-12">
         <div className="text-center">
           <img src={logo} alt="asigurari.ro" className="mx-auto mb-4 h-10" />
-          <h1 className="text-xl font-bold text-gray-900">{t('auth.register.pageTitle')}</h1>
+          <h1 className="text-xl font-bold text-gray-900">
+            {t('auth.register.pageTitle')}
+          </h1>
           <p className="mt-1 text-sm text-gray-400">
             {t('auth.register.pageSubtitle')}
           </p>
@@ -48,7 +50,9 @@ export default function RegisterPage() {
           <CardHeader className="text-center">
             {!isSuccess ? (
               <>
-                <CardTitle className="text-gray-900">{t('auth.register.title')}</CardTitle>
+                <CardTitle className="text-gray-900">
+                  {t('auth.register.title')}
+                </CardTitle>
                 <CardDescription className="text-gray-400">
                   {t('auth.register.description')}
                 </CardDescription>

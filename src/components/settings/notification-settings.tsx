@@ -57,9 +57,7 @@ export function NotificationSettings() {
     <Card className="shadow-sm">
       <CardHeader>
         <CardTitle>{t('settings.notifications')}</CardTitle>
-        <CardDescription>
-          {t('settings.notificationsSubtitle')}
-        </CardDescription>
+        <CardDescription>{t('settings.notificationsSubtitle')}</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">

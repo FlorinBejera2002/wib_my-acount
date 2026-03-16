@@ -1,4 +1,3 @@
-import { useTranslation } from 'react-i18next'
 import { NotificationsSlideOver } from '@/components/notifications/notifications-slide-over'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -7,6 +6,7 @@ import { SidebarTrigger } from '@/components/ui/sidebar'
 import { useNotifications } from '@/hooks/use-notifications'
 import { Bell } from 'lucide-react'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Link, useLocation } from 'react-router-dom'
 
 const breadcrumbMap: Record<string, string> = {
@@ -17,7 +17,10 @@ const breadcrumbMap: Record<string, string> = {
   '/notifications': 'nav.notifications'
 }
 
-function getBreadcrumbs(pathname: string, t: (key: string, options?: Record<string, string>) => string) {
+function getBreadcrumbs(
+  pathname: string,
+  t: (key: string, options?: Record<string, string>) => string
+) {
   const parts = pathname.split('/').filter(Boolean)
   const crumbs: Array<{ label: string; href: string }> = []
 
@@ -31,9 +34,15 @@ function getBreadcrumbs(pathname: string, t: (key: string, options?: Record<stri
 
   if (parts.length > 1 && parts[1]) {
     if (parts[0] === 'quotes') {
-      crumbs.push({ label: t('nav.quoteDetail', { id: parts[1] }), href: pathname })
+      crumbs.push({
+        label: t('nav.quoteDetail', { id: parts[1] }),
+        href: pathname
+      })
     } else if (parts[0] === 'policies') {
-      crumbs.push({ label: t('nav.policyDetail', { id: parts[1] }), href: pathname })
+      crumbs.push({
+        label: t('nav.policyDetail', { id: parts[1] }),
+        href: pathname
+      })
     } else if (parts[0] === 'profile') {
       const subMap: Record<string, string> = {
         security: 'nav.security',
@@ -72,9 +81,15 @@ export function AppHeader() {
             {t('common.home')}
           </Link>
           {breadcrumbs.map((crumb) => (
-            <span key={crumb.href} className="flex items-center gap-1.5 min-w-0">
+            <span
+              key={crumb.href}
+              className="flex items-center gap-1.5 min-w-0"
+            >
               <span className="hidden sm:inline text-muted-foreground">/</span>
-              <Link to={crumb.href} className="font-medium text-foreground truncate">
+              <Link
+                to={crumb.href}
+                className="font-medium text-foreground truncate"
+              >
                 {crumb.label}
               </Link>
             </span>

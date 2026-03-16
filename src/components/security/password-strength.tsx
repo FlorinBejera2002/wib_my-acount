@@ -19,11 +19,29 @@ function calculateStrength(password: string): {
   if (/[0-9]/.test(password)) score++
   if (/[^A-Za-z0-9]/.test(password)) score++
 
-  if (score <= 2) return { score: 1, labelKey: 'security.passwordStrength.weak', color: 'bg-red-500' }
+  if (score <= 2)
+    return {
+      score: 1,
+      labelKey: 'security.passwordStrength.weak',
+      color: 'bg-red-500'
+    }
   if (score <= 3)
-    return { score: 2, labelKey: 'security.passwordStrength.fair', color: 'bg-orange-500' }
-  if (score <= 4) return { score: 3, labelKey: 'security.passwordStrength.good', color: 'bg-yellow-500' }
-  return { score: 4, labelKey: 'security.passwordStrength.strong', color: 'bg-green-500' }
+    return {
+      score: 2,
+      labelKey: 'security.passwordStrength.fair',
+      color: 'bg-orange-500'
+    }
+  if (score <= 4)
+    return {
+      score: 3,
+      labelKey: 'security.passwordStrength.good',
+      color: 'bg-yellow-500'
+    }
+  return {
+    score: 4,
+    labelKey: 'security.passwordStrength.strong',
+    color: 'bg-green-500'
+  }
 }
 
 export function PasswordStrength({ password }: PasswordStrengthProps) {

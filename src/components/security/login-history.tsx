@@ -35,9 +35,7 @@ export function LoginHistory() {
     <Card className="shadow-sm">
       <CardHeader>
         <CardTitle>{t('security.securityInfo')}</CardTitle>
-        <CardDescription>
-          {t('security.securityInfoSubtitle')}
-        </CardDescription>
+        <CardDescription>{t('security.securityInfoSubtitle')}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex items-center gap-3 rounded-lg border p-4">
@@ -55,7 +53,9 @@ export function LoginHistory() {
         <div className="flex items-center gap-3 rounded-lg border p-4">
           <Shield className="h-5 w-5 text-blue-600" />
           <div>
-            <p className="text-sm font-medium">{t('security.passwordChanged')}</p>
+            <p className="text-sm font-medium">
+              {t('security.passwordChanged')}
+            </p>
             <p className="text-sm text-muted-foreground">
               {profile?.security.passwordChangedAt
                 ? formatDateTime(profile.security.passwordChangedAt)
@@ -71,7 +71,9 @@ export function LoginHistory() {
               {t('security.failedAttempts')}
             </p>
             <p className="text-sm text-muted-foreground">
-              {t('security.attemptsCount', { count: profile?.security.failedAttempts ?? 0 })}
+              {t('security.attemptsCount', {
+                count: profile?.security.failedAttempts ?? 0
+              })}
             </p>
           </div>
         </div>

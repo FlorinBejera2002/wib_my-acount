@@ -20,8 +20,8 @@ import {
   FileText,
   Shield
 } from 'lucide-react'
-import { Link, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { Link, useParams } from 'react-router-dom'
 import { QuoteDocuments } from './quote-documents'
 
 const typeConfig: Record<
@@ -190,7 +190,12 @@ export function QuoteDetail() {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
-        <Button variant="ghost" size="icon" asChild={true} className="shrink-0 self-start">
+        <Button
+          variant="ghost"
+          size="icon"
+          asChild={true}
+          className="shrink-0 self-start"
+        >
           <Link to="/quotes">
             <ArrowLeft className="h-4 w-4" />
           </Link>

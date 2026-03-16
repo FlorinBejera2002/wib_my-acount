@@ -101,9 +101,7 @@ export function TwoFactorForm({ onSubmit, isLoading }: TwoFactorFormProps) {
     <div className="space-y-6">
       <div className="space-y-2 text-center">
         <Label className="text-gray-900">{t('auth.verificationCode')}</Label>
-        <p className="text-sm text-gray-400">
-          {t('auth.enterCode')}
-        </p>
+        <p className="text-sm text-gray-400">{t('auth.enterCode')}</p>
       </div>
 
       <div className="flex justify-center gap-2">

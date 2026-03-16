@@ -1,8 +1,8 @@
-import i18n from 'i18next'
-import { initReactI18next } from 'react-i18next'
 import en from '@/locales/en.json'
 import hu from '@/locales/hu.json'
 import ro from '@/locales/ro.json'
+import i18n from 'i18next'
+import { initReactI18next } from 'react-i18next'
 
 function getInitialLanguage(): string {
   try {

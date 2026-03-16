@@ -9,6 +9,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
+import { Skeleton } from '@/components/ui/skeleton'
 import {
   Table,
   TableBody,
@@ -17,7 +18,6 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table'
-import { Skeleton } from '@/components/ui/skeleton'
 import { usePolicies } from '@/hooks/use-policies'
 import { cn, formatCurrency, formatDate } from '@/lib/utils'
 import {
@@ -32,17 +32,13 @@ import {
   X
 } from 'lucide-react'
 import { Fragment, useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
 
 import type { Policy, TableParams } from '@/api/types'
 import { PolicyStatusBadge } from './policy-status-badge'
 
-const EXPANDABLE_TYPES = [
-  'CALATORIE',
-  'LOCUINTA_PAD',
-  'LOCUINTA_FACULTATIVA'
-]
+const EXPANDABLE_TYPES = ['CALATORIE', 'LOCUINTA_PAD', 'LOCUINTA_FACULTATIVA']
 
 const getPolicyDetailsDisplay = (policy: Policy): string => {
   // Travel insurance
@@ -55,12 +51,17 @@ const getPolicyDetailsDisplay = (policy: Policy): string => {
   }
 
   // Home insurance (PAD and Facultativa)
-  if (policy.type === 'LOCUINTA_PAD' || policy.type === 'LOCUINTA_FACULTATIVA') {
+  if (
+    policy.type === 'LOCUINTA_PAD' ||
+    policy.type === 'LOCUINTA_FACULTATIVA'
+  ) {
     const parts = []
     if (policy.propertyType) parts.push(policy.propertyType)
     if (policy.propertyArea) parts.push(`${policy.propertyArea} mp`)
-    if (policy.insuredAmount) parts.push(`${policy.insuredAmount.toLocaleString()} EUR`)
-    if (policy.padNumber && policy.type === 'LOCUINTA_PAD') parts.push(`PAD: ${policy.padNumber}`)
+    if (policy.insuredAmount)
+      parts.push(`${policy.insuredAmount.toLocaleString()} EUR`)
+    if (policy.padNumber && policy.type === 'LOCUINTA_PAD')
+      parts.push(`PAD: ${policy.padNumber}`)
     return parts.length > 0 ? parts.join(', ') : policy.policyDetails || '—'
   }
 
@@ -87,13 +88,25 @@ const filterConfigs = [
       { labelKey: 'insuranceType.CASCO', value: 'CASCO' },
       { labelKey: 'insuranceType.CASCO_ECONOM', value: 'CASCO_ECONOM' },
       { labelKey: 'insuranceType.LOCUINTA_PAD', value: 'LOCUINTA_PAD' },
-      { labelKey: 'insuranceType.LOCUINTA_FACULTATIVA', value: 'LOCUINTA_FACULTATIVA' },
+      {
+        labelKey: 'insuranceType.LOCUINTA_FACULTATIVA',
+        value: 'LOCUINTA_FACULTATIVA'
+      },
       { labelKey: 'insuranceType.CALATORIE', value: 'CALATORIE' },
-      { labelKey: 'insuranceType.ASISTENTA_RUTIERA', value: 'ASISTENTA_RUTIERA' },
+      {
+        labelKey: 'insuranceType.ASISTENTA_RUTIERA',
+        value: 'ASISTENTA_RUTIERA'
+      },
       { labelKey: 'insuranceType.MALPRAXIS', value: 'MALPRAXIS' },
       { labelKey: 'insuranceType.SANATATE', value: 'SANATATE' },
-      { labelKey: 'insuranceType.ACCIDENTE_CALATORI', value: 'ACCIDENTE_CALATORI' },
-      { labelKey: 'insuranceType.ACCIDENTE_PERSOANE', value: 'ACCIDENTE_PERSOANE' },
+      {
+        labelKey: 'insuranceType.ACCIDENTE_CALATORI',
+        value: 'ACCIDENTE_CALATORI'
+      },
+      {
+        labelKey: 'insuranceType.ACCIDENTE_PERSOANE',
+        value: 'ACCIDENTE_PERSOANE'
+      },
       { labelKey: 'insuranceType.ACCIDENTE_TAXI', value: 'ACCIDENTE_TAXI' },
       { labelKey: 'insuranceType.CMR', value: 'CMR' },
       { labelKey: 'insuranceType.VIATA', value: 'VIATA' }
@@ -219,9 +232,7 @@ export function PoliciesTable() {
       <div className="flex flex-col items-center justify-center gap-4 rounded-xl border border-gray-100 bg-white shadow-sm py-16">
         <AlertCircle className="h-12 w-12 text-destructive" />
         <div className="text-center">
-          <p className="font-medium text-foreground">
-            {t('common.error')}
-          </p>
+          <p className="font-medium text-foreground">{t('common.error')}</p>
           <p className="text-sm text-muted-foreground">
             {t('common.tryAgain')}
           </p>
@@ -244,7 +255,9 @@ export function PoliciesTable() {
                 <SelectValue placeholder={t(config.labelKey)} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="ALL">{t('policies.allFilter', { label: t(config.labelKey) })}</SelectItem>
+                <SelectItem value="ALL">
+                  {t('policies.allFilter', { label: t(config.labelKey) })}
+                </SelectItem>
                 {config.options.map((opt) => (
                   <SelectItem key={opt.value} value={opt.value}>
                     {t(opt.labelKey)}
@@ -293,15 +306,31 @@ export function PoliciesTable() {
           <TableHeader className="bg-green-50">
             <TableRow>
               <TableHead className="w-10" />
-              <TableHead className="min-w-[200px]">{t('policies.policyRef')}</TableHead>
-              <TableHead className="min-w-[150px]">{t('policies.type')}</TableHead>
-              <TableHead className="min-w-[150px]">{t('policies.insurer')}</TableHead>
-              <TableHead className="min-w-[200px]">{t('policies.policyDetails')}</TableHead>
-              <TableHead className="min-w-[100px]">{t('policies.premium')}</TableHead>
-              <TableHead className="min-w-[100px]">{t('policies.status')}</TableHead>
-              <TableHead className="min-w-[100px]">{t('policies.expiry')}</TableHead>
-              <TableHead className="min-w-[100px]">{t('policies.daysLeft')}</TableHead>
-              <TableHead >{t('policies.pdf')}</TableHead>
+              <TableHead className="min-w-[200px]">
+                {t('policies.policyRef')}
+              </TableHead>
+              <TableHead className="min-w-[150px]">
+                {t('policies.type')}
+              </TableHead>
+              <TableHead className="min-w-[150px]">
+                {t('policies.insurer')}
+              </TableHead>
+              <TableHead className="min-w-[200px]">
+                {t('policies.policyDetails')}
+              </TableHead>
+              <TableHead className="min-w-[100px]">
+                {t('policies.premium')}
+              </TableHead>
+              <TableHead className="min-w-[100px]">
+                {t('policies.status')}
+              </TableHead>
+              <TableHead className="min-w-[100px]">
+                {t('policies.expiry')}
+              </TableHead>
+              <TableHead className="min-w-[100px]">
+                {t('policies.daysLeft')}
+              </TableHead>
+              <TableHead>{t('policies.pdf')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -341,7 +370,9 @@ export function PoliciesTable() {
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          <span className="font-medium">{policy.policyNumber}</span>
+                          <span className="font-medium">
+                            {policy.policyNumber}
+                          </span>
                           {isExpandable && (
                             <span className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-1.5 py-0.5 text-[10px] font-medium text-gray-500">
                               <Users className="h-3 w-3" />
@@ -372,27 +403,31 @@ export function PoliciesTable() {
                         )}
                       </TableCell>
                       <TableCell>
-                        {!isExpandable && (() => {
-                          const doc = policy.documents.find((d) => d.type === 'POLICY')
-                          return doc ? (
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-8 w-8 p-0"
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                window.open(doc.url, '_blank')
-                              }}
-                            >
-                              <Download className="h-4 w-4 text-muted-foreground" />
-                            </Button>
-                          ) : null
-                        })()}
+                        {!isExpandable &&
+                          (() => {
+                            const doc = policy.documents.find(
+                              (d) => d.type === 'POLICY'
+                            )
+                            return doc ? (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-8 w-8 p-0"
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  window.open(doc.url, '_blank')
+                                }}
+                              >
+                                <Download className="h-4 w-4 text-muted-foreground" />
+                              </Button>
+                            ) : null
+                          })()}
                       </TableCell>
                     </TableRow>
 
                     {/* Sub-rows: insured persons */}
-                    {isExpandable && isExpanded &&
+                    {isExpandable &&
+                      isExpanded &&
                       persons.map((person, idx) => {
                         const isLast = idx === persons.length - 1
 
@@ -401,7 +436,8 @@ export function PoliciesTable() {
                             key={`${policy.id}-p-${idx}`}
                             className={cn(
                               'bg-gray-50/70 hover:bg-gray-100/50 cursor-pointer',
-                              !isLast && 'border-b border-dashed border-gray-200',
+                              !isLast &&
+                                'border-b border-dashed border-gray-200',
                               isLast && 'border-b-2 border-gray-200'
                             )}
                             onClick={() => navigate(`/policies/${policy.id}`)}
@@ -468,8 +504,7 @@ export function PoliciesTable() {
                             </TableCell>
                           </TableRow>
                         )
-                      })
-                    }
+                      })}
                   </Fragment>
                 )
               })
@@ -492,7 +527,13 @@ export function PoliciesTable() {
   )
 }
 
-function ExpiryBadge({ days, t }: { days: number; t: (key: string, opts?: Record<string, unknown>) => string }) {
+function ExpiryBadge({
+  days,
+  t
+}: {
+  days: number
+  t: (key: string, opts?: Record<string, unknown>) => string
+}) {
   if (days < 0) return null
   const label = t('policies.daysCount', { days })
   if (days <= 7) {

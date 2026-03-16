@@ -1,4 +1,3 @@
-import { useTranslation } from 'react-i18next'
 import icon from '@/assets/Icon.svg'
 import logo from '@/assets/logo.svg'
 import { ProfileAvatar } from '@/components/profile/profile-avatar'
@@ -37,6 +36,7 @@ import {
   LogOut,
   User
 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 const navItems = [

@@ -19,9 +19,7 @@ export function QuoteDocuments({ documents }: QuoteDocumentsProps) {
 
   if (documents.length === 0) {
     return (
-      <p className="text-sm text-muted-foreground">
-        {t('quotes.noDocuments')}
-      </p>
+      <p className="text-sm text-muted-foreground">{t('quotes.noDocuments')}</p>
     )
   }
 

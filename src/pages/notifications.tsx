@@ -1,9 +1,6 @@
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import {
-  Card,
-  CardContent
-} from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { useNotifications } from '@/hooks/use-notifications'
 import { formatDate } from '@/lib/utils'
 import { Bell, Check, Trash2 } from 'lucide-react'
@@ -19,7 +16,9 @@ export default function NotificationsPage() {
     return (
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-xl sm:text-2xl font-bold">{t('notifications.title')}</h1>
+          <h1 className="text-xl sm:text-2xl font-bold">
+            {t('notifications.title')}
+          </h1>
         </div>
         <div className="space-y-4">
           {[1, 2, 3].map((i) => (
@@ -55,7 +54,9 @@ export default function NotificationsPage() {
         <div className="flex items-center gap-3">
           <Bell className="h-6 w-6 shrink-0" />
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold">{t('notifications.title')}</h1>
+            <h1 className="text-xl sm:text-2xl font-bold">
+              {t('notifications.title')}
+            </h1>
             <p className="text-sm text-gray-500">
               {unreadCount > 0
                 ? t('notifications.unreadCount', { count: unreadCount })

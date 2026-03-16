@@ -96,7 +96,9 @@ export function ActiveSessions() {
                   <span>IP: {session.ipAddress}</span>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  {t('security.lastActivity', { date: formatDateTime(session.lastActivity) })}
+                  {t('security.lastActivity', {
+                    date: formatDateTime(session.lastActivity)
+                  })}
                 </p>
               </div>
               {!session.isCurrent && (

@@ -20,8 +20,8 @@ import {
   FileText,
   Shield
 } from 'lucide-react'
-import { Link, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { Link, useParams } from 'react-router-dom'
 import { PolicyDocuments } from './policy-documents'
 import { PolicyStatusBadge } from './policy-status-badge'
 
@@ -81,7 +81,12 @@ export function PolicyDetail() {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
-        <Button variant="ghost" size="icon" asChild={true} className="shrink-0 self-start">
+        <Button
+          variant="ghost"
+          size="icon"
+          asChild={true}
+          className="shrink-0 self-start"
+        >
           <Link to="/policies">
             <ArrowLeft className="h-4 w-4" />
           </Link>
@@ -201,7 +206,9 @@ export function PolicyDetail() {
                       </p>
                       <div className="flex items-center gap-2 mt-0.5">
                         <p className="text-sm font-semibold text-gray-900">
-                          {t('policies.daysCount', { days: policy.daysUntilExpiry })}
+                          {t('policies.daysCount', {
+                            days: policy.daysUntilExpiry
+                          })}
                         </p>
                         {policy.daysUntilExpiry <= 30 && (
                           <Badge className="bg-amber-100 text-amber-800 hover:bg-amber-100 border-0 text-xs">

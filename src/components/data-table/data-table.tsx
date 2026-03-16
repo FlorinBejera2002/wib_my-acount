@@ -78,9 +78,7 @@ export function DataTable<TData, TValue>({
       <div className="flex flex-col items-center justify-center gap-4 rounded-xl border border-gray-100 bg-white shadow-sm py-16">
         <AlertCircle className="h-12 w-12 text-destructive" />
         <div className="text-center">
-          <p className="font-medium text-foreground">
-            {t('common.error')}
-          </p>
+          <p className="font-medium text-foreground">{t('common.error')}</p>
           <p className="text-sm text-muted-foreground">
             {t('common.tryAgain')}
           </p>

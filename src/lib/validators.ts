@@ -37,23 +37,17 @@ export const registerSchema = (t: TFunction) =>
         .string()
         .min(1, t('validation.emailRequired'))
         .email(t('validation.emailInvalid')),
-      phone: z
-        .string()
-        .regex(
-          /^\+40[0-9]{9}$/,
-          t('validation.phoneFormat')
-        ),
+      phone: z.string().regex(/^\+40[0-9]{9}$/, t('validation.phoneFormat')),
       password: z
         .string()
         .min(12, t('validation.passwordMin'))
         .regex(/[A-Z]/, t('validation.passwordUppercase'))
         .regex(/[a-z]/, t('validation.passwordLowercase'))
         .regex(/[0-9]/, t('validation.passwordDigit'))
-        .regex(
-          /[^A-Za-z0-9]/,
-          t('validation.passwordSpecial')
-        ),
-      confirmPassword: z.string().min(1, t('validation.confirmPasswordRequired'))
+        .regex(/[^A-Za-z0-9]/, t('validation.passwordSpecial')),
+      confirmPassword: z
+        .string()
+        .min(1, t('validation.confirmPasswordRequired'))
     })
     .refine((data) => data.password === data.confirmPassword, {
       message: t('validation.passwordsDoNotMatch'),
@@ -70,7 +64,9 @@ export const forgotPasswordSchema = (t: TFunction) =>
       .email(t('validation.emailInvalid'))
   })
 
-export type ForgotPasswordFormValues = z.infer<ReturnType<typeof forgotPasswordSchema>>
+export type ForgotPasswordFormValues = z.infer<
+  ReturnType<typeof forgotPasswordSchema>
+>
 
 export const resetPasswordSchema = (t: TFunction) =>
   z
@@ -81,18 +77,19 @@ export const resetPasswordSchema = (t: TFunction) =>
         .regex(/[A-Z]/, t('validation.passwordUppercase'))
         .regex(/[a-z]/, t('validation.passwordLowercase'))
         .regex(/[0-9]/, t('validation.passwordDigit'))
-        .regex(
-          /[^A-Za-z0-9]/,
-          t('validation.passwordSpecial')
-        ),
-      confirmPassword: z.string().min(1, t('validation.confirmPasswordRequired'))
+        .regex(/[^A-Za-z0-9]/, t('validation.passwordSpecial')),
+      confirmPassword: z
+        .string()
+        .min(1, t('validation.confirmPasswordRequired'))
     })
     .refine((data) => data.newPassword === data.confirmPassword, {
       message: t('validation.passwordsDoNotMatch'),
       path: ['confirmPassword']
     })
 
-export type ResetPasswordFormValues = z.infer<ReturnType<typeof resetPasswordSchema>>
+export type ResetPasswordFormValues = z.infer<
+  ReturnType<typeof resetPasswordSchema>
+>
 
 export const changePasswordSchema = (t: TFunction) =>
   z
@@ -104,18 +101,19 @@ export const changePasswordSchema = (t: TFunction) =>
         .regex(/[A-Z]/, t('validation.passwordUppercase'))
         .regex(/[a-z]/, t('validation.passwordLowercase'))
         .regex(/[0-9]/, t('validation.passwordDigit'))
-        .regex(
-          /[^A-Za-z0-9]/,
-          t('validation.passwordSpecial')
-        ),
-      confirmPassword: z.string().min(1, t('validation.confirmPasswordRequired'))
+        .regex(/[^A-Za-z0-9]/, t('validation.passwordSpecial')),
+      confirmPassword: z
+        .string()
+        .min(1, t('validation.confirmPasswordRequired'))
     })
     .refine((data) => data.newPassword === data.confirmPassword, {
       message: t('validation.passwordsDoNotMatch'),
       path: ['confirmPassword']
     })
 
-export type ChangePasswordFormValues = z.infer<ReturnType<typeof changePasswordSchema>>
+export type ChangePasswordFormValues = z.infer<
+  ReturnType<typeof changePasswordSchema>
+>
 
 export const updateProfileSchema = (t: TFunction) =>
   z.object({
@@ -127,15 +125,12 @@ export const updateProfileSchema = (t: TFunction) =>
       .string()
       .min(2, t('validation.lastNameMin'))
       .max(50, t('validation.lastNameMax')),
-    phone: z
-      .string()
-      .regex(
-        /^\+40[0-9]{9}$/,
-        t('validation.phoneFormat')
-      )
+    phone: z.string().regex(/^\+40[0-9]{9}$/, t('validation.phoneFormat'))
   })
 
-export type UpdateProfileFormValues = z.infer<ReturnType<typeof updateProfileSchema>>
+export type UpdateProfileFormValues = z.infer<
+  ReturnType<typeof updateProfileSchema>
+>
 
 export const notificationSettingsSchema = z.object({
   quotes: z.boolean(),
@@ -156,24 +151,46 @@ export type PreferencesFormValues = z.infer<typeof preferencesSchema>
 
 export const createExpiryAlertSchema = (t: TFunction) =>
   z.object({
-    alertType: z.enum([
-      'RCA', 'ASR', 'CALATORIE', 'LOCUINTA_PAD', 'LOCUINTA_OPTIONALA',
-      'CASCO', 'ROVINIETA', 'ITP', 'REVIZIE_AUTO', 'PERMIS',
-      'BULETIN', 'PASAPORT', 'ZIUA_SOTIEI'
-    ], {
-      required_error: t('validation.selectAlertType')
-    }),
-    notifyBefore: z.enum([
-      '1_DAY', '3_DAYS', '7_DAYS', '1_MONTH', '2_MONTHS', '3_MONTHS', '6_MONTHS'
-    ], {
-      required_error: t('validation.selectNotifyInterval')
-    }),
+    alertType: z.enum(
+      [
+        'RCA',
+        'ASR',
+        'CALATORIE',
+        'LOCUINTA_PAD',
+        'LOCUINTA_OPTIONALA',
+        'CASCO',
+        'ROVINIETA',
+        'ITP',
+        'REVIZIE_AUTO',
+        'PERMIS',
+        'BULETIN',
+        'PASAPORT',
+        'ZIUA_SOTIEI'
+      ],
+      {
+        required_error: t('validation.selectAlertType')
+      }
+    ),
+    notifyBefore: z.enum(
+      [
+        '1_DAY',
+        '3_DAYS',
+        '7_DAYS',
+        '1_MONTH',
+        '2_MONTHS',
+        '3_MONTHS',
+        '6_MONTHS'
+      ],
+      {
+        required_error: t('validation.selectNotifyInterval')
+      }
+    ),
     licensePlate: z.string().optional().or(z.literal('')),
     name: z.string().optional().or(z.literal('')),
     shortAddress: z.string().optional().or(z.literal('')),
-    expiryDate: z
-      .string()
-      .min(1, t('validation.expiryDateRequired'))
+    expiryDate: z.string().min(1, t('validation.expiryDateRequired'))
   })
 
-export type CreateExpiryAlertFormValues = z.infer<ReturnType<typeof createExpiryAlertSchema>>
+export type CreateExpiryAlertFormValues = z.infer<
+  ReturnType<typeof createExpiryAlertSchema>
+>

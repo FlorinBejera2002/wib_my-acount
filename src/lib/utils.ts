@@ -16,7 +16,11 @@ function getDateLocale() {
 }
 
 export function formatCurrency(amount: number, currency = 'RON'): string {
-  const localeMap: Record<string, string> = { ro: 'ro-RO', hu: 'hu-HU', en: 'en-US' }
+  const localeMap: Record<string, string> = {
+    ro: 'ro-RO',
+    hu: 'hu-HU',
+    en: 'en-US'
+  }
   const locale = localeMap[i18n.language] || 'en-US'
   return new Intl.NumberFormat(locale, {
     style: 'currency',
@@ -31,7 +35,9 @@ export function formatDate(dateStr: string, pattern = 'dd MMM yyyy'): string {
 }
 
 export function formatDateTime(dateStr: string): string {
-  return format(parseISO(dateStr), 'dd MMM yyyy, HH:mm', { locale: getDateLocale() })
+  return format(parseISO(dateStr), 'dd MMM yyyy, HH:mm', {
+    locale: getDateLocale()
+  })
 }
 
 export function formatFileSize(bytes: number): string {

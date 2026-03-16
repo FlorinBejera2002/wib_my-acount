@@ -53,7 +53,6 @@ export default function LoginPage() {
     )
   }
 
-
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-100 px-4">
       <div className="w-full max-w-xl space-y-6 rounded-lg bg-white p-6 sm:p-12">
@@ -65,7 +64,9 @@ export default function LoginPage() {
           <CardHeader className="text-center">
             {step === 'credentials' && (
               <>
-                <CardTitle className="text-gray-900">{t('auth.login.title')}</CardTitle>
+                <CardTitle className="text-gray-900">
+                  {t('auth.login.title')}
+                </CardTitle>
                 <CardDescription className="text-gray-400">
                   {t('auth.login.description')}
                 </CardDescription>

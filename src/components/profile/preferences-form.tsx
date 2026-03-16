@@ -63,9 +63,7 @@ export function PreferencesForm() {
     <Card className="shadow-sm">
       <CardHeader>
         <CardTitle>{t('preferences.title')}</CardTitle>
-        <CardDescription>
-          {t('preferences.subtitle')}
-        </CardDescription>
+        <CardDescription>{t('preferences.subtitle')}</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -81,9 +79,15 @@ export function PreferencesForm() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="ro">{t('preferences.romanian')}</SelectItem>
-                      <SelectItem value="en">{t('preferences.english')}</SelectItem>
-                      <SelectItem value="hu">{t('preferences.hungarian')}</SelectItem>
+                      <SelectItem value="ro">
+                        {t('preferences.romanian')}
+                      </SelectItem>
+                      <SelectItem value="en">
+                        {t('preferences.english')}
+                      </SelectItem>
+                      <SelectItem value="hu">
+                        {t('preferences.hungarian')}
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 )}

@@ -63,9 +63,13 @@ export function NotificationsSlideOver({
             <div className="flex items-center gap-3">
               <Bell className="h-5 w-5" />
               <div>
-                <h2 className="font-semibold text-gray-900">{t('notifications.title')}</h2>
+                <h2 className="font-semibold text-gray-900">
+                  {t('notifications.title')}
+                </h2>
                 <p className="text-xs text-gray-500">
-                  {unreadCount > 0 ? t('notifications.unreadCount', { count: unreadCount }) : t('notifications.allRead')}
+                  {unreadCount > 0
+                    ? t('notifications.unreadCount', { count: unreadCount })
+                    : t('notifications.allRead')}
                 </p>
               </div>
             </div>

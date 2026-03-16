@@ -31,9 +31,7 @@ export default function DashboardPage() {
         <h1 className="text-xl font-bold text-gray-900">
           {t('dashboard.welcome', { name: user ? `, ${user.firstName}` : '' })}
         </h1>
-        <p className="text-sm text-gray-400">
-          {t('dashboard.subtitle')}
-        </p>
+        <p className="text-sm text-gray-400">{t('dashboard.subtitle')}</p>
       </div>
 
       <StatsCards stats={stats} isLoading={statsLoading} />
