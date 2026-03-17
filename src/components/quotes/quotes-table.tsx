@@ -200,16 +200,16 @@ export function QuotesTable() {
     })
   }
 
-  const hasActiveFilters =
-    (params.filters && Object.values(params.filters).some(Boolean)) ||
-    dateFrom ||
-    dateTo
+  // const hasActiveFilters =
+  //   (params.filters && Object.values(params.filters).some(Boolean)) ||
+  //   dateFrom ||
+  //   dateTo
 
-  const handleClearFilters = () => {
-    setParams((prev) => ({ ...prev, filters: {} }))
-    setDateFrom('')
-    setDateTo('')
-  }
+  // const handleClearFilters = () => {
+  //   setParams((prev) => ({ ...prev, filters: {} }))
+  //   setDateFrom('')
+  //   setDateTo('')
+  // }
 
   return (
     <div>
@@ -238,10 +238,7 @@ export function QuotesTable() {
           ))}
         </div>
 
-        <div className="flex items-center gap-1.5">
-          <span className="text-sm text-gray-400 whitespace-nowrap hidden sm:inline">
-            {t('policies.expiryFrom')}
-          </span>
+        {/* <div className="flex items-center gap-1.5">
           <Input
             type="date"
             value={dateFrom}
@@ -266,7 +263,7 @@ export function QuotesTable() {
               {t('policies.clearFilters')}
             </button>
           )}
-        </div>
+        </div> */}
       </div>
 
       <DataTable

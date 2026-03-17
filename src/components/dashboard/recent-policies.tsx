@@ -134,7 +134,7 @@ export function RecentPolicies() {
                   >
                     <span
                       className={cn(
-                        'flex h-8 max-w-[100px] truncate px-2 shrink-0 items-center justify-center rounded-lg text-xs font-semibold',
+                        'flex h-8 max-w-[130px] truncate px-2 shrink-0 items-center justify-center rounded-lg text-xs font-semibold',
                         type.className
                       )}
                     >
