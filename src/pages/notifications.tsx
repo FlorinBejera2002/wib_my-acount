@@ -41,12 +41,12 @@ export default function NotificationsPage() {
 
   const filteredNotifications =
     notifications?.filter((n) => {
-      if (filter === 'unread') return !n.read
-      if (filter === 'read') return n.read
+      if (filter === 'unread') return !n.isRead
+      if (filter === 'read') return n.isRead
       return true
     }) ?? []
 
-  const unreadCount = notifications?.filter((n) => !n.read).length ?? 0
+  const unreadCount = notifications?.filter((n) => !n.isRead).length ?? 0
 
   return (
     <div className="space-y-6">
@@ -123,7 +123,7 @@ export default function NotificationsPage() {
           {filteredNotifications.map((notification) => (
             <Card
               key={notification.id}
-              className={notification.read ? 'opacity-75' : ''}
+              className={notification.isRead ? 'opacity-75' : ''}
             >
               <CardContent className="p-4">
                 <div className="flex items-start gap-3">
@@ -131,12 +131,12 @@ export default function NotificationsPage() {
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex-1">
                         <h3
-                          className={`font-semibold text-gray-900 ${!notification.read ? 'font-bold' : ''}`}
+                          className={`font-semibold text-gray-900 ${!notification.isRead ? 'font-bold' : ''}`}
                         >
                           {notification.title}
                         </h3>
                         <p className="text-sm text-gray-600 mt-1">
-                          {notification.message}
+                          {notification.body}
                         </p>
                         <div className="flex items-center gap-4 mt-2">
                           <span className="text-xs text-gray-500">
@@ -151,7 +151,7 @@ export default function NotificationsPage() {
                       </div>
 
                       <div className="flex items-center gap-1 flex-shrink-0">
-                        {!notification.read && (
+                        {!notification.isRead && (
                           <Button
                             variant="ghost"
                             size="icon"

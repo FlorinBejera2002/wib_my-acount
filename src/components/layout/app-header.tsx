@@ -64,7 +64,7 @@ export function AppHeader() {
   const { data: notifications } = useNotifications()
   const [notificationsOpen, setNotificationsOpen] = useState(false)
 
-  const unreadCount = notifications?.filter((n) => !n.read).length ?? 0
+  const unreadCount = notifications?.filter((n) => !n.isRead).length ?? 0
 
   return (
     <>

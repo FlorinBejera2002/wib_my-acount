@@ -133,9 +133,8 @@ export type UpdateProfileFormValues = z.infer<
 >
 
 export const notificationSettingsSchema = z.object({
-  quotes: z.boolean(),
-  policiesExpiry: z.boolean(),
-  marketing: z.boolean()
+  email: z.boolean(),
+  push: z.boolean()
 })
 
 export type NotificationSettingsFormValues = z.infer<
@@ -143,8 +142,7 @@ export type NotificationSettingsFormValues = z.infer<
 >
 
 export const preferencesSchema = z.object({
-  language: z.enum(['ro', 'en', 'hu']),
-  timezone: z.string().min(1, 'Timezone is required')
+  language: z.enum(['ro', 'en', 'hu'])
 })
 
 export type PreferencesFormValues = z.infer<typeof preferencesSchema>

@@ -1,24 +1,15 @@
+import { api } from '@/api/axios-client'
+import { ENDPOINTS } from '@/api/endpoints'
 import type { RegisterRequest, RegisterResponse } from '@/api/types'
-import i18n from '@/lib/i18n'
-import { delay } from '@/lib/utils'
 import { useMutation } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
 const registerFn = async (data: RegisterRequest): Promise<RegisterResponse> => {
-  // TODO: decomentează când API-ul e gata
-  // const { data: response } = await api.post(ENDPOINTS.AUTH.REGISTER, data);
-  // return response;
-
-  await delay(1000)
-
-  if (data.email === 'florinpetru0306@gmail.com') {
-    throw new Error(i18n.t('toast.emailAlreadyRegistered'))
-  }
-
-  return {
-    message: i18n.t('toast.accountCreated'),
-    requiresVerification: true
-  }
+  const { data: response } = await api.post<RegisterResponse>(
+    ENDPOINTS.AUTH.REGISTER,
+    data
+  )
+  return response
 }
 
 export function useRegister() {

@@ -1,4 +1,7 @@
-import type { MonthlyQuoteStat } from '@/api/types'
+interface MonthlyQuoteStat {
+  month: string
+  count: number
+}
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useTranslation } from 'react-i18next'

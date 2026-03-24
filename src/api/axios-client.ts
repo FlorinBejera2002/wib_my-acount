@@ -86,14 +86,14 @@ api.interceptors.response.use(
 
       const { data } = await api.post<RefreshTokenResponse>(
         ENDPOINTS.AUTH.REFRESH,
-        { refreshToken }
+        { refresh_token: refreshToken }
       )
 
-      useAuthStore.getState().setTokens(data.accessToken, data.refreshToken)
-      processQueue(null, data.accessToken)
+      useAuthStore.getState().setTokens(data.access_token, data.refresh_token)
+      processQueue(null, data.access_token)
 
       if (originalRequest.headers) {
-        originalRequest.headers.Authorization = `Bearer ${data.accessToken}`
+        originalRequest.headers.Authorization = `Bearer ${data.access_token}`
       }
       return api(originalRequest)
     } catch (refreshError) {

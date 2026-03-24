@@ -34,8 +34,8 @@ export default function LoginPage() {
   const handleLogin = (data: LoginFormValues) => {
     loginMutation.mutate(data, {
       onSuccess: (response) => {
-        if (response.requiresTwoFactor && response.tempToken) {
-          setTempToken(response.tempToken)
+        if (response.requires_two_factor && response.pre_auth_token) {
+          setTempToken(response.pre_auth_token)
           setStep('two-factor')
         }
       }
@@ -44,7 +44,7 @@ export default function LoginPage() {
 
   const handleTwoFactor = (code: string) => {
     twoFactorMutation.mutate(
-      { tempToken, code },
+      { pre_auth_token: tempToken, totp_code: code },
       {
         onSuccess: () => {
           setStep('success')

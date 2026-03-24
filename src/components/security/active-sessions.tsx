@@ -1,4 +1,3 @@
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -17,9 +16,9 @@ import { formatDateTime } from '@/lib/utils'
 import { Globe, Loader2, Monitor, Smartphone } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
-function getDeviceIcon(deviceInfo: string) {
-  const lower = deviceInfo.toLowerCase()
-  if (lower.includes('iphone') || lower.includes('android')) {
+function getDeviceIcon(userAgent: string) {
+  const lower = userAgent.toLowerCase()
+  if (lower.includes('iphone') || lower.includes('android') || lower.includes('mobile')) {
     return Smartphone
   }
   return Monitor
@@ -72,7 +71,7 @@ export function ActiveSessions() {
       </CardHeader>
       <CardContent className="space-y-3">
         {sessions?.map((session) => {
-          const DeviceIcon = getDeviceIcon(session.deviceInfo)
+          const DeviceIcon = getDeviceIcon(session.userAgent)
           return (
             <div
               key={session.id}
@@ -81,36 +80,28 @@ export function ActiveSessions() {
               <DeviceIcon className="h-8 w-8 text-muted-foreground" />
               <div className="flex-1 space-y-1">
                 <div className="flex items-center gap-2">
-                  <p className="text-sm font-medium">{session.deviceInfo}</p>
-                  {session.isCurrent && (
-                    <Badge className="bg-green-100 text-green-800 hover:bg-green-100 border-0">
-                      {t('security.currentSession')}
-                    </Badge>
-                  )}
+                  <p className="text-sm font-medium">{session.userAgent}</p>
                 </div>
                 <div className="flex items-center gap-3 text-xs text-muted-foreground">
                   <span className="flex items-center gap-1">
                     <Globe className="h-3 w-3" />
-                    {session.location}
+                    IP: {session.ip}
                   </span>
-                  <span>IP: {session.ipAddress}</span>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  {t('security.lastActivity', {
-                    date: formatDateTime(session.lastActivity)
+                  {t('security.sessionCreated', {
+                    date: formatDateTime(session.createdAt)
                   })}
                 </p>
               </div>
-              {!session.isCurrent && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => terminateSession.mutate(session.id)}
-                  disabled={terminateSession.isPending}
-                >
-                  {t('security.terminate')}
-                </Button>
-              )}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => terminateSession.mutate(session.id)}
+                disabled={terminateSession.isPending}
+              >
+                {t('security.terminate')}
+              </Button>
             </div>
           )
         })}

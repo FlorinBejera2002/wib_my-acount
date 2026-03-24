@@ -2,12 +2,10 @@
 
 export interface PaginatedResponse<T> {
   data: T[]
-  meta: {
-    currentPage: number
-    totalPages: number
-    totalItems: number
-    itemsPerPage: number
-  }
+  total: number
+  page: number
+  limit: number
+  pages: number
 }
 
 export interface TableParams {
@@ -16,7 +14,8 @@ export interface TableParams {
   sort?: string
   order?: 'asc' | 'desc'
   search?: string
-  filters?: Record<string, string>
+  status?: string
+  type?: string
 }
 
 // ==================== Auth ====================
@@ -27,45 +26,44 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
-  requiresTwoFactor: boolean
-  tempToken?: string
-  accessToken?: string
-  refreshToken?: string
+  access_token?: string
+  refresh_token?: string
   user?: UserProfile
+  pre_auth_token?: string
+  requires_two_factor?: boolean
 }
 
 export interface TwoFactorRequest {
-  tempToken: string
-  code: string
+  pre_auth_token: string
+  totp_code: string
 }
 
 export interface TwoFactorResponse {
-  accessToken: string
-  refreshToken: string
+  access_token: string
+  refresh_token: string
   user: UserProfile
 }
 
 export interface RefreshTokenRequest {
-  refreshToken: string
+  refresh_token: string
 }
 
 export interface RefreshTokenResponse {
-  accessToken: string
-  refreshToken: string
+  access_token: string
+  refresh_token: string
 }
 
 export interface RegisterRequest {
-  firstName: string
-  lastName: string
   email: string
-  phone: string
   password: string
-  confirmPassword: string
+  firstName?: string
+  lastName?: string
 }
 
 export interface RegisterResponse {
-  message: string
-  requiresVerification: boolean
+  access_token: string
+  refresh_token: string
+  user: { id: string; email: string }
 }
 
 export interface ForgotPasswordRequest {
@@ -74,26 +72,35 @@ export interface ForgotPasswordRequest {
 
 export interface ForgotPasswordResponse {
   message: string
-  tempToken: string
 }
 
 export interface VerifyResetCodeRequest {
-  tempToken: string
+  email: string
   code: string
 }
 
 export interface VerifyResetCodeResponse {
-  resetToken: string
+  reset_token: string
 }
 
 export interface ResetPasswordRequest {
-  resetToken: string
-  newPassword: string
-  confirmPassword: string
+  reset_token: string
+  new_password: string
 }
 
 export interface ResetPasswordResponse {
   message: string
+}
+
+// ==================== 2FA Management ====================
+
+export interface Enable2FAResponse {
+  secret: string
+  provisioning_uri: string
+}
+
+export interface Confirm2FARequest {
+  totp_code: string
 }
 
 // ==================== User ====================
@@ -104,48 +111,38 @@ export interface UserProfile {
   firstName: string
   lastName: string
   phone: string
-  photoUrl?: string
-  legacyCustomerId: string
+  roles: string[]
+  isActive: boolean
+  totpEnabled: boolean
   preferences: UserPreferences
-  security: UserSecurity
-  status: 'active' | 'inactive' | 'suspended'
   createdAt: string
+  updatedAt: string
 }
 
 export interface UserPreferences {
   language: 'ro' | 'en' | 'hu'
-  timezone: string
   notifications: NotificationPreferences
 }
 
 export interface NotificationPreferences {
-  quotes: boolean
-  policiesExpiry: boolean
-  marketing: boolean
-}
-
-export interface UserSecurity {
-  lastLogin: string
-  passwordChangedAt: string
-  failedAttempts: number
+  email: boolean
+  push: boolean
 }
 
 export interface UpdateProfileRequest {
-  firstName: string
-  lastName: string
-  phone: string
+  firstName?: string
+  lastName?: string
+  phone?: string
 }
 
 export interface UpdatePreferencesRequest {
-  language: 'ro' | 'en' | 'hu'
-  timezone: string
-  notifications: NotificationPreferences
+  language?: 'ro' | 'en' | 'hu'
+  notifications?: Partial<NotificationPreferences>
 }
 
 export interface ChangePasswordRequest {
-  oldPassword: string
-  newPassword: string
-  confirmPassword: string
+  current_password: string
+  new_password: string
 }
 
 // ==================== Quotes ====================
@@ -245,11 +242,9 @@ export interface Policy {
   createdAt: string
   sourceQuoteId?: string
   documents: PolicyDocument[]
-  // Travel insurance specific
   travelDestination?: string
   travelPurpose?: string
   transportationType?: string
-  // Home insurance specific
   propertyAddress?: string
   insuredAmount?: number
   insuredGoods?: number
@@ -263,13 +258,10 @@ export interface Policy {
 
 export interface Session {
   id: string
-  deviceInfo: string
-  ipAddress: string
-  location: string
+  userAgent: string
+  ip: string
   createdAt: string
-  lastActivity: string
   expiresAt: string
-  isCurrent: boolean
 }
 
 // ==================== Notifications ====================
@@ -285,13 +277,38 @@ export interface Notification {
   id: string
   type: NotificationType
   title: string
-  message: string
-  read: boolean
+  body: string
+  meta?: Record<string, unknown>
+  isRead: boolean
   createdAt: string
-  actionUrl?: string
 }
 
-// ==================== Expiry Alerts ====================
+// ==================== Reminders ====================
+
+export interface Reminder {
+  id: string
+  title: string
+  note?: string
+  remindAt: string
+  isDone: boolean
+  createdAt: string
+  updatedAt: string
+}
+
+export interface CreateReminderRequest {
+  title: string
+  remindAt: string
+  note?: string
+}
+
+export interface UpdateReminderRequest {
+  title?: string
+  remindAt?: string
+  note?: string
+  isDone?: boolean
+}
+
+// ==================== Expiry Alerts (local) ====================
 
 export type AlertType =
   | 'RCA'
@@ -340,15 +357,43 @@ export interface CreateExpiryAlertRequest {
 
 // ==================== Dashboard ====================
 
-export interface MonthlyQuoteStat {
-  month: string
-  count: number
+export interface DashboardStats {
+  policies: {
+    total: number
+    active: number
+    byType: Record<string, number>
+    expiringSoon: Array<{
+      id: string
+      policyNumber: string
+      type: string
+      endDate: string
+    }>
+  }
+  quotes: {
+    total: number
+    pending: number
+  }
+  notifications: {
+    unread: number
+    total: number
+  }
+  reminders: {
+    upcoming: Array<{
+      id: string
+      title: string
+      remindAt: string
+    }>
+    total: number
+  }
 }
 
-export interface DashboardStats {
-  totalQuotes: number
-  activePolicies: number
-  expiringSoon: number
-  unreadNotifications: number
-  quotesPerMonth: MonthlyQuoteStat[]
+// ==================== GDPR Export ====================
+
+export interface ExportDataResponse {
+  exportedAt: string
+  profile: UserProfile
+  policies: Policy[]
+  quotes: Quote[]
+  notifications: Notification[]
+  reminders: Reminder[]
 }

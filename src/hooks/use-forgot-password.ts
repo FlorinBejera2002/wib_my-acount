@@ -1,3 +1,5 @@
+import { api } from '@/api/axios-client'
+import { ENDPOINTS } from '@/api/endpoints'
 import type {
   ForgotPasswordRequest,
   ForgotPasswordResponse,
@@ -7,55 +9,37 @@ import type {
   VerifyResetCodeResponse
 } from '@/api/types'
 import i18n from '@/lib/i18n'
-import { delay } from '@/lib/utils'
 import { useMutation } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
 const forgotPasswordFn = async (
   data: ForgotPasswordRequest
 ): Promise<ForgotPasswordResponse> => {
-  // TODO: decomentează când API-ul e gata
-  // const { data: response } = await api.post(ENDPOINTS.AUTH.FORGOT_PASSWORD, data);
-  // return response;
-
-  await delay(800)
-
-  return {
-    message: i18n.t('toast.verificationCodeSent'),
-    tempToken: `reset_temp_token_${data.email}`
-  }
+  const { data: response } = await api.post<ForgotPasswordResponse>(
+    ENDPOINTS.AUTH.FORGOT_PASSWORD,
+    data
+  )
+  return response
 }
 
 const verifyResetCodeFn = async (
   data: VerifyResetCodeRequest
 ): Promise<VerifyResetCodeResponse> => {
-  // TODO: decomentează când API-ul e gata
-  // const { data: response } = await api.post(ENDPOINTS.AUTH.VERIFY_RESET_CODE, data);
-  // return response;
-
-  await delay(600)
-
-  if (data.code === '123456') {
-    return {
-      resetToken: 'mock_reset_token_abc123'
-    }
-  }
-
-  throw new Error(i18n.t('toast.codeInvalid'))
+  const { data: response } = await api.post<VerifyResetCodeResponse>(
+    ENDPOINTS.AUTH.VERIFY_RESET_CODE,
+    data
+  )
+  return response
 }
 
 const resetPasswordFn = async (
-  _data: ResetPasswordRequest
+  data: ResetPasswordRequest
 ): Promise<ResetPasswordResponse> => {
-  // TODO: decomentează când API-ul e gata
-  // const { data: response } = await api.post(ENDPOINTS.AUTH.RESET_PASSWORD, data);
-  // return response;
-
-  await delay(800)
-
-  return {
-    message: i18n.t('toast.passwordResetSuccess')
-  }
+  const { data: response } = await api.post<ResetPasswordResponse>(
+    ENDPOINTS.AUTH.RESET_PASSWORD,
+    data
+  )
+  return response
 }
 
 export function useForgotPassword() {
@@ -71,7 +55,7 @@ export function useVerifyResetCode() {
   return useMutation({
     mutationFn: verifyResetCodeFn,
     onError: (error: Error) => {
-      toast.error(error.message)
+      toast.error(error.message || i18n.t('toast.codeInvalid'))
     }
   })
 }

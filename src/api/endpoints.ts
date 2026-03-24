@@ -7,7 +7,10 @@ export const ENDPOINTS = {
     LOGOUT: '/auth/logout',
     FORGOT_PASSWORD: '/auth/forgot-password',
     RESET_PASSWORD: '/auth/reset-password',
-    VERIFY_RESET_CODE: '/auth/verify-reset-code'
+    VERIFY_RESET_CODE: '/auth/verify-reset-code',
+    ENABLE_2FA: '/auth/2fa/enable',
+    CONFIRM_2FA: '/auth/2fa/confirm',
+    DISABLE_2FA: '/auth/2fa/disable'
   },
   USERS: {
     PROFILE: '/user/profile',

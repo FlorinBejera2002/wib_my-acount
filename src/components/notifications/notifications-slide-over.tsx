@@ -22,12 +22,12 @@ export function NotificationsSlideOver({
 
   const filteredNotifications =
     notifications?.filter((n) => {
-      if (filter === 'unread') return !n.read
-      if (filter === 'read') return n.read
+      if (filter === 'unread') return !n.isRead
+      if (filter === 'read') return n.isRead
       return true
     }) ?? []
 
-  const unreadCount = notifications?.filter((n) => !n.read).length ?? 0
+  const unreadCount = notifications?.filter((n) => !n.isRead).length ?? 0
 
   const handleMarkAsRead = (_id: string) => {
     // TODO: implementează marcarea ca citită
@@ -146,7 +146,7 @@ export function NotificationsSlideOver({
                   {filteredNotifications.map((notification) => (
                     <Card
                       key={notification.id}
-                      className={!notification.read ? 'bg-blue-50/50' : ''}
+                      className={!notification.isRead ? 'bg-blue-50/50' : ''}
                     >
                       <CardContent className="p-5">
                         <div className="flex items-start gap-3">
@@ -155,7 +155,7 @@ export function NotificationsSlideOver({
                               <div className="flex-1">
                                 <h3
                                   className={`text-sm font-medium ${
-                                    !notification.read
+                                    !notification.isRead
                                       ? 'text-blue-900 font-semibold'
                                       : notification.type === 'POLICY_EXPIRY'
                                         ? 'text-red-700' // Expiry - red (critical)
@@ -170,7 +170,7 @@ export function NotificationsSlideOver({
                                   {notification.title}
                                 </h3>
                                 <p className="text-xs text-gray-600 mt-1 line-clamp-2">
-                                  {notification.message}
+                                  {notification.body}
                                 </p>
                                 <div className="flex items-center gap-2 mt-2">
                                   <span className="text-xs text-gray-500">
@@ -180,7 +180,7 @@ export function NotificationsSlideOver({
                               </div>
 
                               <div className="flex items-center gap-1 flex-shrink-0">
-                                {!notification.read && (
+                                {!notification.isRead && (
                                   <Button
                                     variant="ghost"
                                     size="icon"

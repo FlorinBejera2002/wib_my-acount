@@ -65,15 +65,17 @@ export function paginateMock<T>(
   }
 
   // Apply filters
-  if (params.filters) {
-    for (const [key, value] of Object.entries(params.filters)) {
-      if (value) {
-        filtered = filtered.filter((item) => {
-          const itemValue = (item as Record<string, unknown>)[key]
-          return String(itemValue) === value
-        })
-      }
-    }
+  if (params.status) {
+    filtered = filtered.filter((item) => {
+      const itemValue = (item as Record<string, unknown>).status
+      return String(itemValue) === params.status
+    })
+  }
+  if (params.type) {
+    filtered = filtered.filter((item) => {
+      const itemValue = (item as Record<string, unknown>).type
+      return String(itemValue) === params.type
+    })
   }
 
   // Apply sort
@@ -102,11 +104,9 @@ export function paginateMock<T>(
 
   return {
     data,
-    meta: {
-      currentPage: params.page,
-      totalPages,
-      totalItems,
-      itemsPerPage: params.limit
-    }
+    total: totalItems,
+    page: params.page,
+    limit: params.limit,
+    pages: totalPages
   }
 }

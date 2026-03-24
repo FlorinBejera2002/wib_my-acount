@@ -122,8 +122,7 @@ export function PoliciesTable() {
     limit: 9999,
     sort: 'createdAt',
     order: 'desc',
-    search: '',
-    filters: {}
+    search: ''
   })
 
   const [dateFrom, setDateFrom] = useState('')
@@ -164,22 +163,21 @@ export function PoliciesTable() {
   const handleFilterChange = (key: string, value: string) => {
     setParams((prev) => ({
       ...prev,
-      filters: {
-        ...prev.filters,
-        [key]: value === 'ALL' ? '' : value
-      }
+      [key]: value === 'ALL' ? undefined : value
     }))
   }
 
   const hasActiveFilters =
     dateFrom ||
     dateTo ||
-    Object.values(params.filters || {}).some((v) => v && v !== 'ALL')
+    params.status ||
+    params.type
 
   const handleClearFilters = () => {
     setParams((prev) => ({
       ...prev,
-      filters: {}
+      status: undefined,
+      type: undefined
     }))
     setDateFrom('')
     setDateTo('')
@@ -248,7 +246,7 @@ export function PoliciesTable() {
           {filterConfigs.map((config) => (
             <Select
               key={config.key}
-              value={params.filters?.[config.key] || 'ALL'}
+              value={(params as unknown as Record<string, string | undefined>)[config.key] || 'ALL'}
               onValueChange={(value) => handleFilterChange(config.key, value)}
             >
               <SelectTrigger className="h-9 w-full sm:w-[140px]">

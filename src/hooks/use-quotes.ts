@@ -1,29 +1,21 @@
+import { api } from '@/api/axios-client'
+import { ENDPOINTS } from '@/api/endpoints'
 import type { PaginatedResponse, Quote, TableParams } from '@/api/types'
-import i18n from '@/lib/i18n'
-import { delay, paginateMock } from '@/lib/utils'
-import { mockQuotes } from '@/mocks/quotes'
 import { useQuery } from '@tanstack/react-query'
 
 const fetchQuotes = async (
   params: TableParams
 ): Promise<PaginatedResponse<Quote>> => {
-  // TODO: decomentează când API-ul e gata
-  // const { data } = await api.get(ENDPOINTS.QUOTES.LIST, { params });
-  // return data;
-
-  await delay(500)
-  return paginateMock(mockQuotes, params)
+  const { data } = await api.get<PaginatedResponse<Quote>>(
+    ENDPOINTS.QUOTES.LIST,
+    { params }
+  )
+  return data
 }
 
 const fetchQuote = async (id: string): Promise<Quote> => {
-  // TODO: decomentează când API-ul e gata
-  // const { data } = await api.get(ENDPOINTS.QUOTES.DETAIL(id));
-  // return data;
-
-  await delay(400)
-  const quote = mockQuotes.find((q) => q.id === id)
-  if (!quote) throw new Error(i18n.t('toast.quoteNotFound'))
-  return quote
+  const { data } = await api.get<Quote>(ENDPOINTS.QUOTES.DETAIL(id))
+  return data
 }
 
 export function useQuotes(params: TableParams) {

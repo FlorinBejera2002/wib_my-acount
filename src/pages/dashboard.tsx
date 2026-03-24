@@ -1,4 +1,3 @@
-import { ActivityChart } from '@/components/dashboard/activity-chart'
 import { RecentPolicies } from '@/components/dashboard/recent-policies'
 import { RecentQuotes } from '@/components/dashboard/recent-quotes'
 import { StatsCards } from '@/components/dashboard/stats-cards'
@@ -27,7 +26,7 @@ export default function DashboardPage() {
         <RecentPolicies />
       </div>
 
-      <ActivityChart data={stats?.quotesPerMonth} isLoading={statsLoading} />
+      {/* ActivityChart removed — API does not provide monthly quote stats */}
     </div>
   )
 }

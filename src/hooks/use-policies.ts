@@ -1,29 +1,21 @@
+import { api } from '@/api/axios-client'
+import { ENDPOINTS } from '@/api/endpoints'
 import type { PaginatedResponse, Policy, TableParams } from '@/api/types'
-import i18n from '@/lib/i18n'
-import { delay, paginateMock } from '@/lib/utils'
-import { mockPolicies } from '@/mocks/policies'
 import { useQuery } from '@tanstack/react-query'
 
 const fetchPolicies = async (
   params: TableParams
 ): Promise<PaginatedResponse<Policy>> => {
-  // TODO: decomentează când API-ul e gata
-  // const { data } = await api.get(ENDPOINTS.POLICIES.LIST, { params });
-  // return data;
-
-  await delay(500)
-  return paginateMock(mockPolicies, params)
+  const { data } = await api.get<PaginatedResponse<Policy>>(
+    ENDPOINTS.POLICIES.LIST,
+    { params }
+  )
+  return data
 }
 
 const fetchPolicy = async (id: string): Promise<Policy> => {
-  // TODO: decomentează când API-ul e gata
-  // const { data } = await api.get(ENDPOINTS.POLICIES.DETAIL(id));
-  // return data;
-
-  await delay(400)
-  const policy = mockPolicies.find((p) => p.id === id)
-  if (!policy) throw new Error(i18n.t('toast.policyNotFound'))
-  return policy
+  const { data } = await api.get<Policy>(ENDPOINTS.POLICIES.DETAIL(id))
+  return data
 }
 
 export function usePolicies(params: TableParams) {

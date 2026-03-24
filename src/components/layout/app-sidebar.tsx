@@ -49,13 +49,13 @@ const navItems = [
     labelKey: 'nav.quotes',
     href: '/quotes',
     icon: ClipboardList,
-    countKey: 'totalQuotes' as const
+    countKey: 'totalQuotes'
   },
   {
     labelKey: 'nav.policies',
     href: '/policies',
     icon: FileText,
-    countKey: 'activePolicies' as const
+    countKey: 'activePolicies'
   },
   {
     labelKey: 'nav.expiryAlerts',
@@ -107,7 +107,13 @@ export function AppSidebar() {
               {navItems.map((item) => {
                 const isActive = location.pathname.startsWith(item.href)
                 const count =
-                  item.countKey && stats ? stats[item.countKey] : undefined
+                  item.countKey && stats
+                    ? item.countKey === 'totalQuotes'
+                      ? stats.quotes.total
+                      : item.countKey === 'activePolicies'
+                        ? stats.policies.active
+                        : undefined
+                    : undefined
 
                 return (
                   <SidebarMenuItem key={item.href}>
@@ -142,7 +148,7 @@ export function AppSidebar() {
               <ProfileAvatar
                 firstName={user?.firstName || ''}
                 lastName={user?.lastName || ''}
-                photoUrl={profile?.photoUrl}
+                photoUrl={undefined}
                 size="sm"
                 userId={profile?.id}
               />

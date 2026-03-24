@@ -33,9 +33,7 @@ export function PreferencesForm() {
   } = useForm<UpdatePreferencesRequest>({
     values: profile
       ? {
-          language: profile.preferences.language,
-          timezone: profile.preferences.timezone,
-          notifications: profile.preferences.notifications
+          language: profile.preferences.language
         }
       : undefined
   })

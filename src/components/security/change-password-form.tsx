@@ -45,9 +45,15 @@ export function ChangePasswordForm() {
   const newPassword = watch('newPassword')
 
   const onSubmit = (data: ChangePasswordFormValues) => {
-    changePassword.mutate(data, {
-      onSuccess: () => reset()
-    })
+    changePassword.mutate(
+      {
+        current_password: data.oldPassword,
+        new_password: data.newPassword
+      },
+      {
+        onSuccess: () => reset()
+      }
+    )
   }
 
   return (
