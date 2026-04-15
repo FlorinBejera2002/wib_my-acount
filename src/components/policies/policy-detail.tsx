@@ -195,7 +195,7 @@ export function PolicyDetail() {
                   </div>
                 </div>
 
-                {policy.status === 'ACTIVE' && (
+                {policy.status === 'active' && (
                   <div className="flex items-center gap-4 p-4 rounded-lg border border-gray-100">
                     <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-50">
                       <Clock className="h-5 w-5 text-gray-500" />
@@ -257,7 +257,7 @@ export function PolicyDetail() {
             </div>
           </CardHeader>
           <CardContent>
-            <PolicyDocuments documents={policy.documents} />
+            <PolicyDocuments documents={policy.documents ?? []} />
           </CardContent>
         </Card>
       </div>

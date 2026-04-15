@@ -25,22 +25,33 @@ export interface LoginRequest {
   password: string
 }
 
+// Response interfaces use camelCase — the axios interceptor converts all snake_case keys
 export interface LoginResponse {
-  access_token?: string
-  refresh_token?: string
+  accessToken?: string
+  refreshToken?: string
   user?: UserProfile
-  pre_auth_token?: string
-  requires_two_factor?: boolean
+  preAuthToken?: string
+  requires_2fa?: boolean
+  twoFactorMethod?: 'totp' | 'email'
 }
 
+export interface Disable2FARequest {
+  password: string
+}
+
+export interface TwoFactorMessageResponse {
+  message: string
+}
+
+// Request bodies are sent as-is (not transformed by the response interceptor)
 export interface TwoFactorRequest {
   pre_auth_token: string
   totp_code: string
 }
 
 export interface TwoFactorResponse {
-  access_token: string
-  refresh_token: string
+  accessToken: string
+  refreshToken: string
   user: UserProfile
 }
 
@@ -49,21 +60,22 @@ export interface RefreshTokenRequest {
 }
 
 export interface RefreshTokenResponse {
-  access_token: string
-  refresh_token: string
+  accessToken: string
+  refreshToken: string
 }
 
 export interface RegisterRequest {
   email: string
   password: string
-  firstName?: string
-  lastName?: string
+  first_name?: string
+  last_name?: string
+  phone?: string
 }
 
 export interface RegisterResponse {
-  access_token: string
-  refresh_token: string
-  user: { id: string; email: string }
+  accessToken: string
+  refreshToken: string
+  user: UserProfile
 }
 
 export interface ForgotPasswordRequest {
@@ -80,7 +92,7 @@ export interface VerifyResetCodeRequest {
 }
 
 export interface VerifyResetCodeResponse {
-  reset_token: string
+  resetToken: string
 }
 
 export interface ResetPasswordRequest {
@@ -94,9 +106,14 @@ export interface ResetPasswordResponse {
 
 // ==================== 2FA Management ====================
 
+export interface Enable2FARequest {
+  method: 'totp' | 'email'
+}
+
 export interface Enable2FAResponse {
-  secret: string
-  provisioning_uri: string
+  secret?: string
+  provisioningUri?: string
+  message?: string
 }
 
 export interface Confirm2FARequest {
@@ -112,8 +129,9 @@ export interface UserProfile {
   lastName: string
   phone: string
   roles: string[]
-  isActive: boolean
-  totpEnabled: boolean
+  active: boolean
+  twoFactorEnabled: boolean
+  twoFactorMethod: 'totp' | 'email' | null
   preferences: UserPreferences
   createdAt: string
   updatedAt: string
@@ -130,8 +148,8 @@ export interface NotificationPreferences {
 }
 
 export interface UpdateProfileRequest {
-  firstName?: string
-  lastName?: string
+  first_name?: string
+  last_name?: string
   phone?: string
 }
 
@@ -162,7 +180,7 @@ export type QuoteType =
   | 'ACCIDENTE_PERSOANE'
   | 'ACCIDENTE_TAXI'
   | 'CMR'
-export type QuoteStatus = 'ACTIVE' | 'EXPIRED' | 'CONVERTED' | 'DRAFT'
+export type QuoteStatus = 'active' | 'expired' | 'converted' | 'draft'
 
 export interface QuoteDocument {
   id: string
@@ -207,7 +225,7 @@ export type PolicyType =
   | 'ACCIDENTE_PERSOANE'
   | 'ACCIDENTE_TAXI'
   | 'CMR'
-export type PolicyStatus = 'ACTIVE' | 'EXPIRED' | 'CANCELLED' | 'TERMINATED'
+export type PolicyStatus = 'active' | 'expired' | 'cancelled' | 'terminated'
 
 export interface PolicyDocument {
   id: string
@@ -241,7 +259,7 @@ export interface Policy {
   autoRenew: boolean
   createdAt: string
   sourceQuoteId?: string
-  documents: PolicyDocument[]
+  documents?: PolicyDocument[]
   travelDestination?: string
   travelPurpose?: string
   transportationType?: string
@@ -262,6 +280,10 @@ export interface Session {
   ip: string
   createdAt: string
   expiresAt: string
+  isCurrent?: boolean
+  lastActivity?: string
+  location?: string
+  deviceInfo?: string
 }
 
 // ==================== Notifications ====================

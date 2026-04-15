@@ -19,7 +19,7 @@ import i18n from '@/lib/i18n'
 import { ArrowRight, ExternalLink, X } from 'lucide-react'
 
 const getSimplifiedStatus = (status: QuoteStatus) => {
-  if (status === 'EXPIRED') {
+  if (status === 'expired') {
     return {
       labelKey: 'quoteStatus.EXPIRED',
       dot: 'bg-red-500',
@@ -51,8 +51,8 @@ const filterConfigs = [
     key: 'status',
     labelKey: 'policies.status',
     options: [
-      { value: 'ACTIVE', labelKey: 'quoteStatus.ACTIVE' },
-      { value: 'EXPIRED', labelKey: 'quoteStatus.EXPIRED' }
+      { value: 'active', labelKey: 'quoteStatus.ACTIVE' },
+      { value: 'expired', labelKey: 'quoteStatus.EXPIRED' }
     ]
   }
 ]
@@ -67,8 +67,8 @@ export function QuotesTable() {
     search: ''
   })
 
-  const [dateFrom, setDateFrom] = useState('')
-  const [dateTo, setDateTo] = useState('')
+  const [dateFrom, _setDateFrom] = useState('')
+  const [dateTo, _setDateTo] = useState('')
 
   const { data, isLoading, isError } = useQuotes(params)
 

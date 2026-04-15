@@ -74,10 +74,10 @@ const filterConfigs = [
     key: 'status',
     labelKey: 'policies.filterStatus',
     options: [
-      { labelKey: 'policies.statusActive', value: 'ACTIVE' },
-      { labelKey: 'policies.statusExpired', value: 'EXPIRED' },
-      { labelKey: 'policies.statusCancelled', value: 'CANCELLED' },
-      { labelKey: 'policies.statusTerminated', value: 'TERMINATED' }
+      { labelKey: 'policies.statusActive', value: 'active' },
+      { labelKey: 'policies.statusExpired', value: 'expired' },
+      { labelKey: 'policies.statusCancelled', value: 'cancelled' },
+      { labelKey: 'policies.statusTerminated', value: 'terminated' }
     ]
   },
   {
@@ -167,11 +167,7 @@ export function PoliciesTable() {
     }))
   }
 
-  const hasActiveFilters =
-    dateFrom ||
-    dateTo ||
-    params.status ||
-    params.type
+  const hasActiveFilters = dateFrom || dateTo || params.status || params.type
 
   const handleClearFilters = () => {
     setParams((prev) => ({
@@ -246,7 +242,11 @@ export function PoliciesTable() {
           {filterConfigs.map((config) => (
             <Select
               key={config.key}
-              value={(params as unknown as Record<string, string | undefined>)[config.key] || 'ALL'}
+              value={
+                (params as unknown as Record<string, string | undefined>)[
+                  config.key
+                ] || 'ALL'
+              }
               onValueChange={(value) => handleFilterChange(config.key, value)}
             >
               <SelectTrigger className="h-9 w-full sm:w-[140px]">
@@ -394,7 +394,7 @@ export function PoliciesTable() {
                       </TableCell>
                       <TableCell>{formatDate(policy.endDate)}</TableCell>
                       <TableCell>
-                        {policy.status === 'ACTIVE' ? (
+                        {policy.status === 'active' ? (
                           <ExpiryBadge days={policy.daysUntilExpiry} t={t} />
                         ) : (
                           '—'
@@ -403,7 +403,7 @@ export function PoliciesTable() {
                       <TableCell>
                         {!isExpandable &&
                           (() => {
-                            const doc = policy.documents.find(
+                            const doc = policy.documents?.find(
                               (d) => d.type === 'POLICY'
                             )
                             return doc ? (

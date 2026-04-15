@@ -60,7 +60,8 @@ export function ProfileLayout() {
                   <p className="text-sm text-gray-500">{profile.email}</p>
                   <p className="text-xs text-gray-400 mt-0.5">
                     {t('profile.clientSince', {
-                      date: formatDate(profile.createdAt, 'MMMM yyyy')
+                      date: formatDate(profile.createdAt, 'MMMM yyyy'),
+                      id: profile.id
                     })}
                   </p>
                 </>

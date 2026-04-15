@@ -321,6 +321,10 @@
     "passwordChanged": "Jelszó módosítva",
     "failedAttempts": "Sikertelen bejelentkezési kísérletek",
     "attemptsCount": "{{count}} kísérlet",
+    "accountCreated": "Fiók létrehozva",
+    "twoFactorStatus": "Kétlépcsős azonosítás",
+    "twoFactorEnabled": "Engedélyezve",
+    "twoFactorDisabled": "Letiltva",
     "passwordStrength": {
       "weak": "Gyenge",
       "fair": "Elfogadható",
@@ -332,6 +336,10 @@
   "settings": {
     "notifications": "Értesítések",
     "notificationsSubtitle": "Válassza ki, milyen értesítéseket szeretne kapni",
+    "emailNotifications": "E-mail értesítések",
+    "emailNotificationsDesc": "Értesítések a fiók tevékenységéről e-mailben",
+    "pushNotifications": "Push értesítések",
+    "pushNotificationsDesc": "Valós idejű értesítések a böngészőben",
     "newQuotes": "Új ajánlatok",
     "newQuotesDesc": "Értesítések új ajánlatokról és frissítésekről",
     "policyExpiry": "Kötvény lejárat",
@@ -422,6 +430,50 @@
     "subtitle": "A keresett oldal nem létezik vagy áthelyezték.",
     "backHome": "Vissza a kezdőlapra"
   },
+  "twoFactor": {
+    "section": {
+      "title": "Kétlépcsős azonosítás (2FA)",
+      "subtitle": "Adjon hozzá egy extra biztonsági réteget fiókjához",
+      "activeBadge": "Aktív",
+      "enabledDescription": "Fiókja kétlépcsős azonosítással van védve.",
+      "enabledMethodTotp": "Aktív — Hitelesítő alkalmazás",
+      "enabledMethodEmail": "Aktív — E-mail",
+      "disabledDescription": "A kétlépcsős azonosítás nincs engedélyezve.",
+      "enableBtn": "2FA engedélyezése",
+      "changeMethodBtn": "Módszer módosítása",
+      "disableBtn": "Letiltás"
+    },
+    "setup": {
+      "methodTitle": "Kétlépcsős azonosítás engedélyezése",
+      "methodDescription": "Válassza ki a kétlépcsős azonosítás kívánt módszerét.",
+      "methodTotp": "Hitelesítő alkalmazás",
+      "methodTotpDesc": "Google Authenticator, Authy stb.",
+      "methodEmail": "E-mail",
+      "methodEmailDesc": "Ellenőrző kód az e-mail címére.",
+      "introTitle": "Kétlépcsős azonosítás engedélyezése",
+      "introDescription": "Védje fiókját egy TOTP hitelesítő alkalmazással (pl. Google Authenticator, Authy).",
+      "introStep1": "1. Telepítsen egy hitelesítő alkalmazást a telefonjára.",
+      "introStep2": "2. Szkennelje be a QR-kódot az alkalmazással.",
+      "introStep3": "3. Adja meg a 6 számjegyű kódot a megerősítéshez.",
+      "continue": "Tovább",
+      "qrTitle": "QR-kód beolvasása",
+      "qrDescription": "Nyissa meg a hitelesítő alkalmazást és szkennelje be az alábbi kódot.",
+      "manualEntry": "Vagy adja meg manuálisan a titkos kulcsot:",
+      "secretCopied": "A titkos kulcs másolva",
+      "next": "Következő lépés",
+      "confirmTitle": "Kód ellenőrzése",
+      "confirmDescription": "Adja meg a hitelesítő alkalmazás által generált 6 számjegyű kódot.",
+      "verify": "Ellenőrzés",
+      "successTitle": "2FA sikeresen engedélyezve!",
+      "successDescription": "Fiókja mostantól kétlépcsős azonosítással van védve.",
+      "done": "Kész"
+    },
+    "disable": {
+      "title": "Kétlépcsős azonosítás letiltása",
+      "description": "Adja meg jelenlegi jelszavát a 2FA letiltásához. Ez csökkenti fiókja biztonságát.",
+      "confirm": "2FA letiltása"
+    }
+  },
   "toast": {
     "loginSuccess": "Sikeres hitelesítés!",
     "profileUpdated": "A profil sikeresen frissítve",
@@ -447,6 +499,7 @@
     "passwordResetSuccess": "A jelszó sikeresen visszaállítva!",
     "emailAlreadyRegistered": "Ez az e-mail cím már regisztrálva van",
     "accountCreated": "Fiók sikeresen létrehozva!",
+    "samePassword": "Az új jelszónak különböznie kell a jelenlegi jelszótól.",
     "currentPasswordIncorrect": "A jelenlegi jelszó helytelen",
     "cannotTerminateCurrent": "A jelenlegi munkamenet nem fejezhető be",
     "policyNotFound": "A kötvény nem található",

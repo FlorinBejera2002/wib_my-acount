@@ -2,7 +2,6 @@ import { api } from '@/api/axios-client'
 import { ENDPOINTS } from '@/api/endpoints'
 import type { Session } from '@/api/types'
 import i18n from '@/lib/i18n'
-import { useAuthStore } from '@/stores/auth-store'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
@@ -18,10 +17,7 @@ const terminateSessionFn = async (id: string): Promise<void> => {
 }
 
 const terminateAllSessionsFn = async (): Promise<void> => {
-  const { refreshToken } = useAuthStore.getState()
-  await api.delete(ENDPOINTS.SESSIONS.TERMINATE_ALL, {
-    headers: { 'X-Refresh-Token': refreshToken }
-  })
+  await api.delete(ENDPOINTS.SESSIONS.TERMINATE_ALL)
 }
 
 export function useSessions() {

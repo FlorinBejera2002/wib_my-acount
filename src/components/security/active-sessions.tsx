@@ -1,3 +1,4 @@
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -16,9 +17,13 @@ import { formatDateTime } from '@/lib/utils'
 import { Globe, Loader2, Monitor, Smartphone } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
-function getDeviceIcon(userAgent: string) {
-  const lower = userAgent.toLowerCase()
-  if (lower.includes('iphone') || lower.includes('android') || lower.includes('mobile')) {
+function getDeviceIcon(ua: string) {
+  const lower = ua.toLowerCase()
+  if (
+    lower.includes('iphone') ||
+    lower.includes('android') ||
+    lower.includes('mobile')
+  ) {
     return Smartphone
   }
   return Monitor
@@ -71,37 +76,59 @@ export function ActiveSessions() {
       </CardHeader>
       <CardContent className="space-y-3">
         {sessions?.map((session) => {
-          const DeviceIcon = getDeviceIcon(session.userAgent)
+          const label = session.deviceInfo || session.userAgent
+          const DeviceIcon = getDeviceIcon(label)
           return (
             <div
               key={session.id}
-              className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 rounded-lg border p-4"
+              className={`flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 rounded-lg border p-4${
+                session.isCurrent
+                  ? ' border-accent-green/40 bg-accent-green/5'
+                  : ''
+              }`}
             >
               <DeviceIcon className="h-8 w-8 text-muted-foreground" />
               <div className="flex-1 space-y-1">
                 <div className="flex items-center gap-2">
-                  <p className="text-sm font-medium">{session.userAgent}</p>
+                  <p className="text-sm font-medium">{label}</p>
+                  {session.isCurrent && (
+                    <Badge className="bg-green-100 text-green-800 border-0 text-xs font-medium">
+                      {t('security.currentSession')}
+                    </Badge>
+                  )}
                 </div>
                 <div className="flex items-center gap-3 text-xs text-muted-foreground">
                   <span className="flex items-center gap-1">
                     <Globe className="h-3 w-3" />
                     IP: {session.ip}
                   </span>
+                  {session.location && <span>{session.location}</span>}
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  {t('security.sessionCreated', {
-                    date: formatDateTime(session.createdAt)
-                  })}
-                </p>
+                {session.createdAt && (
+                  <p className="text-xs text-muted-foreground">
+                    {t('security.sessionCreated', {
+                      date: formatDateTime(session.createdAt)
+                    })}
+                  </p>
+                )}
+                {session.lastActivity && (
+                  <p className="text-xs text-muted-foreground">
+                    {t('security.lastActivity', {
+                      date: formatDateTime(session.lastActivity)
+                    })}
+                  </p>
+                )}
               </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => terminateSession.mutate(session.id)}
-                disabled={terminateSession.isPending}
-              >
-                {t('security.terminate')}
-              </Button>
+              {!session.isCurrent && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => terminateSession.mutate(session.id)}
+                  disabled={terminateSession.isPending}
+                >
+                  {t('security.terminate')}
+                </Button>
+              )}
             </div>
           )
         })}

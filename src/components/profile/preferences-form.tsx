@@ -31,11 +31,9 @@ export function PreferencesForm() {
     handleSubmit,
     formState: { isDirty }
   } = useForm<UpdatePreferencesRequest>({
-    values: profile
-      ? {
-          language: profile.preferences.language
-        }
-      : undefined
+    values: {
+      language: profile?.preferences?.language ?? 'ro'
+    }
   })
 
   const onSubmit = (data: UpdatePreferencesRequest) => {

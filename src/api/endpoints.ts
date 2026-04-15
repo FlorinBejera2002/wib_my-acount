@@ -10,7 +10,8 @@ export const ENDPOINTS = {
     VERIFY_RESET_CODE: '/auth/verify-reset-code',
     ENABLE_2FA: '/auth/2fa/enable',
     CONFIRM_2FA: '/auth/2fa/confirm',
-    DISABLE_2FA: '/auth/2fa/disable'
+    DISABLE_2FA: '/auth/2fa/disable',
+    RESEND_2FA_CODE: '/auth/2fa/resend-code'
   },
   USERS: {
     PROFILE: '/user/profile',

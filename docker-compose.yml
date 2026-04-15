@@ -1,0 +1,23 @@
+services:
+  frontend:
+    build:
+      context: .
+      args:
+        # When using the nginx proxy, the frontend calls /api (relative),
+        # so nginx forwards to the middleware container.
+        VITE_API_URL: /api
+    ports:
+      - "3000:80"
+    depends_on:
+      - middleware
+
+  middleware:
+    # Replace with your actual Symfony middleware image/build
+    image: your-symfony-middleware:latest
+    # build:
+    #   context: ../path-to-symfony-middleware
+    ports:
+      - "8080:8080"
+    environment:
+      # The middleware calls the legacy auth server internally
+      LEGACY_AUTH_URL: http://192.168.0.34

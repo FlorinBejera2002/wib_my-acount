@@ -57,7 +57,7 @@ export function LoginHistory() {
               {t('security.twoFactorStatus')}
             </p>
             <p className="text-sm text-muted-foreground">
-              {profile?.totpEnabled
+              {profile?.twoFactorEnabled
                 ? t('security.twoFactorEnabled')
                 : t('security.twoFactorDisabled')}
             </p>

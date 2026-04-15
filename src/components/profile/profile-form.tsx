@@ -43,7 +43,11 @@ export function ProfileForm() {
   })
 
   const onSubmit = (data: UpdateProfileFormValues) => {
-    updateProfile.mutate(data)
+    updateProfile.mutate({
+      first_name: data.firstName,
+      last_name: data.lastName,
+      phone: data.phone
+    })
   }
 
   if (isLoading) {

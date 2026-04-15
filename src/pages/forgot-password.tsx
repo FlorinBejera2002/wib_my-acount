@@ -55,7 +55,7 @@ export default function ForgotPasswordPage() {
       { email, code },
       {
         onSuccess: (response) => {
-          setResetToken(response.reset_token)
+          setResetToken(response.resetToken)
           setStep('new-password')
         }
       }

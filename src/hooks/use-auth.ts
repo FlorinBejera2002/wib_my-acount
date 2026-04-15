@@ -36,19 +36,22 @@ const logoutFn = async (): Promise<void> => {
 
 export function useLogin() {
   const login = useAuthStore((s) => s.login)
+  const navigate = useNavigate()
 
   return useMutation({
     mutationFn: loginFn,
     onSuccess: (data) => {
-      if (!data.requires_two_factor && data.access_token && data.user) {
-        login(data.user, data.access_token, data.refresh_token!)
+      if (!data.requires_2fa && data.accessToken && data.user) {
+        login(data.user, data.accessToken, data.refreshToken!)
         if (data.user.preferences?.language) {
           i18n.changeLanguage(data.user.preferences.language)
         }
+        toast.success(i18n.t('toast.loginSuccess'))
+        setTimeout(() => navigate('/dashboard'), 500)
       }
     },
-    onError: (error: Error) => {
-      toast.error(error.message || i18n.t('toast.emailOrPasswordIncorrect'))
+    onError: () => {
+      toast.error(i18n.t('toast.emailOrPasswordIncorrect'))
     }
   })
 }
@@ -60,7 +63,7 @@ export function useVerifyTwoFactor() {
   return useMutation({
     mutationFn: verifyTwoFactorFn,
     onSuccess: (data) => {
-      login(data.user, data.access_token, data.refresh_token)
+      login(data.user, data.accessToken, data.refreshToken)
       if (data.user.preferences?.language) {
         i18n.changeLanguage(data.user.preferences.language)
       }

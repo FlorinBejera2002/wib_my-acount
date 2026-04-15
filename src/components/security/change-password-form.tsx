@@ -65,7 +65,7 @@ export function ChangePasswordForm() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" autoComplete="off">
           <div className="space-y-2">
             <Label htmlFor="oldPassword">{t('security.currentPassword')}</Label>
             <div className="relative">
@@ -73,6 +73,7 @@ export function ChangePasswordForm() {
                 id="oldPassword"
                 type={showOld ? 'text' : 'password'}
                 className="pr-10"
+                autoComplete="new-password"
                 {...register('oldPassword')}
               />
               <button

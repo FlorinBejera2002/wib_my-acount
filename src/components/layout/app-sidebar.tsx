@@ -146,18 +146,18 @@ export function AppSidebar() {
           <DropdownMenuTrigger asChild={true}>
             <button className="flex w-full items-center gap-3 rounded-lg p-2 transition-colors hover:bg-gray-50 group-data-[collapsible=icon]:justify-center">
               <ProfileAvatar
-                firstName={user?.firstName || ''}
-                lastName={user?.lastName || ''}
+                firstName={profile?.firstName || user?.firstName || ''}
+                lastName={profile?.lastName || user?.lastName || ''}
                 photoUrl={undefined}
                 size="sm"
                 userId={profile?.id}
               />
               <div className="flex flex-1 flex-col overflow-hidden text-left group-data-[collapsible=icon]:hidden">
                 <span className="truncate text-sm font-semibold text-gray-900">
-                  {user ? `${user.firstName} ${user.lastName}` : ''}
+                  {profile ? `${profile.firstName} ${profile.lastName}` : `${user?.firstName ?? ''} ${user?.lastName ?? ''}`}
                 </span>
                 <span className="truncate text-xs text-gray-500">
-                  {user?.email}
+                  {profile?.email || user?.email}
                 </span>
               </div>
               <ChevronsUpDown className="h-4 w-4 shrink-0 text-gray-400 group-data-[collapsible=icon]:hidden" />
@@ -167,9 +167,9 @@ export function AppSidebar() {
             <DropdownMenuLabel className="font-normal">
               <div className="flex flex-col gap-1">
                 <p className="text-sm font-semibold text-gray-900">
-                  {user ? `${user.firstName} ${user.lastName}` : ''}
+                  {profile ? `${profile.firstName} ${profile.lastName}` : `${user?.firstName ?? ''} ${user?.lastName ?? ''}`}
                 </p>
-                <p className="text-xs text-gray-500">{user?.email}</p>
+                <p className="text-xs text-gray-500">{profile?.email || user?.email}</p>
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
