@@ -250,13 +250,22 @@
     "viewOriginalQuote": "View original quote",
     "documents": "Documents",
     "documentsSubtitle": "Files associated with this policy",
-    "noDocuments": "No documents available"
+    "noDocuments": "No documents available",
+    "travellers": "Travellers",
+    "components": "Components",
+    "componentPAD": "PAD",
+    "componentFacultative": "Facultative",
+    "downloadPdf": "Download PDF",
+    "travellerName": "Traveller",
+    "cnp": "CNP",
+    "covers": "Covers"
   },
   "quotes": {
     "title": "My Quotes",
     "subtitle": "View and manage all your insurance quotes",
     "quoteRef": "Quote reference",
     "insuredObject": "Insured object",
+    "productDetails": "Product details",
     "insuredDetails": "Insured details",
     "dateTime": "Date + time",
     "viewOffer": "View offer",

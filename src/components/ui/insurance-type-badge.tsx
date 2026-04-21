@@ -27,11 +27,12 @@ export function InsuranceTypeBadge({
   className = ''
 }: InsuranceTypeBadgeProps) {
   const { t } = useTranslation()
-  const config = typeConfig[type] || {
+  const normalizedType = type.toUpperCase()
+  const config = typeConfig[normalizedType] || {
     bg: 'bg-gray-100',
     text: 'text-gray-600'
   }
-  const label = t(`insuranceType.${type}`, { defaultValue: type })
+  const label = t(`insuranceType.${normalizedType}`, { defaultValue: type })
 
   return (
     <span

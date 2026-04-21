@@ -14,8 +14,8 @@ import {
   SelectValue
 } from '@/components/ui/select'
 import { useQuotes } from '@/hooks/use-quotes'
-import i18n from '@/lib/i18n'
-import { formatCurrency } from '@/lib/utils'
+import { formatDate } from '@/lib/utils'
+import { ExternalLink } from 'lucide-react'
 
 const getSimplifiedStatus = (status: QuoteStatus) => {
   if (status === 'expired') {
@@ -37,13 +37,12 @@ const filterConfigs = [
     key: 'type',
     labelKey: 'policies.type',
     options: [
-      { value: 'rca', labelKey: 'insuranceTypes.rca' },
-      { value: 'casco', labelKey: 'insuranceTypes.casco' },
-      { value: 'home', labelKey: 'insuranceTypes.home' },
-      { value: 'travel', labelKey: 'insuranceTypes.travel' },
-      { value: 'health', labelKey: 'insuranceTypes.health' },
-      { value: 'life', labelKey: 'insuranceTypes.life' },
-      { value: 'other', labelKey: 'insuranceTypes.other' }
+      { value: 'rca', labelKey: 'insuranceType.RCA' },
+      { value: 'casco', labelKey: 'insuranceType.CASCO' },
+      { value: 'home', labelKey: 'insuranceType.LOCUINTA_PAD' },
+      { value: 'travel', labelKey: 'insuranceType.CALATORIE' },
+      { value: 'health', labelKey: 'insuranceType.SANATATE' },
+      { value: 'life', labelKey: 'insuranceType.VIATA' }
     ]
   },
   {
@@ -74,7 +73,6 @@ export function QuotesTable() {
   const filteredData = useMemo(() => {
     if (!data?.data) return []
     let items = data.data
-
     if (dateFrom) {
       const from = new Date(dateFrom)
       items = items.filter((q) => new Date(q.createdAt) >= from)
@@ -84,18 +82,19 @@ export function QuotesTable() {
       to.setHours(23, 59, 59, 999)
       items = items.filter((q) => new Date(q.createdAt) <= to)
     }
-
     return items
   }, [data?.data, dateFrom, dateTo])
 
   const columns: ColumnDef<Quote>[] = [
     {
-      accessorKey: 'id',
+      accessorKey: 'quoteNumber',
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title={t('quotes.quoteRef')} />
       ),
       cell: ({ row }) => (
-        <span className="font-medium">{row.original.id}</span>
+        <span className="font-medium text-gray-900">
+          {row.original.quoteNumber ?? row.original.id}
+        </span>
       )
     },
     {
@@ -104,13 +103,20 @@ export function QuotesTable() {
       cell: ({ row }) => <InsuranceTypeBadge type={row.original.type} />
     },
     {
-      accessorKey: 'premium',
-      header: t('quotes.premium'),
+      accessorKey: 'productDetails',
+      header: t('quotes.productDetails'),
       cell: ({ row }) => (
-        <span>
-          {row.original.premium != null
-            ? formatCurrency(row.original.premium)
-            : '—'}
+        <span className="text-sm text-gray-700 max-w-[220px] truncate block">
+          {row.original.productDetails ?? '—'}
+        </span>
+      )
+    },
+    {
+      accessorKey: 'insuredDetails',
+      header: t('quotes.insuredDetails'),
+      cell: ({ row }) => (
+        <span className="text-sm text-gray-700 max-w-[200px] truncate block">
+          {row.original.insuredDetails ?? '—'}
         </span>
       )
     },
@@ -134,113 +140,67 @@ export function QuotesTable() {
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title={t('quotes.dateTime')} />
       ),
-      cell: ({ row }) => {
-        const localeMap: Record<string, string> = {
-          ro: 'ro-RO',
-          hu: 'hu-HU',
-          en: 'en-US'
-        }
-        const locale = localeMap[i18n.language] || 'en-US'
-        const d = new Date(row.original.createdAt)
-        return (
-          <div className="leading-tight">
-            <div className="text-sm text-gray-900">
-              {d.toLocaleDateString(locale, {
-                day: '2-digit',
-                month: 'short',
-                year: 'numeric'
-              })}
-            </div>
-            <div className="text-xs text-gray-400">
-              {d.toLocaleTimeString(locale, {
-                hour: '2-digit',
-                minute: '2-digit'
-              })}
-            </div>
-          </div>
-        )
-      }
+      cell: ({ row }) => (
+        <span className="text-sm text-gray-700">
+          {formatDate(row.original.createdAt)}
+        </span>
+      )
     },
     {
-      id: 'actions',
-      header: '',
-      cell: () => (
-        <span className="text-sm text-muted-foreground">—</span>
-      )
+      id: 'offerUrl',
+      header: t('quotes.viewOffer'),
+      cell: ({ row }) => {
+        const url = row.original.offerUrl
+        if (!url) return <span className="text-sm text-muted-foreground">—</span>
+        return (
+          <a
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 text-sm text-accent-green hover:text-accent-green/80 transition-colors"
+          >
+            <ExternalLink className="h-3.5 w-3.5 shrink-0" />
+            View
+          </a>
+        )
+      }
     }
   ]
 
-  const handleFilterChange = (key: string, value: string) => {
+  const handleFilterChange = (key: string, value: string) =>
     setParams((prev) => ({
       ...prev,
       [key]: value === 'ALL' ? undefined : value
     }))
-  }
-
-  // const hasActiveFilters =
-  //   (params.filters && Object.values(params.filters).some(Boolean)) ||
-  //   dateFrom ||
-  //   dateTo
-
-  // const handleClearFilters = () => {
-  //   setParams((prev) => ({ ...prev, filters: {} }))
-  //   setDateFrom('')
-  //   setDateTo('')
-  // }
 
   return (
     <div>
       <div className="flex flex-wrap items-center gap-2 pb-4">
-        <div className="flex flex-wrap items-center gap-2">
-          {filterConfigs.map((config) => (
-            <Select
-              key={config.key}
-              value={(params as unknown as Record<string, string | undefined>)[config.key] || 'ALL'}
-              onValueChange={(value) => handleFilterChange(config.key, value)}
-            >
-              <SelectTrigger className="h-9 w-[140px]">
-                <SelectValue placeholder={t(config.labelKey)} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="ALL">
-                  {t('policies.allFilter', { label: t(config.labelKey) })}
+        {filterConfigs.map((config) => (
+          <Select
+            key={config.key}
+            value={
+              (params as unknown as Record<string, string | undefined>)[
+                config.key
+              ] || 'ALL'
+            }
+            onValueChange={(v) => handleFilterChange(config.key, v)}
+          >
+            <SelectTrigger className="h-9 w-[140px]">
+              <SelectValue placeholder={t(config.labelKey)} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="ALL">
+                {t('policies.allFilter', { label: t(config.labelKey) })}
+              </SelectItem>
+              {config.options.map((opt) => (
+                <SelectItem key={opt.value} value={opt.value}>
+                  {t(opt.labelKey)}
                 </SelectItem>
-                {config.options.map((opt) => (
-                  <SelectItem key={opt.value} value={opt.value}>
-                    {t(opt.labelKey)}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          ))}
-        </div>
-
-        {/* <div className="flex items-center gap-1.5">
-          <Input
-            type="date"
-            value={dateFrom}
-            onChange={(e) => setDateFrom(e.target.value)}
-            className="h-9 w-[140px]"
-          />
-          <ArrowRight className="h-4 w-4 text-gray-300 shrink-0" />
-          <Input
-            type="date"
-            value={dateTo}
-            onChange={(e) => setDateTo(e.target.value)}
-            className="h-9 w-[140px]"
-          />
-
-          {hasActiveFilters && (
-            <button
-              type="button"
-              onClick={handleClearFilters}
-              className="flex items-center gap-1 text-sm text-gray-400 hover:text-red-500 transition-colors"
-            >
-              <X className="h-3.5 w-3.5" />
-              {t('policies.clearFilters')}
-            </button>
-          )}
-        </div> */}
+              ))}
+            </SelectContent>
+          </Select>
+        ))}
       </div>
 
       <DataTable

@@ -1,4 +1,4 @@
-import type { Policy } from '@/api/types'
+import type { InsuranceComponent, Policy, PolicyTraveller } from '@/api/types'
 
 export const mockPolicies: Policy[] = [
   {
@@ -8,11 +8,17 @@ export const mockPolicies: Policy[] = [
     type: 'rca',
     status: 'active',
     insurer: 'Omniasig',
+    insurerName: 'Omniasig',
+    vehicleOrProperty: 'B-99-XYZ',
+    policyDetails: 'Volkswagen Golf 2021',
     premium: 1200.0,
     currency: 'RON',
     startDate: '2025-09-01T00:00:00Z',
     endDate: '2026-09-01T00:00:00Z',
     coverageDetails: {},
+    documents: [
+      { id: 'doc_001_1', name: 'Polita RCA.pdf', type: 'POLICY', url: '/docs/pol_001_rca.pdf', size: 230000 }
+    ],
     createdAt: '2025-08-25T10:00:00Z',
     updatedAt: '2025-08-25T10:00:00Z'
   },
@@ -23,11 +29,17 @@ export const mockPolicies: Policy[] = [
     type: 'casco',
     status: 'active',
     insurer: 'Groupama',
+    insurerName: 'Groupama',
+    vehicleOrProperty: 'CJ-01-ABC',
+    policyDetails: 'BMW X3 2023',
     premium: 4200.0,
     currency: 'RON',
     startDate: '2025-10-01T00:00:00Z',
     endDate: '2026-10-01T00:00:00Z',
     coverageDetails: {},
+    documents: [
+      { id: 'doc_002_1', name: 'Polita CASCO.pdf', type: 'POLICY', url: '/docs/pol_002_casco.pdf', size: 350000 }
+    ],
     createdAt: '2025-09-15T14:00:00Z',
     updatedAt: '2025-09-15T14:00:00Z'
   },
@@ -188,12 +200,105 @@ export const mockPolicies: Policy[] = [
     type: 'rca',
     status: 'pending',
     insurer: 'Allianz',
+    insurerName: 'Allianz',
+    vehicleOrProperty: 'B-123-ABC',
+    policyDetails: 'Dacia Duster 2022',
     premium: 1650.0,
     currency: 'RON',
     startDate: '2024-06-15T00:00:00Z',
     endDate: '2025-06-15T00:00:00Z',
     coverageDetails: {},
+    documents: [
+      { id: 'doc_013_1', name: 'Polita RCA.pdf', type: 'POLICY', url: '/docs/pol_013_rca.pdf', size: 245000 }
+    ],
     createdAt: '2024-06-10T14:30:00Z',
     updatedAt: '2024-06-10T14:30:00Z'
+  },
+  {
+    id: 'pol_014',
+    legacyId: null,
+    policyNumber: 'POL-2025-006100',
+    type: 'travel',
+    status: 'active',
+    insurer: 'Omniasig',
+    insurerName: 'Omniasig',
+    policyDetails: 'Europa - 14 zile',
+    premium: 320.0,
+    currency: 'RON',
+    startDate: '2026-04-01T00:00:00Z',
+    endDate: '2026-04-15T00:00:00Z',
+    insuranceType: 'CALATORIE',
+    coverageDetails: {},
+    documents: [
+      { id: 'doc_014_1', name: 'Polita Calatorie.pdf', type: 'POLICY', url: '/docs/pol_014_travel.pdf', size: 310000 }
+    ],
+    travellers: [
+      {
+        name: 'Ion Popescu',
+        cnp: '1850315123456',
+        phone: '+40722111222',
+        premium: 160.0,
+        covers: ['Sport', 'Bagaje', 'Storno'],
+        documents: [
+          { id: 'doc_014_t1', name: 'Certificat Calatorie - Ion Popescu.pdf', type: 'CERTIFICATE', url: '/docs/pol_014_t1.pdf', size: 180000 }
+        ]
+      },
+      {
+        name: 'Maria Popescu',
+        cnp: '2870420654321',
+        phone: '+40722333444',
+        premium: 160.0,
+        covers: ['Sport', 'Bagaje'],
+        documents: [
+          { id: 'doc_014_t2', name: 'Certificat Calatorie - Maria Popescu.pdf', type: 'CERTIFICATE', url: '/docs/pol_014_t2.pdf', size: 175000 }
+        ]
+      }
+    ] satisfies PolicyTraveller[],
+    createdAt: '2026-03-20T10:00:00Z',
+    updatedAt: '2026-03-20T10:00:00Z'
+  },
+  {
+    id: 'pol_015',
+    legacyId: null,
+    policyNumber: 'POL-2025-006200',
+    type: 'home',
+    status: 'active',
+    insurer: 'Groupama',
+    insurerName: 'Groupama',
+    vehicleOrProperty: 'Str. Primăverii 12, București',
+    policyDetails: 'PAD + Facultativă',
+    premium: 890.0,
+    currency: 'RON',
+    startDate: '2026-01-01T00:00:00Z',
+    endDate: '2027-01-01T00:00:00Z',
+    insuranceType: 'LOCUINTA_PAD',
+    coverageDetails: {},
+    documents: [],
+    insuranceComponents: [
+      {
+        type: 'pad',
+        policyNumber: 'PAD-2025-001234',
+        insurerName: 'PAID',
+        premium: 130.0,
+        startDate: '2026-01-01T00:00:00Z',
+        endDate: '2027-01-01T00:00:00Z',
+        documents: [
+          { id: 'doc_015_c1', name: 'Polita PAD.pdf', type: 'POLICY', url: '/docs/pol_015_pad.pdf', size: 220000 }
+        ]
+      },
+      {
+        type: 'facultative',
+        policyNumber: 'FAC-2025-005678',
+        insurerName: 'Groupama',
+        premium: 760.0,
+        startDate: '2026-01-01T00:00:00Z',
+        endDate: '2027-01-01T00:00:00Z',
+        documents: [
+          { id: 'doc_015_c2', name: 'Polita Facultativa.pdf', type: 'POLICY', url: '/docs/pol_015_fac.pdf', size: 280000 }
+        ]
+      }
+    ] satisfies InsuranceComponent[],
+    createdAt: '2025-12-15T09:00:00Z',
+    updatedAt: '2025-12-15T09:00:00Z'
   }
 ]

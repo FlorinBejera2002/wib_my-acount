@@ -258,13 +258,22 @@
     "viewOriginalQuote": "Vezi cotația originală",
     "documents": "Documente",
     "documentsSubtitle": "Fișiere asociate acestei polițe",
-    "noDocuments": "Nu sunt documente disponibile"
+    "noDocuments": "Nu sunt documente disponibile",
+    "travellers": "Călători",
+    "components": "Componente",
+    "componentPAD": "PAD",
+    "componentFacultative": "Facultativă",
+    "downloadPdf": "Descarcă PDF",
+    "travellerName": "Călător",
+    "cnp": "CNP",
+    "covers": "Acoperiri"
   },
   "quotes": {
     "title": "Cotațiile Mele",
     "subtitle": "Vezi și gestionează toate cotațiile tale de asigurare",
     "quoteRef": "Referință cotație",
     "insuredObject": "Obiect asigurat",
+    "productDetails": "Detalii produs",
     "insuredDetails": "Detalii persoană asigurată",
     "dateTime": "Dată + oră",
     "viewOffer": "Vezi oferta",

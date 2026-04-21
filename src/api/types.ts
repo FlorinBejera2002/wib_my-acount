@@ -214,12 +214,16 @@ export type QuoteStatus =
 export interface Quote {
   id: string
   legacyId?: string | null
+  quoteNumber?: string | null
   type: QuoteType
   status: QuoteStatus
   premium?: number | null
   currency: string
   validUntil?: string | null
   quoteData?: Record<string, unknown>
+  productDetails?: string | null
+  insuredDetails?: string | null
+  offerUrl?: string | null
   createdAt: string
   updatedAt: string
 }
@@ -237,6 +241,33 @@ export type PolicyType =
 
 export type PolicyStatus = 'active' | 'expired' | 'cancelled' | 'pending'
 
+export interface PolicyDocument {
+  id: string
+  name: string
+  type: string
+  url: string
+  size?: number
+}
+
+export interface PolicyTraveller {
+  name: string
+  cnp: string
+  phone?: string
+  premium?: number
+  covers?: string[]
+  documents: PolicyDocument[]
+}
+
+export interface InsuranceComponent {
+  type: 'pad' | 'facultative'
+  policyNumber: string
+  insurerName: string
+  premium: number
+  startDate: string
+  endDate: string
+  documents: PolicyDocument[]
+}
+
 export interface Policy {
   id: string
   legacyId?: string | null
@@ -244,11 +275,18 @@ export interface Policy {
   type: PolicyType
   status: PolicyStatus
   insurer?: string | null
+  insurerName?: string | null
+  vehicleOrProperty?: string | null
+  policyDetails?: string | null
   startDate: string
   endDate: string
   premium: number
   currency: string
   coverageDetails?: Record<string, unknown>
+  documents?: PolicyDocument[]
+  travellers?: PolicyTraveller[]
+  insuranceComponents?: InsuranceComponent[]
+  insuranceType?: string
   createdAt: string
   updatedAt: string
 }

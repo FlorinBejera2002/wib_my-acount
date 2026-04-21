@@ -250,13 +250,22 @@
     "viewOriginalQuote": "Eredeti ajánlat megtekintése",
     "documents": "Dokumentumok",
     "documentsSubtitle": "A kötvényhez tartozó fájlok",
-    "noDocuments": "Nincsenek elérhető dokumentumok"
+    "noDocuments": "Nincsenek elérhető dokumentumok",
+    "travellers": "Utazók",
+    "components": "Komponensek",
+    "componentPAD": "PAD",
+    "componentFacultative": "Fakultatív",
+    "downloadPdf": "PDF letöltése",
+    "travellerName": "Utazó",
+    "cnp": "CNP",
+    "covers": "Fedezetek"
   },
   "quotes": {
     "title": "Ajánlataim",
     "subtitle": "Tekintse meg és kezelje biztosítási ajánlatait",
     "quoteRef": "Ajánlat hivatkozás",
     "insuredObject": "Biztosított tárgy",
+    "productDetails": "Termék részletei",
     "insuredDetails": "Biztosított adatai",
     "dateTime": "Dátum + idő",
     "viewOffer": "Ajánlat megtekintése",
