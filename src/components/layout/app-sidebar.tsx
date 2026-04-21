@@ -10,7 +10,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import { Separator } from '@/components/ui/separator'
 import {
   Sidebar,
   SidebarContent,
@@ -26,6 +25,7 @@ import {
 } from '@/components/ui/sidebar'
 import { useDashboardStats } from '@/hooks/use-dashboard-stats'
 import { useProfile } from '@/hooks/use-user'
+import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/stores/auth-store'
 import {
   ChevronsUpDown,
@@ -79,8 +79,8 @@ export function AppSidebar() {
   }
 
   return (
-    <Sidebar collapsible="icon" className="border-r border-gray-200 bg-white">
-      <SidebarHeader className="p-[0.600rem]">
+    <Sidebar collapsible="icon" className="border-r border-gray-100 bg-white">
+      <SidebarHeader className="p-4 group-data-[collapsible=icon]:p-3">
         <div className="flex items-center group-data-[collapsible=icon]:justify-center">
           <img
             src={logo}
@@ -95,15 +95,15 @@ export function AppSidebar() {
         </div>
       </SidebarHeader>
 
-      <Separator className="bg-gray-200 group-data-[collapsible=icon]:mx-2" />
+      <div className="mx-4 h-px bg-gray-100 group-data-[collapsible=icon]:mx-2" />
 
-      <SidebarContent className="px-3 group-data-[collapsible=icon]:px-2 overflow-auto hide-scrollbar pt-2">
+      <SidebarContent className="px-3 group-data-[collapsible=icon]:px-2 overflow-auto hide-scrollbar pt-4">
         <SidebarGroup className="space-y-1 p-0">
-          <SidebarGroupLabel className="text-[11px] font-semibold uppercase tracking-wider text-gray-400 px-3 py-2 group-data-[collapsible=icon]:hidden">
+          <SidebarGroupLabel className="text-[11px] font-semibold uppercase tracking-wider text-gray-400 px-3 pb-2 group-data-[collapsible=icon]:hidden">
             {t('nav.navigation')}
           </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu className="space-y-0.5">
+            <SidebarMenu className="space-y-1">
               {navItems.map((item) => {
                 const isActive = location.pathname.startsWith(item.href)
                 const count =
@@ -121,13 +121,31 @@ export function AppSidebar() {
                       isActive={isActive}
                       onClick={() => navigate(item.href)}
                       tooltip={t(item.labelKey)}
+                      className={cn(
+                        'h-10 rounded-lg transition-all duration-150',
+                        isActive
+                          ? 'bg-primary/5 text-gray-900 font-semibold hover:bg-primary/10'
+                          : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
+                      )}
                     >
-                      <item.icon className="min-w-5 min-h-5 group-data-[collapsible=icon]:h-5 group-data-[collapsible=icon]:w-5" />
-                      <span className="flex-1 font-medium group-data-[collapsible=icon]:hidden">
+                      <item.icon
+                        className={cn(
+                          'min-w-5 min-h-5 group-data-[collapsible=icon]:h-5 group-data-[collapsible=icon]:w-5 transition-colors',
+                          isActive ? 'text-gray-900' : 'text-gray-400'
+                        )}
+                      />
+                      <span className="flex-1 group-data-[collapsible=icon]:hidden">
                         {t(item.labelKey)}
                       </span>
                       {count !== undefined && (
-                        <Badge className="ml-auto h-5 min-w-[20px] justify-center rounded-full bg-accent-green/15 px-1.5 text-[11px] font-semibold text-accent-green group-data-[collapsible=icon]:hidden">
+                        <Badge
+                          className={cn(
+                            'ml-auto h-5 min-w-[20px] justify-center rounded-full px-1.5 text-[11px] font-semibold group-data-[collapsible=icon]:hidden border-0',
+                            isActive
+                              ? 'bg-primary/10 text-gray-900'
+                              : 'bg-gray-100 text-gray-500'
+                          )}
+                        >
                           {count}
                         </Badge>
                       )}
@@ -141,10 +159,10 @@ export function AppSidebar() {
       </SidebarContent>
 
       <SidebarFooter className="p-3 group-data-[collapsible=icon]:p-2">
-        <Separator className="mb-3 bg-gray-200" />
+        <div className="mx-1 mb-3 h-px bg-gray-100" />
         <DropdownMenu>
           <DropdownMenuTrigger asChild={true}>
-            <button className="flex w-full items-center gap-3 rounded-lg p-2 transition-colors hover:bg-gray-50 group-data-[collapsible=icon]:justify-center">
+            <button className="flex w-full items-center gap-3 rounded-xl p-2.5 transition-all duration-150 hover:bg-gray-50 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:rounded-lg">
               <ProfileAvatar
                 firstName={profile?.firstName || (user && 'firstName' in user ? user.firstName : '') || ''}
                 lastName={profile?.lastName || (user && 'lastName' in user ? user.lastName : '') || ''}
@@ -156,11 +174,11 @@ export function AppSidebar() {
                 <span className="truncate text-sm font-semibold text-gray-900">
                   {profile ? `${profile.firstName} ${profile.lastName}` : (user?.username ?? '')}
                 </span>
-                <span className="truncate text-xs text-gray-500">
+                <span className="truncate text-xs text-gray-400">
                   {profile?.email || user?.email}
                 </span>
               </div>
-              <ChevronsUpDown className="h-4 w-4 shrink-0 text-gray-400 group-data-[collapsible=icon]:hidden" />
+              <ChevronsUpDown className="h-4 w-4 shrink-0 text-gray-300 group-data-[collapsible=icon]:hidden" />
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" side="top" className="w-56">
@@ -189,7 +207,7 @@ export function AppSidebar() {
         </DropdownMenu>
       </SidebarFooter>
 
-      <SidebarRail className="hover:after:bg-accent-green/30 after:transition-colors after:duration-200" />
+      <SidebarRail className="hover:after:bg-primary/20 after:transition-colors after:duration-200" />
     </Sidebar>
   )
 }

@@ -149,7 +149,7 @@ export default function LoginPage() {
               {t('auth.noAccount')}{' '}
               <Link
                 to="/register"
-                className="font-medium text-accent-green hover:text-accent-green-hover transition-colors"
+                className="font-medium text-primary hover:text-primary/80 transition-colors"
               >
                 {t('auth.createAccountLink')}
               </Link>
@@ -157,7 +157,7 @@ export default function LoginPage() {
             <p className="text-sm text-gray-400">
               <Link
                 to="/forgot-password"
-                className="font-medium text-accent-green hover:text-accent-green-hover transition-colors"
+                className="font-medium text-primary hover:text-primary/80 transition-colors"
               >
                 {t('auth.forgotPassword')}
               </Link>

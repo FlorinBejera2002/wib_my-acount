@@ -1,6 +1,8 @@
+import { ExpiringAlert } from '@/components/dashboard/expiring-alert'
+import { MonthlyActivityChart } from '@/components/dashboard/monthly-activity-chart'
 import { RecentPolicies } from '@/components/dashboard/recent-policies'
-import { RecentQuotes } from '@/components/dashboard/recent-quotes'
 import { StatsCards } from '@/components/dashboard/stats-cards'
+import { UpcomingReminders } from '@/components/dashboard/upcoming-reminders'
 import { useDashboardStats } from '@/hooks/use-dashboard-stats'
 import { useProfile } from '@/hooks/use-user'
 import { useTranslation } from 'react-i18next'
@@ -21,12 +23,18 @@ export default function DashboardPage() {
 
       <StatsCards stats={stats} isLoading={statsLoading} />
 
+      {stats && stats.policies.expiringSoon.length > 0 && (
+        <ExpiringAlert policies={stats.policies.expiringSoon} />
+      )}
+
       <div className="grid gap-6 lg:grid-cols-2">
-        <RecentQuotes />
+        <MonthlyActivityChart />
         <RecentPolicies />
       </div>
 
-      {/* ActivityChart removed — API does not provide monthly quote stats */}
+      {stats && stats.reminders.upcoming.length > 0 && (
+        <UpcomingReminders reminders={stats.reminders.upcoming} />
+      )}
     </div>
   )
 }

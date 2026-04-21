@@ -66,7 +66,7 @@ export function ProfileAvatar({
       {finalPhotoUrl && (
         <AvatarImage src={finalPhotoUrl} alt={`${firstName} ${lastName}`} />
       )}
-      <AvatarFallback className="bg-accent-green text-white font-semibold">
+      <AvatarFallback className="bg-primary text-white font-semibold">
         {initials}
       </AvatarFallback>
     </Avatar>

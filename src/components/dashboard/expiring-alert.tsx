@@ -1,23 +1,34 @@
-import type { Policy } from '@/api/types'
 import { AlertTriangle } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 
+interface ExpiringPolicy {
+  id: string
+  policyNumber: string
+  type: string
+  endDate: string
+}
+
 interface ExpiringAlertProps {
-  policies: Policy[]
+  policies: ExpiringPolicy[]
 }
 
 export function ExpiringAlert({ policies }: ExpiringAlertProps) {
+  const { t } = useTranslation()
+
   if (policies.length === 0) return null
 
   const label =
     policies.length === 1
-      ? '1 poliță expiră în curând'
-      : `${policies.length} polițe expiră în curând`
+      ? t('dashboard.expiringAlertSingle')
+      : t('dashboard.expiringAlert', { count: policies.length })
 
   const names = policies
     .map((p) => {
-      const daysLeft = Math.ceil((new Date(p.endDate).getTime() - Date.now()) / 86400000)
-      return `${p.type} – ${p.insurer ?? '—'} (${daysLeft} zile)`
+      const daysLeft = Math.ceil(
+        (new Date(p.endDate).getTime() - Date.now()) / 86400000
+      )
+      return `${t(`insuranceType.${p.type.toUpperCase()}`, { defaultValue: p.type })} (${t('dashboard.reminderDaysLeft', { days: daysLeft })})`
     })
     .join(', ')
 

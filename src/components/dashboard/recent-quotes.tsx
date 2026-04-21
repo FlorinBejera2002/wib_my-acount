@@ -1,35 +1,27 @@
 import type { QuoteStatus } from '@/api/types'
+import { InsuranceTypeBadge } from '@/components/ui/insurance-type-badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useQuotes } from '@/hooks/use-quotes'
 import { cn, formatCurrency } from '@/lib/utils'
 import { ArrowRight, ChevronRight } from 'lucide-react'
+import type { TFunction } from 'i18next'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 
-const getSimplifiedQuoteStatus = (status: QuoteStatus) => {
+function getQuoteStatusConfig(status: QuoteStatus, t: TFunction) {
   if (status === 'expired') {
     return {
-      label: 'Expirată',
+      label: t('quoteStatus.EXPIRED'),
       dot: 'bg-red-500',
       text: 'text-red-600'
     }
   }
   return {
-    label: 'Activă',
+    label: t('quoteStatus.ACTIVE'),
     dot: 'bg-accent-green',
     text: 'text-accent-green'
   }
-}
-
-const typeConfig: Record<string, { label: string; className: string }> = {
-  rca: { label: 'RCA', className: 'bg-blue-100 text-blue-700' },
-  casco: { label: 'CASCO', className: 'bg-green-100 text-green-700' },
-  home: { label: 'Locuință', className: 'bg-orange-100 text-orange-700' },
-  health: { label: 'Sănătate', className: 'bg-rose-100 text-rose-700' },
-  travel: { label: 'Călătorie', className: 'bg-purple-100 text-purple-700' },
-  life: { label: 'Viață', className: 'bg-pink-100 text-pink-700' },
-  other: { label: 'Altele', className: 'bg-gray-100 text-gray-700' }
 }
 
 export function RecentQuotes() {
@@ -49,7 +41,7 @@ export function RecentQuotes() {
         </CardTitle>
         <Link
           to="/quotes"
-          className="flex items-center gap-1 text-xs font-medium text-accent-green hover:text-accent-green-hover transition-colors"
+          className="flex items-center gap-1 text-xs font-medium text-primary hover:text-primary/80 transition-colors"
         >
           {t('common.viewAll')}
           <ArrowRight className="h-3.5 w-3.5" />
@@ -67,32 +59,17 @@ export function RecentQuotes() {
             {t('dashboard.noQuotes')}
           </p>
         ) : (
-          <ul>
-            {data?.data.map((quote, i) => {
-              const status = getSimplifiedQuoteStatus(quote.status)
-              const type = typeConfig[quote.type] || {
-                label: quote.type,
-                className: 'bg-gray-100 text-gray-600'
-              }
-              const isLast = i === (data?.data.length ?? 0) - 1
+          <ul className="divide-y divide-gray-100">
+            {data?.data.map((quote) => {
+              const status = getQuoteStatusConfig(quote.status, t)
 
               return (
                 <li key={quote.id}>
                   <Link
                     to={`/quotes/${quote.id}`}
-                    className={cn(
-                      'flex items-center gap-3 px-4 sm:px-6 py-3 transition-colors hover:bg-gray-50',
-                      !isLast && 'border-b border-gray-100'
-                    )}
+                    className="flex items-center gap-3 px-4 sm:px-6 py-3.5 transition-colors hover:bg-gray-50"
                   >
-                    <span
-                      className={cn(
-                        'flex h-8 max-w-[100px] truncate px-2 shrink-0 items-center justify-center rounded-lg text-xs font-semibold',
-                        type.className
-                      )}
-                    >
-                      {type.label}
-                    </span>
+                    <InsuranceTypeBadge type={quote.type} />
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-medium text-gray-900">
                         {quote.id}

@@ -422,6 +422,11 @@ export interface DashboardStats {
     }>
     total: number
   }
+  monthlyActivity?: Array<{
+    month: string
+    quotes: number
+    policies: number
+  }>
 }
 
 // ==================== GDPR Export ====================

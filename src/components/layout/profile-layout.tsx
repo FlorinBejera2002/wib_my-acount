@@ -3,7 +3,7 @@ import { Card } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useProfile } from '@/hooks/use-user'
 import { cn, formatDate } from '@/lib/utils'
-import { Settings, Shield, User } from 'lucide-react'
+import { Shield, User } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { NavLink, Outlet } from 'react-router-dom'
 
@@ -18,11 +18,6 @@ const profileTabs = [
     labelKey: 'profile.tabs.security',
     href: '/profile/security',
     icon: Shield
-  },
-  {
-    labelKey: 'profile.tabs.settings',
-    href: '/profile/settings',
-    icon: Settings
   }
 ]
 
@@ -33,7 +28,7 @@ export function ProfileLayout() {
     <div className="space-y-6">
       {/* Profile Hero Card */}
       <Card className="shadow-sm overflow-hidden">
-        <div className="h-24 bg-gradient-to-r from-accent-green/20 via-accent-green/10 to-transparent" />
+        <div className="h-24 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent" />
         <div className="px-4 sm:px-6 pb-6 -mt-12">
           <div className="flex flex-col sm:flex-row sm:items-end gap-4 sm:gap-5">
             {profile ? (
@@ -86,7 +81,7 @@ export function ProfileLayout() {
                 cn(
                   'flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 -mb-px transition-colors',
                   isActive
-                    ? 'border-accent-green text-accent-green'
+                    ? 'border-primary text-primary'
                     : 'border-transparent text-gray-400 hover:text-gray-600 hover:border-gray-200'
                 )
               }

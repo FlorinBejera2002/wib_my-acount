@@ -1,4 +1,5 @@
 import { Badge } from '@/components/ui/badge'
+import { InsuranceTypeBadge } from '@/components/ui/insurance-type-badge'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -94,9 +95,7 @@ export function PolicyDetail() {
             <h1 className="text-lg sm:text-xl font-bold text-gray-900">
               {policy.policyNumber}
             </h1>
-            <span className="inline-flex items-center rounded-lg px-2 py-0.5 text-xs font-semibold bg-green-100 text-green-700">
-              {typeLabel}
-            </span>
+            <InsuranceTypeBadge type={policy.type} />
           </div>
           <p className="text-sm text-gray-400">
             {t('policies.policyType', { type: typeLabel })}
@@ -112,8 +111,8 @@ export function PolicyDetail() {
             <div className="space-y-6">
               {/* Section Header */}
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-md bg-green-50 shrink-0">
-                  <Shield className="h-5 w-5 text-green-600" />
+                <div className="flex h-10 w-10 items-center justify-center rounded-md bg-blue-50 shrink-0">
+                  <Shield className="h-5 w-5 text-blue-600" />
                 </div>
                 <div>
                   <h3 className="text-base font-semibold text-gray-900">
@@ -126,9 +125,9 @@ export function PolicyDetail() {
               </div>
 
               {/* Premium - Hero Metric */}
-              <div className="flex items-center gap-4 rounded-xl p-4 border border-transparent bg-green-100">
+              <div className="flex items-center gap-4 rounded-xl p-4 border border-transparent bg-blue-100">
                 <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-white shadow-sm">
-                  <Banknote className="h-5 w-5 text-green-600" />
+                  <Banknote className="h-5 w-5 text-blue-600" />
                 </div>
                 <div className="flex-1">
                   <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -212,8 +211,8 @@ export function PolicyDetail() {
         <Card className="shadow-sm">
           <CardHeader>
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-md bg-green-50">
-                <FileText className="h-5 w-5 text-green-500" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-md bg-blue-50">
+                <FileText className="h-5 w-5 text-blue-600" />
               </div>
               <div>
                 <CardTitle className="text-base font-semibold">

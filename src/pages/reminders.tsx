@@ -159,7 +159,7 @@ function AlertCard({
           <span className="text-sm text-gray-400">
             {t('reminders.notificationDate')}
           </span>
-          <span className="flex items-center gap-1.5 text-sm font-medium text-accent-green">
+          <span className="flex items-center gap-1.5 text-sm font-medium text-primary">
             <Bell className="h-3.5 w-3.5" />
             {formatDateLocal(alert.notificationDate)}
           </span>
@@ -222,7 +222,7 @@ function AddAlertForm({ onBack }: { onBack: () => void }) {
         <button
           type="button"
           onClick={onBack}
-          className="flex items-center gap-1.5 text-sm font-medium text-accent-green hover:text-accent-green-hover transition-colors"
+          className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />
           {t('reminders.backBtn')}
@@ -339,7 +339,7 @@ function AddAlertForm({ onBack }: { onBack: () => void }) {
           <Button
             type="submit"
             disabled={createAlert.isPending}
-            className="bg-accent-green hover:bg-accent-green-hover text-white gap-1.5"
+            className="gap-1.5"
           >
             <Check className="h-4 w-4" />
             {createAlert.isPending
@@ -396,7 +396,7 @@ export default function RemindersPage() {
         </div>
         <Button
           onClick={() => setView('add')}
-          className="bg-accent-green hover:bg-accent-green-hover text-white gap-1.5 w-full sm:w-auto"
+          className="gap-1.5 w-full sm:w-auto"
         >
           <Plus className="h-4 w-4" />
           {t('reminders.addAlert')}
@@ -406,8 +406,8 @@ export default function RemindersPage() {
       {!alerts || alerts.length === 0 ? (
         <div className="rounded-xl border border-gray-100 bg-white shadow-sm">
           <div className="flex flex-col items-center justify-center py-16 text-center">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-accent-green/10 mb-4">
-              <Bell className="h-6 w-6 text-accent-green" />
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 mb-4">
+              <Bell className="h-6 w-6 text-primary" />
             </div>
             <p className="text-sm text-gray-400">{t('reminders.noAlerts')}</p>
           </div>

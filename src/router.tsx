@@ -12,7 +12,6 @@ import QuoteDetailPage from '@/pages/quote-detail'
 import QuotesPage from '@/pages/quotes'
 import RegisterPage from '@/pages/register'
 import SecurityPage from '@/pages/security'
-import SettingsPage from '@/pages/settings'
 import { Navigate, createBrowserRouter } from 'react-router-dom'
 import NotificationsPage from './pages/notifications'
 import RemindersPage from './pages/reminders'
@@ -79,10 +78,6 @@ export const router = createBrowserRouter([
               {
                 path: 'security',
                 element: <SecurityPage />
-              },
-              {
-                path: 'settings',
-                element: <SettingsPage />
               }
             ]
           }

@@ -48,7 +48,7 @@ export function DataTable<TData, TValue>({
     return (
       <div className="rounded-xl border border-gray-100 bg-white shadow-sm overflow-x-auto">
         <Table className="min-w-[700px]">
-          <TableHeader className="bg-green-50">
+          <TableHeader className="bg-slate-800 [&_th]:text-slate-300 [&_th]:text-xs [&_th]:font-medium [&_th]:uppercase [&_th]:tracking-wider">
             <TableRow>
               {columns.map((_, i) => (
                 <TableHead key={i}>
@@ -95,7 +95,7 @@ export function DataTable<TData, TValue>({
   return (
     <div className="rounded-xl border border-gray-100 bg-white shadow-sm overflow-x-auto">
       <Table className="min-w-[700px]">
-        <TableHeader className="bg-green-50">
+        <TableHeader className="bg-slate-800 [&_th]:text-slate-300 [&_th]:text-xs [&_th]:font-medium [&_th]:uppercase [&_th]:tracking-wider">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => (

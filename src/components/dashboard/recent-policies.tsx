@@ -1,4 +1,5 @@
 import type { PolicyStatus } from '@/api/types'
+import { InsuranceTypeBadge } from '@/components/ui/insurance-type-badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { usePolicies } from '@/hooks/use-policies'
@@ -8,40 +9,42 @@ import { ArrowRight, ChevronRight } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 
-const statusConfig: Record<
-  PolicyStatus,
-  { label: string; dot: string; text: string }
-> = {
-  active: {
-    label: 'Activă',
-    dot: 'bg-accent-green',
-    text: 'text-accent-green'
-  },
-  expired: {
-    label: 'Expirată',
-    dot: 'bg-red-500',
-    text: 'text-red-600'
-  },
-  cancelled: {
-    label: 'Anulată',
-    dot: 'bg-gray-500',
-    text: 'text-gray-600'
-  },
-  pending: {
-    label: 'În așteptare',
-    dot: 'bg-orange-500',
-    text: 'text-orange-600'
+function getStatusConfig(
+  status: PolicyStatus,
+  t: TFunction
+): { label: string; dot: string; text: string } {
+  switch (status) {
+    case 'active':
+      return {
+        label: t('policyStatus.ACTIVE'),
+        dot: 'bg-accent-green',
+        text: 'text-accent-green'
+      }
+    case 'expired':
+      return {
+        label: t('policyStatus.EXPIRED'),
+        dot: 'bg-red-500',
+        text: 'text-red-600'
+      }
+    case 'cancelled':
+      return {
+        label: t('policyStatus.CANCELLED'),
+        dot: 'bg-gray-500',
+        text: 'text-gray-600'
+      }
+    case 'pending':
+      return {
+        label: t('policyStatus.PENDING'),
+        dot: 'bg-orange-500',
+        text: 'text-orange-600'
+      }
+    default:
+      return {
+        label: t('policyStatus.ACTIVE'),
+        dot: 'bg-accent-green',
+        text: 'text-accent-green'
+      }
   }
-}
-
-const typeConfig: Record<string, { label: string; className: string }> = {
-  rca: { label: 'RCA', className: 'bg-blue-100 text-blue-700' },
-  casco: { label: 'CASCO', className: 'bg-green-100 text-green-700' },
-  home: { label: 'Locuință', className: 'bg-orange-100 text-orange-700' },
-  health: { label: 'Sănătate', className: 'bg-rose-100 text-rose-700' },
-  travel: { label: 'Călătorie', className: 'bg-purple-100 text-purple-700' },
-  life: { label: 'Viață', className: 'bg-pink-100 text-pink-700' },
-  other: { label: 'Altele', className: 'bg-gray-100 text-gray-700' }
 }
 
 function formatDaysUntilExpiry(days: number, t: TFunction): string {
@@ -68,7 +71,7 @@ export function RecentPolicies() {
         </CardTitle>
         <Link
           to="/policies"
-          className="flex items-center gap-1 text-xs font-medium text-accent-green hover:text-accent-green-hover transition-colors"
+          className="flex items-center gap-1 text-xs font-medium text-primary hover:text-primary/80 transition-colors"
         >
           {t('common.viewAll')}
           <ArrowRight className="h-3.5 w-3.5" />
@@ -86,32 +89,16 @@ export function RecentPolicies() {
             {t('dashboard.noPolicies')}
           </p>
         ) : (
-          <ul>
-            {data?.data.map((policy, i) => {
-              const status = statusConfig[policy.status] ?? statusConfig.active
-              const isLast = i === (data?.data.length ?? 0) - 1
-              const type = typeConfig[policy.type] || {
-                label: policy.type,
-                className: 'bg-gray-100 text-gray-600'
-              }
-
+          <ul className="divide-y divide-gray-100">
+            {data?.data.map((policy) => {
+              const status = getStatusConfig(policy.status, t)
               return (
                 <li key={policy.id}>
                   <Link
                     to={`/policies/${policy.id}`}
-                    className={cn(
-                      'flex items-center gap-3 px-4 sm:px-6 py-3 transition-colors hover:bg-gray-50',
-                      !isLast && 'border-b border-gray-100'
-                    )}
+                    className="flex items-center gap-3 px-4 sm:px-6 py-3.5 transition-colors hover:bg-gray-50"
                   >
-                    <span
-                      className={cn(
-                        'flex h-8 max-w-[130px] truncate px-2 shrink-0 items-center justify-center rounded-lg text-xs font-semibold',
-                        type.className
-                      )}
-                    >
-                      {type.label}
-                    </span>
+                    <InsuranceTypeBadge type={policy.type} />
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-medium text-gray-900">
                         {policy.policyNumber}

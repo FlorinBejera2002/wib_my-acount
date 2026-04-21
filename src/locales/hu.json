@@ -45,7 +45,12 @@
     "ACCIDENTE_CALATORI": "Utasbaleset",
     "ACCIDENTE_PERSOANE": "Személyi baleset",
     "ACCIDENTE_TAXI": "Taxi baleset",
-    "CMR": "CMR"
+    "CMR": "CMR",
+    "TRAVEL": "Utazás",
+    "HEALTH": "Egészség",
+    "PAD": "PAD",
+    "FACULTATIVE": "Opcionális",
+    "PAD_FACULTATIVE": "PAD + Opcionális"
   },
   "policyDocType": {
     "POLICY": "Kötvény",
@@ -187,12 +192,17 @@
     "recentQuotes": "Legutóbbi ajánlatok",
     "noPolicies": "Nincsenek kötvények.",
     "noQuotes": "Nincsenek ajánlatok.",
-    "activityTitle": "Ajánlatok aktivitása",
+    "activityTitle": "Aktivitása",
     "last6Months": "Elmúlt 6 hónap",
     "expired": "Lejárt",
     "expiresToday": "Ma lejár",
     "expiresTomorrow": "Holnap lejár",
     "daysRemaining": "{{days}} nap van hátra",
+    "expiringAlert": "{{count}} kötvény hamarosan lejár",
+    "expiringAlertSingle": "1 kötvény hamarosan lejár",
+    "upcomingReminders": "Közelgő emlékeztetők",
+    "noReminders": "Nincsenek közelgő emlékeztetők",
+    "reminderDaysLeft": "{{days}} nap van hátra",
     "month": "Hónap: {{label}}",
     "quotesCount": "{{count}} ajánlat",
     "total": "Összesen",
@@ -267,7 +277,7 @@
     "insuredObject": "Biztosított tárgy",
     "productDetails": "Termék részletei",
     "insuredDetails": "Biztosított adatai",
-    "dateTime": "Dátum + idő",
+    "dateTime": "Dátum",
     "viewOffer": "Ajánlat megtekintése",
     "reset": "Visszaállítás",
     "notFound": "Az ajánlat nem található",
@@ -296,8 +306,7 @@
     "fileTooLarge": "A fájl mérete nem haladhatja meg az 5 MB-ot",
     "tabs": {
       "personal": "Személyes adatok",
-      "security": "Biztonság",
-      "settings": "Beállítások"
+      "security": "Biztonság"
     }
   },
   "preferences": {
@@ -343,30 +352,21 @@
     }
   },
   "settings": {
-    "notifications": "Értesítések",
-    "notificationsSubtitle": "Válassza ki, milyen értesítéseket szeretne kapni",
-    "emailNotifications": "E-mail értesítések",
-    "emailNotificationsDesc": "Értesítések a fiók tevékenységéről e-mailben",
-    "pushNotifications": "Push értesítések",
-    "pushNotificationsDesc": "Valós idejű értesítések a böngészőben",
-    "newQuotes": "Új ajánlatok",
-    "newQuotesDesc": "Értesítések új ajánlatokról és frissítésekről",
-    "policyExpiry": "Kötvény lejárat",
-    "policyExpiryDesc": "Riasztások a kötvények lejárata előtt",
-    "saving": "Mentés...",
-    "saveSettings": "Beállítások mentése",
+    "dangerZone": "Veszélyzóna",
+    "dangerZoneDesc": "Visszafordíthatatlan műveletek a fiókján",
     "deleteAccount": "Fiók törlése",
     "deleteAccountTitle": "Fiók törlése",
-    "deleteAccountDesc": "Ez a művelet visszafordíthatatlan. Minden adata véglegesen törlődik, beleértve a kötvényeket, ajánlatokat és az előzményeket.",
+    "deleteAccountDesc": "Kérelmét az ügyfélszolgálati csapatnak küldjük el, akik kezelik a törlési folyamatot.",
     "warning": "Figyelem!",
     "deleteWarning1": "Minden aktív kötvény visszavonásra kerül",
     "deleteWarning2": "Az ajánlatelőzmények elvesznek",
     "deleteWarning3": "Többé nem fogja tudni elérni a dokumentumokat",
-    "confirmPhrase": "FIÓK TÖRLÉSE",
-    "confirmLabel": "Írja be a <strong>FIÓK TÖRLÉSE</strong> szöveget a megerősítéshez",
+    "passwordConfirmLabel": "Adja meg jelszavát a megerősítéshez",
+    "processInfo1": "Kérelmét elküldjük ügyfélszolgálati csapatunknak.",
+    "processInfo2": "Megerősítő e-mailt fog kapni.",
+    "processInfo3": "Egy ügyfélszolgálati munkatárs felveszi Önnel a kapcsolatot a folyamat befejezéséhez.",
     "processing": "Feldolgozás...",
-    "confirmDelete": "Törlés megerősítése",
-    "deleteRequestSent": "A törlési kérelem elküldve"
+    "confirmDelete": "Törlési kérelem küldése"
   },
   "notifications": {
     "title": "Értesítések",

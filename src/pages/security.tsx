@@ -3,6 +3,7 @@ import { TwoFactorSetupDialog } from '@/components/auth/two-factor-setup-dialog'
 import { ActiveSessions } from '@/components/security/active-sessions'
 import { ChangePasswordForm } from '@/components/security/change-password-form'
 import { LoginHistory } from '@/components/security/login-history'
+import { DeleteAccountDialog } from '@/components/settings/delete-account-dialog'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -49,7 +50,7 @@ function TwoFactorSection() {
           {twoFactorEnabled ? (
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-3 text-sm text-gray-600">
-                <ShieldCheck className="h-5 w-5 text-accent-green shrink-0" />
+                <ShieldCheck className="h-5 w-5 text-primary shrink-0" />
                 <span>{methodLabel}</span>
               </div>
               <div className="flex items-center gap-2 shrink-0">
@@ -94,6 +95,26 @@ function TwoFactorSection() {
   )
 }
 
+function DangerZone() {
+  const { t } = useTranslation()
+
+  return (
+    <Card className="shadow-sm border-destructive/30">
+      <CardContent className="pt-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm font-medium">{t('settings.deleteAccountTitle')}</p>
+            <p className="text-sm text-muted-foreground">
+              {t('settings.deleteAccountDesc')}
+            </p>
+          </div>
+          <DeleteAccountDialog />
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
 export default function SecurityPage() {
   return (
     <div className="grid gap-6 lg:grid-cols-2">
@@ -101,6 +122,7 @@ export default function SecurityPage() {
         <ChangePasswordForm />
         <TwoFactorSection />
         <LoginHistory />
+        <DangerZone />
       </div>
       <ActiveSessions />
     </div>

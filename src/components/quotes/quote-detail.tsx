@@ -1,4 +1,5 @@
 import type { QuoteStatus } from '@/api/types'
+import { InsuranceTypeBadge } from '@/components/ui/insurance-type-badge'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -27,9 +28,9 @@ const typeConfig: Record<
   { badge: string; iconBg: string; iconText: string }
 > = {
   rca: {
-    badge: 'bg-green-100 text-green-700',
-    iconBg: 'bg-green-50',
-    iconText: 'text-green-600'
+    badge: 'bg-blue-100 text-blue-700',
+    iconBg: 'bg-blue-50',
+    iconText: 'text-blue-600'
   },
   casco: {
     badge: 'bg-green-100 text-green-700',
@@ -173,14 +174,7 @@ export function QuoteDetail() {
             <h1 className="text-lg sm:text-xl font-bold text-gray-900">
               {quote.id}
             </h1>
-            <span
-              className={cn(
-                'inline-flex items-center rounded-lg px-2 py-0.5 text-xs font-semibold',
-                type.badge
-              )}
-            >
-              {typeLabel}
-            </span>
+            <InsuranceTypeBadge type={quote.type} />
           </div>
           <p className="text-sm text-gray-400">
             {t('quotes.quoteType', { type: typeLabel })}
@@ -300,8 +294,8 @@ export function QuoteDetail() {
         <Card className="shadow-sm">
           <CardHeader>
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-md bg-green-50">
-                <FileText className="h-5 w-5 text-green-500" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-md bg-blue-50">
+                <FileText className="h-5 w-5 text-blue-600" />
               </div>
               <div>
                 <CardTitle className="text-base font-semibold">

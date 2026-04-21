@@ -82,7 +82,7 @@ export function ActiveSessions() {
               key={session.id}
               className={`flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 rounded-lg border p-4${
                 session.current
-                  ? ' border-accent-green/40 bg-accent-green/5'
+                  ? ' border-primary/40 bg-primary/5'
                   : ''
               }`}
             >

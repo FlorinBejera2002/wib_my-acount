@@ -22,7 +22,7 @@ import {
   AlertCircle,
   ChevronDown,
   ChevronRight,
-  FileText,
+  Download,
   Inbox,
   X
 } from 'lucide-react'
@@ -85,11 +85,10 @@ function PdfLink({ url, label }: { url: string; label?: string }) {
       target="_blank"
       rel="noopener noreferrer"
       onClick={(e) => e.stopPropagation()}
-      className="inline-flex items-center gap-1.5 text-sm text-accent-green hover:text-accent-green/80 transition-colors"
+      className="inline-flex items-center gap-1.5 text-sm text-primary hover:text-primary/80 transition-colors"
       title={label}
     >
-      <FileText className="h-4 w-4 shrink-0" />
-      <span className="hidden sm:inline">PDF</span>
+      <Download className="h-4 w-4 shrink-0" />
     </a>
   )
 }
@@ -186,7 +185,7 @@ export function PoliciesTable() {
         </div>
         <div className="rounded-xl border border-gray-100 bg-white shadow-sm overflow-x-auto hide-scrollbar">
           <Table className="min-w-[900px]">
-            <TableHeader className="bg-green-50">
+            <TableHeader className="bg-slate-100 [&_th]:text-slate-500 [&_th]:text-xs [&_th]:font-medium [&_th]:uppercase [&_th]:tracking-wider">
               <TableRow>
                 {Array.from({ length: COL_COUNT }).map((_, i) => (
                   <TableHead key={i}><Skeleton className="h-4 w-20" /></TableHead>
@@ -267,7 +266,7 @@ export function PoliciesTable() {
       {/* Table */}
       <div className="rounded-xl border border-gray-100 bg-white shadow-sm overflow-x-auto hide-scrollbar">
         <Table className="min-w-[900px]">
-          <TableHeader className="bg-green-50">
+          <TableHeader className="bg-slate-100 [&_th]:text-slate-500 [&_th]:text-xs [&_th]:font-medium [&_th]:uppercase [&_th]:tracking-wider">
             <TableRow>
               <TableHead className="w-10" />
               <TableHead>{t('policies.policyRef')}</TableHead>
@@ -353,19 +352,16 @@ function PolicyRowGroup({
       {/* ── Main row ── */}
       <TableRow
         className="cursor-pointer transition-colors hover:bg-muted/50"
-        onClick={onNavigate}
+        onClick={expandable ? onToggle : onNavigate}
       >
         <TableCell className="w-10 px-3">
           {expandable && (
-            <button
-              type="button"
-              onClick={(e) => { e.stopPropagation(); onToggle() }}
-              className="p-0.5 rounded transition-colors hover:bg-gray-200"
+            <span className="p-1 rounded-md"
             >
               {expanded
-                ? <ChevronDown className="h-4 w-4 text-gray-500" />
-                : <ChevronRight className="h-4 w-4 text-gray-400" />}
-            </button>
+                ? <ChevronDown className="h-4 w-4 text-primary" />
+                : <ChevronRight className="h-4 w-4 text-slate-400" />}
+            </span>
           )}
         </TableCell>
 
@@ -413,11 +409,12 @@ function PolicyRowGroup({
 
       {/* ── Expanded: nested sub-table ── */}
       {expanded && policy.travellers && policy.travellers.length > 0 && (
-        <TableRow className="bg-transparent hover:bg-transparent">
-          <TableCell colSpan={COL_COUNT} className="p-0">
+        <TableRow className="hover:bg-transparent border-0">
+          <TableCell colSpan={COL_COUNT} className="bg-blue-50/50 py-3 px-4 pl-12 ">
             <TravellerSubTable
               policyNumber={policy.policyNumber}
               travellers={policy.travellers}
+              onNavigate={onNavigate}
               t={t}
             />
           </TableCell>
@@ -425,10 +422,11 @@ function PolicyRowGroup({
       )}
 
       {expanded && policy.insuranceComponents && policy.insuranceComponents.length > 0 && (
-        <TableRow className="bg-transparent hover:bg-transparent">
-          <TableCell colSpan={COL_COUNT} className="p-0">
+        <TableRow className="hover:bg-transparent border-0">
+          <TableCell colSpan={COL_COUNT} className="bg-blue-50/50 py-3 px-4 pl-12 ">
             <ComponentSubTable
               components={policy.insuranceComponents}
+              onNavigate={onNavigate}
               t={t}
             />
           </TableCell>
@@ -446,65 +444,66 @@ function PolicyRowGroup({
 function TravellerSubTable({
   policyNumber,
   travellers,
+  onNavigate,
   t
 }: {
   policyNumber: string
   travellers: NonNullable<Policy['travellers']>
+  onNavigate: () => void
   t: (key: string, opts?: Record<string, unknown>) => string
 }) {
   return (
-    <div className="border-t border-gray-100 bg-slate-50/60 pl-10">
-      <table className="w-full text-sm">
-        <thead>
-          <tr className="border-b border-gray-200/60">
-            <th className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+      <Table>
+        <TableHeader>
+          <TableRow className="hover:bg-transparent !border-b !border-slate-200/70">
+            <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">
               {t('policies.policyRef')}
-            </th>
-            <th className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+            </TableHead>
+            <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">
               {t('policies.travellerName')}
-            </th>
-            <th className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+            </TableHead>
+            <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">
               {t('policies.cnp')}
-            </th>
-            <th className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+            </TableHead>
+            <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">
               {t('policies.premium')}
-            </th>
-            <th className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+            </TableHead>
+            <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">
               {t('policies.covers')}
-            </th>
-            <th className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+            </TableHead>
+            <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">
               {t('policies.pdf')}
-            </th>
-          </tr>
-        </thead>
-        <tbody>
+            </TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {travellers.map((trav, idx) => {
             const doc = trav.documents[0]
             return (
-              <tr
+              <TableRow
                 key={`trav-${idx}`}
-                className="border-b border-gray-100 last:border-b-0 hover:bg-slate-100/60 transition-colors"
+                className="cursor-pointer hover:bg-muted/50"
+                onClick={onNavigate}
               >
-                <td className="px-4 py-2 text-gray-600">{policyNumber}</td>
-                <td className="px-4 py-2 font-medium text-gray-900">{trav.name}</td>
-                <td className="px-4 py-2 text-gray-600">{trav.cnp}</td>
-                <td className="px-4 py-2 text-gray-900">
+                <TableCell className="text-sm text-gray-700">{policyNumber}</TableCell>
+                <TableCell className="text-sm font-medium text-gray-900">{trav.name}</TableCell>
+                <TableCell className="text-sm text-gray-700">{trav.cnp}</TableCell>
+                <TableCell className="text-sm text-gray-900">
                   {trav.premium != null ? formatCurrency(trav.premium) : '—'}
-                </td>
-                <td className="px-4 py-2">
+                </TableCell>
+                <TableCell className="text-sm">
                   {trav.covers && trav.covers.length > 0 ? (
                     <span className="text-gray-700">{trav.covers.join(', ')}</span>
                   ) : '—'}
-                </td>
-                <td className="px-4 py-2">
-                  {doc ? <PdfLink url={doc.url} label={doc.name} /> : '—'}
-                </td>
-              </tr>
+                </TableCell>
+                <TableCell className="text-sm">
+                  {doc ? <PdfLink url={doc.url} label={doc.name} /> : null}
+                </TableCell>
+              </TableRow>
             )
           })}
-        </tbody>
-      </table>
-    </div>
+        </TableBody>
+      </Table>
   )
 }
 
@@ -515,34 +514,35 @@ function TravellerSubTable({
 
 function ComponentSubTable({
   components,
+  onNavigate,
   t
 }: {
   components: NonNullable<Policy['insuranceComponents']>
+  onNavigate: () => void
   t: (key: string, opts?: Record<string, unknown>) => string
 }) {
   return (
-    <div className="border-t border-gray-100 bg-slate-50/60 pl-10">
-      <table className="w-full text-sm">
-        <thead>
-          <tr className="border-b border-gray-200/60">
-            <th className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+      <Table>
+        <TableHeader>
+          <TableRow className="hover:bg-transparent !border-b !border-slate-200/70">
+            <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">
               {t('policies.policyRef')}
-            </th>
-            <th className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+            </TableHead>
+            <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">
               {t('policies.type')}
-            </th>
-            <th className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+            </TableHead>
+            <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">
               {t('policies.insurer')}
-            </th>
-            <th className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+            </TableHead>
+            <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">
               {t('policies.premium')}
-            </th>
-            <th className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+            </TableHead>
+            <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">
               {t('policies.pdf')}
-            </th>
-          </tr>
-        </thead>
-        <tbody>
+            </TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {components.map((comp, idx) => {
             const doc = comp.documents[0]
             const typeLabel =
@@ -550,26 +550,26 @@ function ComponentSubTable({
                 ? t('policies.componentPAD')
                 : t('policies.componentFacultative')
             return (
-              <tr
+              <TableRow
                 key={`comp-${idx}`}
-                className="border-b border-gray-100 last:border-b-0 hover:bg-slate-100/60 transition-colors"
+                className="cursor-pointer hover:bg-muted/50"
+                onClick={onNavigate}
               >
-                <td className="px-4 py-2 text-gray-600">{comp.policyNumber}</td>
-                <td className="px-4 py-2">
+                <TableCell className="text-sm text-gray-700">{comp.policyNumber}</TableCell>
+                <TableCell className="text-sm">
                   <Badge variant="outline" className="text-xs font-medium">
                     {typeLabel}
                   </Badge>
-                </td>
-                <td className="px-4 py-2 text-gray-700">{comp.insurerName}</td>
-                <td className="px-4 py-2 text-gray-900">{formatCurrency(comp.premium)}</td>
-                <td className="px-4 py-2">
-                  {doc ? <PdfLink url={doc.url} label={doc.name} /> : '—'}
-                </td>
-              </tr>
+                </TableCell>
+                <TableCell className="text-sm text-gray-700">{comp.insurerName}</TableCell>
+                <TableCell className="text-sm text-gray-900">{formatCurrency(comp.premium)}</TableCell>
+                <TableCell className="text-sm">
+                  {doc ? <PdfLink url={doc.url} label={doc.name} /> : null}
+                </TableCell>
+              </TableRow>
             )
           })}
-        </tbody>
-      </table>
-    </div>
+        </TableBody>
+      </Table>
   )
 }

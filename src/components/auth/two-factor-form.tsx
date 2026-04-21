@@ -119,7 +119,7 @@ export function TwoFactorForm({ onSubmit, isLoading }: TwoFactorFormProps) {
             value={digit}
             onChange={(e) => handleChange(index, e.target.value)}
             onKeyDown={(e) => handleKeyDown(index, e)}
-            className="h-12 w-12 text-center text-lg font-semibold focus-visible:ring-accent-green"
+            className="h-12 w-12 text-center text-lg font-semibold focus-visible:ring-primary"
             disabled={isLoading}
             aria-label={t('auth.digitLabel', { n: index + 1 })}
           />
@@ -128,7 +128,7 @@ export function TwoFactorForm({ onSubmit, isLoading }: TwoFactorFormProps) {
 
       {isLoading && (
         <div className="flex items-center justify-center gap-2 text-sm text-gray-400">
-          <Loader2 className="h-4 w-4 animate-spin text-accent-green" />
+          <Loader2 className="h-4 w-4 animate-spin text-primary" />
           {t('auth.verifyingCode')}
         </div>
       )}
@@ -143,7 +143,7 @@ export function TwoFactorForm({ onSubmit, isLoading }: TwoFactorFormProps) {
             variant="ghost"
             size="sm"
             onClick={handleResend}
-            className="text-accent-green hover:text-accent-green-hover hover:bg-accent-green/10"
+            className="text-primary hover:text-primary/80 hover:bg-primary/10"
           >
             {t('auth.resendCode')}
           </Button>

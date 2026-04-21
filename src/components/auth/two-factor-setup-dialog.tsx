@@ -93,7 +93,7 @@ export function TwoFactorSetupDialog({
           <>
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
-                <ShieldCheck className="h-5 w-5 text-accent-green" />
+                <ShieldCheck className="h-5 w-5 text-primary" />
                 {t('twoFactor.setup.methodTitle')}
               </DialogTitle>
               <DialogDescription>
@@ -107,11 +107,11 @@ export function TwoFactorSetupDialog({
                 onClick={() => setMethod('totp')}
                 className={`w-full flex items-center gap-3 rounded-lg border p-4 text-left transition-colors ${
                   method === 'totp'
-                    ? 'border-accent-green bg-green-50'
+                    ? 'border-primary bg-blue-50'
                     : 'border-gray-200 hover:border-gray-300'
                 }`}
               >
-                <Smartphone className={`h-5 w-5 shrink-0 ${method === 'totp' ? 'text-accent-green' : 'text-gray-400'}`} />
+                <Smartphone className={`h-5 w-5 shrink-0 ${method === 'totp' ? 'text-primary' : 'text-gray-400'}`} />
                 <div>
                   <p className="text-sm font-medium text-gray-900">
                     {t('twoFactor.setup.methodTotp')}
@@ -127,11 +127,11 @@ export function TwoFactorSetupDialog({
                 onClick={() => setMethod('email')}
                 className={`w-full flex items-center gap-3 rounded-lg border p-4 text-left transition-colors ${
                   method === 'email'
-                    ? 'border-accent-green bg-green-50'
+                    ? 'border-primary bg-blue-50'
                     : 'border-gray-200 hover:border-gray-300'
                 }`}
               >
-                <Mail className={`h-5 w-5 shrink-0 ${method === 'email' ? 'text-accent-green' : 'text-gray-400'}`} />
+                <Mail className={`h-5 w-5 shrink-0 ${method === 'email' ? 'text-primary' : 'text-gray-400'}`} />
                 <div>
                   <p className="text-sm font-medium text-gray-900">
                     {t('twoFactor.setup.methodEmail')}

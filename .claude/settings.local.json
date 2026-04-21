@@ -25,7 +25,8 @@
       "Bash(cd /c/Users/flori/Documents/projects/wib_my-acount && npx biome check ./src 2>&1)",
       "Bash(true:*)",
       "Bash(cat:*)",
-      "Bash(cd /c/Users/flori/Documents/projects/wib_my-acount && npx openapi-typescript src/api/openapi.json -o src/api/generated-types.ts 2>&1)"
+      "Bash(cd /c/Users/flori/Documents/projects/wib_my-acount && npx openapi-typescript src/api/openapi.json -o src/api/generated-types.ts 2>&1)",
+      "Bash(cd /c/Users/flori/Documents/projects/wib_my-acount && npx tsc --noEmit 2>&1)"
     ]
   }
 }

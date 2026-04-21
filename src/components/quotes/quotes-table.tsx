@@ -157,10 +157,10 @@ export function QuotesTable() {
             href={url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 text-sm text-accent-green hover:text-accent-green/80 transition-colors"
+            className="inline-flex items-center gap-1.5 text-sm text-primary hover:text-primary/80 transition-colors"
           >
             <ExternalLink className="h-3.5 w-3.5 shrink-0" />
-            View
+            {t('quotes.viewOffer')}
           </a>
         )
       }

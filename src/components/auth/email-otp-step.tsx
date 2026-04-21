@@ -125,7 +125,7 @@ export function EmailOtpStep({ preAuthToken, onSubmit, isLoading, onExpired }: E
             type="button"
             onClick={handleResend}
             disabled={resend.isPending}
-            className="text-sm font-medium text-accent-green hover:text-accent-green-hover transition-colors disabled:opacity-50"
+            className="text-sm font-medium text-primary hover:text-primary/80 transition-colors disabled:opacity-50"
           >
             {resend.isPending ? (
               <span className="flex items-center gap-1 justify-center">

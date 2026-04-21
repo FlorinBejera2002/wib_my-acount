@@ -33,25 +33,29 @@ const cards = [
     labelKey: 'dashboard.totalQuotes',
     key: 'totalQuotes',
     icon: ClipboardList,
-    iconColor: 'text-accent-green'
+    iconColor: 'text-emerald-600',
+    iconBg: 'bg-emerald-50'
   },
   {
     labelKey: 'dashboard.activePolicies',
     key: 'activePolicies',
     icon: FileText,
-    iconColor: 'text-blue-500'
+    iconColor: 'text-blue-600',
+    iconBg: 'bg-blue-50'
   },
   {
     labelKey: 'dashboard.expiringSoon',
     key: 'expiringSoon',
     icon: AlertTriangle,
-    iconColor: 'text-amber-500'
+    iconColor: 'text-amber-600',
+    iconBg: 'bg-amber-50'
   },
   {
     labelKey: 'dashboard.notifications',
     key: 'unreadNotifications',
     icon: Bell,
-    iconColor: 'text-red-500'
+    iconColor: 'text-rose-600',
+    iconBg: 'bg-rose-50'
   }
 ]
 
@@ -66,19 +70,30 @@ export function StatsCards({ stats, isLoading }: StatsCardsProps) {
         return (
           <div
             key={card.key}
-            className="relative rounded-xl bg-white p-4 shadow-sm border border-gray-100"
+            className="rounded-xl bg-white p-5 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200"
           >
-            <Icon
-              className={cn('absolute right-4 top-4 h-5 w-5', card.iconColor)}
-            />
-            <p className="text-xs text-gray-400">{t(card.labelKey)}</p>
-            {isLoading ? (
-              <Skeleton className="mt-1 h-6 w-10" />
-            ) : (
-              <p className="mt-1 text-xl font-bold text-gray-900">
-                {getStatValue(stats, card.key)}
-              </p>
-            )}
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">
+                  {t(card.labelKey)}
+                </p>
+                {isLoading ? (
+                  <Skeleton className="mt-2 h-8 w-16" />
+                ) : (
+                  <p className="mt-1 text-3xl font-bold text-gray-900">
+                    {getStatValue(stats, card.key)}
+                  </p>
+                )}
+              </div>
+              <div
+                className={cn(
+                  'flex h-11 w-11 items-center justify-center rounded-xl',
+                  card.iconBg
+                )}
+              >
+                <Icon className={cn('h-5 w-5', card.iconColor)} />
+              </div>
+            </div>
           </div>
         )
       })}

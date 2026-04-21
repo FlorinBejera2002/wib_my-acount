@@ -114,7 +114,7 @@ export function ResetPasswordForm({
 
       <Button
         type="submit"
-        className="w-full bg-accent-green hover:bg-accent-green-hover text-white"
+        className="w-full"
         disabled={isLoading}
       >
         {isLoading ? (
