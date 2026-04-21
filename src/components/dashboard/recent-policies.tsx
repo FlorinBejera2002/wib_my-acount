@@ -27,49 +27,21 @@ const statusConfig: Record<
     dot: 'bg-gray-500',
     text: 'text-gray-600'
   },
-  terminated: {
-    label: 'Reziliată',
+  pending: {
+    label: 'În așteptare',
     dot: 'bg-orange-500',
     text: 'text-orange-600'
   }
 }
 
 const typeConfig: Record<string, { label: string; className: string }> = {
-  RCA: { label: 'RCA', className: 'bg-blue-100 text-blue-700' },
-  CASCO: { label: 'CASCO', className: 'bg-green-100 text-green-700' },
-  CASCO_ECONOM: {
-    label: 'CASCO Econom',
-    className: 'bg-emerald-100 text-emerald-700'
-  },
-  LOCUINTA_PAD: {
-    label: 'Locuință PAD',
-    className: 'bg-orange-100 text-orange-700'
-  },
-  LOCUINTA_FACULTATIVA: {
-    label: 'Locuință Facultativă',
-    className: 'bg-amber-100 text-amber-700'
-  },
-  CALATORIE: { label: 'Călătorie', className: 'bg-purple-100 text-purple-700' },
-  VIATA: { label: 'Viață', className: 'bg-pink-100 text-pink-700' },
-  ASISTENTA_RUTIERA: {
-    label: 'Asistență Rutieră',
-    className: 'bg-sky-100 text-sky-700'
-  },
-  MALPRAXIS: { label: 'Malpraxis', className: 'bg-red-100 text-red-700' },
-  SANATATE: { label: 'Sănătate', className: 'bg-rose-100 text-rose-700' },
-  ACCIDENTE_CALATORI: {
-    label: 'Accidente Călători',
-    className: 'bg-indigo-100 text-indigo-700'
-  },
-  ACCIDENTE_PERSOANE: {
-    label: 'Accidente Persoane',
-    className: 'bg-violet-100 text-violet-700'
-  },
-  ACCIDENTE_TAXI: {
-    label: 'Accidente Taxi',
-    className: 'bg-slate-100 text-slate-700'
-  },
-  CMR: { label: 'CMR', className: 'bg-cyan-100 text-cyan-700' }
+  rca: { label: 'RCA', className: 'bg-blue-100 text-blue-700' },
+  casco: { label: 'CASCO', className: 'bg-green-100 text-green-700' },
+  home: { label: 'Locuință', className: 'bg-orange-100 text-orange-700' },
+  health: { label: 'Sănătate', className: 'bg-rose-100 text-rose-700' },
+  travel: { label: 'Călătorie', className: 'bg-purple-100 text-purple-700' },
+  life: { label: 'Viață', className: 'bg-pink-100 text-pink-700' },
+  other: { label: 'Altele', className: 'bg-gray-100 text-gray-700' }
 }
 
 function formatDaysUntilExpiry(days: number, t: TFunction): string {
@@ -145,9 +117,7 @@ export function RecentPolicies() {
                         {policy.policyNumber}
                       </p>
                       <p className="truncate text-xs text-gray-400">
-                        {policy.insurerName}
-                        {policy.vehicleOrProperty &&
-                          ` · ${policy.vehicleOrProperty}`}
+                        {policy.insurer ?? '—'}
                       </p>
                     </div>
                     <div className="flex shrink-0 flex-col items-end gap-1">
@@ -165,18 +135,21 @@ export function RecentPolicies() {
                         />
                         <span className="hidden sm:inline">{status.label}</span>
                       </span>
-                      {policy.status === 'active' && (
-                        <span
-                          className={cn(
-                            'text-[11px] hidden sm:block',
-                            policy.daysUntilExpiry <= 30
-                              ? 'font-medium text-amber-600'
-                              : 'text-gray-400'
-                          )}
-                        >
-                          {formatDaysUntilExpiry(policy.daysUntilExpiry, t)}
-                        </span>
-                      )}
+                      {policy.status === 'active' && (() => {
+                        const daysLeft = Math.ceil((new Date(policy.endDate).getTime() - Date.now()) / 86400000)
+                        return (
+                          <span
+                            className={cn(
+                              'text-[11px] hidden sm:block',
+                              daysLeft <= 30
+                                ? 'font-medium text-amber-600'
+                                : 'text-gray-400'
+                            )}
+                          >
+                            {formatDaysUntilExpiry(daysLeft, t)}
+                          </span>
+                        )
+                      })()}
                     </div>
                     <ChevronRight className="h-4 w-4 shrink-0 text-gray-300 hidden sm:block" />
                   </Link>

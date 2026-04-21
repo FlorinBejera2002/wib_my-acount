@@ -15,8 +15,8 @@ const registerFn = async (data: RegisterFormValues): Promise<RegisterResponse> =
     {
       email: data.email,
       password: data.password,
-      first_name: data.firstName,
-      last_name: data.lastName,
+      firstName: data.firstName,
+      lastName: data.lastName,
       phone: data.phone
     }
   )

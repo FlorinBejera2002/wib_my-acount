@@ -35,17 +35,17 @@ export function ProfileForm() {
     resolver: zodResolver(schema),
     values: profile
       ? {
-          firstName: profile.firstName,
-          lastName: profile.lastName,
-          phone: profile.phone
+          firstName: profile.firstName ?? '',
+          lastName: profile.lastName ?? '',
+          phone: profile.phone ?? ''
         }
       : undefined
   })
 
   const onSubmit = (data: UpdateProfileFormValues) => {
     updateProfile.mutate({
-      first_name: data.firstName,
-      last_name: data.lastName,
+      firstName: data.firstName,
+      lastName: data.lastName,
       phone: data.phone
     })
   }

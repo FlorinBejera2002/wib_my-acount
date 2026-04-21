@@ -1,5 +1,3 @@
-import type { NotificationPreferences } from '@/api/types'
-import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -7,12 +5,10 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card'
-import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Switch } from '@/components/ui/switch'
 import { useProfile, useUpdatePreferences } from '@/hooks/use-user'
 import { Loader2 } from 'lucide-react'
-import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 
 export function NotificationSettings() {
@@ -20,19 +16,10 @@ export function NotificationSettings() {
   const { data: profile, isLoading } = useProfile()
   const updatePreferences = useUpdatePreferences()
 
-  const {
-    control,
-    handleSubmit,
-    formState: { isDirty }
-  } = useForm<NotificationPreferences>({
-    values: profile?.preferences.notifications
-  })
+  const enabled = profile?.preferences?.notifications ?? true
 
-  const onSubmit = (data: NotificationPreferences) => {
-    if (!profile) return
-    updatePreferences.mutate({
-      notifications: data
-    })
+  const handleToggle = (value: boolean) => {
+    updatePreferences.mutate({ notifications: value })
   }
 
   if (isLoading) {
@@ -43,7 +30,7 @@ export function NotificationSettings() {
           <Skeleton className="h-4 w-64" />
         </CardHeader>
         <CardContent className="space-y-4">
-          {Array.from({ length: 2 }).map((_, i) => (
+          {Array.from({ length: 1 }).map((_, i) => (
             <Skeleton key={i} className="h-12 w-full" />
           ))}
         </CardContent>
@@ -58,63 +45,24 @@ export function NotificationSettings() {
         <CardDescription>{t('settings.notificationsSubtitle')}</CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <Label>{t('settings.emailNotifications')}</Label>
-                <p className="text-sm text-muted-foreground">
-                  {t('settings.emailNotificationsDesc')}
-                </p>
-              </div>
-              <Controller
-                control={control}
-                name="email"
-                render={({ field }) => (
-                  <Switch
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                )}
-              />
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div>
-                <Label>{t('settings.pushNotifications')}</Label>
-                <p className="text-sm text-muted-foreground">
-                  {t('settings.pushNotificationsDesc')}
-                </p>
-              </div>
-              <Controller
-                control={control}
-                name="push"
-                render={({ field }) => (
-                  <Switch
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                )}
-              />
-            </div>
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm font-medium">{t('settings.emailNotifications')}</p>
+            <p className="text-sm text-muted-foreground">
+              {t('settings.emailNotificationsDesc')}
+            </p>
           </div>
-
-          <div className="flex justify-end">
-            <Button
-              type="submit"
-              disabled={!isDirty || updatePreferences.isPending}
-            >
-              {updatePreferences.isPending ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  {t('settings.saving')}
-                </>
-              ) : (
-                t('settings.saveSettings')
-              )}
-            </Button>
+          <Switch
+            checked={enabled}
+            onCheckedChange={handleToggle}
+            disabled={updatePreferences.isPending}
+          />
+        </div>
+        {updatePreferences.isPending && (
+          <div className="flex justify-end mt-4">
+            <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
           </div>
-        </form>
+        )}
       </CardContent>
     </Card>
   )

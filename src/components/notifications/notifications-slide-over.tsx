@@ -157,13 +157,12 @@ export function NotificationsSlideOver({
                                   className={`text-sm font-medium ${
                                     !notification.isRead
                                       ? 'text-blue-900 font-semibold'
-                                      : notification.type === 'POLICY_EXPIRY'
+                                      : notification.type === 'policy_expiry'
                                         ? 'text-red-700' // Expiry - red (critical)
-                                        : notification.type === 'QUOTE_READY'
+                                        : notification.type === 'quote_accepted'
                                           ? 'text-green-700' // Ready - green (positive)
-                                          : notification.type ===
-                                              'PASSWORD_CHANGE'
-                                            ? 'text-amber-700' // Security - amber (warning)
+                                          : notification.type === 'reminder'
+                                            ? 'text-amber-700' // Reminder - amber (warning)
                                             : 'text-gray-900' // Default - gray
                                   }`}
                                 >

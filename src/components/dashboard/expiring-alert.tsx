@@ -15,7 +15,10 @@ export function ExpiringAlert({ policies }: ExpiringAlertProps) {
       : `${policies.length} polițe expiră în curând`
 
   const names = policies
-    .map((p) => `${p.type} – ${p.insurerName} (${p.daysUntilExpiry} zile)`)
+    .map((p) => {
+      const daysLeft = Math.ceil((new Date(p.endDate).getTime() - Date.now()) / 86400000)
+      return `${p.type} – ${p.insurer ?? '—'} (${daysLeft} zile)`
+    })
     .join(', ')
 
   return (

@@ -8,7 +8,6 @@ import {
   CardTitle
 } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import { VehicleBrandLogo } from '@/components/ui/vehicle-brand-logo'
 import { useQuote } from '@/hooks/use-quotes'
 import { cn, formatCurrency, formatDate } from '@/lib/utils'
 import {
@@ -22,81 +21,45 @@ import {
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Link, useParams } from 'react-router-dom'
-import { QuoteDocuments } from './quote-documents'
 
 const typeConfig: Record<
   string,
   { badge: string; iconBg: string; iconText: string }
 > = {
-  RCA: {
+  rca: {
     badge: 'bg-green-100 text-green-700',
     iconBg: 'bg-green-50',
     iconText: 'text-green-600'
   },
-  CASCO: {
+  casco: {
     badge: 'bg-green-100 text-green-700',
     iconBg: 'bg-green-50',
     iconText: 'text-green-600'
   },
-  CASCO_ECONOM: {
-    badge: 'bg-green-100 text-green-700',
-    iconBg: 'bg-green-50',
-    iconText: 'text-green-600'
+  home: {
+    badge: 'bg-orange-100 text-orange-700',
+    iconBg: 'bg-orange-50',
+    iconText: 'text-orange-600'
   },
-  LOCUINTA_PAD: {
-    badge: 'bg-green-100 text-green-700',
-    iconBg: 'bg-green-50',
-    iconText: 'text-green-600'
+  health: {
+    badge: 'bg-rose-100 text-rose-700',
+    iconBg: 'bg-rose-50',
+    iconText: 'text-rose-600'
   },
-  LOCUINTA_FACULTATIVA: {
-    badge: 'bg-green-100 text-green-700',
-    iconBg: 'bg-green-50',
-    iconText: 'text-green-600'
+  travel: {
+    badge: 'bg-purple-100 text-purple-700',
+    iconBg: 'bg-purple-50',
+    iconText: 'text-purple-600'
   },
-  CALATORIE: {
-    badge: 'bg-green-100 text-green-700',
-    iconBg: 'bg-green-50',
-    iconText: 'text-green-600'
+  life: {
+    badge: 'bg-pink-100 text-pink-700',
+    iconBg: 'bg-pink-50',
+    iconText: 'text-pink-600'
   },
-  VIATA: {
-    badge: 'bg-green-100 text-green-700',
-    iconBg: 'bg-green-50',
-    iconText: 'text-green-600'
-  },
-  ASISTENTA_RUTIERA: {
-    badge: 'bg-green-100 text-green-700',
-    iconBg: 'bg-green-50',
-    iconText: 'text-green-600'
-  },
-  MALPRAXIS: {
-    badge: 'bg-green-100 text-green-700',
-    iconBg: 'bg-green-50',
-    iconText: 'text-green-600'
-  },
-  SANATATE: {
-    badge: 'bg-green-100 text-green-700',
-    iconBg: 'bg-green-50',
-    iconText: 'text-green-600'
-  },
-  ACCIDENTE_CALATORI: {
-    badge: 'bg-green-100 text-green-700',
-    iconBg: 'bg-green-50',
-    iconText: 'text-green-600'
-  },
-  ACCIDENTE_PERSOANE: {
-    badge: 'bg-green-100 text-green-700',
-    iconBg: 'bg-green-50',
-    iconText: 'text-green-600'
-  },
-  ACCIDENTE_TAXI: {
-    badge: 'bg-green-100 text-green-700',
-    iconBg: 'bg-green-50',
-    iconText: 'text-green-600'
-  },
-  CMR: {
-    badge: 'bg-green-100 text-green-700',
-    iconBg: 'bg-green-50',
-    iconText: 'text-green-600'
+  other: {
+    badge: 'bg-gray-100 text-gray-700',
+    iconBg: 'bg-gray-50',
+    iconText: 'text-gray-600'
   }
 }
 
@@ -104,25 +67,30 @@ const statusConfig: Record<
   QuoteStatus,
   { labelKey: string; dot: string; text: string }
 > = {
-  ACTIVE: {
-    labelKey: 'quoteStatus.ACTIVE',
+  draft: {
+    labelKey: 'quoteStatus.DRAFT',
+    dot: 'bg-gray-400',
+    text: 'text-gray-500'
+  },
+  submitted: {
+    labelKey: 'quoteStatus.SUBMITTED',
+    dot: 'bg-blue-500',
+    text: 'text-blue-600'
+  },
+  accepted: {
+    labelKey: 'quoteStatus.ACCEPTED',
     dot: 'bg-accent-green',
     text: 'text-accent-green'
   },
-  EXPIRED: {
+  expired: {
     labelKey: 'quoteStatus.EXPIRED',
     dot: 'bg-red-500',
     text: 'text-red-600'
   },
-  CONVERTED: {
+  converted: {
     labelKey: 'quoteStatus.CONVERTED',
     dot: 'bg-purple-500',
     text: 'text-purple-600'
-  },
-  DRAFT: {
-    labelKey: 'quoteStatus.DRAFT',
-    dot: 'bg-gray-400',
-    text: 'text-gray-500'
   }
 }
 
@@ -203,7 +171,7 @@ export function QuoteDetail() {
         <div className="flex-1 min-w-0">
           <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             <h1 className="text-lg sm:text-xl font-bold text-gray-900">
-              {quote.quoteNumber}
+              {quote.id}
             </h1>
             <span
               className={cn(
@@ -270,7 +238,7 @@ export function QuoteDetail() {
                     {t('quotes.insurancePremium')}
                   </p>
                   <p className="text-xl font-bold text-gray-900 mt-0.5">
-                    {formatCurrency(quote.premium)}
+                    {quote.premium != null ? formatCurrency(quote.premium) : '—'}
                   </p>
                 </div>
               </div>
@@ -283,50 +251,32 @@ export function QuoteDetail() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      {t('quotes.insurer')}
+                      {t('quotes.type')}
                     </p>
                     <p className="text-sm font-semibold text-gray-900 mt-0.5 truncate">
-                      {quote.insurerName}
+                      {typeLabel}
                     </p>
                   </div>
                 </div>
-
-                {quote.vehicleOrProperty && (
-                  <div className="flex items-center gap-4 p-4 rounded-lg bg-gray-50/50">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white shadow-sm">
-                      <VehicleBrandLogo
-                        vehicleText={quote.vehicleOrProperty}
-                        size="md"
-                      />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        {t('quotes.insuredObjectLabel')}
-                      </p>
-                      <p className="text-sm font-semibold text-gray-900 mt-0.5 truncate">
-                        {quote.vehicleOrProperty}
-                      </p>
-                    </div>
-                  </div>
-                )}
               </div>
 
               {/* Dates */}
               <div className="space-y-3">
-                <div className="flex items-center gap-4 p-4 rounded-lg border border-gray-100">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-50">
-                    <CalendarRange className="h-5 w-5 text-gray-500" />
+                {quote.validUntil && (
+                  <div className="flex items-center gap-4 p-4 rounded-lg border border-gray-100">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-50">
+                      <CalendarRange className="h-5 w-5 text-gray-500" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        {t('quotes.validUntil')}
+                      </p>
+                      <p className="text-sm font-semibold text-gray-900 mt-0.5">
+                        {formatDate(quote.validUntil)}
+                      </p>
+                    </div>
                   </div>
-                  <div className="flex-1">
-                    <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      {t('quotes.validityPeriod')}
-                    </p>
-                    <p className="text-sm font-semibold text-gray-900 mt-0.5">
-                      {formatDate(quote.validFrom)} —{' '}
-                      {formatDate(quote.validUntil)}
-                    </p>
-                  </div>
-                </div>
+                )}
 
                 <div className="flex items-center gap-4 p-4 rounded-lg border border-gray-100">
                   <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-50">
@@ -364,7 +314,9 @@ export function QuoteDetail() {
             </div>
           </CardHeader>
           <CardContent>
-            <QuoteDocuments documents={quote.documents} />
+            <p className="text-sm text-muted-foreground">
+              {t('policies.noDocuments')}
+            </p>
           </CardContent>
         </Card>
       </div>

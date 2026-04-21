@@ -146,15 +146,15 @@ export function AppSidebar() {
           <DropdownMenuTrigger asChild={true}>
             <button className="flex w-full items-center gap-3 rounded-lg p-2 transition-colors hover:bg-gray-50 group-data-[collapsible=icon]:justify-center">
               <ProfileAvatar
-                firstName={profile?.firstName || user?.firstName || ''}
-                lastName={profile?.lastName || user?.lastName || ''}
+                firstName={profile?.firstName || (user && 'firstName' in user ? user.firstName : '') || ''}
+                lastName={profile?.lastName || (user && 'lastName' in user ? user.lastName : '') || ''}
                 photoUrl={undefined}
                 size="sm"
                 userId={profile?.id}
               />
               <div className="flex flex-1 flex-col overflow-hidden text-left group-data-[collapsible=icon]:hidden">
                 <span className="truncate text-sm font-semibold text-gray-900">
-                  {profile ? `${profile.firstName} ${profile.lastName}` : `${user?.firstName ?? ''} ${user?.lastName ?? ''}`}
+                  {profile ? `${profile.firstName} ${profile.lastName}` : (user?.username ?? '')}
                 </span>
                 <span className="truncate text-xs text-gray-500">
                   {profile?.email || user?.email}
@@ -167,7 +167,7 @@ export function AppSidebar() {
             <DropdownMenuLabel className="font-normal">
               <div className="flex flex-col gap-1">
                 <p className="text-sm font-semibold text-gray-900">
-                  {profile ? `${profile.firstName} ${profile.lastName}` : `${user?.firstName ?? ''} ${user?.lastName ?? ''}`}
+                  {profile ? `${profile.firstName} ${profile.lastName}` : (user?.username ?? '')}
                 </p>
                 <p className="text-xs text-gray-500">{profile?.email || user?.email}</p>
               </div>

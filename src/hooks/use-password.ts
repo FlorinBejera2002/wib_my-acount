@@ -20,7 +20,7 @@ export function useChangePassword() {
       const code = error.response?.data?.error?.code
       if (code === 'SAME_PASSWORD') {
         toast.error(i18n.t('toast.samePassword'))
-      } else if (code === 'INVALID_CURRENT_PASSWORD') {
+      } else if (code === 'INVALID_PASSWORD') {
         toast.error(i18n.t('toast.currentPasswordIncorrect'))
       } else {
         toast.error(error.message || i18n.t('toast.passwordChangeError'))

@@ -40,8 +40,8 @@ export function ProfileLayout() {
               <div className="mx-auto sm:mx-0">
                 <div className="rounded-full border-4 border-white shadow-sm">
                   <ProfileAvatar
-                    firstName={profile.firstName}
-                    lastName={profile.lastName}
+                    firstName={profile.firstName ?? ''}
+                    lastName={profile.lastName ?? ''}
                     photoUrl={undefined}
                     size="lg"
                     userId={profile.id}

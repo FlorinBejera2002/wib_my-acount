@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next'
 
 import type { Quote, QuoteStatus, TableParams } from '@/api/types'
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header'
-import { Input } from '@/components/ui/input'
 import { InsuranceTypeBadge } from '@/components/ui/insurance-type-badge'
 import {
   Select,
@@ -16,7 +15,7 @@ import {
 } from '@/components/ui/select'
 import { useQuotes } from '@/hooks/use-quotes'
 import i18n from '@/lib/i18n'
-import { ArrowRight, ExternalLink, X } from 'lucide-react'
+import { formatCurrency } from '@/lib/utils'
 
 const getSimplifiedStatus = (status: QuoteStatus) => {
   if (status === 'expired') {
@@ -38,13 +37,13 @@ const filterConfigs = [
     key: 'type',
     labelKey: 'policies.type',
     options: [
-      { value: 'RCA', labelKey: 'insuranceTypes.rca' },
-      { value: 'CASCO', labelKey: 'insuranceTypes.casco' },
-      { value: 'HOME', labelKey: 'insuranceTypes.home' },
-      { value: 'TRAVEL', labelKey: 'insuranceTypes.travel' },
-      { value: 'HEALTH', labelKey: 'insuranceTypes.health' },
-      { value: 'LIFE', labelKey: 'insuranceTypes.life' },
-      { value: 'OTHER', labelKey: 'insuranceTypes.other' }
+      { value: 'rca', labelKey: 'insuranceTypes.rca' },
+      { value: 'casco', labelKey: 'insuranceTypes.casco' },
+      { value: 'home', labelKey: 'insuranceTypes.home' },
+      { value: 'travel', labelKey: 'insuranceTypes.travel' },
+      { value: 'health', labelKey: 'insuranceTypes.health' },
+      { value: 'life', labelKey: 'insuranceTypes.life' },
+      { value: 'other', labelKey: 'insuranceTypes.other' }
     ]
   },
   {
@@ -91,12 +90,12 @@ export function QuotesTable() {
 
   const columns: ColumnDef<Quote>[] = [
     {
-      accessorKey: 'quoteNumber',
+      accessorKey: 'id',
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title={t('quotes.quoteRef')} />
       ),
       cell: ({ row }) => (
-        <span className="font-medium">{row.original.quoteNumber}</span>
+        <span className="font-medium">{row.original.id}</span>
       )
     },
     {
@@ -105,20 +104,13 @@ export function QuotesTable() {
       cell: ({ row }) => <InsuranceTypeBadge type={row.original.type} />
     },
     {
-      accessorKey: 'vehicleOrProperty',
-      header: t('quotes.insuredObject'),
+      accessorKey: 'premium',
+      header: t('quotes.premium'),
       cell: ({ row }) => (
-        <span className="max-w-[200px] truncate block">
-          {row.original.vehicleOrProperty || '—'}
-        </span>
-      )
-    },
-    {
-      accessorKey: 'insuredDetails',
-      header: t('quotes.insuredDetails'),
-      cell: ({ row }) => (
-        <span className="max-w-[220px] truncate block">
-          {row.original.insuredDetails || '—'}
+        <span>
+          {row.original.premium != null
+            ? formatCurrency(row.original.premium)
+            : '—'}
         </span>
       )
     },
@@ -172,17 +164,8 @@ export function QuotesTable() {
     {
       id: 'actions',
       header: '',
-      cell: ({ row }) => (
-        <a
-          href={row.original.offerUrl || 'https://asigurari.ro'}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center text-nowrap gap-1.5 text-sm font-medium text-accent-green hover:text-accent-green-hover transition-colors"
-          onClick={(e) => e.stopPropagation()}
-        >
-          {t('quotes.viewOffer')}
-          <ExternalLink className="h-3.5 w-3.5" />
-        </a>
+      cell: () => (
+        <span className="text-sm text-muted-foreground">—</span>
       )
     }
   ]

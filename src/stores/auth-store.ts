@@ -1,16 +1,19 @@
-import type { UserProfile } from '@/api/types'
+import type { LoginUser, UserProfile } from '@/api/types'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
+/** The store user can be a minimal LoginUser (right after login) or a full UserProfile (after fetch). */
+type StoreUser = LoginUser | UserProfile
+
 interface AuthState {
-  user: UserProfile | null
+  user: StoreUser | null
   accessToken: string | null
   refreshToken: string | null
   isAuthenticated: boolean
-  login: (user: UserProfile, accessToken: string, refreshToken: string) => void
+  login: (user: StoreUser, accessToken: string, refreshToken: string) => void
   logout: () => void
   setTokens: (accessToken: string, refreshToken: string) => void
-  setUser: (user: UserProfile) => void
+  setUser: (user: StoreUser) => void
   setTwoFactorEnabled: (value: boolean) => void
 }
 

@@ -8,7 +8,6 @@ import {
   CardTitle
 } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import { VehicleBrandLogo } from '@/components/ui/vehicle-brand-logo'
 import { usePolicy } from '@/hooks/use-policies'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import {
@@ -22,7 +21,6 @@ import {
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Link, useParams } from 'react-router-dom'
-import { PolicyDocuments } from './policy-documents'
 import { PolicyStatusBadge } from './policy-status-badge'
 
 export function PolicyDetail() {
@@ -153,29 +151,11 @@ export function PolicyDetail() {
                       {t('policies.insurer')}
                     </p>
                     <p className="text-sm font-semibold text-gray-900 mt-0.5 truncate">
-                      {policy.insurerName}
+                      {policy.insurer ?? '—'}
                     </p>
                   </div>
                 </div>
 
-                {policy.vehicleOrProperty && (
-                  <div className="flex items-center gap-4 p-4 rounded-lg bg-gray-50/50">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white shadow-sm">
-                      <VehicleBrandLogo
-                        vehicleText={policy.vehicleOrProperty}
-                        size="md"
-                      />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        {t('policies.insuredObject')}
-                      </p>
-                      <p className="text-sm font-semibold text-gray-900 mt-0.5 truncate">
-                        {policy.vehicleOrProperty}
-                      </p>
-                    </div>
-                  </div>
-                )}
               </div>
 
               {/* Dates & Info */}
@@ -195,51 +175,40 @@ export function PolicyDetail() {
                   </div>
                 </div>
 
-                {policy.status === 'active' && (
-                  <div className="flex items-center gap-4 p-4 rounded-lg border border-gray-100">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-50">
-                      <Clock className="h-5 w-5 text-gray-500" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        {t('policies.daysUntilExpiry')}
-                      </p>
-                      <div className="flex items-center gap-2 mt-0.5">
-                        <p className="text-sm font-semibold text-gray-900">
-                          {t('policies.daysCount', {
-                            days: policy.daysUntilExpiry
-                          })}
+                {policy.status === 'active' && (() => {
+                  const daysUntilExpiry = Math.ceil((new Date(policy.endDate).getTime() - Date.now()) / 86400000)
+                  return (
+                    <div className="flex items-center gap-4 p-4 rounded-lg border border-gray-100">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-50">
+                        <Clock className="h-5 w-5 text-gray-500" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          {t('policies.daysUntilExpiry')}
                         </p>
-                        {policy.daysUntilExpiry <= 30 && (
-                          <Badge className="bg-amber-100 text-amber-800 hover:bg-amber-100 border-0 text-xs">
-                            {t('policies.expiresSoon')}
-                          </Badge>
-                        )}
+                        <div className="flex items-center gap-2 mt-0.5">
+                          <p className="text-sm font-semibold text-gray-900">
+                            {t('policies.daysCount', {
+                              days: daysUntilExpiry
+                            })}
+                          </p>
+                          {daysUntilExpiry <= 30 && (
+                            <Badge className="bg-amber-100 text-amber-800 hover:bg-amber-100 border-0 text-xs">
+                              {t('policies.expiresSoon')}
+                            </Badge>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                )}
+                  )
+                })()}
               </div>
 
-              {/* Source Quote Link */}
-              {policy.sourceQuoteId && (
-                <div className="p-4 rounded-lg bg-gray-50/50">
-                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">
-                    {t('policies.sourceQuote')}
-                  </p>
-                  <Link
-                    to={`/quotes/${policy.sourceQuoteId}`}
-                    className="text-sm font-semibold text-primary hover:underline"
-                  >
-                    {t('policies.viewOriginalQuote')}
-                  </Link>
-                </div>
-              )}
             </div>
           </CardContent>
         </Card>
 
-        {/* Documents Card */}
+        {/* Documents Card - placeholder */}
         <Card className="shadow-sm">
           <CardHeader>
             <div className="flex items-center gap-3">
@@ -257,7 +226,9 @@ export function PolicyDetail() {
             </div>
           </CardHeader>
           <CardContent>
-            <PolicyDocuments documents={policy.documents ?? []} />
+            <p className="text-sm text-muted-foreground">
+              {t('policies.noDocuments')}
+            </p>
           </CardContent>
         </Card>
       </div>

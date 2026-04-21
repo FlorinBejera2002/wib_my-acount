@@ -76,13 +76,12 @@ export function ActiveSessions() {
       </CardHeader>
       <CardContent className="space-y-3">
         {sessions?.map((session) => {
-          const label = session.deviceInfo || session.userAgent
-          const DeviceIcon = getDeviceIcon(label)
+          const DeviceIcon = getDeviceIcon(session.userAgent)
           return (
             <div
               key={session.id}
               className={`flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 rounded-lg border p-4${
-                session.isCurrent
+                session.current
                   ? ' border-accent-green/40 bg-accent-green/5'
                   : ''
               }`}
@@ -90,8 +89,8 @@ export function ActiveSessions() {
               <DeviceIcon className="h-8 w-8 text-muted-foreground" />
               <div className="flex-1 space-y-1">
                 <div className="flex items-center gap-2">
-                  <p className="text-sm font-medium">{label}</p>
-                  {session.isCurrent && (
+                  <p className="text-sm font-medium">{session.userAgent}</p>
+                  {session.current && (
                     <Badge className="bg-green-100 text-green-800 border-0 text-xs font-medium">
                       {t('security.currentSession')}
                     </Badge>
@@ -102,7 +101,6 @@ export function ActiveSessions() {
                     <Globe className="h-3 w-3" />
                     IP: {session.ip}
                   </span>
-                  {session.location && <span>{session.location}</span>}
                 </div>
                 {session.createdAt && (
                   <p className="text-xs text-muted-foreground">
@@ -111,15 +109,15 @@ export function ActiveSessions() {
                     })}
                   </p>
                 )}
-                {session.lastActivity && (
+                {session.lastActivityAt && (
                   <p className="text-xs text-muted-foreground">
                     {t('security.lastActivity', {
-                      date: formatDateTime(session.lastActivity)
+                      date: formatDateTime(session.lastActivityAt)
                     })}
                   </p>
                 )}
               </div>
-              {!session.isCurrent && (
+              {!session.current && (
                 <Button
                   variant="outline"
                   size="sm"

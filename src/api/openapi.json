@@ -1,0 +1,307 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "WIB Middleware API",
+    "description": "Backend API contract for the myAccount React SPA.",
+    "contact": { "name": "WIB Development" },
+    "version": "1.0.0"
+  },
+  "servers": [{ "url": "/", "description": "API server" }],
+  "paths": {
+    "/api/auth/login": {
+      "post": {
+        "operationId": "post_api_auth_login",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["email", "password"],
+                "properties": {
+                  "email": { "type": "string", "format": "email" },
+                  "password": { "type": "string", "format": "password" }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "title": "FullLoginResponse",
+                      "required": ["requires_2fa", "access_token", "refresh_token", "user"],
+                      "properties": {
+                        "requires_2fa": { "type": "boolean" },
+                        "access_token": { "type": "string" },
+                        "refresh_token": { "type": "string" },
+                        "user": {
+                          "properties": {
+                            "id": { "type": "string" },
+                            "username": { "type": "string" },
+                            "email": { "type": "string", "format": "email" }
+                          },
+                          "type": "object"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    {
+                      "title": "TwoFactorRequiredResponse",
+                      "required": ["requires_2fa", "pre_auth_token", "two_factor_method"],
+                      "properties": {
+                        "requires_2fa": { "type": "boolean" },
+                        "pre_auth_token": { "type": "string" },
+                        "two_factor_method": { "type": "string", "enum": ["totp", "email"] }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/register": {
+      "post": {
+        "operationId": "post_api_auth_register",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["email", "password"],
+                "properties": {
+                  "email": { "type": "string", "format": "email" },
+                  "password": { "type": "string", "format": "password", "minLength": 8 },
+                  "confirmPassword": { "type": "string", "format": "password" },
+                  "firstName": { "type": "string", "maxLength": 100 },
+                  "lastName": { "type": "string", "maxLength": 100 },
+                  "phone": { "type": "string", "maxLength": 30 },
+                  "username": { "type": "string" }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Registration successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "required": ["access_token", "refresh_token", "user"],
+                  "properties": {
+                    "access_token": { "type": "string" },
+                    "refresh_token": { "type": "string" },
+                    "user": {
+                      "properties": {
+                        "id": { "type": "string" },
+                        "username": { "type": "string" },
+                        "email": { "type": "string", "format": "email" }
+                      },
+                      "type": "object"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/two-factor": {
+      "post": {
+        "operationId": "post_api_auth_two_factor",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["pre_auth_token", "totp_code"],
+                "properties": {
+                  "pre_auth_token": { "type": "string" },
+                  "totp_code": { "type": "string", "pattern": "^\\d{6}$" }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "2FA verification successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "required": ["access_token", "refresh_token", "user"],
+                  "properties": {
+                    "access_token": { "type": "string" },
+                    "refresh_token": { "type": "string" },
+                    "user": {
+                      "properties": {
+                        "id": { "type": "string" },
+                        "username": { "type": "string" },
+                        "email": { "type": "string", "format": "email" }
+                      },
+                      "type": "object"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/refresh": {
+      "post": {
+        "operationId": "post_api_auth_refresh",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["refresh_token"],
+                "properties": {
+                  "refresh_token": { "type": "string" }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "required": ["access_token", "refresh_token"],
+                  "properties": {
+                    "access_token": { "type": "string" },
+                    "refresh_token": { "type": "string" }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ErrorResponse": {
+        "required": ["error"],
+        "properties": {
+          "error": {
+            "required": ["code", "message"],
+            "properties": {
+              "code": { "type": "string" },
+              "message": { "type": "string" },
+              "details": { "type": "object" }
+            },
+            "type": "object"
+          }
+        },
+        "type": "object"
+      },
+      "PolicyResponse": {
+        "required": ["id", "policyNumber", "type", "status", "startDate", "endDate", "premium", "currency", "createdAt", "updatedAt"],
+        "properties": {
+          "id": { "type": "string" },
+          "legacyId": { "type": "string", "nullable": true },
+          "policyNumber": { "type": "string" },
+          "type": { "type": "string", "enum": ["rca", "casco", "home", "health", "travel", "life", "other"] },
+          "status": { "type": "string", "enum": ["active", "expired", "cancelled", "pending"] },
+          "insurer": { "type": "string", "nullable": true },
+          "startDate": { "type": "string", "format": "date" },
+          "endDate": { "type": "string", "format": "date" },
+          "premium": { "type": "number", "format": "float" },
+          "currency": { "type": "string" },
+          "coverageDetails": { "type": "object" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        },
+        "type": "object"
+      },
+      "QuoteResponse": {
+        "required": ["id", "type", "status", "currency", "createdAt", "updatedAt"],
+        "properties": {
+          "id": { "type": "string" },
+          "legacyId": { "type": "string", "nullable": true },
+          "type": { "type": "string", "enum": ["rca", "casco", "home", "health", "travel", "life", "other"] },
+          "status": { "type": "string", "enum": ["draft", "submitted", "accepted", "expired", "converted"] },
+          "premium": { "type": "number", "format": "float", "nullable": true },
+          "currency": { "type": "string" },
+          "validUntil": { "type": "string", "format": "date", "nullable": true },
+          "quoteData": { "type": "object" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        },
+        "type": "object"
+      },
+      "ReminderResponse": {
+        "required": ["id", "title", "remindAt", "isDone", "createdAt", "updatedAt"],
+        "properties": {
+          "id": { "type": "string" },
+          "title": { "type": "string" },
+          "note": { "type": "string", "nullable": true },
+          "remindAt": { "type": "string", "format": "date-time" },
+          "isDone": { "type": "boolean" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        },
+        "type": "object"
+      },
+      "UserProfile": {
+        "required": ["id", "email", "username", "country", "twoFactorEnabled", "preferences", "source", "createdAt"],
+        "properties": {
+          "id": { "type": "string" },
+          "email": { "type": "string" },
+          "username": { "type": "string" },
+          "parentUsername": { "type": "string", "nullable": true },
+          "firstName": { "type": "string", "nullable": true },
+          "lastName": { "type": "string", "nullable": true },
+          "fullName": { "type": "string", "nullable": true },
+          "phone": { "type": "string", "nullable": true },
+          "country": { "type": "string" },
+          "person": { "type": "object" },
+          "contact": { "type": "object" },
+          "address": { "type": "object" },
+          "company": { "type": "object" },
+          "twoFactorEnabled": { "type": "boolean" },
+          "twoFactorMethod": { "type": "string", "enum": ["totp", "email"], "nullable": true },
+          "preferences": {
+            "properties": {
+              "language": { "type": "string", "enum": ["ro", "en", "fr", "de"] },
+              "notifications": { "type": "boolean" }
+            },
+            "type": "object"
+          },
+          "source": { "type": "string", "enum": ["registration", "legacy_sync"] },
+          "createdAt": { "type": "string", "format": "date-time" }
+        },
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "http",
+        "bearerFormat": "JWT",
+        "scheme": "bearer"
+      }
+    }
+  }
+}

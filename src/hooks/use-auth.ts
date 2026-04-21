@@ -43,9 +43,6 @@ export function useLogin() {
     onSuccess: (data) => {
       if (!data.requires_2fa && data.accessToken && data.user) {
         login(data.user, data.accessToken, data.refreshToken!)
-        if (data.user.preferences?.language) {
-          i18n.changeLanguage(data.user.preferences.language)
-        }
         toast.success(i18n.t('toast.loginSuccess'))
         setTimeout(() => navigate('/dashboard'), 500)
       }
@@ -64,9 +61,6 @@ export function useVerifyTwoFactor() {
     mutationFn: verifyTwoFactorFn,
     onSuccess: (data) => {
       login(data.user, data.accessToken, data.refreshToken)
-      if (data.user.preferences?.language) {
-        i18n.changeLanguage(data.user.preferences.language)
-      }
       toast.success(i18n.t('toast.loginSuccess'))
       setTimeout(() => navigate('/dashboard'), 500)
     },

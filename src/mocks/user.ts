@@ -3,25 +3,18 @@ import type { UserProfile } from '@/api/types'
 export const mockUser: UserProfile = {
   id: 'usr_001',
   email: 'florinpetru0306@gmail.com',
+  username: 'florinpetru',
   firstName: 'Florin',
   lastName: 'Petru',
+  fullName: 'Florin Petru',
   phone: '+40722123456',
-  photoUrl: '',
-  legacyCustomerId: 'CUST-987654',
+  country: 'ro',
+  twoFactorEnabled: false,
+  twoFactorMethod: null,
   preferences: {
     language: 'ro',
-    timezone: 'Europe/Bucharest',
-    notifications: {
-      quotes: true,
-      policiesExpiry: true,
-      marketing: false
-    }
+    notifications: true
   },
-  security: {
-    lastLogin: '2025-11-03T15:45:00Z',
-    passwordChangedAt: '2025-09-15T10:00:00Z',
-    failedAttempts: 0
-  },
-  status: 'active',
+  source: 'registration',
   createdAt: '2024-03-15T08:00:00Z'
 }

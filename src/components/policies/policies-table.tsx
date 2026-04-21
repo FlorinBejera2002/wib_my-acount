@@ -1,6 +1,4 @@
 ﻿import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { InsuranceTypeBadge } from '@/components/ui/insurance-type-badge'
 import {
   Select,
@@ -19,54 +17,21 @@ import {
   TableRow
 } from '@/components/ui/table'
 import { usePolicies } from '@/hooks/use-policies'
-import { cn, formatCurrency, formatDate } from '@/lib/utils'
-import {
-  AlertCircle,
-  ArrowRight,
-  ChevronDown,
-  ChevronRight,
-  Download,
-  Inbox,
-  User,
-  Users,
-  X
-} from 'lucide-react'
-import { Fragment, useMemo, useState } from 'react'
+import { formatCurrency, formatDate } from '@/lib/utils'
+import { AlertCircle, Inbox, X } from 'lucide-react'
+import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 
 import type { Policy, TableParams } from '@/api/types'
 import { PolicyStatusBadge } from './policy-status-badge'
 
-const EXPANDABLE_TYPES = ['CALATORIE', 'LOCUINTA_PAD', 'LOCUINTA_FACULTATIVA']
+const getPolicySubtitle = (policy: Policy): string => {
+  return policy.insurer ?? '—'
+}
 
-const getPolicyDetailsDisplay = (policy: Policy): string => {
-  // Travel insurance
-  if (policy.type === 'CALATORIE') {
-    const parts = []
-    if (policy.travelDestination) parts.push(policy.travelDestination)
-    if (policy.travelPurpose) parts.push(policy.travelPurpose)
-    if (policy.transportationType) parts.push(policy.transportationType)
-    return parts.length > 0 ? parts.join(', ') : policy.policyDetails || '—'
-  }
-
-  // Home insurance (PAD and Facultativa)
-  if (
-    policy.type === 'LOCUINTA_PAD' ||
-    policy.type === 'LOCUINTA_FACULTATIVA'
-  ) {
-    const parts = []
-    if (policy.propertyType) parts.push(policy.propertyType)
-    if (policy.propertyArea) parts.push(`${policy.propertyArea} mp`)
-    if (policy.insuredAmount)
-      parts.push(`${policy.insuredAmount.toLocaleString()} EUR`)
-    if (policy.padNumber && policy.type === 'LOCUINTA_PAD')
-      parts.push(`PAD: ${policy.padNumber}`)
-    return parts.length > 0 ? parts.join(', ') : policy.policyDetails || '—'
-  }
-
-  // Default for other types
-  return policy.policyDetails || '—'
+const computeDaysUntilExpiry = (endDate: string): number => {
+  return Math.ceil((new Date(endDate).getTime() - Date.now()) / 86400000)
 }
 
 const filterConfigs = [
@@ -77,39 +42,20 @@ const filterConfigs = [
       { labelKey: 'policies.statusActive', value: 'active' },
       { labelKey: 'policies.statusExpired', value: 'expired' },
       { labelKey: 'policies.statusCancelled', value: 'cancelled' },
-      { labelKey: 'policies.statusTerminated', value: 'terminated' }
+      { labelKey: 'policies.statusPending', value: 'pending' }
     ]
   },
   {
     key: 'type',
     labelKey: 'policies.filterType',
     options: [
-      { labelKey: 'insuranceType.RCA', value: 'RCA' },
-      { labelKey: 'insuranceType.CASCO', value: 'CASCO' },
-      { labelKey: 'insuranceType.CASCO_ECONOM', value: 'CASCO_ECONOM' },
-      { labelKey: 'insuranceType.LOCUINTA_PAD', value: 'LOCUINTA_PAD' },
-      {
-        labelKey: 'insuranceType.LOCUINTA_FACULTATIVA',
-        value: 'LOCUINTA_FACULTATIVA'
-      },
-      { labelKey: 'insuranceType.CALATORIE', value: 'CALATORIE' },
-      {
-        labelKey: 'insuranceType.ASISTENTA_RUTIERA',
-        value: 'ASISTENTA_RUTIERA'
-      },
-      { labelKey: 'insuranceType.MALPRAXIS', value: 'MALPRAXIS' },
-      { labelKey: 'insuranceType.SANATATE', value: 'SANATATE' },
-      {
-        labelKey: 'insuranceType.ACCIDENTE_CALATORI',
-        value: 'ACCIDENTE_CALATORI'
-      },
-      {
-        labelKey: 'insuranceType.ACCIDENTE_PERSOANE',
-        value: 'ACCIDENTE_PERSOANE'
-      },
-      { labelKey: 'insuranceType.ACCIDENTE_TAXI', value: 'ACCIDENTE_TAXI' },
-      { labelKey: 'insuranceType.CMR', value: 'CMR' },
-      { labelKey: 'insuranceType.VIATA', value: 'VIATA' }
+      { labelKey: 'insuranceType.rca', value: 'rca' },
+      { labelKey: 'insuranceType.casco', value: 'casco' },
+      { labelKey: 'insuranceType.home', value: 'home' },
+      { labelKey: 'insuranceType.health', value: 'health' },
+      { labelKey: 'insuranceType.travel', value: 'travel' },
+      { labelKey: 'insuranceType.life', value: 'life' },
+      { labelKey: 'insuranceType.other', value: 'other' }
     ]
   }
 ]
@@ -127,8 +73,6 @@ export function PoliciesTable() {
 
   const [dateFrom, setDateFrom] = useState('')
   const [dateTo, setDateTo] = useState('')
-  const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set())
-
   const { data, isLoading, isError } = usePolicies(params)
 
   const filteredData = useMemo(() => {
@@ -147,18 +91,6 @@ export function PoliciesTable() {
 
     return items
   }, [data?.data, dateFrom, dateTo])
-
-  const toggleRow = (id: string) => {
-    setExpandedRows((prev) => {
-      const next = new Set(prev)
-      if (next.has(id)) {
-        next.delete(id)
-      } else {
-        next.add(id)
-      }
-      return next
-    })
-  }
 
   const handleFilterChange = (key: string, value: string) => {
     setParams((prev) => ({
@@ -314,7 +246,7 @@ export function PoliciesTable() {
                 {t('policies.insurer')}
               </TableHead>
               <TableHead className="min-w-[200px]">
-                {t('policies.policyDetails')}
+                {t('policies.insuredObject')}
               </TableHead>
               <TableHead className="min-w-[100px]">
                 {t('policies.premium')}
@@ -328,182 +260,50 @@ export function PoliciesTable() {
               <TableHead className="min-w-[100px]">
                 {t('policies.daysLeft')}
               </TableHead>
-              <TableHead>{t('policies.pdf')}</TableHead>
+              <TableHead />
+
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredData.length > 0 ? (
               filteredData.map((policy) => {
-                const isExpandable =
-                  EXPANDABLE_TYPES.includes(policy.type) &&
-                  policy.insuredPersons &&
-                  policy.insuredPersons.length > 0
-                const isExpanded = expandedRows.has(policy.id)
-                const persons = policy.insuredPersons || []
+                const daysUntilExpiry = computeDaysUntilExpiry(policy.endDate)
 
                 return (
-                  <Fragment key={policy.id}>
-                    {/* Parent row */}
-                    <TableRow
-                      className={cn(
-                        'transition-colors cursor-pointer hover:bg-gray-50',
-                        isExpanded && 'bg-green-50/40 border-b-0'
+                  <TableRow
+                    key={policy.id}
+                    className="transition-colors cursor-pointer hover:bg-gray-50"
+                    onClick={() => navigate(`/policies/${policy.id}`)}
+                  >
+                    <TableCell className="w-10 px-3" />
+                    <TableCell>
+                      <span className="font-medium">
+                        {policy.policyNumber}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <InsuranceTypeBadge type={policy.type} />
+                    </TableCell>
+                    <TableCell>{policy.insurer ?? '—'}</TableCell>
+                    <TableCell>
+                      <span className="max-w-[220px] truncate block">
+                        {getPolicySubtitle(policy)}
+                      </span>
+                    </TableCell>
+                    <TableCell>{formatCurrency(policy.premium)}</TableCell>
+                    <TableCell>
+                      <PolicyStatusBadge status={policy.status} />
+                    </TableCell>
+                    <TableCell>{formatDate(policy.endDate)}</TableCell>
+                    <TableCell>
+                      {policy.status === 'active' ? (
+                        <ExpiryBadge days={daysUntilExpiry} t={t} />
+                      ) : (
+                        '—'
                       )}
-                      onClick={() =>
-                        isExpandable
-                          ? toggleRow(policy.id)
-                          : navigate(`/policies/${policy.id}`)
-                      }
-                    >
-                      <TableCell className="w-10 px-3">
-                        {isExpandable ? (
-                          <div className="flex items-center gap-1">
-                            {isExpanded ? (
-                              <ChevronDown className="h-4 w-4 text-accent-green" />
-                            ) : (
-                              <ChevronRight className="h-4 w-4 text-gray-400" />
-                            )}
-                          </div>
-                        ) : null}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium">
-                            {policy.policyNumber}
-                          </span>
-                          {isExpandable && (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-1.5 py-0.5 text-[10px] font-medium text-gray-500">
-                              <Users className="h-3 w-3" />
-                              {persons.length}
-                            </span>
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <InsuranceTypeBadge type={policy.type} />
-                      </TableCell>
-                      <TableCell>{policy.insurerName}</TableCell>
-                      <TableCell>
-                        <span className="max-w-[220px] truncate block">
-                          {getPolicyDetailsDisplay(policy)}
-                        </span>
-                      </TableCell>
-                      <TableCell>{formatCurrency(policy.premium)}</TableCell>
-                      <TableCell>
-                        <PolicyStatusBadge status={policy.status} />
-                      </TableCell>
-                      <TableCell>{formatDate(policy.endDate)}</TableCell>
-                      <TableCell>
-                        {policy.status === 'active' ? (
-                          <ExpiryBadge days={policy.daysUntilExpiry} t={t} />
-                        ) : (
-                          '—'
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        {!isExpandable &&
-                          (() => {
-                            const doc = policy.documents?.find(
-                              (d) => d.type === 'POLICY'
-                            )
-                            return doc ? (
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="h-8 w-8 p-0"
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  window.open(doc.url, '_blank')
-                                }}
-                              >
-                                <Download className="h-4 w-4 text-muted-foreground" />
-                              </Button>
-                            ) : null
-                          })()}
-                      </TableCell>
-                    </TableRow>
-
-                    {/* Sub-rows: insured persons */}
-                    {isExpandable &&
-                      isExpanded &&
-                      persons.map((person, idx) => {
-                        const isLast = idx === persons.length - 1
-
-                        return (
-                          <TableRow
-                            key={`${policy.id}-p-${idx}`}
-                            className={cn(
-                              'bg-gray-50/70 hover:bg-gray-100/50 cursor-pointer',
-                              !isLast &&
-                                'border-b border-dashed border-gray-200',
-                              isLast && 'border-b-2 border-gray-200'
-                            )}
-                            onClick={() => navigate(`/policies/${policy.id}`)}
-                          >
-                            {/* Tree connector */}
-                            <TableCell className="w-10 px-3 relative">
-                              <div className="flex items-center justify-center">
-                                <div
-                                  className={cn(
-                                    'absolute left-1/2 w-px bg-green-300',
-                                    isLast ? 'top-0 h-1/2' : 'top-0 h-full'
-                                  )}
-                                />
-                                <div className="absolute left-1/2 top-1/2 h-px w-3 bg-green-300" />
-                                <div className="relative z-10 flex h-5 w-5 items-center justify-center rounded-full bg-green-100">
-                                  <User className="h-3 w-3 text-green-600" />
-                                </div>
-                              </div>
-                            </TableCell>
-                            {/* Name */}
-                            <TableCell>
-                              <span className="text-sm font-medium text-gray-800">
-                                {person.name}
-                              </span>
-                            </TableCell>
-                            {/* Role in Tip column */}
-                            <TableCell>
-                              {person.role && (
-                                <Badge
-                                  variant="outline"
-                                  className="border-green-200 bg-green-50 text-green-700 text-xs font-normal"
-                                >
-                                  {person.role}
-                                </Badge>
-                              )}
-                            </TableCell>
-                            {/* CNP in Asigurător column */}
-                            <TableCell>
-                              {person.cnp && (
-                                <span className="text-xs text-gray-500 font-mono">
-                                  {person.cnp}
-                                </span>
-                              )}
-                            </TableCell>
-                            <TableCell />
-                            <TableCell />
-                            <TableCell />
-                            <TableCell />
-                            <TableCell />
-                            <TableCell>
-                              {person.documentUrl && (
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="h-8 w-8 p-0"
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    window.open(person.documentUrl, '_blank')
-                                  }}
-                                >
-                                  <Download className="h-4 w-4 text-green-600" />
-                                </Button>
-                              )}
-                            </TableCell>
-                          </TableRow>
-                        )
-                      })}
-                  </Fragment>
+                    </TableCell>
+                    <TableCell />
+                  </TableRow>
                 )
               })
             ) : (

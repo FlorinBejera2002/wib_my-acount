@@ -1,3 +1,14 @@
+// ==========================================================================
+// Types derived from the OpenAPI spec (src/api/openapi.json).
+// Regenerate reference types: yarn generate:api
+//
+// Naming conventions (per backend contract):
+//   Request bodies → snake_case for multi-word keys (refresh_token, new_password)
+//   Response bodies → camelCase (accessToken, policyNumber)
+//   The axios response interceptor converts snake_case → camelCase automatically,
+//   EXCEPT keys containing digits (e.g. requires_2fa stays as-is).
+// ==========================================================================
+
 // ==================== Generic Types ====================
 
 export interface PaginatedResponse<T> {
@@ -20,30 +31,38 @@ export interface TableParams {
 
 // ==================== Auth ====================
 
+/** Minimal user object returned by login / register / 2FA endpoints. */
+export interface LoginUser {
+  id: string
+  username: string
+  email: string
+}
+
 export interface LoginRequest {
   email: string
   password: string
 }
 
-// Response interfaces use camelCase — the axios interceptor converts all snake_case keys
+/**
+ * Login 200 response — two possible shapes:
+ * 1. Full login (requires_2fa=false): accessToken + refreshToken + user
+ * 2. 2FA required (requires_2fa=true): preAuthToken + twoFactorMethod
+ *
+ * NOTE: `requires_2fa` is NOT converted by the interceptor because `_2` (digit)
+ * doesn't match the `/_([a-z])/g` regex. We keep the original snake_case key.
+ */
 export interface LoginResponse {
+  requires_2fa: boolean
+  // Present when requires_2fa === false
   accessToken?: string
   refreshToken?: string
-  user?: UserProfile
+  user?: LoginUser
+  // Present when requires_2fa === true
   preAuthToken?: string
-  requires_2fa?: boolean
   twoFactorMethod?: 'totp' | 'email'
 }
 
-export interface Disable2FARequest {
-  password: string
-}
-
-export interface TwoFactorMessageResponse {
-  message: string
-}
-
-// Request bodies are sent as-is (not transformed by the response interceptor)
+// Request bodies use snake_case per backend contract
 export interface TwoFactorRequest {
   pre_auth_token: string
   totp_code: string
@@ -52,7 +71,7 @@ export interface TwoFactorRequest {
 export interface TwoFactorResponse {
   accessToken: string
   refreshToken: string
-  user: UserProfile
+  user: LoginUser
 }
 
 export interface RefreshTokenRequest {
@@ -67,15 +86,17 @@ export interface RefreshTokenResponse {
 export interface RegisterRequest {
   email: string
   password: string
-  first_name?: string
-  last_name?: string
+  confirmPassword?: string
+  firstName?: string
+  lastName?: string
   phone?: string
+  username?: string
 }
 
 export interface RegisterResponse {
   accessToken: string
   refreshToken: string
-  user: UserProfile
+  user: LoginUser
 }
 
 export interface ForgotPasswordRequest {
@@ -120,42 +141,51 @@ export interface Confirm2FARequest {
   totp_code: string
 }
 
+export interface Disable2FARequest {
+  password: string
+}
+
+export interface TwoFactorMessageResponse {
+  message: string
+}
+
 // ==================== User ====================
+
+export interface UserPreferences {
+  language: 'ro' | 'en' | 'fr' | 'de'
+  notifications: boolean
+}
 
 export interface UserProfile {
   id: string
   email: string
-  firstName: string
-  lastName: string
-  phone: string
-  roles: string[]
-  active: boolean
+  username: string
+  parentUsername?: string | null
+  firstName?: string | null
+  lastName?: string | null
+  fullName?: string | null
+  phone?: string | null
+  country: string
+  person?: Record<string, unknown>
+  contact?: Record<string, unknown>
+  address?: Record<string, unknown>
+  company?: Record<string, unknown>
   twoFactorEnabled: boolean
-  twoFactorMethod: 'totp' | 'email' | null
+  twoFactorMethod?: 'totp' | 'email' | null
   preferences: UserPreferences
+  source: 'registration' | 'legacy_sync'
   createdAt: string
-  updatedAt: string
-}
-
-export interface UserPreferences {
-  language: 'ro' | 'en' | 'hu'
-  notifications: NotificationPreferences
-}
-
-export interface NotificationPreferences {
-  email: boolean
-  push: boolean
 }
 
 export interface UpdateProfileRequest {
-  first_name?: string
-  last_name?: string
+  firstName?: string
+  lastName?: string
   phone?: string
 }
 
 export interface UpdatePreferencesRequest {
-  language?: 'ro' | 'en' | 'hu'
-  notifications?: Partial<NotificationPreferences>
+  language?: 'ro' | 'en' | 'fr' | 'de'
+  notifications?: boolean
 }
 
 export interface ChangePasswordRequest {
@@ -166,134 +196,81 @@ export interface ChangePasswordRequest {
 // ==================== Quotes ====================
 
 export type QuoteType =
-  | 'RCA'
-  | 'CASCO'
-  | 'CASCO_ECONOM'
-  | 'LOCUINTA_PAD'
-  | 'LOCUINTA_FACULTATIVA'
-  | 'CALATORIE'
-  | 'VIATA'
-  | 'ASISTENTA_RUTIERA'
-  | 'MALPRAXIS'
-  | 'SANATATE'
-  | 'ACCIDENTE_CALATORI'
-  | 'ACCIDENTE_PERSOANE'
-  | 'ACCIDENTE_TAXI'
-  | 'CMR'
-export type QuoteStatus = 'active' | 'expired' | 'converted' | 'draft'
+  | 'rca'
+  | 'casco'
+  | 'home'
+  | 'health'
+  | 'travel'
+  | 'life'
+  | 'other'
 
-export interface QuoteDocument {
-  id: string
-  name: string
-  type: 'OFFER' | 'COMPARISON' | 'TERMS'
-  url: string
-  size: number
-}
+export type QuoteStatus =
+  | 'draft'
+  | 'submitted'
+  | 'accepted'
+  | 'expired'
+  | 'converted'
 
 export interface Quote {
   id: string
-  quoteNumber: string
+  legacyId?: string | null
   type: QuoteType
   status: QuoteStatus
-  insurerName: string
-  insurerLogo?: string
-  vehicleOrProperty?: string
-  insuredDetails?: string
-  premium: number
-  currency: 'RON'
-  validFrom: string
-  validUntil: string
+  premium?: number | null
+  currency: string
+  validUntil?: string | null
+  quoteData?: Record<string, unknown>
   createdAt: string
-  offerUrl?: string
-  documents: QuoteDocument[]
+  updatedAt: string
 }
 
 // ==================== Policies ====================
 
 export type PolicyType =
-  | 'RCA'
-  | 'CASCO'
-  | 'CASCO_ECONOM'
-  | 'LOCUINTA_PAD'
-  | 'LOCUINTA_FACULTATIVA'
-  | 'CALATORIE'
-  | 'VIATA'
-  | 'ASISTENTA_RUTIERA'
-  | 'MALPRAXIS'
-  | 'SANATATE'
-  | 'ACCIDENTE_CALATORI'
-  | 'ACCIDENTE_PERSOANE'
-  | 'ACCIDENTE_TAXI'
-  | 'CMR'
-export type PolicyStatus = 'active' | 'expired' | 'cancelled' | 'terminated'
+  | 'rca'
+  | 'casco'
+  | 'home'
+  | 'health'
+  | 'travel'
+  | 'life'
+  | 'other'
 
-export interface PolicyDocument {
-  id: string
-  name: string
-  type: 'POLICY' | 'CERTIFICATE' | 'GREEN_CARD' | 'RECEIPT'
-  url: string
-  size: number
-}
-
-export interface PolicyInsuredPerson {
-  name: string
-  cnp?: string
-  role?: string
-  documentUrl?: string
-}
+export type PolicyStatus = 'active' | 'expired' | 'cancelled' | 'pending'
 
 export interface Policy {
   id: string
+  legacyId?: string | null
   policyNumber: string
   type: PolicyType
   status: PolicyStatus
-  insurerName: string
-  vehicleOrProperty?: string
-  policyDetails?: string
-  insuredPersons?: PolicyInsuredPerson[]
-  premium: number
-  currency: 'RON'
+  insurer?: string | null
   startDate: string
   endDate: string
-  daysUntilExpiry: number
-  autoRenew: boolean
+  premium: number
+  currency: string
+  coverageDetails?: Record<string, unknown>
   createdAt: string
-  sourceQuoteId?: string
-  documents?: PolicyDocument[]
-  travelDestination?: string
-  travelPurpose?: string
-  transportationType?: string
-  propertyAddress?: string
-  insuredAmount?: number
-  insuredGoods?: number
-  propertyType?: string
-  propertyArea?: number
-  yearOfConstruction?: number
-  padNumber?: string
+  updatedAt: string
 }
 
 // ==================== Sessions ====================
 
 export interface Session {
   id: string
-  userAgent: string
   ip: string
+  userAgent: string
+  lastActivityAt: string
   createdAt: string
-  expiresAt: string
-  isCurrent?: boolean
-  lastActivity?: string
-  location?: string
-  deviceInfo?: string
+  current: boolean
 }
 
 // ==================== Notifications ====================
 
 export type NotificationType =
-  | 'POLICY_EXPIRY'
-  | 'QUOTE_READY'
-  | 'PASSWORD_CHANGE'
-  | 'NEW_LOGIN'
-  | 'SYSTEM'
+  | 'policy_expiry'
+  | 'quote_accepted'
+  | 'system'
+  | 'reminder'
 
 export interface Notification {
   id: string
@@ -310,7 +287,7 @@ export interface Notification {
 export interface Reminder {
   id: string
   title: string
-  note?: string
+  note?: string | null
   remindAt: string
   isDone: boolean
   createdAt: string
@@ -320,17 +297,17 @@ export interface Reminder {
 export interface CreateReminderRequest {
   title: string
   remindAt: string
-  note?: string
+  note?: string | null
 }
 
 export interface UpdateReminderRequest {
   title?: string
   remindAt?: string
-  note?: string
+  note?: string | null
   isDone?: boolean
 }
 
-// ==================== Expiry Alerts (local) ====================
+// ==================== Expiry Alerts (local UI concept, maps to Reminders API) ====================
 
 export type AlertType =
   | 'RCA'
@@ -413,9 +390,47 @@ export interface DashboardStats {
 
 export interface ExportDataResponse {
   exportedAt: string
-  profile: UserProfile
-  policies: Policy[]
-  quotes: Quote[]
-  notifications: Notification[]
-  reminders: Reminder[]
+  profile: Record<string, unknown>
+  policies: Record<string, unknown>[]
+  quotes: Record<string, unknown>[]
+  notifications: Record<string, unknown>[]
+  reminders: Record<string, unknown>[]
 }
+
+// ==================== Error ====================
+
+export interface ApiError {
+  error: {
+    code: string
+    message: string
+    details?: Record<string, string[]>
+  }
+}
+
+// ==================== Error Codes ====================
+
+export const ERROR_CODES = {
+  INVALID_CREDENTIALS: 'INVALID_CREDENTIALS',
+  INVALID_PASSWORD: 'INVALID_PASSWORD',
+  INVALID_REFRESH_TOKEN: 'INVALID_REFRESH_TOKEN',
+  INVALID_RESET_CODE: 'INVALID_RESET_CODE',
+  INVALID_RESET_TOKEN: 'INVALID_RESET_TOKEN',
+  INVALID_TWO_FACTOR_CODE: 'INVALID_TWO_FACTOR_CODE',
+  TWO_FACTOR_REQUIRED: 'TWO_FACTOR_REQUIRED',
+  USER_ALREADY_EXISTS: 'USER_ALREADY_EXISTS',
+  TOO_MANY_REQUESTS: 'TOO_MANY_REQUESTS',
+  VALIDATION_ERROR: 'VALIDATION_ERROR',
+  SAME_PASSWORD: 'SAME_PASSWORD',
+  INVALID_2FA_METHOD: 'INVALID_2FA_METHOD',
+  INVALID_PRE_AUTH_TOKEN: 'INVALID_PRE_AUTH_TOKEN',
+  POLICY_NOT_FOUND: 'POLICY_NOT_FOUND',
+  QUOTE_NOT_FOUND: 'QUOTE_NOT_FOUND',
+  NOTIFICATION_NOT_FOUND: 'NOTIFICATION_NOT_FOUND',
+  REMINDER_NOT_FOUND: 'REMINDER_NOT_FOUND',
+  SESSION_NOT_FOUND: 'SESSION_NOT_FOUND',
+  UNAUTHORIZED: 'UNAUTHORIZED',
+  FORBIDDEN: 'FORBIDDEN',
+  NOT_FOUND: 'NOT_FOUND',
+} as const
+
+export type ErrorCode = (typeof ERROR_CODES)[keyof typeof ERROR_CODES]

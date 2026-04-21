@@ -19,8 +19,8 @@ const statusConfig: Record<
     labelKey: 'policyStatus.CANCELLED',
     className: 'bg-gray-100 text-gray-800 hover:bg-gray-100'
   },
-  terminated: {
-    labelKey: 'policyStatus.TERMINATED',
+  pending: {
+    labelKey: 'policyStatus.PENDING',
     className: 'bg-orange-100 text-orange-800 hover:bg-orange-100'
   }
 }
