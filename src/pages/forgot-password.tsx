@@ -30,7 +30,7 @@ export default function ForgotPasswordPage() {
   const { t } = useTranslation()
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
   const [step, setStep] = useState<ResetStep>('email')
-  const [tempToken, setTempToken] = useState('')
+  const [email, setEmail] = useState('')
   const [resetToken, setResetToken] = useState('')
 
   const forgotPasswordMutation = useForgotPassword()
@@ -43,8 +43,8 @@ export default function ForgotPasswordPage() {
 
   const handleForgotPassword = (data: ForgotPasswordFormValues) => {
     forgotPasswordMutation.mutate(data, {
-      onSuccess: (response) => {
-        setTempToken(response.tempToken)
+      onSuccess: () => {
+        setEmail(data.email)
         setStep('verify-code')
       }
     })
@@ -52,7 +52,7 @@ export default function ForgotPasswordPage() {
 
   const handleVerifyCode = (code: string) => {
     verifyResetCodeMutation.mutate(
-      { tempToken, code },
+      { email, code },
       {
         onSuccess: (response) => {
           setResetToken(response.resetToken)
@@ -65,9 +65,8 @@ export default function ForgotPasswordPage() {
   const handleResetPassword = (data: ResetPasswordFormValues) => {
     resetPasswordMutation.mutate(
       {
-        resetToken,
-        newPassword: data.newPassword,
-        confirmPassword: data.confirmPassword
+        reset_token: resetToken,
+        new_password: data.newPassword
       },
       {
         onSuccess: () => {

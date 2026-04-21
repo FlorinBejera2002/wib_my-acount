@@ -12,22 +12,22 @@ const statusConfig: Record<
   PolicyStatus,
   { label: string; dot: string; text: string }
 > = {
-  ACTIVE: {
+  active: {
     label: 'Activă',
     dot: 'bg-accent-green',
     text: 'text-accent-green'
   },
-  EXPIRED: {
+  expired: {
     label: 'Expirată',
     dot: 'bg-red-500',
     text: 'text-red-600'
   },
-  CANCELLED: {
+  cancelled: {
     label: 'Anulată',
     dot: 'bg-gray-500',
     text: 'text-gray-600'
   },
-  TERMINATED: {
+  terminated: {
     label: 'Reziliată',
     dot: 'bg-orange-500',
     text: 'text-orange-600'
@@ -116,7 +116,7 @@ export function RecentPolicies() {
         ) : (
           <ul>
             {data?.data.map((policy, i) => {
-              const status = statusConfig[policy.status]
+              const status = statusConfig[policy.status] ?? statusConfig.active
               const isLast = i === (data?.data.length ?? 0) - 1
               const type = typeConfig[policy.type] || {
                 label: policy.type,
@@ -165,7 +165,7 @@ export function RecentPolicies() {
                         />
                         <span className="hidden sm:inline">{status.label}</span>
                       </span>
-                      {policy.status === 'ACTIVE' && (
+                      {policy.status === 'active' && (
                         <span
                           className={cn(
                             'text-[11px] hidden sm:block',

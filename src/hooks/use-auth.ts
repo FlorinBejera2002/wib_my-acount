@@ -1,3 +1,5 @@
+import { api } from '@/api/axios-client'
+import { ENDPOINTS } from '@/api/endpoints'
 import type {
   LoginRequest,
   LoginResponse,
@@ -5,65 +7,51 @@ import type {
   TwoFactorResponse
 } from '@/api/types'
 import i18n from '@/lib/i18n'
-import { delay } from '@/lib/utils'
-import { mockUser } from '@/mocks/user'
 import { useAuthStore } from '@/stores/auth-store'
 import { useMutation } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 
 const loginFn = async (data: LoginRequest): Promise<LoginResponse> => {
-  // TODO: decomentează când API-ul e gata
-  // const { data: response } = await api.post(ENDPOINTS.AUTH.LOGIN, data);
-  // return response;
-
-  await delay(800)
-
-  if (
-    data.email === 'florinpetru0306@gmail.com' &&
-    data.password === 'password'
-  ) {
-    return {
-      requiresTwoFactor: true,
-      tempToken: 'temp_token_mock_123'
-    }
-  }
-
-  throw new Error(i18n.t('toast.emailOrPasswordIncorrect'))
+  const { data: response } = await api.post<LoginResponse>(
+    ENDPOINTS.AUTH.LOGIN,
+    data
+  )
+  return response
 }
 
 const verifyTwoFactorFn = async (
   data: TwoFactorRequest
 ): Promise<TwoFactorResponse> => {
-  // TODO: decomentează când API-ul e gata
-  // const { data: response } = await api.post(ENDPOINTS.AUTH.TWO_FACTOR, data);
-  // return response;
-
-  await delay(600)
-
-  if (data.code === '123456') {
-    return {
-      accessToken: 'mock_access_token_abc',
-      refreshToken: 'mock_refresh_token_xyz',
-      user: mockUser
-    }
-  }
-
-  throw new Error(i18n.t('toast.codeInvalid'))
+  const { data: response } = await api.post<TwoFactorResponse>(
+    ENDPOINTS.AUTH.TWO_FACTOR,
+    data
+  )
+  return response
 }
 
 const logoutFn = async (): Promise<void> => {
-  // TODO: decomentează când API-ul e gata
-  // await api.post(ENDPOINTS.AUTH.LOGOUT);
-
-  await delay(300)
+  await api.post(ENDPOINTS.AUTH.LOGOUT)
 }
 
 export function useLogin() {
+  const login = useAuthStore((s) => s.login)
+  const navigate = useNavigate()
+
   return useMutation({
     mutationFn: loginFn,
-    onError: (error: Error) => {
-      toast.error(error.message)
+    onSuccess: (data) => {
+      if (!data.requires_2fa && data.accessToken && data.user) {
+        login(data.user, data.accessToken, data.refreshToken!)
+        if (data.user.preferences?.language) {
+          i18n.changeLanguage(data.user.preferences.language)
+        }
+        toast.success(i18n.t('toast.loginSuccess'))
+        setTimeout(() => navigate('/dashboard'), 500)
+      }
+    },
+    onError: () => {
+      toast.error(i18n.t('toast.emailOrPasswordIncorrect'))
     }
   })
 }
@@ -83,7 +71,7 @@ export function useVerifyTwoFactor() {
       setTimeout(() => navigate('/dashboard'), 500)
     },
     onError: (error: Error) => {
-      toast.error(error.message)
+      toast.error(error.message || i18n.t('toast.codeInvalid'))
     }
   })
 }

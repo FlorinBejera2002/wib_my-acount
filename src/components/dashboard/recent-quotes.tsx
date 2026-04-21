@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 
 const getSimplifiedQuoteStatus = (status: QuoteStatus) => {
-  if (status === 'EXPIRED') {
+  if (status === 'expired') {
     return {
       label: 'Expirată',
       dot: 'bg-red-500',

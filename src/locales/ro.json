@@ -122,8 +122,16 @@
       "preparingDashboard": "Pregătim panoul tău de control..."
     },
     "twoFactor": {
-      "title": "Verificare în doi pași",
-      "description": "Am trimis un cod de verificare pe adresa ta de email"
+      "title": "Verificare autentificare în doi pași",
+      "totpDescription": "Introduceți codul din aplicația dvs. de autentificare.",
+      "emailDescription": "Am trimis un cod de 6 cifre la adresa dvs. de email. Codul este valabil 10 minute.",
+      "verify": "Verifică",
+      "resendCode": "Retrimite codul",
+      "resendIn": "Puteți retrimite codul în {{seconds}}s",
+      "resending": "Se trimite...",
+      "sessionExpired": "Sesiunea a expirat. Vă rugăm să vă autentificați din nou.",
+      "invalidCode": "Cod invalid sau expirat. Încercați din nou.",
+      "rateLimited": "Prea multe încercări. Așteptați și reîncercați."
     },
     "noAccount": "Nu ai un cont?",
     "createAccountLink": "Creează un cont",
@@ -321,6 +329,10 @@
     "passwordChanged": "Parola schimbată",
     "failedAttempts": "Încercări eșuate de autentificare",
     "attemptsCount": "{{count}} încercări",
+    "accountCreated": "Cont creat",
+    "twoFactorStatus": "Autentificare în doi pași",
+    "twoFactorEnabled": "Activată",
+    "twoFactorDisabled": "Dezactivată",
     "passwordStrength": {
       "weak": "Slabă",
       "fair": "Acceptabilă",
@@ -332,6 +344,10 @@
   "settings": {
     "notifications": "Notificări",
     "notificationsSubtitle": "Alege ce notificări dorești să primești",
+    "emailNotifications": "Notificări email",
+    "emailNotificationsDesc": "Primește notificări despre activitatea contului pe email",
+    "pushNotifications": "Notificări push",
+    "pushNotificationsDesc": "Notificări în timp real în browser",
     "newQuotes": "Cotații noi",
     "newQuotesDesc": "Notificări despre cotații noi și actualizări",
     "policyExpiry": "Expirare polițe",
@@ -422,6 +438,50 @@
     "subtitle": "Pagina pe care o cauți nu există sau a fost mutată.",
     "backHome": "Înapoi la pagina principală"
   },
+  "twoFactor": {
+    "section": {
+      "title": "Autentificare în doi pași (2FA)",
+      "subtitle": "Adaugă un strat suplimentar de securitate contului tău",
+      "activeBadge": "Activă",
+      "enabledDescription": "Contul tău este protejat cu autentificare în doi pași.",
+      "enabledMethodTotp": "Activ — Aplicație de autentificare",
+      "enabledMethodEmail": "Activ — Email",
+      "disabledDescription": "Autentificarea în doi pași nu este activată.",
+      "enableBtn": "Activează 2FA",
+      "changeMethodBtn": "Schimbă metoda",
+      "disableBtn": "Dezactivează"
+    },
+    "setup": {
+      "methodTitle": "Activează autentificarea în doi pași",
+      "methodDescription": "Alege metoda preferată de autentificare în doi pași.",
+      "methodTotp": "Aplicație de autentificare",
+      "methodTotpDesc": "Google Authenticator, Authy etc.",
+      "methodEmail": "Email",
+      "methodEmailDesc": "Cod de verificare trimis la adresa dvs. de email.",
+      "introTitle": "Activează autentificarea în doi pași",
+      "introDescription": "Protejează-ți contul cu o aplicație de autentificare TOTP (ex: Google Authenticator, Authy).",
+      "introStep1": "1. Instalează o aplicație de autentificare pe telefonul tău.",
+      "introStep2": "2. Scanează codul QR cu aplicația.",
+      "introStep3": "3. Introdu codul de 6 cifre pentru confirmare.",
+      "continue": "Continuă",
+      "qrTitle": "Scanează codul QR",
+      "qrDescription": "Deschide aplicația de autentificare și scanează codul de mai jos.",
+      "manualEntry": "Sau introdu manual cheia secretă:",
+      "secretCopied": "Cheia secretă a fost copiată",
+      "next": "Următorul pas",
+      "confirmTitle": "Verifică codul",
+      "confirmDescription": "Introdu codul de 6 cifre generat de aplicația ta de autentificare.",
+      "verify": "Verifică",
+      "successTitle": "2FA activată cu succes!",
+      "successDescription": "Contul tău este acum protejat cu autentificare în doi pași.",
+      "done": "Finalizare"
+    },
+    "disable": {
+      "title": "Dezactivează autentificarea în doi pași",
+      "description": "Introdu parola actuală pentru a dezactiva 2FA. Aceasta va reduce securitatea contului tău.",
+      "confirm": "Dezactivează 2FA"
+    }
+  },
   "toast": {
     "loginSuccess": "Autentificare reușită!",
     "profileUpdated": "Profilul a fost actualizat cu succes",
@@ -445,11 +505,19 @@
     "codeInvalid": "Codul introdus nu este valid",
     "verificationCodeSent": "Codul de verificare a fost trimis pe email",
     "passwordResetSuccess": "Parola a fost resetată cu succes!",
-    "emailAlreadyRegistered": "Această adresă de email este deja înregistrată",
+    "emailAlreadyRegistered": "Există un cont activ asociat adresei de email introduse",
+    "registerError": "A apărut o eroare la crearea contului. Încearcă din nou.",
     "accountCreated": "Contul a fost creat cu succes!",
+    "samePassword": "Parola nouă trebuie să fie diferită de parola actuală.",
     "currentPasswordIncorrect": "Parola actuală este incorectă",
     "cannotTerminateCurrent": "Nu poți încheia sesiunea curentă",
     "policyNotFound": "Polița nu a fost găsită",
-    "quoteNotFound": "Cotația nu a fost găsită"
+    "quoteNotFound": "Cotația nu a fost găsită",
+    "twoFactorEnabled": "Autentificarea în doi pași a fost activată",
+    "twoFactorEnableError": "Eroare la activarea autentificării în doi pași",
+    "twoFactorDisabled": "Autentificarea în doi pași a fost dezactivată",
+    "twoFactorDisableError": "Eroare la dezactivarea autentificării în doi pași",
+    "resendCodeSuccess": "Un nou cod a fost trimis.",
+    "resendCodeError": "Eroare la trimiterea codului. Încercați din nou."
   }
 }

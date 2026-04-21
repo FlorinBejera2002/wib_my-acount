@@ -1,36 +1,30 @@
+import { api } from '@/api/axios-client'
+import { ENDPOINTS } from '@/api/endpoints'
 import type { Notification } from '@/api/types'
 import i18n from '@/lib/i18n'
-import { delay } from '@/lib/utils'
-import { mockNotifications } from '@/mocks/notifications'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
 const fetchNotifications = async (): Promise<Notification[]> => {
-  // TODO: decomentează când API-ul e gata
-  // const { data } = await api.get(ENDPOINTS.NOTIFICATIONS.LIST);
-  // return data;
-
-  await delay(400)
-  return mockNotifications
+  const { data } = await api.get<{ notifications: Notification[] }>(
+    ENDPOINTS.NOTIFICATIONS.LIST
+  )
+  return data.notifications
 }
 
-const markReadFn = async (id: string): Promise<void> => {
-  // TODO: decomentează când API-ul e gata
-  // await api.patch(ENDPOINTS.NOTIFICATIONS.MARK_READ(id));
-
-  await delay(300)
-  const notif = mockNotifications.find((n) => n.id === id)
-  if (notif) notif.read = true
+const markReadFn = async (id: string): Promise<Notification> => {
+  const { data } = await api.patch<Notification>(
+    ENDPOINTS.NOTIFICATIONS.MARK_READ(id)
+  )
+  return data
 }
 
 const markAllReadFn = async (): Promise<void> => {
-  // TODO: decomentează când API-ul e gata
-  // await api.patch(ENDPOINTS.NOTIFICATIONS.MARK_ALL_READ);
+  await api.patch(ENDPOINTS.NOTIFICATIONS.MARK_ALL_READ)
+}
 
-  await delay(400)
-  mockNotifications.forEach((n) => {
-    n.read = true
-  })
+const deleteNotificationFn = async (id: string): Promise<void> => {
+  await api.delete(ENDPOINTS.NOTIFICATIONS.DELETE(id))
 }
 
 export function useNotifications() {
@@ -59,6 +53,17 @@ export function useMarkAllNotificationsRead() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notifications'] })
       toast.success(i18n.t('toast.allNotificationsRead'))
+    }
+  })
+}
+
+export function useDeleteNotification() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: deleteNotificationFn,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notifications'] })
     }
   })
 }

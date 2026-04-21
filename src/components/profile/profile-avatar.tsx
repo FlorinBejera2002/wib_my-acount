@@ -40,7 +40,7 @@ export function ProfileAvatar({
   userId
 }: ProfileAvatarProps) {
   const [storedPhotoUrl, setStoredPhotoUrl] = useState<string | null>(null)
-  const initials = `${firstName[0] || ''}${lastName[0] || ''}`.toUpperCase()
+  const initials = `${firstName?.[0] || ''}${lastName?.[0] || ''}`.toUpperCase()
 
   useEffect(() => {
     if (userId) {

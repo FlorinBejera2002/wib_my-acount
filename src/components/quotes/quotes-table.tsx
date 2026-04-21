@@ -19,7 +19,7 @@ import i18n from '@/lib/i18n'
 import { ArrowRight, ExternalLink, X } from 'lucide-react'
 
 const getSimplifiedStatus = (status: QuoteStatus) => {
-  if (status === 'EXPIRED') {
+  if (status === 'expired') {
     return {
       labelKey: 'quoteStatus.EXPIRED',
       dot: 'bg-red-500',
@@ -51,8 +51,8 @@ const filterConfigs = [
     key: 'status',
     labelKey: 'policies.status',
     options: [
-      { value: 'ACTIVE', labelKey: 'quoteStatus.ACTIVE' },
-      { value: 'EXPIRED', labelKey: 'quoteStatus.EXPIRED' }
+      { value: 'active', labelKey: 'quoteStatus.ACTIVE' },
+      { value: 'expired', labelKey: 'quoteStatus.EXPIRED' }
     ]
   }
 ]
@@ -64,12 +64,11 @@ export function QuotesTable() {
     limit: 9999,
     sort: 'createdAt',
     order: 'desc',
-    search: '',
-    filters: {}
+    search: ''
   })
 
-  const [dateFrom, setDateFrom] = useState('')
-  const [dateTo, setDateTo] = useState('')
+  const [dateFrom, _setDateFrom] = useState('')
+  const [dateTo, _setDateTo] = useState('')
 
   const { data, isLoading, isError } = useQuotes(params)
 
@@ -189,15 +188,10 @@ export function QuotesTable() {
   ]
 
   const handleFilterChange = (key: string, value: string) => {
-    setParams((prev) => {
-      const newFilters = { ...prev.filters }
-      if (value === 'ALL') {
-        delete newFilters[key]
-      } else {
-        newFilters[key] = value
-      }
-      return { ...prev, filters: newFilters }
-    })
+    setParams((prev) => ({
+      ...prev,
+      [key]: value === 'ALL' ? undefined : value
+    }))
   }
 
   // const hasActiveFilters =
@@ -218,7 +212,7 @@ export function QuotesTable() {
           {filterConfigs.map((config) => (
             <Select
               key={config.key}
-              value={params.filters?.[config.key] || 'ALL'}
+              value={(params as unknown as Record<string, string | undefined>)[config.key] || 'ALL'}
               onValueChange={(value) => handleFilterChange(config.key, value)}
             >
               <SelectTrigger className="h-9 w-[140px]">

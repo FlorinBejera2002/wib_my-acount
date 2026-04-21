@@ -1,18 +1,13 @@
+import { api } from '@/api/axios-client'
+import { ENDPOINTS } from '@/api/endpoints'
 import type { ChangePasswordRequest } from '@/api/types'
 import i18n from '@/lib/i18n'
-import { delay } from '@/lib/utils'
 import { useMutation } from '@tanstack/react-query'
+import type { AxiosError } from 'axios'
 import { toast } from 'sonner'
 
 const changePasswordFn = async (data: ChangePasswordRequest): Promise<void> => {
-  // TODO: decomentează când API-ul e gata
-  // await api.post(ENDPOINTS.USERS.CHANGE_PASSWORD, data);
-
-  await delay(700)
-
-  if (data.oldPassword === 'wrong') {
-    throw new Error(i18n.t('toast.currentPasswordIncorrect'))
-  }
+  await api.post(ENDPOINTS.USERS.CHANGE_PASSWORD, data)
 }
 
 export function useChangePassword() {
@@ -21,8 +16,15 @@ export function useChangePassword() {
     onSuccess: () => {
       toast.success(i18n.t('toast.passwordChanged'))
     },
-    onError: (error: Error) => {
-      toast.error(error.message || i18n.t('toast.passwordChangeError'))
+    onError: (error: AxiosError<{ error?: { code?: string } }>) => {
+      const code = error.response?.data?.error?.code
+      if (code === 'SAME_PASSWORD') {
+        toast.error(i18n.t('toast.samePassword'))
+      } else if (code === 'INVALID_CURRENT_PASSWORD') {
+        toast.error(i18n.t('toast.currentPasswordIncorrect'))
+      } else {
+        toast.error(error.message || i18n.t('toast.passwordChangeError'))
+      }
     }
   })
 }

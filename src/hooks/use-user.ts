@@ -6,24 +6,18 @@ import type {
   UserProfile
 } from '@/api/types'
 import i18n from '@/lib/i18n'
-import { delay } from '@/lib/utils'
-import { mockUser } from '@/mocks/user'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
 const fetchProfile = async (): Promise<UserProfile> => {
-  // TODO: decomentează când API-ul e gata
-  // const { data } = await api.get(ENDPOINTS.USERS.PROFILE);
-  // return data;
-
-  await delay(500)
-  return mockUser
+  const { data } = await api.get<UserProfile>(ENDPOINTS.USERS.PROFILE)
+  return data
 }
 
 const updateProfileFn = async (
   data: UpdateProfileRequest
 ): Promise<UserProfile> => {
-  const { data: response } = await api.patch(
+  const { data: response } = await api.patch<UserProfile>(
     ENDPOINTS.USERS.UPDATE_PROFILE,
     data
   )
@@ -32,13 +26,15 @@ const updateProfileFn = async (
 
 const updatePreferencesFn = async (
   data: UpdatePreferencesRequest
-): Promise<UserProfile> => {
-  // TODO: decomentează când API-ul e gata
-  // const { data: response } = await api.patch(ENDPOINTS.USERS.UPDATE_PREFERENCES, data);
-  // return response;
+): Promise<{ preferences: UserProfile['preferences'] }> => {
+  const { data: response } = await api.patch<{
+    preferences: UserProfile['preferences']
+  }>(ENDPOINTS.USERS.UPDATE_PREFERENCES, data)
+  return response
+}
 
-  await delay(600)
-  return { ...mockUser, preferences: { ...mockUser.preferences, ...data } }
+const deleteAccountFn = async (): Promise<void> => {
+  await api.delete(ENDPOINTS.USERS.DELETE_ACCOUNT)
 }
 
 export function useProfile() {
@@ -69,7 +65,10 @@ export function useUpdatePreferences() {
   return useMutation({
     mutationFn: updatePreferencesFn,
     onSuccess: (data) => {
-      queryClient.setQueryData(['profile'], data)
+      queryClient.setQueryData<UserProfile | undefined>(
+        ['profile'],
+        (old) => (old ? { ...old, preferences: data.preferences } : old)
+      )
       if (data.preferences?.language) {
         i18n.changeLanguage(data.preferences.language)
       }
@@ -77,6 +76,15 @@ export function useUpdatePreferences() {
     },
     onError: () => {
       toast.error(i18n.t('toast.preferencesError'))
+    }
+  })
+}
+
+export function useDeleteAccount() {
+  return useMutation({
+    mutationFn: deleteAccountFn,
+    onError: () => {
+      toast.error(i18n.t('toast.deleteAccountError'))
     }
   })
 }

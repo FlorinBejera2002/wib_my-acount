@@ -31,8 +31,6 @@ export function NotificationSettings() {
   const onSubmit = (data: NotificationPreferences) => {
     if (!profile) return
     updatePreferences.mutate({
-      language: profile.preferences.language,
-      timezone: profile.preferences.timezone,
       notifications: data
     })
   }
@@ -45,7 +43,7 @@ export function NotificationSettings() {
           <Skeleton className="h-4 w-64" />
         </CardHeader>
         <CardContent className="space-y-4">
-          {Array.from({ length: 3 }).map((_, i) => (
+          {Array.from({ length: 2 }).map((_, i) => (
             <Skeleton key={i} className="h-12 w-full" />
           ))}
         </CardContent>
@@ -64,14 +62,14 @@ export function NotificationSettings() {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <Label>{t('settings.newQuotes')}</Label>
+                <Label>{t('settings.emailNotifications')}</Label>
                 <p className="text-sm text-muted-foreground">
-                  {t('settings.newQuotesDesc')}
+                  {t('settings.emailNotificationsDesc')}
                 </p>
               </div>
               <Controller
                 control={control}
-                name="quotes"
+                name="email"
                 render={({ field }) => (
                   <Switch
                     checked={field.value}
@@ -83,14 +81,14 @@ export function NotificationSettings() {
 
             <div className="flex items-center justify-between">
               <div>
-                <Label>{t('settings.policyExpiry')}</Label>
+                <Label>{t('settings.pushNotifications')}</Label>
                 <p className="text-sm text-muted-foreground">
-                  {t('settings.policyExpiryDesc')}
+                  {t('settings.pushNotificationsDesc')}
                 </p>
               </div>
               <Controller
                 control={control}
-                name="policiesExpiry"
+                name="push"
                 render={({ field }) => (
                   <Switch
                     checked={field.value}

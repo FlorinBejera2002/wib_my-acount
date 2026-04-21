@@ -1,35 +1,23 @@
+import { api } from '@/api/axios-client'
+import { ENDPOINTS } from '@/api/endpoints'
 import type { Session } from '@/api/types'
 import i18n from '@/lib/i18n'
-import { delay } from '@/lib/utils'
-import { mockSessions } from '@/mocks/sessions'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
 const fetchSessions = async (): Promise<Session[]> => {
-  // TODO: decomentează când API-ul e gata
-  // const { data } = await api.get(ENDPOINTS.SESSIONS.LIST);
-  // return data;
-
-  await delay(500)
-  return mockSessions
+  const { data } = await api.get<{ sessions: Session[] }>(
+    ENDPOINTS.SESSIONS.LIST
+  )
+  return data.sessions
 }
 
 const terminateSessionFn = async (id: string): Promise<void> => {
-  // TODO: decomentează când API-ul e gata
-  // await api.delete(ENDPOINTS.SESSIONS.TERMINATE(id));
-
-  await delay(400)
-  const session = mockSessions.find((s) => s.id === id)
-  if (session?.isCurrent) {
-    throw new Error(i18n.t('toast.cannotTerminateCurrent'))
-  }
+  await api.delete(ENDPOINTS.SESSIONS.TERMINATE(id))
 }
 
 const terminateAllSessionsFn = async (): Promise<void> => {
-  // TODO: decomentează când API-ul e gata
-  // await api.delete(ENDPOINTS.SESSIONS.TERMINATE_ALL);
-
-  await delay(600)
+  await api.delete(ENDPOINTS.SESSIONS.TERMINATE_ALL)
 }
 
 export function useSessions() {

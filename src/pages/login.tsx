@@ -1,6 +1,7 @@
 import logo from '@/assets/logo.svg'
+import { EmailOtpStep } from '@/components/auth/email-otp-step'
 import { LoginForm } from '@/components/auth/login-form'
-import { TwoFactorForm } from '@/components/auth/two-factor-form'
+import { TotpStep } from '@/components/auth/totp-step'
 import {
   Card,
   CardContent,
@@ -22,7 +23,8 @@ export default function LoginPage() {
   const { t } = useTranslation()
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
   const [step, setStep] = useState<LoginStep>('credentials')
-  const [tempToken, setTempToken] = useState('')
+  const [preAuthToken, setPreAuthToken] = useState('')
+  const [twoFactorMethod, setTwoFactorMethod] = useState<'totp' | 'email'>('totp')
 
   const loginMutation = useLogin()
   const twoFactorMutation = useVerifyTwoFactor()
@@ -34,23 +36,39 @@ export default function LoginPage() {
   const handleLogin = (data: LoginFormValues) => {
     loginMutation.mutate(data, {
       onSuccess: (response) => {
-        if (response.requiresTwoFactor && response.tempToken) {
-          setTempToken(response.tempToken)
+        if (response.requires_2fa && response.preAuthToken) {
+          setPreAuthToken(response.preAuthToken)
+          setTwoFactorMethod(response.twoFactorMethod ?? 'totp')
           setStep('two-factor')
         }
       }
     })
   }
 
-  const handleTwoFactor = (code: string) => {
+  const handleVerify = (code: string, setError: (msg: string) => void) => {
     twoFactorMutation.mutate(
-      { tempToken, code },
+      { pre_auth_token: preAuthToken, totp_code: code },
       {
         onSuccess: () => {
+          setPreAuthToken('')
           setStep('success')
+        },
+        onError: (err: unknown) => {
+          const status = (err as { response?: { status?: number } })?.response?.status
+          const errorCode = (err as { response?: { data?: { error?: { code?: string } } } })?.response?.data?.error?.code
+          if (errorCode === 'INVALID_PRE_AUTH_TOKEN' || status === 401) {
+            handleExpired()
+          } else {
+            setError(t('auth.twoFactor.invalidCode'))
+          }
         }
       }
     )
+  }
+
+  const handleExpired = () => {
+    setPreAuthToken('')
+    setStep('credentials')
   }
 
   return (
@@ -73,14 +91,9 @@ export default function LoginPage() {
               </>
             )}
             {step === 'two-factor' && (
-              <>
-                <CardTitle className="text-gray-900">
-                  {t('auth.twoFactor.title')}
-                </CardTitle>
-                <CardDescription className="text-gray-400">
-                  {t('auth.twoFactor.description')}
-                </CardDescription>
-              </>
+              <CardTitle className="text-gray-900">
+                {t('auth.twoFactor.title')}
+              </CardTitle>
             )}
             {step === 'success' && (
               <>
@@ -102,10 +115,20 @@ export default function LoginPage() {
               />
             )}
 
-            {step === 'two-factor' && (
-              <TwoFactorForm
-                onSubmit={handleTwoFactor}
+            {step === 'two-factor' && twoFactorMethod === 'totp' && (
+              <TotpStep
+                onSubmit={handleVerify}
                 isLoading={twoFactorMutation.isPending}
+                onExpired={handleExpired}
+              />
+            )}
+
+            {step === 'two-factor' && twoFactorMethod === 'email' && (
+              <EmailOtpStep
+                preAuthToken={preAuthToken}
+                onSubmit={handleVerify}
+                isLoading={twoFactorMutation.isPending}
+                onExpired={handleExpired}
               />
             )}
 

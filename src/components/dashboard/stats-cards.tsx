@@ -9,28 +9,47 @@ interface StatsCardsProps {
   isLoading: boolean
 }
 
+function getStatValue(
+  stats: DashboardStats | undefined,
+  key: string
+): number {
+  if (!stats) return 0
+  switch (key) {
+    case 'totalQuotes':
+      return stats.quotes.total
+    case 'activePolicies':
+      return stats.policies.active
+    case 'expiringSoon':
+      return stats.policies.expiringSoon.length
+    case 'unreadNotifications':
+      return stats.notifications.unread
+    default:
+      return 0
+  }
+}
+
 const cards = [
   {
     labelKey: 'dashboard.totalQuotes',
-    key: 'totalQuotes' as const,
+    key: 'totalQuotes',
     icon: ClipboardList,
     iconColor: 'text-accent-green'
   },
   {
     labelKey: 'dashboard.activePolicies',
-    key: 'activePolicies' as const,
+    key: 'activePolicies',
     icon: FileText,
     iconColor: 'text-blue-500'
   },
   {
     labelKey: 'dashboard.expiringSoon',
-    key: 'expiringSoon' as const,
+    key: 'expiringSoon',
     icon: AlertTriangle,
     iconColor: 'text-amber-500'
   },
   {
     labelKey: 'dashboard.notifications',
-    key: 'unreadNotifications' as const,
+    key: 'unreadNotifications',
     icon: Bell,
     iconColor: 'text-red-500'
   }
@@ -57,7 +76,7 @@ export function StatsCards({ stats, isLoading }: StatsCardsProps) {
               <Skeleton className="mt-1 h-6 w-10" />
             ) : (
               <p className="mt-1 text-xl font-bold text-gray-900">
-                {stats?.[card.key] ?? 0}
+                {getStatValue(stats, card.key)}
               </p>
             )}
           </div>

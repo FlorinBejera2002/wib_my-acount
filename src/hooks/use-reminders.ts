@@ -1,77 +1,153 @@
-import type { CreateExpiryAlertRequest, ExpiryAlert } from '@/api/types'
+import { api } from '@/api/axios-client'
+import { ENDPOINTS } from '@/api/endpoints'
+import type {
+  CreateExpiryAlertRequest,
+  CreateReminderRequest,
+  ExpiryAlert,
+  Reminder,
+  UpdateReminderRequest
+} from '@/api/types'
 import i18n from '@/lib/i18n'
-import { delay } from '@/lib/utils'
-import { mockExpiryAlerts } from '@/mocks/reminders'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
-const NOTIFY_BEFORE_OFFSETS: Record<
-  string,
-  { days?: number; months?: number }
-> = {
-  '1_DAY': { days: 1 },
-  '3_DAYS': { days: 3 },
-  '7_DAYS': { days: 7 },
-  '1_MONTH': { months: 1 },
-  '2_MONTHS': { months: 2 },
-  '3_MONTHS': { months: 3 },
-  '6_MONTHS': { months: 6 }
+// ==================== Reminders (API) ====================
+
+const fetchReminders = async (): Promise<Reminder[]> => {
+  const { data } = await api.get<{ reminders: Reminder[] }>(
+    ENDPOINTS.REMINDERS.LIST
+  )
+  return data.reminders
 }
 
-function computeNotificationDate(
-  expiryDate: string,
-  notifyBefore: string
-): string {
-  const date = new Date(expiryDate)
-  const offset = NOTIFY_BEFORE_OFFSETS[notifyBefore]
-  if (offset?.days) date.setDate(date.getDate() - offset.days)
-  if (offset?.months) date.setMonth(date.getMonth() - offset.months)
-  return date.toISOString().slice(0, 10)
+const createReminderFn = async (
+  data: CreateReminderRequest
+): Promise<Reminder> => {
+  const { data: response } = await api.post<Reminder>(
+    ENDPOINTS.REMINDERS.CREATE,
+    data
+  )
+  return response
 }
 
-const fetchAlerts = async (): Promise<ExpiryAlert[]> => {
-  // TODO: decomentează când API-ul e gata
-  // const { data } = await api.get(ENDPOINTS.REMINDERS.LIST)
-  // return data
-
-  await delay(400)
-  return mockExpiryAlerts
+const updateReminderFn = async ({
+  id,
+  ...data
+}: UpdateReminderRequest & { id: string }): Promise<Reminder> => {
+  const { data: response } = await api.put<Reminder>(
+    ENDPOINTS.REMINDERS.UPDATE(id),
+    data
+  )
+  return response
 }
 
-const createAlertFn = async (
+const deleteReminderFn = async (id: string): Promise<void> => {
+  await api.delete(ENDPOINTS.REMINDERS.DELETE(id))
+}
+
+export function useReminders() {
+  return useQuery({
+    queryKey: ['reminders'],
+    queryFn: fetchReminders
+  })
+}
+
+export function useCreateReminder() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: createReminderFn,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['reminders'] })
+      toast.success(i18n.t('toast.alertCreated'))
+    },
+    onError: () => {
+      toast.error(i18n.t('toast.alertCreateError'))
+    }
+  })
+}
+
+export function useUpdateReminder() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: updateReminderFn,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['reminders'] })
+      toast.success(i18n.t('toast.alertUpdated'))
+    },
+    onError: () => {
+      toast.error(i18n.t('toast.alertUpdateError'))
+    }
+  })
+}
+
+export function useDeleteReminder() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: deleteReminderFn,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['reminders'] })
+      toast.success(i18n.t('toast.alertDeleted'))
+    },
+    onError: () => {
+      toast.error(i18n.t('toast.alertDeleteError'))
+    }
+  })
+}
+
+// ==================== Expiry Alerts (local UI concept using Reminders API) ====================
+
+const fetchExpiryAlerts = async (): Promise<ExpiryAlert[]> => {
+  const { data } = await api.get<{ reminders: Reminder[] }>(
+    ENDPOINTS.REMINDERS.LIST
+  )
+  return data.reminders.map((r) => ({
+    id: r.id,
+    alertType: (r.title as ExpiryAlert['alertType']) || 'RCA',
+    notifyBefore: '1_MONTH' as const,
+    expiryDate: r.remindAt,
+    notificationDate: r.remindAt,
+    createdAt: r.createdAt,
+    name: r.note || undefined
+  }))
+}
+
+const createExpiryAlertFn = async (
   data: CreateExpiryAlertRequest
 ): Promise<ExpiryAlert> => {
-  // TODO: decomentează când API-ul e gata
-  // const { data: response } = await api.post(ENDPOINTS.REMINDERS.CREATE, data)
-  // return response
-
-  await delay(500)
-  const newAlert: ExpiryAlert = {
-    id: `alert_${Date.now()}`,
-    ...data,
-    notificationDate: computeNotificationDate(
-      data.expiryDate,
-      data.notifyBefore
-    ),
-    createdAt: new Date().toISOString()
+  const { data: response } = await api.post<Reminder>(
+    ENDPOINTS.REMINDERS.CREATE,
+    {
+      title: data.alertType,
+      remindAt: data.expiryDate,
+      note: [data.licensePlate, data.name, data.shortAddress]
+        .filter(Boolean)
+        .join(' | ') || undefined
+    }
+  )
+  return {
+    id: response.id,
+    alertType: data.alertType,
+    notifyBefore: data.notifyBefore,
+    licensePlate: data.licensePlate,
+    name: data.name,
+    shortAddress: data.shortAddress,
+    expiryDate: data.expiryDate,
+    notificationDate: response.remindAt,
+    createdAt: response.createdAt
   }
-  mockExpiryAlerts.unshift(newAlert)
-  return newAlert
 }
 
-const deleteAlertFn = async (id: string): Promise<void> => {
-  // TODO: decomentează când API-ul e gata
-  // await api.delete(ENDPOINTS.REMINDERS.DELETE(id))
-
-  await delay(300)
-  const index = mockExpiryAlerts.findIndex((a) => a.id === id)
-  if (index !== -1) mockExpiryAlerts.splice(index, 1)
+const deleteExpiryAlertFn = async (id: string): Promise<void> => {
+  await api.delete(ENDPOINTS.REMINDERS.DELETE(id))
 }
 
 export function useExpiryAlerts() {
   return useQuery({
     queryKey: ['expiry-alerts'],
-    queryFn: fetchAlerts
+    queryFn: fetchExpiryAlerts
   })
 }
 
@@ -79,7 +155,7 @@ export function useCreateExpiryAlert() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: createAlertFn,
+    mutationFn: createExpiryAlertFn,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['expiry-alerts'] })
       toast.success(i18n.t('toast.alertCreated'))
@@ -94,7 +170,7 @@ export function useDeleteExpiryAlert() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: deleteAlertFn,
+    mutationFn: deleteExpiryAlertFn,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['expiry-alerts'] })
       toast.success(i18n.t('toast.alertDeleted'))
