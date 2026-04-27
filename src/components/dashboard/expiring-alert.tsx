@@ -34,12 +34,16 @@ export function ExpiringAlert({ policies }: ExpiringAlertProps) {
 
   return (
     <Link
-      to="/policies"
-      className="flex items-center gap-3 rounded-xl border border-amber-200 bg-amber-50/50 px-4 py-3 text-sm transition-colors hover:bg-amber-50"
+      to={
+        policies.length === 1 && policies[0]
+          ? `/policies?policyId=${policies[0].id}`
+          : '/policies'
+      }
+      className="flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50/30 px-4 py-3 text-sm transition-all hover:bg-slate-50/50 hover:border-slate-300"
     >
-      <AlertTriangle className="h-4 w-4 shrink-0 text-amber-500" />
-      <span className="font-medium text-amber-800">{label}</span>
-      <span className="hidden truncate text-xs text-amber-600 sm:block">
+      <AlertTriangle className="h-4 w-4 shrink-0 text-amber-600" />
+      <span className="font-medium text-slate-700">{label}</span>
+      <span className="hidden truncate text-xs text-slate-500 sm:block">
         — {names}
       </span>
     </Link>
