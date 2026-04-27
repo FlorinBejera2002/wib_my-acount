@@ -33,34 +33,64 @@ const typeConfig: Record<
     iconText: 'text-blue-600'
   },
   casco: {
-    badge: 'bg-green-100 text-green-700',
-    iconBg: 'bg-green-50',
-    iconText: 'text-green-600'
+    badge: 'bg-emerald-100 text-emerald-700',
+    iconBg: 'bg-emerald-50',
+    iconText: 'text-emerald-600'
+  },
+  casco_econom: {
+    badge: 'bg-teal-100 text-teal-700',
+    iconBg: 'bg-teal-50',
+    iconText: 'text-teal-600'
   },
   home: {
     badge: 'bg-orange-100 text-orange-700',
     iconBg: 'bg-orange-50',
     iconText: 'text-orange-600'
   },
-  health: {
-    badge: 'bg-rose-100 text-rose-700',
-    iconBg: 'bg-rose-50',
-    iconText: 'text-rose-600'
+  pad: {
+    badge: 'bg-amber-100 text-amber-700',
+    iconBg: 'bg-amber-50',
+    iconText: 'text-amber-600'
   },
   travel: {
     badge: 'bg-purple-100 text-purple-700',
     iconBg: 'bg-purple-50',
     iconText: 'text-purple-600'
   },
-  life: {
+  health: {
     badge: 'bg-pink-100 text-pink-700',
     iconBg: 'bg-pink-50',
     iconText: 'text-pink-600'
   },
-  other: {
-    badge: 'bg-gray-100 text-gray-700',
-    iconBg: 'bg-gray-50',
-    iconText: 'text-gray-600'
+  cmr: {
+    badge: 'bg-lime-100 text-lime-700',
+    iconBg: 'bg-lime-50',
+    iconText: 'text-lime-600'
+  },
+  rcp: {
+    badge: 'bg-rose-100 text-rose-700',
+    iconBg: 'bg-rose-50',
+    iconText: 'text-rose-600'
+  },
+  accidents: {
+    badge: 'bg-indigo-100 text-indigo-700',
+    iconBg: 'bg-indigo-50',
+    iconText: 'text-indigo-600'
+  },
+  accidents_taxi: {
+    badge: 'bg-sky-100 text-sky-700',
+    iconBg: 'bg-sky-50',
+    iconText: 'text-sky-600'
+  },
+  accidents_traveler: {
+    badge: 'bg-violet-100 text-violet-700',
+    iconBg: 'bg-violet-50',
+    iconText: 'text-violet-600'
+  },
+  breakdown: {
+    badge: 'bg-cyan-100 text-cyan-700',
+    iconBg: 'bg-cyan-50',
+    iconText: 'text-cyan-600'
   }
 }
 

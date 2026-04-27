@@ -196,13 +196,19 @@ export interface ChangePasswordRequest {
 // ==================== Quotes ====================
 
 export type QuoteType =
-  | 'rca'
+  | 'accidents'
+  | 'accidents_taxi'
+  | 'accidents_traveler'
+  | 'breakdown'
   | 'casco'
-  | 'home'
+  | 'casco_econom'
+  | 'cmr'
   | 'health'
+  | 'home'
+  | 'pad'
+  | 'rca'
+  | 'rcp'
   | 'travel'
-  | 'life'
-  | 'other'
 
 export type QuoteStatus =
   | 'draft'
@@ -222,6 +228,7 @@ export interface Quote {
   validUntil?: string | null
   quoteData?: Record<string, unknown>
   productDetails?: string | null
+  vehicleOrProperty?: string | null
   insuredDetails?: string | null
   offerUrl?: string | null
   createdAt: string
@@ -231,13 +238,19 @@ export interface Quote {
 // ==================== Policies ====================
 
 export type PolicyType =
-  | 'rca'
+  | 'accidents'
+  | 'accidents_taxi'
+  | 'accidents_traveler'
+  | 'breakdown'
   | 'casco'
-  | 'home'
+  | 'casco_econom'
+  | 'cmr'
   | 'health'
+  | 'home'
+  | 'pad'
+  | 'rca'
+  | 'rcp'
   | 'travel'
-  | 'life'
-  | 'other'
 
 export type PolicyStatus = 'active' | 'expired' | 'cancelled' | 'pending'
 

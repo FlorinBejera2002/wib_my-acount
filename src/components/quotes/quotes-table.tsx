@@ -39,10 +39,17 @@ const filterConfigs = [
     options: [
       { value: 'rca', labelKey: 'insuranceType.RCA' },
       { value: 'casco', labelKey: 'insuranceType.CASCO' },
-      { value: 'home', labelKey: 'insuranceType.LOCUINTA_PAD' },
-      { value: 'travel', labelKey: 'insuranceType.CALATORIE' },
-      { value: 'health', labelKey: 'insuranceType.SANATATE' },
-      { value: 'life', labelKey: 'insuranceType.VIATA' }
+      { value: 'casco_econom', labelKey: 'insuranceType.CASCO_ECONOM' },
+      { value: 'home', labelKey: 'insuranceType.HOME' },
+      { value: 'pad', labelKey: 'insuranceType.PAD' },
+      { value: 'travel', labelKey: 'insuranceType.TRAVEL' },
+      { value: 'health', labelKey: 'insuranceType.HEALTH' },
+      { value: 'cmr', labelKey: 'insuranceType.CMR' },
+      { value: 'rcp', labelKey: 'insuranceType.RCP' },
+      { value: 'accidents', labelKey: 'insuranceType.ACCIDENTS' },
+      { value: 'accidents_taxi', labelKey: 'insuranceType.ACCIDENTS_TAXI' },
+      { value: 'accidents_traveler', labelKey: 'insuranceType.ACCIDENTS_TRAVELER' },
+      { value: 'breakdown', labelKey: 'insuranceType.BREAKDOWN' }
     ]
   },
   {
@@ -107,7 +114,7 @@ export function QuotesTable() {
       header: t('quotes.productDetails'),
       cell: ({ row }) => (
         <span className="text-sm text-gray-700 max-w-[220px] truncate block">
-          {row.original.productDetails ?? '—'}
+          {row.original.productDetails ?? row.original.vehicleOrProperty ?? '—'}
         </span>
       )
     },
@@ -157,9 +164,9 @@ export function QuotesTable() {
             href={url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 text-sm text-primary hover:text-primary/80 transition-colors"
+            className="inline-flex items-center gap-1.5 rounded-md border border-gray-150 bg-gray-50/40 px-3 py-1.5 text-xs font-medium text-blue-600 shadow-[0_1px_3px_rgba(0,0,0,0.04)] transition-colors hover:bg-gray-50 hover:text-blue-700"
           >
-            <ExternalLink className="h-3.5 w-3.5 shrink-0" />
+            <ExternalLink className="h-3 w-3 shrink-0" />
             {t('quotes.viewOffer')}
           </a>
         )

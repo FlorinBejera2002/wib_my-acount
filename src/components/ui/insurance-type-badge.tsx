@@ -1,13 +1,14 @@
 import {
   Car,
-  Heart,
   Home,
   Plane,
+  Shield,
   ShieldCheck,
   Stethoscope,
   Truck,
   UserCheck,
   Users,
+  Wrench,
   type LucideIcon
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
@@ -16,45 +17,19 @@ const typeConfig: Record<
   string,
   { bg: string; text: string; icon: LucideIcon }
 > = {
-  RCA: { bg: 'bg-blue-50', text: 'text-blue-700', icon: Car },
+  ACCIDENTS: { bg: 'bg-indigo-50', text: 'text-indigo-700', icon: Users },
+  ACCIDENTS_TAXI: { bg: 'bg-sky-50', text: 'text-sky-700', icon: Car },
+  ACCIDENTS_TRAVELER: { bg: 'bg-violet-50', text: 'text-violet-700', icon: UserCheck },
+  BREAKDOWN: { bg: 'bg-cyan-50', text: 'text-cyan-700', icon: Wrench },
   CASCO: { bg: 'bg-emerald-50', text: 'text-emerald-700', icon: ShieldCheck },
   CASCO_ECONOM: { bg: 'bg-teal-50', text: 'text-teal-700', icon: ShieldCheck },
-  LOCUINTA_PAD: { bg: 'bg-orange-50', text: 'text-orange-700', icon: Home },
-  LOCUINTA_FACULTATIVA: {
-    bg: 'bg-amber-50',
-    text: 'text-amber-700',
-    icon: Home
-  },
-  CALATORIE: { bg: 'bg-purple-50', text: 'text-purple-700', icon: Plane },
-  VIATA: { bg: 'bg-rose-50', text: 'text-rose-700', icon: Heart },
-  ASISTENTA_RUTIERA: { bg: 'bg-cyan-50', text: 'text-cyan-700', icon: Car },
-  MALPRAXIS: {
-    bg: 'bg-red-50',
-    text: 'text-red-700',
-    icon: Stethoscope
-  },
-  SANATATE: {
-    bg: 'bg-pink-50',
-    text: 'text-pink-700',
-    icon: Stethoscope
-  },
-  ACCIDENTE_CALATORI: {
-    bg: 'bg-indigo-50',
-    text: 'text-indigo-700',
-    icon: Users
-  },
-  ACCIDENTE_PERSOANE: {
-    bg: 'bg-violet-50',
-    text: 'text-violet-700',
-    icon: UserCheck
-  },
-  ACCIDENTE_TAXI: { bg: 'bg-sky-50', text: 'text-sky-700', icon: Car },
   CMR: { bg: 'bg-lime-50', text: 'text-lime-700', icon: Truck },
-  TRAVEL: { bg: 'bg-purple-50', text: 'text-purple-700', icon: Plane },
   HEALTH: { bg: 'bg-pink-50', text: 'text-pink-700', icon: Stethoscope },
-  PAD: { bg: 'bg-orange-50', text: 'text-orange-700', icon: Home },
-  FACULTATIVE: { bg: 'bg-amber-50', text: 'text-amber-700', icon: Home },
-  PAD_FACULTATIVE: { bg: 'bg-amber-50', text: 'text-amber-700', icon: Home }
+  HOME: { bg: 'bg-orange-50', text: 'text-orange-700', icon: Home },
+  PAD: { bg: 'bg-amber-50', text: 'text-amber-700', icon: Home },
+  RCA: { bg: 'bg-blue-50', text: 'text-blue-700', icon: Car },
+  RCP: { bg: 'bg-rose-50', text: 'text-rose-700', icon: Shield },
+  TRAVEL: { bg: 'bg-purple-50', text: 'text-purple-700', icon: Plane }
 }
 
 const defaultConfig = {
