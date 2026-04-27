@@ -33,8 +33,8 @@ const updatePreferencesFn = async (
   return response
 }
 
-const deleteAccountFn = async (password: string): Promise<void> => {
-  await api.delete(ENDPOINTS.USERS.DELETE_ACCOUNT, { data: { password } })
+const deleteAccountFn = async (): Promise<void> => {
+  await api.post(ENDPOINTS.USERS.DELETE_ACCOUNT)
 }
 
 export function useProfile() {

@@ -46,9 +46,9 @@ export function DataTable<TData, TValue>({
 
   if (isLoading) {
     return (
-      <div className="rounded-xl border border-gray-100 bg-white shadow-sm overflow-x-auto">
+      <div className="rounded-xl border border-gray-100/80 bg-white shadow-[0_1px_4px_rgba(0,0,0,0.05)] overflow-x-auto">
         <Table className="min-w-[700px]">
-          <TableHeader className="bg-slate-800 [&_th]:text-slate-300 [&_th]:text-xs [&_th]:font-medium [&_th]:uppercase [&_th]:tracking-wider">
+          <TableHeader className="bg-slate-50 [&_th]:text-slate-500 [&_th]:text-xs [&_th]:font-medium [&_th]:uppercase [&_th]:tracking-wider">
             <TableRow>
               {columns.map((_, i) => (
                 <TableHead key={i}>
@@ -75,7 +75,7 @@ export function DataTable<TData, TValue>({
 
   if (isError) {
     return (
-      <div className="flex flex-col items-center justify-center gap-4 rounded-xl border border-gray-100 bg-white shadow-sm py-16">
+      <div className="flex flex-col items-center justify-center gap-4 rounded-xl border border-gray-100/80 bg-white shadow-[0_1px_4px_rgba(0,0,0,0.05)] py-16">
         <AlertCircle className="h-12 w-12 text-destructive" />
         <div className="text-center">
           <p className="font-medium text-foreground">{t('common.error')}</p>
@@ -93,9 +93,9 @@ export function DataTable<TData, TValue>({
   }
 
   return (
-    <div className="rounded-xl border border-gray-100 bg-white shadow-sm overflow-x-auto">
+    <div className="rounded-xl border border-gray-100/80 bg-white shadow-[0_1px_4px_rgba(0,0,0,0.05)] overflow-x-auto">
       <Table className="min-w-[700px]">
-        <TableHeader className="bg-slate-800 [&_th]:text-slate-300 [&_th]:text-xs [&_th]:font-medium [&_th]:uppercase [&_th]:tracking-wider">
+        <TableHeader className="bg-slate-50 [&_th]:text-slate-500 [&_th]:text-xs [&_th]:font-medium [&_th]:uppercase [&_th]:tracking-wider">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
@@ -116,7 +116,7 @@ export function DataTable<TData, TValue>({
             table.getRowModel().rows.map((row) => (
               <TableRow
                 key={row.id}
-                className={onRowClick ? 'cursor-pointer hover:bg-gray-50' : ''}
+                className={onRowClick ? 'cursor-pointer' : ''}
                 onClick={() => onRowClick?.(row.original)}
               >
                 {row.getVisibleCells().map((cell) => (

@@ -8,10 +8,8 @@ import {
   DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { useDeleteAccount } from '@/hooks/use-user'
-import { AlertTriangle, Eye, EyeOff, Info, Loader2 } from 'lucide-react'
+import { AlertTriangle, Info, Loader2 } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
@@ -19,32 +17,19 @@ import { toast } from 'sonner'
 export function DeleteAccountDialog() {
   const { t } = useTranslation()
   const [open, setOpen] = useState(false)
-  const [password, setPassword] = useState('')
-  const [showPassword, setShowPassword] = useState(false)
   const deleteAccount = useDeleteAccount()
 
-  const canDelete = password.length > 0
-
   const handleDelete = () => {
-    deleteAccount.mutate(password, {
+    deleteAccount.mutate(undefined, {
       onSuccess: () => {
         toast.success(t('toast.deleteRequestSent'))
         setOpen(false)
-        setPassword('')
       }
     })
   }
 
-  const handleOpenChange = (value: boolean) => {
-    setOpen(value)
-    if (!value) {
-      setPassword('')
-      setShowPassword(false)
-    }
-  }
-
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild={true}>
         <Button variant="destructive">{t('settings.deleteAccount')}</Button>
       </DialogTrigger>
@@ -59,7 +44,7 @@ export function DeleteAccountDialog() {
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4 py-4">
+        <div className="py-4">
           <div className="rounded-lg bg-blue-50 p-4 text-sm text-blue-800">
             <div className="flex items-start gap-2">
               <Info className="h-4 w-4 mt-0.5 shrink-0" />
@@ -70,44 +55,16 @@ export function DeleteAccountDialog() {
               </div>
             </div>
           </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="delete-password">
-              {t('settings.passwordConfirmLabel')}
-            </Label>
-            <div className="relative">
-              <Input
-                id="delete-password"
-                type={showPassword ? 'text' : 'password'}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder={t('auth.passwordPlaceholder')}
-                className="pr-10"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                tabIndex={-1}
-              >
-                {showPassword ? (
-                  <EyeOff className="h-4 w-4" />
-                ) : (
-                  <Eye className="h-4 w-4" />
-                )}
-              </button>
-            </div>
-          </div>
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => handleOpenChange(false)}>
+          <Button variant="outline" onClick={() => setOpen(false)}>
             {t('common.cancel')}
           </Button>
           <Button
             variant="destructive"
             onClick={handleDelete}
-            disabled={!canDelete || deleteAccount.isPending}
+            disabled={deleteAccount.isPending}
           >
             {deleteAccount.isPending ? (
               <>

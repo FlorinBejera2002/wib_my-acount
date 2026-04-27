@@ -68,6 +68,7 @@ export function TwoFactorDisableDialog({
             onKeyDown={(e) => {
               if (e.key === 'Enter' && password) handleDisable()
             }}
+            autoComplete="current-password"
             autoFocus
           />
         </div>
