@@ -1,11 +1,5 @@
-import { NotificationsSlideOver } from '@/components/notifications/notifications-slide-over'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { SidebarTrigger } from '@/components/ui/sidebar'
-import { useNotifications } from '@/hooks/use-notifications'
-import { Bell } from 'lucide-react'
-import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useLocation } from 'react-router-dom'
 
@@ -13,8 +7,7 @@ const breadcrumbMap: Record<string, string> = {
   '/dashboard': 'nav.dashboard',
   '/quotes': 'nav.quotes',
   '/policies': 'nav.policies',
-  '/profile': 'nav.profile',
-  '/notifications': 'nav.notifications'
+  '/profile': 'nav.profile'
 }
 
 function getBreadcrumbs(
@@ -61,62 +54,35 @@ export function AppHeader() {
   const { t } = useTranslation()
   const location = useLocation()
   const breadcrumbs = getBreadcrumbs(location.pathname, t)
-  const { data: notifications } = useNotifications()
-  const [notificationsOpen, setNotificationsOpen] = useState(false)
-
-  const unreadCount = notifications?.filter((n) => !n.isRead).length ?? 0
 
   return (
-    <>
-      <header className="flex h-14 items-center gap-4 border-b bg-card px-4 lg:px-6">
-        <SidebarTrigger />
+    <header className="flex h-14 items-center gap-4 border-b bg-card px-4 lg:px-6">
+      <SidebarTrigger />
 
-        <Separator orientation="vertical" className="h-6" />
+      <Separator orientation="vertical" className="h-6" />
 
-        <nav className="flex items-center gap-1.5 text-sm min-w-0 overflow-hidden">
-          <Link
-            to="/dashboard"
-            className="hidden sm:inline text-muted-foreground hover:text-foreground shrink-0"
+      <nav className="flex items-center gap-1.5 text-sm min-w-0 overflow-hidden">
+        <Link
+          to="/dashboard"
+          className="hidden sm:inline text-muted-foreground hover:text-foreground shrink-0"
+        >
+          {t('common.home')}
+        </Link>
+        {breadcrumbs.map((crumb) => (
+          <span
+            key={crumb.href}
+            className="flex items-center gap-1.5 min-w-0"
           >
-            {t('common.home')}
-          </Link>
-          {breadcrumbs.map((crumb) => (
-            <span
-              key={crumb.href}
-              className="flex items-center gap-1.5 min-w-0"
+            <span className="hidden sm:inline text-muted-foreground">/</span>
+            <Link
+              to={crumb.href}
+              className="font-medium text-foreground truncate"
             >
-              <span className="hidden sm:inline text-muted-foreground">/</span>
-              <Link
-                to={crumb.href}
-                className="font-medium text-foreground truncate"
-              >
-                {crumb.label}
-              </Link>
-            </span>
-          ))}
-        </nav>
-
-        <div className="ml-auto flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="relative"
-            onClick={() => setNotificationsOpen(true)}
-          >
-            <Bell className="h-5 w-5" />
-            {unreadCount > 0 && (
-              <Badge className="absolute -right-1 -top-1 flex h-5 min-w-[20px] items-center justify-center rounded-full px-1 text-[10px]">
-                {unreadCount}
-              </Badge>
-            )}
-          </Button>
-        </div>
-      </header>
-
-      <NotificationsSlideOver
-        open={notificationsOpen}
-        onOpenChange={setNotificationsOpen}
-      />
-    </>
+              {crumb.label}
+            </Link>
+          </span>
+        ))}
+      </nav>
+    </header>
   )
 }
