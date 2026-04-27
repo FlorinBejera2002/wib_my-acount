@@ -80,7 +80,9 @@
     "timezoneRequired": "Az időzóna megadása kötelező",
     "selectAlertType": "Válassza ki a riasztás típusát",
     "selectNotifyInterval": "Válassza ki az értesítési időközt",
-    "expiryDateRequired": "A lejárati dátum megadása kötelező"
+    "expiryDateRequired": "A lejárati dátum megadása kötelező",
+    "expiryDateFuture": "A lejárati dátumnak a jövőben kell lennie",
+    "notifyBeforeTooEarly": "Az értesítési időköz hosszabb, mint a lejáratig hátralévő idő — az emlékeztető már a múltban lenne"
   },
   "auth": {
     "emailLabel": "E-mail cím",
@@ -184,7 +186,7 @@
     "expiringSoon": "Hamarosan lejár",
     "notifications": "Értesítések",
     "recentPolicies": "Kötvények",
-    "recentQuotes": "Legutóbbi ajánlatok",
+    "recentQuotes": "Ajánlatok",
     "noPolicies": "Nincsenek kötvények.",
     "noQuotes": "Nincsenek ajánlatok.",
     "activityTitle": "Aktivitása",
@@ -410,6 +412,7 @@
     "nameLabel": "Név",
     "namePlaceholder": "Adja meg a nevet",
     "saveBtn": "Mentés",
+    "formErrors": "Kérjük, javítsa ki a következő hibákat:",
     "alertTypes": {
       "RCA": "Kötelező gépjármű-biztosítás (RCA)",
       "ASR": "Közúti biztosítás (ASR)",

@@ -80,7 +80,9 @@
     "timezoneRequired": "Timezone is required",
     "selectAlertType": "Select alert type",
     "selectNotifyInterval": "Select notification interval",
-    "expiryDateRequired": "Expiry date is required"
+    "expiryDateRequired": "Expiry date is required",
+    "expiryDateFuture": "Expiry date must be in the future",
+    "notifyBeforeTooEarly": "The notification interval is longer than the time until expiry — the reminder would already be in the past"
   },
   "auth": {
     "emailLabel": "Email address",
@@ -184,7 +186,7 @@
     "expiringSoon": "Expiring Soon",
     "notifications": "Notifications",
     "recentPolicies": "Policies",
-    "recentQuotes": "Recent Quotes",
+    "recentQuotes": "Quotes",
     "noPolicies": "No policies.",
     "noQuotes": "No quotes.",
     "activityTitle": "Activity",
@@ -410,6 +412,7 @@
     "nameLabel": "Name",
     "namePlaceholder": "Enter name",
     "saveBtn": "Save",
+    "formErrors": "Please fix the following errors:",
     "alertTypes": {
       "RCA": "Mandatory Auto Insurance (RCA)",
       "ASR": "Road Insurance (ASR)",

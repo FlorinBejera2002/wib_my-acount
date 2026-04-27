@@ -358,53 +358,6 @@ export interface UpdateReminderRequest {
   isDone?: boolean
 }
 
-// ==================== Expiry Alerts (local UI concept, maps to Reminders API) ====================
-
-export type AlertType =
-  | 'RCA'
-  | 'ASR'
-  | 'CALATORIE'
-  | 'LOCUINTA_PAD'
-  | 'LOCUINTA_OPTIONALA'
-  | 'CASCO'
-  | 'ROVINIETA'
-  | 'ITP'
-  | 'REVIZIE_AUTO'
-  | 'PERMIS'
-  | 'BULETIN'
-  | 'PASAPORT'
-  | 'ZIUA_SOTIEI'
-
-export type NotifyBefore =
-  | '1_DAY'
-  | '3_DAYS'
-  | '7_DAYS'
-  | '1_MONTH'
-  | '2_MONTHS'
-  | '3_MONTHS'
-  | '6_MONTHS'
-
-export interface ExpiryAlert {
-  id: string
-  alertType: AlertType
-  notifyBefore: NotifyBefore
-  licensePlate?: string
-  name?: string
-  shortAddress?: string
-  expiryDate: string
-  notificationDate: string
-  createdAt: string
-}
-
-export interface CreateExpiryAlertRequest {
-  alertType: AlertType
-  notifyBefore: NotifyBefore
-  licensePlate?: string
-  name?: string
-  shortAddress?: string
-  expiryDate: string
-}
-
 // ==================== Dashboard ====================
 
 export interface DashboardStats {
@@ -486,7 +439,7 @@ export const ERROR_CODES = {
   SESSION_NOT_FOUND: 'SESSION_NOT_FOUND',
   UNAUTHORIZED: 'UNAUTHORIZED',
   FORBIDDEN: 'FORBIDDEN',
-  NOT_FOUND: 'NOT_FOUND',
+  NOT_FOUND: 'NOT_FOUND'
 } as const
 
 export type ErrorCode = (typeof ERROR_CODES)[keyof typeof ERROR_CODES]

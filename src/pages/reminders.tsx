@@ -1,4 +1,4 @@
-import type { AlertType, ExpiryAlert, NotifyBefore } from '@/api/types'
+import type { Reminder } from '@/api/types'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -11,9 +11,9 @@ import {
 } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
-  useCreateExpiryAlert,
-  useDeleteExpiryAlert,
-  useExpiryAlerts
+  useCreateReminder,
+  useDeleteReminder,
+  useReminders
 } from '@/hooks/use-reminders'
 import i18n from '@/lib/i18n'
 import {
@@ -25,6 +25,42 @@ import { ArrowLeft, Bell, Check, Plus, X } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+
+type AlertType =
+  | 'RCA'
+  | 'ASR'
+  | 'CALATORIE'
+  | 'LOCUINTA_PAD'
+  | 'LOCUINTA_OPTIONALA'
+  | 'CASCO'
+  | 'ROVINIETA'
+  | 'ITP'
+  | 'REVIZIE_AUTO'
+  | 'PERMIS'
+  | 'BULETIN'
+  | 'PASAPORT'
+  | 'ZIUA_SOTIEI'
+
+type NotifyBefore =
+  | '1_DAY'
+  | '3_DAYS'
+  | '7_DAYS'
+  | '1_MONTH'
+  | '2_MONTHS'
+  | '3_MONTHS'
+  | '6_MONTHS'
+
+interface ParsedAlert {
+  id: string
+  alertType: AlertType
+  notifyBefore: NotifyBefore
+  licensePlate?: string
+  name?: string
+  shortAddress?: string
+  expiryDate: string
+  notificationDate: string
+  createdAt: string
+}
 
 const ALERT_TYPE_KEYS: AlertType[] = [
   'RCA',
@@ -73,6 +109,71 @@ const HOUSING_TYPES: AlertType[] = ['LOCUINTA_PAD', 'LOCUINTA_OPTIONALA']
 
 const BIRTHDAY_TYPE: AlertType = 'ZIUA_SOTIEI'
 
+function computeRemindAt(
+  expiryDate: string,
+  notifyBefore: NotifyBefore
+): string {
+  const date = new Date(expiryDate)
+  switch (notifyBefore) {
+    case '1_DAY':
+      date.setDate(date.getDate() - 1)
+      break
+    case '3_DAYS':
+      date.setDate(date.getDate() - 3)
+      break
+    case '7_DAYS':
+      date.setDate(date.getDate() - 7)
+      break
+    case '1_MONTH':
+      date.setMonth(date.getMonth() - 1)
+      break
+    case '2_MONTHS':
+      date.setMonth(date.getMonth() - 2)
+      break
+    case '3_MONTHS':
+      date.setMonth(date.getMonth() - 3)
+      break
+    case '6_MONTHS':
+      date.setMonth(date.getMonth() - 6)
+      break
+  }
+  return date.toISOString().slice(0, 10)
+}
+
+function parseReminderToAlert(reminder: Reminder): ParsedAlert {
+  let notifyBefore: NotifyBefore = '1_MONTH'
+  let licensePlate: string | undefined
+  let name: string | undefined
+  let shortAddress: string | undefined
+  let expiryDate = reminder.remindAt
+
+  if (reminder.note) {
+    try {
+      const parsed = JSON.parse(reminder.note)
+      notifyBefore = parsed.notifyBefore || '1_MONTH'
+      licensePlate = parsed.licensePlate || undefined
+      name = parsed.name || undefined
+      shortAddress = parsed.shortAddress || undefined
+      expiryDate = parsed.expiryDate || reminder.remindAt
+    } catch {
+      // Legacy reminder with plain text note — use as name
+      name = reminder.note
+    }
+  }
+
+  return {
+    id: reminder.id,
+    alertType: (reminder.title as AlertType) || 'RCA',
+    notifyBefore,
+    licensePlate,
+    name,
+    shortAddress,
+    expiryDate,
+    notificationDate: reminder.remindAt,
+    createdAt: reminder.createdAt
+  }
+}
+
 function formatDateLocal(dateStr: string): string {
   const localeMap: Record<string, string> = {
     ro: 'ro-RO',
@@ -92,7 +193,7 @@ function AlertCard({
   alert,
   onDelete
 }: {
-  alert: ExpiryAlert
+  alert: ParsedAlert
   onDelete: (id: string) => void
 }) {
   const { t } = useTranslation()
@@ -171,7 +272,7 @@ function AlertCard({
 
 function AddAlertForm({ onBack }: { onBack: () => void }) {
   const { t } = useTranslation()
-  const createAlert = useCreateExpiryAlert()
+  const createReminder = useCreateReminder()
 
   const schema = useMemo(() => createExpiryAlertSchema(t), [t])
 
@@ -203,14 +304,17 @@ function AddAlertForm({ onBack }: { onBack: () => void }) {
       : t('reminders.expiryDate')
 
   const onSubmit = (data: CreateExpiryAlertFormValues) => {
-    createAlert.mutate(
+    createReminder.mutate(
       {
-        alertType: data.alertType,
-        notifyBefore: data.notifyBefore,
-        licensePlate: data.licensePlate || undefined,
-        name: data.name || undefined,
-        shortAddress: data.shortAddress || undefined,
-        expiryDate: data.expiryDate
+        title: data.alertType,
+        remindAt: computeRemindAt(data.expiryDate, data.notifyBefore),
+        note: JSON.stringify({
+          notifyBefore: data.notifyBefore,
+          licensePlate: data.licensePlate || undefined,
+          name: data.name || undefined,
+          shortAddress: data.shortAddress || undefined,
+          expiryDate: data.expiryDate
+        })
       },
       { onSuccess: () => onBack() }
     )
@@ -336,13 +440,29 @@ function AddAlertForm({ onBack }: { onBack: () => void }) {
             </div>
           </div>
 
+          {Object.keys(errors).length > 0 && (
+            <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3">
+              <p className="text-sm font-medium text-red-700">
+                {t('reminders.formErrors')}
+              </p>
+              <ul className="mt-1 list-disc pl-5 text-sm text-red-600">
+                {Object.values(errors).map(
+                  (err, i) =>
+                    err?.message && (
+                      <li key={`err-${i.toString()}`}>{err.message}</li>
+                    )
+                )}
+              </ul>
+            </div>
+          )}
+
           <Button
             type="submit"
-            disabled={createAlert.isPending}
+            disabled={createReminder.isPending}
             className="gap-1.5"
           >
             <Check className="h-4 w-4" />
-            {createAlert.isPending
+            {createReminder.isPending
               ? t('common.saving')
               : t('reminders.saveBtn')}
           </Button>
@@ -354,9 +474,14 @@ function AddAlertForm({ onBack }: { onBack: () => void }) {
 
 export default function RemindersPage() {
   const { t } = useTranslation()
-  const { data: alerts, isLoading } = useExpiryAlerts()
-  const deleteAlert = useDeleteExpiryAlert()
+  const { data: reminders, isLoading } = useReminders()
+  const deleteReminder = useDeleteReminder()
   const [view, setView] = useState<'list' | 'add'>('list')
+
+  const alerts = useMemo(
+    () => reminders?.map(parseReminderToAlert),
+    [reminders]
+  )
 
   if (view === 'add') {
     return <AddAlertForm onBack={() => setView('list')} />
@@ -418,7 +543,7 @@ export default function RemindersPage() {
             <AlertCard
               key={alert.id}
               alert={alert}
-              onDelete={(id) => deleteAlert.mutate(id)}
+              onDelete={(id) => deleteReminder.mutate(id)}
             />
           ))}
         </div>

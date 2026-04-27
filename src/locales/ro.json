@@ -80,7 +80,9 @@
     "timezoneRequired": "Fusul orar este obligatoriu",
     "selectAlertType": "Selectați tipul alertei",
     "selectNotifyInterval": "Selectați intervalul de notificare",
-    "expiryDateRequired": "Data expirare este obligatorie"
+    "expiryDateRequired": "Data expirare este obligatorie",
+    "expiryDateFuture": "Data de expirare trebuie să fie în viitor",
+    "notifyBeforeTooEarly": "Intervalul de notificare este mai mare decât timpul rămas până la expirare — reminderul ar fi deja în trecut"
   },
   "auth": {
     "emailLabel": "Adresă de email",
@@ -192,7 +194,7 @@
     "expiringSoon": "Expiră Curând",
     "notifications": "Notificări",
     "recentPolicies": "Polițe",
-    "recentQuotes": "Cotații Recente",
+    "recentQuotes": "Cotații",
     "noPolicies": "Nu există polițe.",
     "noQuotes": "Nu există cotații.",
     "activityTitle": "Activitate",
@@ -418,6 +420,7 @@
     "nameLabel": "Nume",
     "namePlaceholder": "Introduceti numele",
     "saveBtn": "Salvati",
+    "formErrors": "Vă rugăm să corectați următoarele erori:",
     "alertTypes": {
       "RCA": "Asigurare Auto Obligatorie (RCA)",
       "ASR": "Asigurare Rutieră (ASR)",

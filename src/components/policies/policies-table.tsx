@@ -7,6 +7,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
+import { Sheet, SheetContent } from '@/components/ui/sheet'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
   Table,
@@ -16,10 +17,6 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table'
-import {
-  Sheet,
-  SheetContent
-} from '@/components/ui/sheet'
 import { usePolicies } from '@/hooks/use-policies'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import {
@@ -30,8 +27,9 @@ import {
   Inbox,
   X
 } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useSearchParams } from 'react-router-dom'
 
 import type { Policy, TableParams } from '@/api/types'
 import { PolicyDetailPanel } from './policy-detail-panel'
@@ -41,8 +39,7 @@ const COL_COUNT = 10
 
 const isExpandable = (policy: Policy): boolean =>
   (policy.travellers != null && policy.travellers.length > 0) ||
-  (policy.insuranceComponents != null &&
-    policy.insuranceComponents.length > 0)
+  (policy.insuranceComponents != null && policy.insuranceComponents.length > 0)
 
 const getExpandCount = (policy: Policy): number => {
   if (policy.travellers && policy.travellers.length > 0)
@@ -81,7 +78,10 @@ const filterConfigs = [
       { labelKey: 'insuranceType.RCP', value: 'rcp' },
       { labelKey: 'insuranceType.ACCIDENTS', value: 'accidents' },
       { labelKey: 'insuranceType.ACCIDENTS_TAXI', value: 'accidents_taxi' },
-      { labelKey: 'insuranceType.ACCIDENTS_TRAVELER', value: 'accidents_traveler' },
+      {
+        labelKey: 'insuranceType.ACCIDENTS_TRAVELER',
+        value: 'accidents_traveler'
+      },
       { labelKey: 'insuranceType.BREAKDOWN', value: 'breakdown' }
     ]
   }
@@ -133,8 +133,20 @@ function ExpiryBadge({
 
 export function PoliciesTable() {
   const { t } = useTranslation()
+  const [searchParams, setSearchParams] = useSearchParams()
 
-  const [selectedPolicyId, setSelectedPolicyId] = useState<string | null>(null)
+  const [selectedPolicyId, setSelectedPolicyId] = useState<string | null>(
+    searchParams.get('policyId')
+  )
+
+  useEffect(() => {
+    const paramId = searchParams.get('policyId')
+    if (paramId) {
+      setSelectedPolicyId(paramId)
+      searchParams.delete('policyId')
+      setSearchParams(searchParams, { replace: true })
+    }
+  }, [searchParams, setSearchParams])
   const [params, setParams] = useState<TableParams>({
     page: 1,
     limit: 9999,
@@ -169,7 +181,20 @@ export function PoliciesTable() {
       to.setHours(23, 59, 59, 999)
       items = items.filter((p) => new Date(p.endDate) <= to)
     }
-    return items
+    // Sort policies: expired policies go to the bottom
+    return items.sort((a, b) => {
+      const aExpired = a.status === 'expired'
+      const bExpired = b.status === 'expired'
+
+      // If both are expired or both are not expired, maintain original order
+      if (aExpired === bExpired) return 0
+
+      // If a is expired and b is not, a should come after b
+      if (aExpired && !bExpired) return 1
+
+      // If b is expired and a is not, a should come before b
+      return -1
+    })
   }, [data?.data, dateFrom, dateTo])
 
   const handleFilterChange = (key: string, value: string) =>
@@ -200,7 +225,9 @@ export function PoliciesTable() {
             <TableHeader className="bg-slate-50 [&_th]:text-slate-500 [&_th]:text-xs [&_th]:font-medium [&_th]:uppercase [&_th]:tracking-wider">
               <TableRow>
                 {Array.from({ length: COL_COUNT }).map((_, i) => (
-                  <TableHead key={i}><Skeleton className="h-4 w-20" /></TableHead>
+                  <TableHead key={i}>
+                    <Skeleton className="h-4 w-20" />
+                  </TableHead>
                 ))}
               </TableRow>
             </TableHeader>
@@ -208,7 +235,9 @@ export function PoliciesTable() {
               {Array.from({ length: 5 }).map((_, r) => (
                 <TableRow key={r}>
                   {Array.from({ length: COL_COUNT }).map((_, c) => (
-                    <TableCell key={c}><Skeleton className="h-4 w-full" /></TableCell>
+                    <TableCell key={c}>
+                      <Skeleton className="h-4 w-full" />
+                    </TableCell>
                   ))}
                 </TableRow>
               ))}
@@ -226,7 +255,9 @@ export function PoliciesTable() {
         <AlertCircle className="h-12 w-12 text-destructive" />
         <div className="text-center">
           <p className="font-medium text-foreground">{t('common.error')}</p>
-          <p className="text-sm text-muted-foreground">{t('common.tryAgain')}</p>
+          <p className="text-sm text-muted-foreground">
+            {t('common.tryAgain')}
+          </p>
         </div>
       </div>
     )
@@ -322,7 +353,9 @@ export function PoliciesTable() {
                 <TableCell colSpan={COL_COUNT} className="h-32 text-center">
                   <div className="flex flex-col items-center gap-2">
                     <Inbox className="h-10 w-10 text-muted-foreground/50" />
-                    <p className="text-muted-foreground">{t('common.noResults')}</p>
+                    <p className="text-muted-foreground">
+                      {t('common.noResults')}
+                    </p>
                   </div>
                 </TableCell>
               </TableRow>
@@ -379,19 +412,24 @@ function PolicyRowGroup({
       >
         <TableCell className="w-10 px-3">
           {expandable && (
-            <span className="p-1 rounded-md"
-            >
-              {expanded
-                ? <ChevronDown className="h-4 w-4 text-primary" />
-                : <ChevronRight className="h-4 w-4 text-slate-400" />}
+            <span className="p-1 rounded-md">
+              {expanded ? (
+                <ChevronDown className="h-4 w-4 text-primary" />
+              ) : (
+                <ChevronRight className="h-4 w-4 text-slate-400" />
+              )}
             </span>
           )}
         </TableCell>
 
         <TableCell>
-          <span className="font-medium text-gray-900">{policy.policyNumber}</span>
+          <span className="font-medium text-gray-900">
+            {policy.policyNumber}
+          </span>
           {expandable && (
-            <span className="ml-1 text-xs text-muted-foreground">({count})</span>
+            <span className="ml-1 text-xs text-muted-foreground">
+              ({count})
+            </span>
           )}
         </TableCell>
 
@@ -426,14 +464,19 @@ function PolicyRowGroup({
         </TableCell>
 
         <TableCell>
-          {firstDoc ? <PdfLink url={firstDoc.url} label={firstDoc.name} /> : null}
+          {firstDoc ? (
+            <PdfLink url={firstDoc.url} label={firstDoc.name} />
+          ) : null}
         </TableCell>
       </TableRow>
 
       {/* ── Expanded: nested sub-table ── */}
       {expanded && policy.travellers && policy.travellers.length > 0 && (
         <TableRow className="hover:bg-transparent border-0">
-          <TableCell colSpan={COL_COUNT} className="bg-gray-50/80 py-3 px-4 pl-12">
+          <TableCell
+            colSpan={COL_COUNT}
+            className="bg-gray-50/80 py-3 px-4 pl-12"
+          >
             <TravellerSubTable
               policyNumber={policy.policyNumber}
               travellers={policy.travellers}
@@ -445,17 +488,22 @@ function PolicyRowGroup({
         </TableRow>
       )}
 
-      {expanded && policy.insuranceComponents && policy.insuranceComponents.length > 0 && (
-        <TableRow className="hover:bg-transparent border-0">
-          <TableCell colSpan={COL_COUNT} className="bg-gray-50/80 py-3 px-4 pl-12">
-            <ComponentSubTable
-              components={policy.insuranceComponents}
-              onNavigate={onNavigate}
-              t={t}
-            />
-          </TableCell>
-        </TableRow>
-      )}
+      {expanded &&
+        policy.insuranceComponents &&
+        policy.insuranceComponents.length > 0 && (
+          <TableRow className="hover:bg-transparent border-0">
+            <TableCell
+              colSpan={COL_COUNT}
+              className="bg-gray-50/80 py-3 px-4 pl-12"
+            >
+              <ComponentSubTable
+                components={policy.insuranceComponents}
+                onNavigate={onNavigate}
+                t={t}
+              />
+            </TableCell>
+          </TableRow>
+        )}
     </>
   )
 }
@@ -478,59 +526,70 @@ function TravellerSubTable({
   onNavigate: () => void
   t: (key: string, opts?: Record<string, unknown>) => string
 }) {
-  const premiumPerTraveller = travellers.length > 0 ? totalPremium / travellers.length : 0
+  const premiumPerTraveller =
+    travellers.length > 0 ? totalPremium / travellers.length : 0
   return (
-      <Table>
-        <TableHeader>
-          <TableRow className="hover:bg-transparent !border-b !border-slate-200/70">
-            <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">
-              {t('policies.policyRef')}
-            </TableHead>
-            <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">
-              {t('policies.travellerName')}
-            </TableHead>
-            <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">
-              {t('policies.cnp')}
-            </TableHead>
-            <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">
-              {t('policies.premium')}
-            </TableHead>
-            <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">
-              {t('policies.covers')}
-            </TableHead>
-            <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">
-              {t('policies.pdf')}
-            </TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {travellers.map((trav, idx) => {
-            const doc = trav.documents[0]
-            return (
-              <TableRow
-                key={`trav-${idx}`}
-                className="cursor-pointer hover:bg-gray-50/50"
-                onClick={onNavigate}
-              >
-                <TableCell className="text-sm text-gray-700">{policyNumber}</TableCell>
-                <TableCell className="text-sm font-medium text-gray-900">{trav.name}</TableCell>
-                <TableCell className="text-sm text-gray-700">{trav.cnp}</TableCell>
-                <TableCell className="text-sm text-gray-900">
-                  {formatCurrency(premiumPerTraveller)}
-                </TableCell>
-                <TableCell className="text-sm">
-                  {trav.covers && trav.covers.length > 0 ? (
-                    <span className="text-gray-700">{trav.covers.join(', ')}</span>
-                  ) : '—'}
-                </TableCell>
-                <TableCell className="text-sm">
-                  {doc ? <PdfLink url={doc.url} label={doc.name} /> : null}
-                </TableCell>
-              </TableRow>
-            )
-          })}
-        </TableBody>
-      </Table>
+    <Table>
+      <TableHeader>
+        <TableRow className="hover:bg-transparent !border-b !border-slate-200/70">
+          <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">
+            {t('policies.policyRef')}
+          </TableHead>
+          <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">
+            {t('policies.travellerName')}
+          </TableHead>
+          <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">
+            {t('policies.cnp')}
+          </TableHead>
+          <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">
+            {t('policies.premium')}
+          </TableHead>
+          <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">
+            {t('policies.covers')}
+          </TableHead>
+          <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">
+            {t('policies.pdf')}
+          </TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {travellers.map((trav, idx) => {
+          const doc = trav.documents[0]
+          return (
+            <TableRow
+              key={`trav-${idx}`}
+              className="cursor-pointer hover:bg-gray-50/50"
+              onClick={onNavigate}
+            >
+              <TableCell className="text-sm text-gray-700">
+                {policyNumber}
+              </TableCell>
+              <TableCell className="text-sm font-medium text-gray-900">
+                {trav.name}
+              </TableCell>
+              <TableCell className="text-sm text-gray-700">
+                {trav.cnp}
+              </TableCell>
+              <TableCell className="text-sm text-gray-900">
+                {formatCurrency(premiumPerTraveller)}
+              </TableCell>
+              <TableCell className="text-sm">
+                {trav.covers && trav.covers.length > 0 ? (
+                  <span className="text-gray-700">
+                    {trav.covers.join(', ')}
+                  </span>
+                ) : (
+                  '—'
+                )}
+              </TableCell>
+              <TableCell className="text-sm">
+                {doc ? <PdfLink url={doc.url} label={doc.name} /> : null}
+              </TableCell>
+            </TableRow>
+          )
+        })}
+      </TableBody>
+    </Table>
   )
 }
 
@@ -549,54 +608,60 @@ function ComponentSubTable({
   t: (key: string, opts?: Record<string, unknown>) => string
 }) {
   return (
-      <Table>
-        <TableHeader>
-          <TableRow className="hover:bg-transparent !border-b !border-slate-200/70">
-            <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">
-              {t('policies.policyRef')}
-            </TableHead>
-            <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">
-              {t('policies.type')}
-            </TableHead>
-            <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">
-              {t('policies.insurer')}
-            </TableHead>
-            <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">
-              {t('policies.premium')}
-            </TableHead>
-            <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">
-              {t('policies.pdf')}
-            </TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {components.map((comp, idx) => {
-            const doc = comp.documents[0]
-            const typeLabel =
-              comp.type === 'pad'
-                ? t('policies.componentPAD')
-                : t('policies.componentFacultative')
-            return (
-              <TableRow
-                key={`comp-${idx}`}
-                className="cursor-pointer hover:bg-gray-50/50"
-                onClick={onNavigate}
-              >
-                <TableCell className="text-sm text-gray-700">{comp.policyNumber}</TableCell>
-                <TableCell className="text-sm">
-                  <Badge variant="outline" className="text-xs font-medium">
-                    {typeLabel}
-                  </Badge>
-                </TableCell>
-                <TableCell className="text-sm text-gray-700">{comp.insurerName}</TableCell>
-                <TableCell className="text-sm text-gray-900">{formatCurrency(comp.premium)}</TableCell>
-                <TableCell className="text-sm">
-                  {doc ? <PdfLink url={doc.url} label={doc.name} /> : null}
-                </TableCell>
-              </TableRow>
-            )
-          })}
-        </TableBody>
-      </Table>
+    <Table>
+      <TableHeader>
+        <TableRow className="hover:bg-transparent !border-b !border-slate-200/70">
+          <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">
+            {t('policies.policyRef')}
+          </TableHead>
+          <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">
+            {t('policies.type')}
+          </TableHead>
+          <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">
+            {t('policies.insurer')}
+          </TableHead>
+          <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">
+            {t('policies.premium')}
+          </TableHead>
+          <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">
+            {t('policies.pdf')}
+          </TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {components.map((comp, idx) => {
+          const doc = comp.documents[0]
+          const typeLabel =
+            comp.type === 'pad'
+              ? t('policies.componentPAD')
+              : t('policies.componentFacultative')
+          return (
+            <TableRow
+              key={`comp-${idx}`}
+              className="cursor-pointer hover:bg-gray-50/50"
+              onClick={onNavigate}
+            >
+              <TableCell className="text-sm text-gray-700">
+                {comp.policyNumber}
+              </TableCell>
+              <TableCell className="text-sm">
+                <Badge variant="outline" className="text-xs font-medium">
+                  {typeLabel}
+                </Badge>
+              </TableCell>
+              <TableCell className="text-sm text-gray-700">
+                {comp.insurerName}
+              </TableCell>
+              <TableCell className="text-sm text-gray-900">
+                {formatCurrency(comp.premium)}
+              </TableCell>
+              <TableCell className="text-sm">
+                {doc ? <PdfLink url={doc.url} label={doc.name} /> : null}
+              </TableCell>
+            </TableRow>
+          )
+        })}
+      </TableBody>
+    </Table>
   )
 }

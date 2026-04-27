@@ -1,11 +1,12 @@
 import type { PolicyStatus } from '@/api/types'
-import { InsuranceTypeBadge } from '@/components/ui/insurance-type-badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { InsuranceTypeBadge } from '@/components/ui/insurance-type-badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { usePolicies } from '@/hooks/use-policies'
 import { cn } from '@/lib/utils'
 import type { TFunction } from 'i18next'
 import { ArrowRight, ChevronRight } from 'lucide-react'
+import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 
@@ -47,21 +48,48 @@ function getStatusConfig(
   }
 }
 
-function formatDaysUntilExpiry(days: number, t: TFunction): string {
-  if (days < 0) return t('dashboard.expired')
-  if (days === 0) return t('dashboard.expiresToday')
-  if (days === 1) return t('dashboard.expiresTomorrow')
-  return t('dashboard.daysRemaining', { days })
-}
-
 export function RecentPolicies() {
   const { t } = useTranslation()
   const { data, isLoading } = usePolicies({
     page: 1,
-    limit: 5,
+    limit: 50,
     sort: 'createdAt',
     order: 'desc'
   })
+
+  const sortedPolicies = useMemo(() => {
+    if (!data?.data) return []
+
+    const policies = [...data.data]
+
+    // Separate policies by status
+    const pending = policies.filter((p) => p.status === 'pending')
+    const active = policies.filter((p) => p.status === 'active')
+    const expired = policies.filter((p) => p.status === 'expired')
+
+    const result = []
+    let slotsRemaining = 5
+
+    // Add pending policies first
+    const pendingToAdd = pending.slice(0, slotsRemaining)
+    result.push(...pendingToAdd)
+    slotsRemaining -= pendingToAdd.length
+
+    // Add active policies if there's space
+    if (slotsRemaining > 0) {
+      const activeToAdd = active.slice(0, slotsRemaining)
+      result.push(...activeToAdd)
+      slotsRemaining -= activeToAdd.length
+    }
+
+    // Add expired policies if there's still space
+    if (slotsRemaining > 0) {
+      const expiredToAdd = expired.slice(0, slotsRemaining)
+      result.push(...expiredToAdd)
+    }
+
+    return result
+  }, [data?.data])
 
   return (
     <Card className="shadow-sm overflow-hidden">
@@ -84,18 +112,18 @@ export function RecentPolicies() {
               <Skeleton key={i} className="h-14 w-full rounded-lg" />
             ))}
           </div>
-        ) : data?.data.length === 0 ? (
+        ) : sortedPolicies.length === 0 ? (
           <p className="px-6 py-8 text-center text-sm text-gray-400">
             {t('dashboard.noPolicies')}
           </p>
         ) : (
           <ul className="divide-y divide-gray-100">
-            {data?.data.map((policy) => {
+            {sortedPolicies.map((policy) => {
               const status = getStatusConfig(policy.status, t)
               return (
                 <li key={policy.id}>
                   <Link
-                    to={`/policies/${policy.id}`}
+                    to={`/policies?policyId=${policy.id}`}
                     className="flex items-center gap-3 px-4 sm:px-6 py-3.5 transition-colors hover:bg-gray-50"
                   >
                     <InsuranceTypeBadge type={policy.type} />
@@ -103,9 +131,12 @@ export function RecentPolicies() {
                       <p className="truncate text-sm font-medium text-gray-900">
                         {policy.policyNumber}
                       </p>
-                      <p className="truncate text-xs text-gray-400">
-                        {policy.insurer ?? '—'}
-                      </p>
+                      <span className="text-sm text-gray-700 max-w-[230px] truncate block">
+                        {policy.policyDetails ??
+                          policy.vehicleOrProperty ??
+                          policy.insurer ??
+                          '—'}
+                      </span>
                     </div>
                     <div className="flex shrink-0 flex-col items-end gap-1">
                       <span
@@ -122,21 +153,6 @@ export function RecentPolicies() {
                         />
                         <span className="hidden sm:inline">{status.label}</span>
                       </span>
-                      {policy.status === 'active' && (() => {
-                        const daysLeft = Math.ceil((new Date(policy.endDate).getTime() - Date.now()) / 86400000)
-                        return (
-                          <span
-                            className={cn(
-                              'text-[11px] hidden sm:block',
-                              daysLeft <= 30
-                                ? 'font-medium text-amber-600'
-                                : 'text-gray-400'
-                            )}
-                          >
-                            {formatDaysUntilExpiry(daysLeft, t)}
-                          </span>
-                        )
-                      })()}
                     </div>
                     <ChevronRight className="h-4 w-4 shrink-0 text-gray-300 hidden sm:block" />
                   </Link>

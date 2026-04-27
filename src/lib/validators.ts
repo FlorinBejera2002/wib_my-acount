@@ -147,47 +147,85 @@ export const preferencesSchema = z.object({
 
 export type PreferencesFormValues = z.infer<typeof preferencesSchema>
 
+const NOTIFY_BEFORE_DAYS: Record<string, number> = {
+  '1_DAY': 1,
+  '3_DAYS': 3,
+  '7_DAYS': 7,
+  '1_MONTH': 30,
+  '2_MONTHS': 60,
+  '3_MONTHS': 90,
+  '6_MONTHS': 180
+}
+
 export const createExpiryAlertSchema = (t: TFunction) =>
-  z.object({
-    alertType: z.enum(
-      [
-        'RCA',
-        'ASR',
-        'CALATORIE',
-        'LOCUINTA_PAD',
-        'LOCUINTA_OPTIONALA',
-        'CASCO',
-        'ROVINIETA',
-        'ITP',
-        'REVIZIE_AUTO',
-        'PERMIS',
-        'BULETIN',
-        'PASAPORT',
-        'ZIUA_SOTIEI'
-      ],
-      {
-        required_error: t('validation.selectAlertType')
+  z
+    .object({
+      alertType: z.enum(
+        [
+          'RCA',
+          'ASR',
+          'CALATORIE',
+          'LOCUINTA_PAD',
+          'LOCUINTA_OPTIONALA',
+          'CASCO',
+          'ROVINIETA',
+          'ITP',
+          'REVIZIE_AUTO',
+          'PERMIS',
+          'BULETIN',
+          'PASAPORT',
+          'ZIUA_SOTIEI'
+        ],
+        {
+          required_error: t('validation.selectAlertType')
+        }
+      ),
+      notifyBefore: z.enum(
+        [
+          '1_DAY',
+          '3_DAYS',
+          '7_DAYS',
+          '1_MONTH',
+          '2_MONTHS',
+          '3_MONTHS',
+          '6_MONTHS'
+        ],
+        {
+          required_error: t('validation.selectNotifyInterval')
+        }
+      ),
+      licensePlate: z.string().optional().or(z.literal('')),
+      name: z.string().optional().or(z.literal('')),
+      shortAddress: z.string().optional().or(z.literal('')),
+      expiryDate: z.string().min(1, t('validation.expiryDateRequired'))
+    })
+    .superRefine((data, ctx) => {
+      if (data.expiryDate && data.alertType !== 'ZIUA_SOTIEI') {
+        const today = new Date()
+        today.setHours(0, 0, 0, 0)
+        const expiry = new Date(data.expiryDate)
+        if (expiry <= today) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: t('validation.expiryDateFuture'),
+            path: ['expiryDate']
+          })
+          return
+        }
+
+        const daysUntilExpiry = Math.floor(
+          (expiry.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
+        )
+        const notifyDays = NOTIFY_BEFORE_DAYS[data.notifyBefore] ?? 0
+        if (notifyDays >= daysUntilExpiry) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: t('validation.notifyBeforeTooEarly'),
+            path: ['notifyBefore']
+          })
+        }
       }
-    ),
-    notifyBefore: z.enum(
-      [
-        '1_DAY',
-        '3_DAYS',
-        '7_DAYS',
-        '1_MONTH',
-        '2_MONTHS',
-        '3_MONTHS',
-        '6_MONTHS'
-      ],
-      {
-        required_error: t('validation.selectNotifyInterval')
-      }
-    ),
-    licensePlate: z.string().optional().or(z.literal('')),
-    name: z.string().optional().or(z.literal('')),
-    shortAddress: z.string().optional().or(z.literal('')),
-    expiryDate: z.string().min(1, t('validation.expiryDateRequired'))
-  })
+    })
 
 export type CreateExpiryAlertFormValues = z.infer<
   ReturnType<typeof createExpiryAlertSchema>
