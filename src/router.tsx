@@ -6,7 +6,6 @@ import ForgotPasswordPage from '@/pages/forgot-password'
 import LoginPage from '@/pages/login'
 import NotFoundPage from '@/pages/not-found'
 import PoliciesPage from '@/pages/policies'
-import PolicyDetailPage from '@/pages/policy-detail'
 import ProfilePage from '@/pages/profile'
 import QuoteDetailPage from '@/pages/quote-detail'
 import QuotesPage from '@/pages/quotes'
@@ -55,11 +54,7 @@ export const router = createBrowserRouter([
             path: '/policies',
             element: <PoliciesPage />
           },
-          {
-            path: '/policies/:id',
-            element: <PolicyDetailPage />
-          },
-          {
+{
             path: '/notifications',
             element: <NotificationsPage />
           },

@@ -16,6 +16,10 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table'
+import {
+  Sheet,
+  SheetContent
+} from '@/components/ui/sheet'
 import { usePolicies } from '@/hooks/use-policies'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import {
@@ -28,9 +32,9 @@ import {
 } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
 
 import type { Policy, TableParams } from '@/api/types'
+import { PolicyDetailPanel } from './policy-detail-panel'
 import { PolicyStatusBadge } from './policy-status-badge'
 
 const COL_COUNT = 10
@@ -68,10 +72,17 @@ const filterConfigs = [
     options: [
       { labelKey: 'insuranceType.RCA', value: 'rca' },
       { labelKey: 'insuranceType.CASCO', value: 'casco' },
-      { labelKey: 'insuranceType.LOCUINTA_PAD', value: 'home' },
-      { labelKey: 'insuranceType.SANATATE', value: 'health' },
-      { labelKey: 'insuranceType.CALATORIE', value: 'travel' },
-      { labelKey: 'insuranceType.VIATA', value: 'life' }
+      { labelKey: 'insuranceType.CASCO_ECONOM', value: 'casco_econom' },
+      { labelKey: 'insuranceType.HOME', value: 'home' },
+      { labelKey: 'insuranceType.PAD', value: 'pad' },
+      { labelKey: 'insuranceType.TRAVEL', value: 'travel' },
+      { labelKey: 'insuranceType.HEALTH', value: 'health' },
+      { labelKey: 'insuranceType.CMR', value: 'cmr' },
+      { labelKey: 'insuranceType.RCP', value: 'rcp' },
+      { labelKey: 'insuranceType.ACCIDENTS', value: 'accidents' },
+      { labelKey: 'insuranceType.ACCIDENTS_TAXI', value: 'accidents_taxi' },
+      { labelKey: 'insuranceType.ACCIDENTS_TRAVELER', value: 'accidents_traveler' },
+      { labelKey: 'insuranceType.BREAKDOWN', value: 'breakdown' }
     ]
   }
 ]
@@ -85,10 +96,11 @@ function PdfLink({ url, label }: { url: string; label?: string }) {
       target="_blank"
       rel="noopener noreferrer"
       onClick={(e) => e.stopPropagation()}
-      className="inline-flex items-center gap-1.5 text-sm text-primary hover:text-primary/80 transition-colors"
+      className="inline-flex items-center gap-1.5 rounded-md border border-gray-150 bg-gray-50/40 px-3 py-1.5 text-xs font-medium text-blue-600 shadow-[0_1px_3px_rgba(0,0,0,0.04)] transition-colors hover:bg-gray-50 hover:text-blue-700"
       title={label}
     >
-      <Download className="h-4 w-4 shrink-0" />
+      <Download className="h-3 w-3 shrink-0" />
+      PDF
     </a>
   )
 }
@@ -121,8 +133,8 @@ function ExpiryBadge({
 
 export function PoliciesTable() {
   const { t } = useTranslation()
-  const navigate = useNavigate()
 
+  const [selectedPolicyId, setSelectedPolicyId] = useState<string | null>(null)
   const [params, setParams] = useState<TableParams>({
     page: 1,
     limit: 9999,
@@ -183,9 +195,9 @@ export function PoliciesTable() {
           <Skeleton className="h-9 w-[140px]" />
           <Skeleton className="h-9 w-[100px]" />
         </div>
-        <div className="rounded-xl border border-gray-100 bg-white shadow-sm overflow-x-auto hide-scrollbar">
+        <div className="rounded-xl border border-gray-100/80 bg-white shadow-[0_1px_4px_rgba(0,0,0,0.05)] overflow-x-auto hide-scrollbar">
           <Table className="min-w-[900px]">
-            <TableHeader className="bg-slate-100 [&_th]:text-slate-500 [&_th]:text-xs [&_th]:font-medium [&_th]:uppercase [&_th]:tracking-wider">
+            <TableHeader className="bg-slate-50 [&_th]:text-slate-500 [&_th]:text-xs [&_th]:font-medium [&_th]:uppercase [&_th]:tracking-wider">
               <TableRow>
                 {Array.from({ length: COL_COUNT }).map((_, i) => (
                   <TableHead key={i}><Skeleton className="h-4 w-20" /></TableHead>
@@ -210,7 +222,7 @@ export function PoliciesTable() {
   /* Error */
   if (isError) {
     return (
-      <div className="flex flex-col items-center justify-center gap-4 rounded-xl border border-gray-100 bg-white shadow-sm py-16">
+      <div className="flex flex-col items-center justify-center gap-4 rounded-xl border border-gray-100/80 bg-white shadow-[0_1px_4px_rgba(0,0,0,0.05)] py-16">
         <AlertCircle className="h-12 w-12 text-destructive" />
         <div className="text-center">
           <p className="font-medium text-foreground">{t('common.error')}</p>
@@ -264,9 +276,9 @@ export function PoliciesTable() {
       </div>
 
       {/* Table */}
-      <div className="rounded-xl border border-gray-100 bg-white shadow-sm overflow-x-auto hide-scrollbar">
+      <div className="rounded-xl border border-gray-100/80 bg-white shadow-[0_1px_4px_rgba(0,0,0,0.05)] overflow-x-auto hide-scrollbar">
         <Table className="min-w-[900px]">
-          <TableHeader className="bg-slate-100 [&_th]:text-slate-500 [&_th]:text-xs [&_th]:font-medium [&_th]:uppercase [&_th]:tracking-wider">
+          <TableHeader className="bg-slate-50 [&_th]:text-slate-500 [&_th]:text-xs [&_th]:font-medium [&_th]:uppercase [&_th]:tracking-wider">
             <TableRow>
               <TableHead className="w-10" />
               <TableHead>{t('policies.policyRef')}</TableHead>
@@ -300,7 +312,7 @@ export function PoliciesTable() {
                     expanded={expanded}
                     firstDoc={firstDoc}
                     onToggle={() => toggleRow(policy.id)}
-                    onNavigate={() => navigate(`/policies/${policy.id}`)}
+                    onNavigate={() => setSelectedPolicyId(policy.id)}
                     t={t}
                   />
                 )
@@ -318,6 +330,17 @@ export function PoliciesTable() {
           </TableBody>
         </Table>
       </div>
+
+      <Sheet
+        open={!!selectedPolicyId}
+        onOpenChange={(open) => !open && setSelectedPolicyId(null)}
+      >
+        <SheetContent className="sm:max-w-xl overflow-y-auto">
+          {selectedPolicyId && (
+            <PolicyDetailPanel policyId={selectedPolicyId} />
+          )}
+        </SheetContent>
+      </Sheet>
     </div>
   )
 }
@@ -351,7 +374,7 @@ function PolicyRowGroup({
     <>
       {/* ── Main row ── */}
       <TableRow
-        className="cursor-pointer transition-colors hover:bg-muted/50"
+        className="cursor-pointer transition-colors hover:bg-gray-50/50"
         onClick={expandable ? onToggle : onNavigate}
       >
         <TableCell className="w-10 px-3">
@@ -410,10 +433,11 @@ function PolicyRowGroup({
       {/* ── Expanded: nested sub-table ── */}
       {expanded && policy.travellers && policy.travellers.length > 0 && (
         <TableRow className="hover:bg-transparent border-0">
-          <TableCell colSpan={COL_COUNT} className="bg-blue-50/50 py-3 px-4 pl-12 ">
+          <TableCell colSpan={COL_COUNT} className="bg-gray-50/80 py-3 px-4 pl-12">
             <TravellerSubTable
               policyNumber={policy.policyNumber}
               travellers={policy.travellers}
+              totalPremium={policy.premium}
               onNavigate={onNavigate}
               t={t}
             />
@@ -423,7 +447,7 @@ function PolicyRowGroup({
 
       {expanded && policy.insuranceComponents && policy.insuranceComponents.length > 0 && (
         <TableRow className="hover:bg-transparent border-0">
-          <TableCell colSpan={COL_COUNT} className="bg-blue-50/50 py-3 px-4 pl-12 ">
+          <TableCell colSpan={COL_COUNT} className="bg-gray-50/80 py-3 px-4 pl-12">
             <ComponentSubTable
               components={policy.insuranceComponents}
               onNavigate={onNavigate}
@@ -444,14 +468,17 @@ function PolicyRowGroup({
 function TravellerSubTable({
   policyNumber,
   travellers,
+  totalPremium,
   onNavigate,
   t
 }: {
   policyNumber: string
   travellers: NonNullable<Policy['travellers']>
+  totalPremium: number
   onNavigate: () => void
   t: (key: string, opts?: Record<string, unknown>) => string
 }) {
+  const premiumPerTraveller = travellers.length > 0 ? totalPremium / travellers.length : 0
   return (
       <Table>
         <TableHeader>
@@ -482,14 +509,14 @@ function TravellerSubTable({
             return (
               <TableRow
                 key={`trav-${idx}`}
-                className="cursor-pointer hover:bg-muted/50"
+                className="cursor-pointer hover:bg-gray-50/50"
                 onClick={onNavigate}
               >
                 <TableCell className="text-sm text-gray-700">{policyNumber}</TableCell>
                 <TableCell className="text-sm font-medium text-gray-900">{trav.name}</TableCell>
                 <TableCell className="text-sm text-gray-700">{trav.cnp}</TableCell>
                 <TableCell className="text-sm text-gray-900">
-                  {trav.premium != null ? formatCurrency(trav.premium) : '—'}
+                  {formatCurrency(premiumPerTraveller)}
                 </TableCell>
                 <TableCell className="text-sm">
                   {trav.covers && trav.covers.length > 0 ? (
@@ -552,7 +579,7 @@ function ComponentSubTable({
             return (
               <TableRow
                 key={`comp-${idx}`}
-                className="cursor-pointer hover:bg-muted/50"
+                className="cursor-pointer hover:bg-gray-50/50"
                 onClick={onNavigate}
               >
                 <TableCell className="text-sm text-gray-700">{comp.policyNumber}</TableCell>
