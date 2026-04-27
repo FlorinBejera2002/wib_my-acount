@@ -45,7 +45,7 @@ export const mockPolicies: Policy[] = [
     id: 'pol_002',
     policyNumber: 'POL-2025-005679',
     type: 'CASCO',
-    status: 'ACTIVE',
+    status: 'active',
     insurerName: 'Groupama',
     vehicleOrProperty: 'Volkswagen Golf 8 2023',
     policyDetails: 'CASCO Full, Franșiză 500 RON',

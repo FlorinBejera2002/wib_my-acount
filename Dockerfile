@@ -9,7 +9,7 @@ RUN yarn install --frozen-lockfile
 COPY . .
 
 # Build-time env: override via --build-arg if needed
-ARG VITE_API_URL=http://localhost:8080
+ARG VITE_API_URL=http://192.168.0.171:8080
 ENV VITE_API_URL=$VITE_API_URL
 
 RUN yarn build

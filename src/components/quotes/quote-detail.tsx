@@ -104,22 +104,22 @@ const statusConfig: Record<
   QuoteStatus,
   { labelKey: string; dot: string; text: string }
 > = {
-  ACTIVE: {
+  active: {
     labelKey: 'quoteStatus.ACTIVE',
     dot: 'bg-accent-green',
     text: 'text-accent-green'
   },
-  EXPIRED: {
+  expired: {
     labelKey: 'quoteStatus.EXPIRED',
     dot: 'bg-red-500',
     text: 'text-red-600'
   },
-  CONVERTED: {
+  converted: {
     labelKey: 'quoteStatus.CONVERTED',
     dot: 'bg-purple-500',
     text: 'text-purple-600'
   },
-  DRAFT: {
+  draft: {
     labelKey: 'quoteStatus.DRAFT',
     dot: 'bg-gray-400',
     text: 'text-gray-500'

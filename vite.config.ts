@@ -17,7 +17,7 @@ export default defineConfig({
       // full middleware URL, Vite will forward requests to the Symfony
       // middleware, bypassing CORS entirely during development.
       '/api': {
-        target: 'http://localhost:8080',
+        target: 'http://192.168.0.171:8080',
         changeOrigin: true
       }
     }
