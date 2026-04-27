@@ -1,7 +1,6 @@
 import icon from '@/assets/Icon.svg'
 import logo from '@/assets/logo.svg'
 import { ProfileAvatar } from '@/components/profile/profile-avatar'
-import { Badge } from '@/components/ui/badge'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,7 +22,9 @@ import {
   SidebarMenuItem,
   SidebarRail
 } from '@/components/ui/sidebar'
-import { useDashboardStats } from '@/hooks/use-dashboard-stats'
+import { usePolicies } from '@/hooks/use-policies'
+import { useQuotes } from '@/hooks/use-quotes'
+import { useReminders } from '@/hooks/use-reminders'
 import { useProfile } from '@/hooks/use-user'
 import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/stores/auth-store'
@@ -60,7 +61,8 @@ const navItems = [
   {
     labelKey: 'nav.expiryAlerts',
     href: '/reminders',
-    icon: Clock
+    icon: Clock,
+    countKey: 'upcomingReminders'
   }
 ]
 
@@ -70,7 +72,11 @@ export function AppSidebar() {
   const navigate = useNavigate()
   const user = useAuthStore((s) => s.user)
   const logout = useAuthStore((s) => s.logout)
-  const { data: stats } = useDashboardStats()
+
+  // API calls separate pentru fiecare count
+  const { data: quotesData } = useQuotes({ page: 1, limit: 1 })
+  const { data: policiesData } = usePolicies({ page: 1, limit: 1 })
+  const { data: remindersData } = useReminders()
   const { data: profile } = useProfile()
 
   const handleLogout = () => {
@@ -106,14 +112,15 @@ export function AppSidebar() {
             <SidebarMenu className="space-y-1">
               {navItems.map((item) => {
                 const isActive = location.pathname.startsWith(item.href)
-                const count =
-                  item.countKey && stats
-                    ? item.countKey === 'totalQuotes'
-                      ? stats.quotes.total
-                      : item.countKey === 'activePolicies'
-                        ? stats.policies.active
+                const count = item.countKey
+                  ? item.countKey === 'totalQuotes'
+                    ? quotesData?.total || 0
+                    : item.countKey === 'activePolicies'
+                      ? policiesData?.total || 0
+                      : item.countKey === 'upcomingReminders'
+                        ? remindersData?.length || 0
                         : undefined
-                    : undefined
+                  : undefined
 
                 return (
                   <SidebarMenuItem key={item.href}>
@@ -122,32 +129,32 @@ export function AppSidebar() {
                       onClick={() => navigate(item.href)}
                       tooltip={t(item.labelKey)}
                       className={cn(
-                        'h-10 rounded-lg transition-all duration-150',
+                        'h-10 rounded-lg transition-[background-color] duration-150',
                         isActive
-                          ? 'bg-primary/5 text-gray-900 font-semibold hover:bg-primary/10'
-                          : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
+                          ? 'bg-gray-100 text-gray-900 font-medium hover:bg-gray-100'
+                          : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700'
                       )}
                     >
                       <item.icon
                         className={cn(
                           'min-w-5 min-h-5 group-data-[collapsible=icon]:h-5 group-data-[collapsible=icon]:w-5 transition-colors',
-                          isActive ? 'text-gray-900' : 'text-gray-400'
+                          isActive ? 'text-gray-700' : 'text-gray-400'
                         )}
                       />
                       <span className="flex-1 group-data-[collapsible=icon]:hidden">
                         {t(item.labelKey)}
                       </span>
                       {count !== undefined && (
-                        <Badge
+                        <span
                           className={cn(
-                            'ml-auto h-5 min-w-[20px] justify-center rounded-full px-1.5 text-[11px] font-semibold group-data-[collapsible=icon]:hidden border-0',
+                            'pointer-events-none ml-auto flex h-5 min-w-[20px] items-center justify-center rounded-full text-[11px] text-center group-data-[collapsible=icon]:hidden',
                             isActive
-                              ? 'bg-primary/10 text-gray-900'
-                              : 'bg-gray-100 text-gray-500'
+                              ? 'border-gray-200 text-blue-800 font-normal shadow-[inset_0_1px_5px_0_rgba(0,0,0,0.1),inset_0_-1px_5px_0_rgba(0,0,0,0.1)]'
+                              : 'border-gray-200 text-blue-800 font-normal shadow-[inset_0_1px_5px_0_rgba(0,0,0,0.1),inset_0_-1px_5px_0_rgba(0,0,0,0.1)]'
                           )}
                         >
                           {count}
-                        </Badge>
+                        </span>
                       )}
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -164,15 +171,25 @@ export function AppSidebar() {
           <DropdownMenuTrigger asChild={true}>
             <button className="flex w-full items-center gap-3 rounded-xl p-2.5 transition-all duration-150 hover:bg-gray-50 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:rounded-lg">
               <ProfileAvatar
-                firstName={profile?.firstName || (user && 'firstName' in user ? user.firstName : '') || ''}
-                lastName={profile?.lastName || (user && 'lastName' in user ? user.lastName : '') || ''}
+                firstName={
+                  profile?.firstName ||
+                  (user && 'firstName' in user ? user.firstName : '') ||
+                  ''
+                }
+                lastName={
+                  profile?.lastName ||
+                  (user && 'lastName' in user ? user.lastName : '') ||
+                  ''
+                }
                 photoUrl={undefined}
                 size="sm"
                 userId={profile?.id}
               />
               <div className="flex flex-1 flex-col overflow-hidden text-left group-data-[collapsible=icon]:hidden">
                 <span className="truncate text-sm font-semibold text-gray-900">
-                  {profile ? `${profile.firstName} ${profile.lastName}` : (user?.username ?? '')}
+                  {profile
+                    ? `${profile.firstName} ${profile.lastName}`
+                    : (user?.username ?? '')}
                 </span>
                 <span className="truncate text-xs text-gray-400">
                   {profile?.email || user?.email}
@@ -185,9 +202,13 @@ export function AppSidebar() {
             <DropdownMenuLabel className="font-normal">
               <div className="flex flex-col gap-1">
                 <p className="text-sm font-semibold text-gray-900">
-                  {profile ? `${profile.firstName} ${profile.lastName}` : (user?.username ?? '')}
+                  {profile
+                    ? `${profile.firstName} ${profile.lastName}`
+                    : (user?.username ?? '')}
                 </p>
-                <p className="text-xs text-gray-500">{profile?.email || user?.email}</p>
+                <p className="text-xs text-gray-500">
+                  {profile?.email || user?.email}
+                </p>
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />

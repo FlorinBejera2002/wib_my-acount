@@ -28,7 +28,7 @@ export function UpcomingReminders({ reminders }: UpcomingRemindersProps) {
         </Link>
       </CardHeader>
       <CardContent>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-3 grid-cols-1 lg:grid-cols-2">
           {reminders.map((reminder) => {
             const remindDate = new Date(reminder.remindAt)
             const daysLeft = Math.ceil(
@@ -38,16 +38,16 @@ export function UpcomingReminders({ reminders }: UpcomingRemindersProps) {
             return (
               <div
                 key={reminder.id}
-                className="flex items-start gap-3 rounded-lg border border-gray-100 bg-gray-50/50 p-3 transition-colors hover:bg-gray-50"
+                className="flex items-start gap-3 rounded-lg border border-slate-200 bg-slate-50/30 p-3 transition-all hover:bg-slate-50/50 hover:border-slate-300"
               >
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-amber-100">
-                  <Bell className="h-4 w-4 text-amber-600" />
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-100">
+                  <Bell className="h-4 w-4 text-slate-600" />
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-medium text-gray-900">
                     {reminder.title}
                   </p>
-                  <div className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
+                  <div className="mt-1 flex items-center gap-1.5 text-xs text-slate-500">
                     <Calendar className="h-3 w-3 shrink-0" />
                     <span>
                       {remindDate.toLocaleDateString(i18n.language, {
@@ -57,7 +57,7 @@ export function UpcomingReminders({ reminders }: UpcomingRemindersProps) {
                       })}
                     </span>
                     {daysLeft >= 0 && (
-                      <span className="ml-1 text-amber-600 font-medium">
+                      <span className="ml-1 text-slate-700 font-medium">
                         ({t('dashboard.reminderDaysLeft', { days: daysLeft })})
                       </span>
                     )}
