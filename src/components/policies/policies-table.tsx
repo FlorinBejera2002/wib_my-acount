@@ -129,6 +129,27 @@ function ExpiryBadge({
   return <span className="text-sm text-muted-foreground">{label}</span>
 }
 
+function HoverCell({
+  text,
+  maxWidth = 'max-w-[200px]'
+}: { text: string; maxWidth?: string }) {
+  if (text.length <= 30) {
+    return <span className="text-sm text-gray-700">{text}</span>
+  }
+  return (
+    <div className="relative group/cell">
+      <span
+        className={`text-sm text-gray-700 block ${maxWidth} truncate cursor-default`}
+      >
+        {text}
+      </span>
+      <div className="invisible opacity-0 group-hover/cell:visible group-hover/cell:opacity-100 transition-all duration-200 absolute z-50 left-0 top-full mt-1 max-w-xs rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 shadow-lg whitespace-normal">
+        {text}
+      </div>
+    </div>
+  )
+}
+
 function ExpandCountLabel({
   policy,
   count
@@ -727,14 +748,12 @@ function PolicyRowGroup({
           <InsuranceTypeBadge type={policy.insuranceType ?? policy.type} />
         </TableCell>
 
-        <TableCell className="text-sm text-gray-700">
-          {policy.insurerName ?? policy.insurer ?? '—'}
+        <TableCell>
+          <HoverCell text={policy.insurerName ?? policy.insurer ?? '—'} />
         </TableCell>
 
         <TableCell>
-          <span className="text-sm text-gray-700 max-w-[200px] truncate block">
-            {policy.policyDetails ?? policy.vehicleOrProperty ?? '—'}
-          </span>
+          <HoverCell text={policy.policyDetails ?? policy.vehicleOrProperty ?? '—'} />
         </TableCell>
 
         <TableCell className="text-sm text-gray-900">
