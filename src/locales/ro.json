@@ -16,7 +16,10 @@
     "copyright": "© Copyright 2026 Asigurari.ro - A Trading Style of Wilson Insurance Broker SRL",
     "days": "zile",
     "daysCount": "{{count}} zile",
-    "home": "Acasă"
+    "home": "Acasă",
+    "showMore": "Mai mult",
+    "showLess": "Mai puțin",
+    "newQuote": "Solicită o cotație"
   },
   "policyStatus": {
     "ACTIVE": "Activă",
