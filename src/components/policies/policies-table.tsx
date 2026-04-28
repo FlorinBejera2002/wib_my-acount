@@ -600,11 +600,6 @@ function PolicyCard({
           </p>
           <div className="flex flex-col gap-2">
             {policy.travellers.map((trav, idx) => {
-              const doc = trav.documents[0]
-              const premiumPerTraveller =
-                policy.travellers!.length > 0
-                  ? policy.premium / policy.travellers!.length
-                  : 0
               return (
                 <div
                   key={`trav-${idx}`}
@@ -637,7 +632,6 @@ function PolicyCard({
             </p>
             <div className="flex flex-col gap-2">
               {policy.insuranceComponents.map((comp, idx) => {
-                const doc = comp.documents[0]
                 return (
                   <div
                     key={`comp-${idx}`}
