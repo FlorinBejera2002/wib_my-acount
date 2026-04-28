@@ -155,20 +155,26 @@ export function PoliciesTable() {
   const [selectedTravellerIdx, setSelectedTravellerIdx] = useState<
     number | null
   >(null)
+  const [selectedComponentIdx, setSelectedComponentIdx] = useState<
+    number | null
+  >(null)
 
   const openPolicy = (id: string) => {
     setSelectedPolicyId(id)
     setSelectedTravellerIdx(null)
+    setSelectedComponentIdx(null)
   }
 
   const openTraveller = (policyId: string, travellerIdx: number) => {
     setSelectedPolicyId(policyId)
     setSelectedTravellerIdx(travellerIdx)
+    setSelectedComponentIdx(null)
   }
 
   const closeSheet = () => {
     setSelectedPolicyId(null)
     setSelectedTravellerIdx(null)
+    setSelectedComponentIdx(null)
   }
 
   useEffect(() => {
@@ -449,7 +455,15 @@ export function PoliciesTable() {
             <PolicyDetailPanel
               policyId={selectedPolicyId}
               travellerIndex={selectedTravellerIdx}
-              onSelectTraveller={setSelectedTravellerIdx}
+              onSelectTraveller={(idx) => {
+                setSelectedTravellerIdx(idx)
+                setSelectedComponentIdx(null)
+              }}
+              componentIndex={selectedComponentIdx}
+              onSelectComponent={(idx) => {
+                setSelectedComponentIdx(idx)
+                setSelectedTravellerIdx(null)
+              }}
             />
           )}
         </SheetContent>

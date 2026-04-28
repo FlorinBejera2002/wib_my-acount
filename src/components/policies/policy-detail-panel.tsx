@@ -11,6 +11,7 @@ import {
   Download,
   FileText,
   Inbox,
+  Layers,
   Users
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
@@ -19,11 +20,15 @@ import { PolicyStatusBadge } from './policy-status-badge'
 export function PolicyDetailPanel({
   policyId,
   travellerIndex,
-  onSelectTraveller
+  onSelectTraveller,
+  componentIndex,
+  onSelectComponent
 }: {
   policyId: string
   travellerIndex?: number | null
   onSelectTraveller?: (idx: number) => void
+  componentIndex?: number | null
+  onSelectComponent?: (idx: number) => void
 }) {
   const { t } = useTranslation()
   const { data: policy, isLoading, isError } = usePolicy(policyId)
@@ -292,6 +297,200 @@ export function PolicyDetailPanel({
     )
   }
 
+  /* ── Component-specific view (PAD / Facultativă) ── */
+  const resolvedComponents = policy.insuranceComponents && policy.insuranceComponents.length > 0
+    ? policy.insuranceComponents
+    : policy.insuranceType === 'pad_facultative'
+      ? [
+          { type: 'pad' as const, policyNumber: policy.policyNumber, insurerName: policy.insurerName ?? policy.insurer ?? '—', premium: policy.premium / 2, startDate: policy.startDate, endDate: policy.endDate, documents: [] as { id: string; name: string; type: string; url: string }[] },
+          { type: 'facultative' as const, policyNumber: policy.policyNumber, insurerName: policy.insurerName ?? policy.insurer ?? '—', premium: policy.premium / 2, startDate: policy.startDate, endDate: policy.endDate, documents: [] as { id: string; name: string; type: string; url: string }[] }
+        ]
+      : null
+
+  if (
+    componentIndex != null &&
+    resolvedComponents &&
+    resolvedComponents[componentIndex]
+  ) {
+    const comp = resolvedComponents[componentIndex]
+    const compDaysUntilExpiry = Math.ceil(
+      (new Date(comp.endDate).getTime() - Date.now()) / 86400000
+    )
+    const otherComponents = resolvedComponents
+      .map((c, i) => ({
+        type: c.type,
+        policyNumber: c.policyNumber,
+        insurerName: c.insurerName,
+        index: i
+      }))
+      .filter((_, i) => i !== componentIndex)
+
+    return (
+      <div className="space-y-5">
+        {/* ── Header ── */}
+        <SheetHeader className="space-y-3">
+          <div className="flex flex-wrap items-center gap-1.5">
+            <PolicyStatusBadge status={policy.status} />
+          </div>
+          <SheetTitle className="text-base md:text-xl font-bold text-gray-900 leading-tight">
+            <div className="flex md:items-center gap-2 flex-col md:flex-row items-start">
+              {comp.policyNumber}{' '}
+              <span className="text-blue-800 hidden md:flex">•</span>
+              <InsuranceTypeBadge type={comp.type} />
+            </div>
+          </SheetTitle>
+        </SheetHeader>
+        <Separator />
+
+        {/* ── Details List ── */}
+        <div className="space-y-0">
+          {/* Premium */}
+          <div className="flex items-center gap-3 px-4 py-3 transition-colors border-b border-gray-100">
+            <div className="flex-1 min-w-0">
+              <p className="text-[10px] font-medium uppercase tracking-wider text-gray-400 mb-0.5">
+                {t('policies.insurancePremium')}
+              </p>
+              <p className="text-sm font-semibold text-green-600 truncate">
+                {formatCurrency(comp.premium)}
+              </p>
+            </div>
+          </div>
+
+          {/* Insurer */}
+          <div className="flex items-center gap-3 px-4 py-3 transition-colors border-b border-gray-100">
+            <div className="flex-1 min-w-0">
+              <p className="text-[10px] font-medium uppercase tracking-wider text-gray-400 mb-0.5">
+                {t('policies.insurer')}
+              </p>
+              <p className="text-sm font-semibold text-gray-900 truncate">
+                {comp.insurerName}
+              </p>
+            </div>
+          </div>
+
+          {/* Coverage Period */}
+          <div className="flex items-center gap-3 px-4 py-3 transition-colors border-b border-gray-100">
+            <div className="flex-1">
+              <p className="text-[10px] font-medium uppercase tracking-wider text-gray-400 mb-0.5">
+                {t('policies.coveragePeriod')}
+              </p>
+              <p className="text-sm font-semibold text-gray-900">
+                {formatDate(comp.startDate)} — {formatDate(comp.endDate)}
+              </p>
+            </div>
+          </div>
+
+          {/* Days Until Expiry */}
+          {policy.status === 'active' && compDaysUntilExpiry >= 0 && (
+            <div className="flex items-center gap-3 px-4 py-3 transition-colors border-b border-gray-100">
+              <div className="flex-1">
+                <p className="text-[10px] font-medium uppercase tracking-wider text-gray-400 mb-0.5">
+                  {t('policies.daysUntilExpiry')}
+                </p>
+                <div className="flex items-center gap-2">
+                  <p className="text-sm font-semibold text-gray-900">
+                    {t('policies.daysCount', { days: compDaysUntilExpiry })}
+                  </p>
+                  {compDaysUntilExpiry <= 7 && (
+                    <Badge className="bg-red-100 text-red-700 border border-red-200 text-[10px] px-2 py-0.5 rounded">
+                      {t('policies.expiresSoon')}
+                    </Badge>
+                  )}
+                  {compDaysUntilExpiry > 7 && compDaysUntilExpiry <= 30 && (
+                    <Badge className="bg-amber-100 text-amber-700 border border-amber-200 text-[10px] px-2 py-0.5 rounded">
+                      {t('policies.expiresSoon')}
+                    </Badge>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Insured Object (from parent policy) */}
+          {(policy.policyDetails ?? policy.vehicleOrProperty) && (
+            <div className="flex items-center gap-3 px-4 py-3 transition-colors">
+              <div className="flex-1 min-w-0">
+                <p className="text-[10px] font-medium uppercase tracking-wider text-gray-400 mb-0.5">
+                  {t('policies.policyDetails')}
+                </p>
+                <p className="text-sm font-semibold text-gray-900 truncate">
+                  {policy.policyDetails ?? policy.vehicleOrProperty}
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* ── Other component ── */}
+        {otherComponents.length > 0 && (
+          <>
+            <Separator />
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <Layers className="h-4 w-4 text-gray-500" />
+                <h3 className="text-sm font-semibold text-gray-900">
+                  {t('policies.components')}
+                </h3>
+              </div>
+              <div className="space-y-2">
+                {otherComponents.map((other) => (
+                  <button
+                    key={other.index}
+                    type="button"
+                    onClick={() => onSelectComponent?.(other.index)}
+                    className="group flex w-full items-center gap-3 rounded-lg border border-gray-100 bg-gray-50/50 px-4 py-3 text-left transition-colors duration-200 hover:bg-gray-100/70 hover:border-gray-200 focus:outline-none focus:ring-1 focus:ring-gray-300"
+                  >
+                    <div className="flex-1 min-w-0">
+                      <InsuranceTypeBadge type={other.type} />
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {other.insurerName} — {other.policyNumber}
+                      </p>
+                    </div>
+                    <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-gray-600 transition-colors shrink-0" />
+                  </button>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* ── Documents ── */}
+        <Separator />
+        <div className="space-y-3">
+          <div className="flex items-center gap-2">
+            <FileText className="h-4 w-4 text-gray-500" />
+            <h3 className="text-sm font-semibold text-gray-900">
+              {t('policies.documents')}
+            </h3>
+          </div>
+          {comp.documents.length > 0 ? (
+            <div className="space-y-2">
+              {comp.documents.map((doc) => (
+                <a
+                  key={doc.id}
+                  href={doc.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3 rounded-lg border border-gray-100 bg-gray-50/50 px-4 py-3 text-sm text-blue-600 transition-colors hover:bg-gray-50"
+                >
+                  <Download className="h-4 w-4 shrink-0" />
+                  {doc.name}
+                </a>
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center gap-2 rounded-xl border border-dashed border-gray-200 bg-gray-50/50 py-6">
+              <Inbox className="h-8 w-8 text-gray-300" />
+              <p className="text-xs text-muted-foreground">
+                {t('policies.noDocuments')}
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-5">
       {/* ── Header ── */}
@@ -432,6 +631,56 @@ export function PolicyDetailPanel({
           </div>
         </>
       )}
+
+      {/* ── Insurance Components (PAD + Facultativă) ── */}
+      {(() => {
+        const components = policy.insuranceComponents && policy.insuranceComponents.length > 0
+          ? policy.insuranceComponents
+          : policy.insuranceType === 'pad_facultative'
+            ? [
+                { type: 'pad' as const, policyNumber: policy.policyNumber, insurerName: policy.insurerName ?? policy.insurer ?? '—', premium: policy.premium / 2, startDate: policy.startDate, endDate: policy.endDate, documents: [] },
+                { type: 'facultative' as const, policyNumber: policy.policyNumber, insurerName: policy.insurerName ?? policy.insurer ?? '—', premium: policy.premium / 2, startDate: policy.startDate, endDate: policy.endDate, documents: [] }
+              ]
+            : null
+        if (!components) return null
+        return (
+          <>
+            <Separator />
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <Layers className="h-4 w-4 text-gray-500" />
+                <h3 className="text-sm font-semibold text-gray-900">
+                  {t('policies.components')}
+                </h3>
+                <Badge
+                  variant="outline"
+                  className="ml-auto text-[10px] font-medium"
+                >
+                  {components.length}
+                </Badge>
+              </div>
+              <div className="space-y-2">
+                {components.map((comp, idx) => (
+                  <button
+                    key={`comp-${idx}`}
+                    type="button"
+                    onClick={() => onSelectComponent?.(idx)}
+                    className="group flex w-full items-center gap-3 rounded-lg border border-gray-100 bg-gray-50/50 px-4 py-3 text-left transition-colors duration-200 hover:bg-gray-100/70 hover:border-gray-200 focus:outline-none focus:ring-1 focus:ring-gray-300"
+                  >
+                    <div className="flex-1 min-w-0">
+                      <InsuranceTypeBadge type={comp.type} />
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {comp.insurerName} — {comp.policyNumber}
+                      </p>
+                    </div>
+                    <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-gray-600 transition-colors shrink-0" />
+                  </button>
+                ))}
+              </div>
+            </div>
+          </>
+        )
+      })()}
 
       {/* ── Documents ── */}
       <Separator />
