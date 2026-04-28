@@ -3,14 +3,6 @@ import { InsuranceTypeBadge } from '@/components/ui/insurance-type-badge'
 import { Separator } from '@/components/ui/separator'
 import { SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { Skeleton } from '@/components/ui/skeleton'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
-} from '@/components/ui/table'
 import { usePolicy } from '@/hooks/use-policies'
 import { cn, formatCurrency, formatDate } from '@/lib/utils'
 import {
@@ -400,7 +392,8 @@ export function PolicyDetailPanel({
       {/* ── Travellers ── */}
       {policy.travellers && policy.travellers.length > 0 && (
         <>
-          <div className="space-y-3 border-t border-gray-100 pt-4">
+          <Separator />
+          <div className="space-y-3">
             <div className="flex items-center gap-2">
               <Users className="h-4 w-4 text-gray-500" />
               <h3 className="text-sm font-semibold text-gray-900">
@@ -413,61 +406,47 @@ export function PolicyDetailPanel({
                 {policy.travellers.length}
               </Badge>
             </div>
-            <div className="rounded-xl border border-gray-100 bg-white shadow-sm overflow-hidden">
-              <Table>
-                <TableHeader className="bg-green-50">
-                  <TableRow>
-                    <TableHead className="text-[11px] font-medium text-slate-500 uppercase tracking-wider">
-                      {t('policies.travellerName')}
-                    </TableHead>
-                    <TableHead className="text-[11px] font-medium text-slate-500 uppercase tracking-wider">
-                      {t('policies.cnp')}
-                    </TableHead>
-                    <TableHead className="text-[11px] font-medium text-slate-500 uppercase tracking-wider text-right">
-                      {t('policies.premium')}
-                    </TableHead>
-                    <TableHead className="text-[11px] font-medium text-slate-500 uppercase tracking-wider w-10" />
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {policy.travellers.map((trav, idx) => {
-                    const doc = trav.documents[0]
-                    const premiumPerTraveller =
-                      policy.travellers!.length > 0
-                        ? policy.premium / policy.travellers!.length
-                        : 0
-                    return (
-                      <TableRow
-                        key={`trav-${idx}`}
-                        className="hover:bg-muted/50"
+            <div className="space-y-2">
+              {policy.travellers.map((trav, idx) => {
+                const doc = trav.documents[0]
+                const premiumPerTraveller =
+                  policy.travellers!.length > 0
+                    ? policy.premium / policy.travellers!.length
+                    : 0
+                return (
+                  <button
+                    key={`trav-${idx}`}
+                    type="button"
+                    onClick={() => onSelectTraveller?.(idx)}
+                    className="group flex w-full items-center gap-3 rounded-lg border border-gray-100 bg-gray-50/50 px-4 py-3 text-left transition-colors duration-200 hover:bg-gray-100/70 hover:border-gray-200 focus:outline-none focus:ring-1 focus:ring-gray-300"
+                  >
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-gray-900 truncate">
+                        {trav.name}
+                      </p>
+                      <p className="text-xs text-muted-foreground font-mono mt-0.5">
+                        {trav.cnp}
+                      </p>
+                    </div>
+                    <span className="text-sm font-semibold text-gray-900 shrink-0">
+                      {formatCurrency(premiumPerTraveller)}
+                    </span>
+                    {doc && (
+                      <a
+                        href={doc.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className="inline-flex h-7 w-7 items-center justify-center rounded-md text-gray-400 transition-colors hover:bg-gray-200 hover:text-gray-700 shrink-0"
+                        title={doc.name}
                       >
-                        <TableCell className="text-sm font-medium text-gray-900 py-2">
-                          {trav.name}
-                        </TableCell>
-                        <TableCell className="text-xs text-gray-500 font-mono py-2">
-                          {trav.cnp}
-                        </TableCell>
-                        <TableCell className="text-sm font-semibold text-gray-900 text-right py-2">
-                          {formatCurrency(premiumPerTraveller)}
-                        </TableCell>
-                        <TableCell className="py-2">
-                          {doc ? (
-                            <a
-                              href={doc.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex h-7 w-7 items-center justify-center rounded-md text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700"
-                              title={doc.name}
-                            >
-                              <Download className="h-3.5 w-3.5" />
-                            </a>
-                          ) : null}
-                        </TableCell>
-                      </TableRow>
-                    )
-                  })}
-                </TableBody>
-              </Table>
+                        <Download className="h-3.5 w-3.5" />
+                      </a>
+                    )}
+                    <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-gray-600 transition-colors shrink-0" />
+                  </button>
+                )
+              })}
             </div>
           </div>
         </>
