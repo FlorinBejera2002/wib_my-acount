@@ -68,7 +68,7 @@ export function RecentPolicies() {
     const expired = policies.filter((p) => p.status === 'expired')
 
     const result = []
-    let slotsRemaining = 5
+    let slotsRemaining = 3
 
     // Add pending policies first
     const pendingToAdd = pending.slice(0, slotsRemaining)
@@ -126,9 +126,9 @@ export function RecentPolicies() {
                     to={`/policies?policyId=${policy.id}`}
                     className="flex items-center gap-3 px-4 sm:px-6 py-3.5 transition-colors hover:bg-gray-50"
                   >
-                    <InsuranceTypeBadge type={policy.type} />
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-medium text-gray-900">
+                      <InsuranceTypeBadge type={policy.type} />
+                      <p className="truncate text-sm font-medium text-gray-900 pt-3">
                         {policy.policyNumber}
                       </p>
                       <span className="text-sm text-gray-700 max-w-[230px] truncate block">
