@@ -1,21 +1,186 @@
 import { Badge } from '@/components/ui/badge'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle
+} from '@/components/ui/dialog'
 import { InsuranceTypeBadge } from '@/components/ui/insurance-type-badge'
 import { Separator } from '@/components/ui/separator'
 import { SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { Skeleton } from '@/components/ui/skeleton'
 import { usePolicy } from '@/hooks/use-policies'
+import { useCreateReminder } from '@/hooks/use-reminders'
 import { cn, formatCurrency, formatDate } from '@/lib/utils'
+import type { Policy } from '@/api/types'
 import {
   AlertCircle,
+  Bell,
+  Check,
   ChevronRight,
   Download,
   FileText,
   Inbox,
+  Info,
   Layers,
   Users
 } from 'lucide-react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { PolicyStatusBadge } from './policy-status-badge'
+
+const NOTIFY_OPTIONS = [
+  { key: '7_DAYS', days: 7 },
+  { key: '1_MONTH', days: 30 },
+  { key: '2_MONTHS', days: 60 },
+  { key: '3_MONTHS', days: 90 }
+] as const
+
+function computeRemindDate(endDate: string, days: number): string {
+  const date = new Date(endDate)
+  date.setDate(date.getDate() - days)
+  return date.toISOString().slice(0, 10)
+}
+
+function ReminderDialog({
+  policy,
+  open,
+  onOpenChange
+}: {
+  policy: Policy
+  open: boolean
+  onOpenChange: (open: boolean) => void
+}) {
+  const { t } = useTranslation()
+  const [selected, setSelected] = useState<string | null>(null)
+  const [done, setDone] = useState(false)
+  const createReminder = useCreateReminder()
+  const daysLeft = Math.ceil(
+    (new Date(policy.endDate).getTime() - Date.now()) / 86400000
+  )
+
+  const typeName = t(
+    `insuranceType.${(policy.insuranceType ?? policy.type).toUpperCase()}`,
+    { defaultValue: policy.type }
+  )
+
+  const handleSubmit = () => {
+    if (!selected) return
+    const option = NOTIFY_OPTIONS.find((o) => o.key === selected)
+    if (!option) return
+
+    const remindAt = computeRemindDate(policy.endDate, option.days)
+    const title = `${typeName} — ${policy.policyNumber}`
+    const note = JSON.stringify({
+      notifyBefore: selected,
+      expiryDate: policy.endDate,
+      policyNumber: policy.policyNumber,
+      policyType: policy.insuranceType ?? policy.type
+    })
+
+    createReminder.mutate(
+      { title, remindAt, note },
+      {
+        onSuccess: () => {
+          setDone(true)
+          setTimeout(() => {
+            onOpenChange(false)
+            setDone(false)
+            setSelected(null)
+          }, 1500)
+        }
+      }
+    )
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-sm rounded-xl p-0 overflow-hidden">
+        <DialogHeader className="px-5 pt-5 pb-0">
+          <DialogTitle className="text-base font-bold text-gray-900 flex items-center gap-2">
+            <Bell className="h-4 w-4 text-blue-800" />
+            {t('policies.reminderTitle')}
+          </DialogTitle>
+        </DialogHeader>
+
+        <div className="px-5 pb-5 space-y-4">
+          {/* Auto reminder info */}
+          <div className="flex gap-2.5 rounded-lg bg-blue-50 border border-blue-100 px-3.5 py-3">
+            <Info className="h-4 w-4 text-blue-600 shrink-0 mt-0.5" />
+            <p className="text-xs text-blue-700 leading-relaxed">
+              {t('policies.reminderSubtitle')}
+            </p>
+          </div>
+
+          {/* Policy info */}
+          <div className="rounded-lg bg-gray-50 border border-gray-100 px-3.5 py-2.5">
+            <p className="text-xs text-gray-400 font-medium uppercase tracking-wider">
+              {policy.policyNumber}
+            </p>
+            <p className="text-sm font-semibold text-gray-900 mt-0.5">
+              {typeName} — {t('policies.expiry')}: {formatDate(policy.endDate)}
+            </p>
+          </div>
+
+          {/* Notify before options */}
+          <div>
+            <p className="text-xs font-medium text-gray-500 mb-2">
+              {t('policies.notifyBefore')}
+            </p>
+            <div className="grid grid-cols-2 gap-2">
+              {NOTIFY_OPTIONS.map((opt) => {
+                const tooLate = opt.days >= daysLeft
+                return (
+                  <button
+                    key={opt.key}
+                    type="button"
+                    disabled={tooLate}
+                    onClick={() => !tooLate && setSelected(opt.key)}
+                    className={cn(
+                      'rounded-lg border px-3 py-2.5 text-sm font-medium transition-all duration-150',
+                      tooLate
+                        ? 'border-gray-100 bg-gray-50 text-gray-300 cursor-not-allowed line-through'
+                        : selected === opt.key
+                          ? 'border-blue-800 bg-blue-50 text-blue-800'
+                          : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50'
+                    )}
+                  >
+                    {t(`reminders.notifyBeforeLabels.${opt.key}`)}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+
+          {/* Submit */}
+          <button
+            type="button"
+            disabled={!selected || createReminder.isPending || done}
+            onClick={handleSubmit}
+            className={cn(
+              'flex w-full items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-all duration-200',
+              done
+                ? 'bg-green-600'
+                : 'bg-blue-800 hover:bg-blue-900 disabled:opacity-50 disabled:cursor-not-allowed'
+            )}
+          >
+            {done ? (
+              <>
+                <Check className="h-4 w-4" />
+                {t('policies.reminderSuccess')}
+              </>
+            ) : (
+              <>
+                <Bell className="h-4 w-4" />
+                {t('policies.setReminder')}
+              </>
+            )}
+          </button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  )
+}
 
 export function PolicyDetailPanel({
   policyId,
@@ -546,7 +711,7 @@ export function PolicyDetailPanel({
           </div>
         </div>
 
-        {/* Days Until Expiry */}
+        {/* Days Until Expiry + Reminder */}
         {policy.status === 'active' && (
           <>
             <div className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50/50 transition-colors border-b border-gray-100">
@@ -570,6 +735,7 @@ export function PolicyDetailPanel({
                   )}
                 </div>
               </div>
+              <PolicyReminderButton policy={policy} />
             </div>
           </>
         )}
@@ -699,5 +865,28 @@ export function PolicyDetailPanel({
         </div>
       </div>
     </div>
+  )
+}
+
+/* ═══════════════════════════════════════════════════════════════════════ */
+/*  PolicyReminderButton                                                  */
+/* ═══════════════════════════════════════════════════════════════════════ */
+
+function PolicyReminderButton({ policy }: { policy: Policy }) {
+  const { t } = useTranslation()
+  const [open, setOpen] = useState(false)
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="inline-flex items-center gap-1.5 shrink-0 rounded-md border border-gray-200 bg-white px-2.5 py-1.5 text-xs font-medium text-gray-600 shadow-sm transition-colors hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200"
+      >
+        <Bell className="h-3.5 w-3.5" />
+        {t('policies.setReminder')}
+      </button>
+      <ReminderDialog policy={policy} open={open} onOpenChange={setOpen} />
+    </>
   )
 }

@@ -288,7 +288,13 @@
     "otherTravellers": "Ceilalți călători",
     "viewDetails": "Vezi detalii",
     "startDate": "Data început",
-    "endDate": "Data sfârșit"
+    "endDate": "Data sfârșit",
+    "setReminder": "Setează reminder",
+    "reminderTitle": "Reminder expirare poliță",
+    "reminderSubtitle": "Primești automat o notificare cu 30 de zile înainte de expirare. Dacă dorești un reminder suplimentar, alege când să fii notificat.",
+    "notifyBefore": "Notifică-mă cu",
+    "reminderSuccess": "Reminder-ul a fost setat cu succes",
+    "beforeExpiry": "înainte de expirare"
   },
   "quotes": {
     "title": "Cotațiile Mele",

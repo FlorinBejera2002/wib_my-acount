@@ -1,7 +1,7 @@
 import type { DashboardStats } from '@/api/types'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
-import { AlertTriangle, Bell, ClipboardList, FileText } from 'lucide-react'
+import { AlertTriangle, ClipboardList, Clock, FileText } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 interface StatsCardsProps {
@@ -21,8 +21,8 @@ function getStatValue(
       return stats.policies.active
     case 'expiringSoon':
       return stats.policies.expiringSoon.length
-    case 'unreadNotifications':
-      return stats.notifications.unread
+    case 'totalReminders':
+      return stats.reminders.total
     default:
       return 0
   }
@@ -51,9 +51,9 @@ const cards = [
     iconBg: 'bg-amber-50'
   },
   {
-    labelKey: 'dashboard.notifications',
-    key: 'unreadNotifications',
-    icon: Bell,
+    labelKey: 'dashboard.upcomingReminders',
+    key: 'totalReminders',
+    icon: Clock,
     iconColor: 'text-rose-600',
     iconBg: 'bg-rose-50'
   }

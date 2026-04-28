@@ -280,7 +280,13 @@
     "otherTravellers": "Többi utazó",
     "viewDetails": "Részletek",
     "startDate": "Kezdő dátum",
-    "endDate": "Befejező dátum"
+    "endDate": "Befejező dátum",
+    "setReminder": "Emlékeztető beállítása",
+    "reminderTitle": "Kötvény lejárati emlékeztető",
+    "reminderSubtitle": "Automatikusan kap értesítést 30 nappal a lejárat előtt. Ha további emlékeztetőt szeretne, válassza ki az időpontot.",
+    "notifyBefore": "Értesítés",
+    "reminderSuccess": "Emlékeztető sikeresen beállítva",
+    "beforeExpiry": "a lejárat előtt"
   },
   "quotes": {
     "title": "Ajánlataim",

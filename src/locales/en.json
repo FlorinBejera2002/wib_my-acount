@@ -280,7 +280,13 @@
     "otherTravellers": "Other travellers",
     "viewDetails": "View details",
     "startDate": "Start date",
-    "endDate": "End date"
+    "endDate": "End date",
+    "setReminder": "Set reminder",
+    "reminderTitle": "Policy expiry reminder",
+    "reminderSubtitle": "You automatically receive a notification 30 days before expiry. If you want an additional reminder, choose when to be notified.",
+    "notifyBefore": "Notify me",
+    "reminderSuccess": "Reminder set successfully",
+    "beforeExpiry": "before expiry"
   },
   "quotes": {
     "title": "My Quotes",
