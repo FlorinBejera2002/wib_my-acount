@@ -18,7 +18,7 @@ import {
   TableRow
 } from '@/components/ui/table'
 import { usePolicies } from '@/hooks/use-policies'
-import { formatCurrency, formatDate } from '@/lib/utils'
+import { cn, formatCurrency, formatDate } from '@/lib/utils'
 import {
   AlertCircle,
   ChevronDown,
@@ -551,7 +551,14 @@ function PolicyCard({
               <p className="text-[10px] font-medium uppercase tracking-wider text-gray-400 mb-0.5">
                 {t('policies.daysLeft')}
               </p>
-              <ExpiryBadge days={days} t={t} />
+              <p
+                className={cn(
+                  'text-sm font-semibold',
+                  days <= 7 ? 'text-red-600' : 'text-gray-800'
+                )}
+              >
+                {t('policies.daysCount', { days })}
+              </p>
             </div>
           )}
 

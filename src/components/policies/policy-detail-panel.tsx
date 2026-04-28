@@ -408,11 +408,6 @@ export function PolicyDetailPanel({
             </div>
             <div className="space-y-2">
               {policy.travellers.map((trav, idx) => {
-                const doc = trav.documents[0]
-                const premiumPerTraveller =
-                  policy.travellers!.length > 0
-                    ? policy.premium / policy.travellers!.length
-                    : 0
                 return (
                   <button
                     key={`trav-${idx}`}
@@ -428,21 +423,6 @@ export function PolicyDetailPanel({
                         {trav.cnp}
                       </p>
                     </div>
-                    <span className="text-sm font-semibold text-gray-900 shrink-0">
-                      {formatCurrency(premiumPerTraveller)}
-                    </span>
-                    {doc && (
-                      <a
-                        href={doc.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={(e) => e.stopPropagation()}
-                        className="inline-flex h-7 w-7 items-center justify-center rounded-md text-gray-400 transition-colors hover:bg-gray-200 hover:text-gray-700 shrink-0"
-                        title={doc.name}
-                      >
-                        <Download className="h-3.5 w-3.5" />
-                      </a>
-                    )}
                     <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-gray-600 transition-colors shrink-0" />
                   </button>
                 )
