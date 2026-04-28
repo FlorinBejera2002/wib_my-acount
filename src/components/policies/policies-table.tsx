@@ -129,6 +129,20 @@ function ExpiryBadge({
   return <span className="text-sm text-muted-foreground">{label}</span>
 }
 
+function ExpandCountLabel({
+  policy,
+  count
+}: { policy: Policy; count: number }) {
+  if (count <= 1) return null
+  return (
+    <span className="ml-1 text-xs text-muted-foreground">
+      {policy.insuranceComponents && policy.insuranceComponents.length > 0
+        ? `(${count})`
+        : `+${count - 1}`}
+    </span>
+  )
+}
+
 /* ── Main export ──────────────────────────────────────────────────────── */
 
 export function PoliciesTable() {
@@ -238,8 +252,15 @@ export function PoliciesTable() {
           <Skeleton className="h-9 w-[140px]" />
           <Skeleton className="h-9 w-[100px]" />
         </div>
-        <div className="rounded-xl border border-gray-100/80 bg-white shadow-[0_1px_4px_rgba(0,0,0,0.05)] overflow-x-auto hide-scrollbar">
-          <Table className="min-w-[900px]">
+        {/* Mobile skeleton */}
+        <div className="flex flex-col gap-3 lg:hidden">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Skeleton key={i} className="h-28 w-full rounded-xl" />
+          ))}
+        </div>
+        {/* Desktop skeleton */}
+        <div className="hidden lg:block rounded-xl border border-gray-100/80 bg-white shadow-[0_1px_4px_rgba(0,0,0,0.05)]">
+          <Table>
             <TableHeader className="bg-slate-50 [&_th]:text-slate-500 [&_th]:text-xs [&_th]:font-medium [&_th]:uppercase [&_th]:tracking-wider">
               <TableRow>
                 {Array.from({ length: COL_COUNT }).map((_, i) => (
@@ -285,7 +306,7 @@ export function PoliciesTable() {
   return (
     <div>
       {/* Filters */}
-      <div className="flex flex-wrap items-center gap-2 pb-4">
+      <div className="flex items-center gap-2 pb-4">
         {filterConfigs.map((config) => (
           <Select
             key={config.key}
@@ -296,7 +317,7 @@ export function PoliciesTable() {
             }
             onValueChange={(v) => handleFilterChange(config.key, v)}
           >
-            <SelectTrigger className="h-9 w-full sm:w-[140px]">
+            <SelectTrigger className="h-9 w-[130px] md:w-[160px]">
               <SelectValue placeholder={t(config.labelKey)} />
             </SelectTrigger>
             <SelectContent>
@@ -316,16 +337,52 @@ export function PoliciesTable() {
           <button
             type="button"
             onClick={handleClearFilters}
-            className="flex items-center gap-1 text-sm text-gray-400 hover:text-red-500 transition-colors"
+            className="flex items-center gap-1 text-sm text-gray-400 hover:text-red-500 transition-colors shrink-0"
           >
             <X className="h-3.5 w-3.5" />
-            {t('policies.clearFilters')}
+            <span className="hidden md:inline">
+              {t('policies.clearFilters')}
+            </span>
           </button>
         )}
       </div>
 
-      {/* Table */}
-      <div className="rounded-xl border border-gray-100/80 bg-white shadow-[0_1px_4px_rgba(0,0,0,0.05)] overflow-x-auto hide-scrollbar">
+      {/* ═══ Mobile / Tablet card list (< lg) ═══ */}
+      <div className="flex flex-col gap-5 lg:hidden">
+        {filteredData.length > 0 ? (
+          filteredData.map((policy) => {
+            const expandable = isExpandable(policy)
+            const expanded = expandedRows.has(policy.id)
+            const days = computeDaysUntilExpiry(policy.endDate)
+            const count = getExpandCount(policy)
+            const firstDoc = policy.documents?.[0]
+
+            return (
+              <PolicyCard
+                key={policy.id}
+                policy={policy}
+                days={days}
+                count={count}
+                expandable={expandable}
+                expanded={expanded}
+                firstDoc={firstDoc}
+                onToggle={() => toggleRow(policy.id)}
+                onNavigate={() => openPolicy(policy.id)}
+                onSelectTraveller={(idx) => openTraveller(policy.id, idx)}
+                t={t}
+              />
+            )
+          })
+        ) : (
+          <div className="flex flex-col items-center gap-2 rounded-xl border border-gray-100/80 bg-white py-16 shadow-[0_1px_4px_rgba(0,0,0,0.05)]">
+            <Inbox className="h-10 w-10 text-muted-foreground/50" />
+            <p className="text-muted-foreground">{t('common.noResults')}</p>
+          </div>
+        )}
+      </div>
+
+      {/* ═══ Desktop table (lg+) ═══ */}
+      <div className="hidden lg:block rounded-xl border border-gray-100/80 bg-white shadow-[0_1px_4px_rgba(0,0,0,0.05)] overflow-x-auto hide-scrollbar">
         <Table className="min-w-[900px]">
           <TableHeader className="bg-slate-50 [&_th]:text-slate-500 [&_th]:text-xs [&_th]:font-medium [&_th]:uppercase [&_th]:tracking-wider">
             <TableRow>
@@ -362,9 +419,7 @@ export function PoliciesTable() {
                     firstDoc={firstDoc}
                     onToggle={() => toggleRow(policy.id)}
                     onNavigate={() => openPolicy(policy.id)}
-                    onSelectTraveller={(idx) =>
-                      openTraveller(policy.id, idx)
-                    }
+                    onSelectTraveller={(idx) => openTraveller(policy.id, idx)}
                     t={t}
                   />
                 )
@@ -389,7 +444,7 @@ export function PoliciesTable() {
         open={!!selectedPolicyId}
         onOpenChange={(open) => !open && closeSheet()}
       >
-        <SheetContent className="sm:max-w-xl overflow-y-auto">
+        <SheetContent className="w-full md:max-w-xl overflow-y-auto">
           {selectedPolicyId && (
             <PolicyDetailPanel
               policyId={selectedPolicyId}
@@ -404,7 +459,219 @@ export function PoliciesTable() {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════ */
-/*  PolicyRowGroup                                                        */
+/*  PolicyCard – mobile / tablet (< lg)                                  */
+/* ═══════════════════════════════════════════════════════════════════════ */
+
+function PolicyCard({
+  policy,
+  days,
+  count,
+  expandable,
+  expanded,
+  firstDoc,
+  onToggle,
+  onNavigate,
+  onSelectTraveller,
+  t
+}: {
+  policy: Policy
+  days: number
+  count: number
+  expandable: boolean
+  expanded: boolean
+  firstDoc?: { url: string; name: string }
+  onToggle: () => void
+  onNavigate: () => void
+  onSelectTraveller: (idx: number) => void
+  t: (key: string, opts?: Record<string, unknown>) => string
+}) {
+  const handleClick = () => {
+    if (expandable) onToggle()
+    else onNavigate()
+  }
+
+  return (
+    <div className="rounded-xl border border-gray-200/80 bg-gray-50/50 shadow-[0_1px_4px_rgba(0,0,0,0.04)] overflow-hidden">
+      {/* ── Header ── */}
+      <div
+        className="flex items-center justify-between gap-3 px-4 py-3 bg-gray-100/60 cursor-pointer"
+        onClick={handleClick}
+      >
+        <div className="flex items-center gap-2 min-w-0">
+          {expandable && (
+            <span className="shrink-0">
+              {expanded ? (
+                <ChevronDown className="h-4 w-4 text-primary" />
+              ) : (
+                <ChevronRight className="h-4 w-4 text-slate-400" />
+              )}
+            </span>
+          )}
+          <span className="font-bold text-gray-900 text-sm truncate">
+            {policy.policyNumber}
+          </span>
+          <ExpandCountLabel policy={policy} count={count} />
+        </div>
+        <PolicyStatusBadge status={policy.status} />
+      </div>
+
+      {/* ── Body ── */}
+      <div className="cursor-pointer px-4 py-4" onClick={handleClick}>
+        {/* Type badge */}
+        <InsuranceTypeBadge
+          type={policy.insuranceType ?? policy.type}
+          className="px-2 py-0.5 text-[11px] gap-1 [&_svg]:h-3 [&_svg]:w-3"
+        />
+
+        {/* Mini-cards grid */}
+        <div className="grid grid-cols-2 gap-2 mt-3">
+          {/* Premium */}
+          <div className="rounded-lg bg-white border border-gray-100 px-3 py-2.5">
+            <p className="text-[10px] font-medium uppercase tracking-wider text-gray-400 mb-0.5">
+              {t('policies.premium')}
+            </p>
+            <p className="text-sm font-bold text-gray-900">
+              {formatCurrency(policy.premium)}
+            </p>
+          </div>
+
+          {/* Expiry */}
+          <div className="rounded-lg bg-white border border-gray-100 px-3 py-2.5">
+            <p className="text-[10px] font-medium uppercase tracking-wider text-gray-400 mb-0.5">
+              {t('policies.expiry')}
+            </p>
+            <p className="text-sm font-semibold text-gray-800">
+              {formatDate(policy.endDate)}
+            </p>
+          </div>
+
+          {/* Days left */}
+          {policy.status === 'active' && days >= 0 && (
+            <div className="rounded-lg bg-white border border-gray-100 px-3 py-2.5">
+              <p className="text-[10px] font-medium uppercase tracking-wider text-gray-400 mb-0.5">
+                {t('policies.daysLeft')}
+              </p>
+              <ExpiryBadge days={days} t={t} />
+            </div>
+          )}
+
+          {/* Insurer */}
+          <div className="rounded-lg bg-white border border-gray-100 px-3 py-2.5">
+            <p className="text-[10px] font-medium uppercase tracking-wider text-gray-400 mb-0.5">
+              {t('policies.insurer')}
+            </p>
+            <p className="text-sm font-semibold text-gray-800 truncate">
+              {policy.insurerName ?? policy.insurer ?? '—'}
+            </p>
+          </div>
+        </div>
+
+        {/* Actions row: PDF left, details right */}
+        <div className="flex items-center justify-between mt-3">
+          <div>
+            {firstDoc && <PdfLink url={firstDoc.url} label={firstDoc.name} />}
+          </div>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation()
+              onNavigate()
+            }}
+            className="inline-flex items-center gap-1 text-xs font-medium text-blue-600 hover:text-blue-700 transition-colors"
+          >
+            {t('policies.viewDetails')}
+            <ChevronRight className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      </div>
+
+      {/* ── Expanded: travellers ── */}
+      {expanded && policy.travellers && policy.travellers.length > 0 && (
+        <div className="border-t border-gray-200/60 bg-gray-100/40 px-4 py-4">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-3">
+            {t('policies.travellers')}
+          </p>
+          <div className="flex flex-col gap-2">
+            {policy.travellers.map((trav, idx) => {
+              const doc = trav.documents[0]
+              const premiumPerTraveller =
+                policy.travellers!.length > 0
+                  ? policy.premium / policy.travellers!.length
+                  : 0
+              return (
+                <div
+                  key={`trav-${idx}`}
+                  className="flex items-center gap-3 rounded-lg bg-white border border-gray-100 px-3.5 py-2.5 cursor-pointer transition-colors hover:border-gray-200 hover:shadow-sm"
+                  onClick={() => onSelectTraveller(idx)}
+                >
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-gray-900 truncate">
+                      {trav.name}
+                    </p>
+                    <p className="text-xs text-gray-400 font-mono mt-0.5">
+                      {trav.cnp}
+                    </p>
+                  </div>
+                  <span className="text-sm font-bold text-gray-900 shrink-0">
+                    {formatCurrency(premiumPerTraveller)}
+                  </span>
+                  {doc && (
+                    <span className="shrink-0">
+                      <PdfLink url={doc.url} label={doc.name} />
+                    </span>
+                  )}
+                  <ChevronRight className="h-4 w-4 text-gray-300 shrink-0" />
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* ── Expanded: insurance components ── */}
+      {expanded &&
+        policy.insuranceComponents &&
+        policy.insuranceComponents.length > 0 && (
+          <div className="border-t border-gray-200/60 bg-gray-100/40 px-4 py-4">
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-3">
+              {t('policies.components')}
+            </p>
+            <div className="flex flex-col gap-2">
+              {policy.insuranceComponents.map((comp, idx) => {
+                const doc = comp.documents[0]
+                return (
+                  <div
+                    key={`comp-${idx}`}
+                    className="flex items-center gap-3 rounded-lg bg-white border border-gray-100 px-3.5 py-2.5 cursor-pointer transition-colors hover:border-gray-200 hover:shadow-sm"
+                    onClick={onNavigate}
+                  >
+                    <div className="flex-1 min-w-0">
+                      <InsuranceTypeBadge type={comp.type} />
+                      <p className="text-xs text-gray-500 mt-1.5 truncate">
+                        {comp.insurerName} — {comp.policyNumber}
+                      </p>
+                    </div>
+                    <span className="text-sm font-bold text-gray-900 shrink-0">
+                      {formatCurrency(comp.premium)}
+                    </span>
+                    {doc && (
+                      <span className="shrink-0">
+                        <PdfLink url={doc.url} label={doc.name} />
+                      </span>
+                    )}
+                    <ChevronRight className="h-4 w-4 text-gray-300 shrink-0" />
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        )}
+    </div>
+  )
+}
+
+/* ═══════════════════════════════════════════════════════════════════════ */
+/*  PolicyRowGroup – desktop table (lg+)                                 */
 /* ═══════════════════════════════════════════════════════════════════════ */
 
 function PolicyRowGroup({
@@ -453,14 +720,7 @@ function PolicyRowGroup({
           <span className="font-medium text-gray-900">
             {policy.policyNumber}
           </span>
-          {expandable && count > 1 && (
-            <span className="ml-1 text-xs text-muted-foreground">
-              {policy.insuranceComponents &&
-              policy.insuranceComponents.length > 0
-                ? `(${count})`
-                : `+${count - 1}`}
-            </span>
-          )}
+          <ExpandCountLabel policy={policy} count={count} />
         </TableCell>
 
         <TableCell>
@@ -537,8 +797,7 @@ function PolicyRowGroup({
 }
 
 /* ═══════════════════════════════════════════════════════════════════════ */
-/*  Travel sub-table                                                      */
-/*  Columns: Policy | Traveller | CNP | Premium | Covers | PDF            */
+/*  Travel sub-table (desktop)                                           */
 /* ═══════════════════════════════════════════════════════════════════════ */
 
 function TravellerSubTable({
@@ -602,8 +861,7 @@ function TravellerSubTable({
 }
 
 /* ═══════════════════════════════════════════════════════════════════════ */
-/*  Home combo sub-table                                                  */
-/*  Columns: Policy | Insurance Type | Insurer | Premium | PDF            */
+/*  Home combo sub-table (desktop)                                       */
 /* ═══════════════════════════════════════════════════════════════════════ */
 
 function ComponentSubTable({
