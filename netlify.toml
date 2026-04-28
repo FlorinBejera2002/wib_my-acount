@@ -5,7 +5,7 @@
 # Proxy /api/* requests to the backend (uses API_PROXY_TARGET env var)
 [[redirects]]
   from = "/api/*"
-  to = "http://marcus:8080/api/:splat"
+  to = "https://relationships-convertible-brian-representative.trycloudflare.com/api/:splat"
   status = 200
   force = true
 

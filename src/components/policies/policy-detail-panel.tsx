@@ -300,8 +300,9 @@ export function PolicyDetailPanel({
           <PolicyStatusBadge status={policy.status} />
         </div>
         <SheetTitle className="text-base md:text-xl font-bold text-gray-900 leading-tight">
-          <div className="flex items-center gap-2">
-            {policy.policyNumber} <span className="text-blue-800">•</span>
+          <div className="flex md:items-center gap-2 flex-col md:flex-row items-start">
+            {policy.policyNumber}{' '}
+            <span className="text-blue-800 hidden md:flex">•</span>
             <InsuranceTypeBadge type={policy.insuranceType ?? policy.type} />
           </div>
         </SheetTitle>

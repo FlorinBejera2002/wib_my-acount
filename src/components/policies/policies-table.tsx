@@ -619,14 +619,6 @@ function PolicyCard({
                       {trav.cnp}
                     </p>
                   </div>
-                  <span className="text-sm font-bold text-gray-900 shrink-0">
-                    {formatCurrency(premiumPerTraveller)}
-                  </span>
-                  {doc && (
-                    <span className="shrink-0">
-                      <PdfLink url={doc.url} label={doc.name} />
-                    </span>
-                  )}
                   <ChevronRight className="h-4 w-4 text-gray-300 shrink-0" />
                 </div>
               )
@@ -658,14 +650,7 @@ function PolicyCard({
                         {comp.insurerName} — {comp.policyNumber}
                       </p>
                     </div>
-                    <span className="text-sm font-bold text-gray-900 shrink-0">
-                      {formatCurrency(comp.premium)}
-                    </span>
-                    {doc && (
-                      <span className="shrink-0">
-                        <PdfLink url={doc.url} label={doc.name} />
-                      </span>
-                    )}
+
                     <ChevronRight className="h-4 w-4 text-gray-300 shrink-0" />
                   </div>
                 )
