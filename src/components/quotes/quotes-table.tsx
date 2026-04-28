@@ -432,14 +432,14 @@ function QuoteCard({
 
         {/* Offer link */}
         {quote.offerUrl && (
-          <div className="mt-3">
+          <div className="mt-4">
             <a
               href={quote.offerUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-md border border-gray-150 bg-gray-50/40 px-3 py-1.5 text-xs font-medium text-blue-600 shadow-[0_1px_3px_rgba(0,0,0,0.04)] transition-colors hover:bg-gray-50 hover:text-blue-700"
+              className="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-800 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-900"
             >
-              <ExternalLink className="h-3 w-3 shrink-0" />
+              <ExternalLink className="h-4 w-4 shrink-0" />
               {t('quotes.viewOffer')}
             </a>
           </div>
