@@ -20,7 +20,8 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarRail
+  SidebarRail,
+  useSidebar
 } from '@/components/ui/sidebar'
 import { usePolicies } from '@/hooks/use-policies'
 import { useQuotes } from '@/hooks/use-quotes'
@@ -72,6 +73,7 @@ export function AppSidebar() {
   const navigate = useNavigate()
   const user = useAuthStore((s) => s.user)
   const logout = useAuthStore((s) => s.logout)
+  const { isMobile, setOpenMobile } = useSidebar()
 
   // API calls separate pentru fiecare count
   const { data: quotesData } = useQuotes({ page: 1, limit: 1 })
@@ -126,7 +128,10 @@ export function AppSidebar() {
                   <SidebarMenuItem key={item.href}>
                     <SidebarMenuButton
                       isActive={isActive}
-                      onClick={() => navigate(item.href)}
+                      onClick={() => {
+                        navigate(item.href)
+                        if (isMobile) setOpenMobile(false)
+                      }}
                       tooltip={t(item.labelKey)}
                       className={cn(
                         'h-10 rounded-lg transition-[background-color] duration-150',
