@@ -283,8 +283,8 @@
     "endDate": "Befejező dátum",
     "setReminder": "Emlékeztető beállítása",
     "reminderTitle": "Kötvény lejárati emlékeztető",
-    "reminderSubtitle": "Automatikusan kap értesítést 30 nappal a lejárat előtt. Ha további emlékeztetőt szeretne, válassza ki az időpontot.",
-    "notifyBefore": "Értesítés",
+    "autoRenewalInfo": "Automatikusan küldünk megújítási ajánlatokat e-mailben {{days}} nappal a lejárat előtt. Ha korábban szeretne emlékeztetőt, válasszon az alábbiak közül.",
+    "notifyBefore": "További emlékeztető",
     "reminderSuccess": "Emlékeztető sikeresen beállítva",
     "beforeExpiry": "a lejárat előtt"
   },
@@ -428,6 +428,7 @@
     "namePlaceholder": "Adja meg a nevet",
     "saveBtn": "Mentés",
     "formErrors": "Kérjük, javítsa ki a következő hibákat:",
+    "autoRenewalInfo": "{{type}} esetén automatikusan küldünk megújítási ajánlatokat e-mailben {{days}} nappal a lejárat előtt. Ha korábban szeretne emlékeztetőt, állítsa be itt.",
     "alertTypes": {
       "RCA": "Kötelező gépjármű-biztosítás (RCA)",
       "ASR": "Közúti biztosítás (ASR)",

@@ -30,11 +30,32 @@ import { useTranslation } from 'react-i18next'
 import { PolicyStatusBadge } from './policy-status-badge'
 
 const NOTIFY_OPTIONS = [
-  { key: '7_DAYS', days: 7 },
-  { key: '1_MONTH', days: 30 },
-  { key: '2_MONTHS', days: 60 },
-  { key: '3_MONTHS', days: 90 }
+  { key: '3_MONTHS', days: 90 },
+  { key: '6_MONTHS', days: 180 }
 ] as const
+
+const AUTO_EMAIL_DAYS: Record<string, number[]> = {
+  rca: [60, 30, 10, 1],
+  casco: [30, 10, 1],
+  casco_econom: [30, 10, 1],
+  home: [25, 5],
+  pad: [25, 5],
+  pad_facultative: [25, 5],
+  rcp: [30, 10, 1],
+  cmr: [30, 10, 1],
+  health: [30, 10, 1],
+  breakdown: [30, 10, 1],
+  travel: [30, 10, 1],
+  accidents: [30, 15, 1],
+  accidents_taxi: [30, 10, 1],
+  accidents_traveler: [30, 10, 1]
+}
+
+function formatAutoDays(days: number[]): string {
+  return days
+    .map((d) => (d === 1 ? '1 zi' : `${d} zile`))
+    .join(', ')
+}
 
 function computeRemindDate(endDate: string, days: number): string {
   const date = new Date(endDate)
@@ -59,10 +80,12 @@ function ReminderDialog({
     (new Date(policy.endDate).getTime() - Date.now()) / 86400000
   )
 
+  const policyType = (policy.insuranceType ?? policy.type).toLowerCase()
   const typeName = t(
-    `insuranceType.${(policy.insuranceType ?? policy.type).toUpperCase()}`,
+    `insuranceType.${policyType.toUpperCase()}`,
     { defaultValue: policy.type }
   )
+  const autoDays = AUTO_EMAIL_DAYS[policyType] ?? [30, 10, 1]
 
   const handleSubmit = () => {
     if (!selected) return
@@ -104,11 +127,13 @@ function ReminderDialog({
         </DialogHeader>
 
         <div className="px-5 pb-5 space-y-4">
-          {/* Auto reminder info */}
+          {/* Auto renewal emails info */}
           <div className="flex gap-2.5 rounded-lg bg-blue-50 border border-blue-100 px-3.5 py-3">
             <Info className="h-4 w-4 text-blue-600 shrink-0 mt-0.5" />
             <p className="text-xs text-blue-700 leading-relaxed">
-              {t('policies.reminderSubtitle')}
+              {t('policies.autoRenewalInfo', {
+                days: formatAutoDays(autoDays)
+              })}
             </p>
           </div>
 

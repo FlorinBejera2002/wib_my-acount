@@ -21,7 +21,7 @@ import {
   createExpiryAlertSchema
 } from '@/lib/validators'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ArrowLeft, Bell, Check, Plus, X } from 'lucide-react'
+import { ArrowLeft, Bell, Check, Info, Plus, X } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -108,6 +108,28 @@ const NAME_TYPES: AlertType[] = [
 const HOUSING_TYPES: AlertType[] = ['LOCUINTA_PAD', 'LOCUINTA_OPTIONALA']
 
 const BIRTHDAY_TYPE: AlertType = 'ZIUA_SOTIEI'
+
+const AUTO_EMAIL_BY_ALERT: Record<string, number[] | null> = {
+  RCA: [60, 30, 10, 1],
+  CASCO: [30, 10, 1],
+  ASR: [30, 10, 1],
+  CALATORIE: [30, 10, 1],
+  LOCUINTA_PAD: [25, 5],
+  LOCUINTA_OPTIONALA: [25, 5],
+  ROVINIETA: null,
+  ITP: null,
+  REVIZIE_AUTO: null,
+  PERMIS: null,
+  BULETIN: null,
+  PASAPORT: null,
+  ZIUA_SOTIEI: null
+}
+
+function formatAutoDays(days: number[]): string {
+  return days
+    .map((d) => (d === 1 ? '1 zi' : `${d} zile`))
+    .join(', ')
+}
 
 function computeRemindAt(
   expiryDate: string,
@@ -338,6 +360,19 @@ function AddAlertForm({ onBack }: { onBack: () => void }) {
 
       <div className="rounded-xl border border-gray-100 bg-white shadow-sm p-6">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          {/* Auto renewal info */}
+          {alertType && AUTO_EMAIL_BY_ALERT[alertType] && (
+            <div className="flex gap-2.5 rounded-lg bg-blue-50 border border-blue-100 px-3.5 py-3">
+              <Info className="h-4 w-4 text-blue-600 shrink-0 mt-0.5" />
+              <p className="text-xs text-blue-700 leading-relaxed">
+                {t('reminders.autoRenewalInfo', {
+                  type: t(`reminders.alertTypes.${alertType}`),
+                  days: formatAutoDays(AUTO_EMAIL_BY_ALERT[alertType]!)
+                })}
+              </p>
+            </div>
+          )}
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <Label>{t('reminders.alertFor')}</Label>

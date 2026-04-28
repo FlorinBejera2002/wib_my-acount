@@ -291,8 +291,8 @@
     "endDate": "Data sfârșit",
     "setReminder": "Setează reminder",
     "reminderTitle": "Reminder expirare poliță",
-    "reminderSubtitle": "Primești automat o notificare cu 30 de zile înainte de expirare. Dacă dorești un reminder suplimentar, alege când să fii notificat.",
-    "notifyBefore": "Notifică-mă cu",
+    "autoRenewalInfo": "Îți trimitem automat pe email oferte de reînnoire la {{days}} înainte de expirare. Dacă vrei un reminder suplimentar mai devreme, alege mai jos.",
+    "notifyBefore": "Reminder suplimentar",
     "reminderSuccess": "Reminder-ul a fost setat cu succes",
     "beforeExpiry": "înainte de expirare"
   },
@@ -436,6 +436,7 @@
     "namePlaceholder": "Introduceti numele",
     "saveBtn": "Salvati",
     "formErrors": "Vă rugăm să corectați următoarele erori:",
+    "autoRenewalInfo": "Pentru {{type}}, îți trimitem automat pe email oferte de reînnoire la {{days}} înainte de expirare. Dacă vrei un reminder suplimentar mai devreme, setează-l aici.",
     "alertTypes": {
       "RCA": "Asigurare Auto Obligatorie (RCA)",
       "ASR": "Asigurare Rutieră (ASR)",

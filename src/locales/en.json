@@ -283,8 +283,8 @@
     "endDate": "End date",
     "setReminder": "Set reminder",
     "reminderTitle": "Policy expiry reminder",
-    "reminderSubtitle": "You automatically receive a notification 30 days before expiry. If you want an additional reminder, choose when to be notified.",
-    "notifyBefore": "Notify me",
+    "autoRenewalInfo": "We automatically send you renewal offers by email at {{days}} before expiry. If you want an additional reminder earlier, choose below.",
+    "notifyBefore": "Additional reminder",
     "reminderSuccess": "Reminder set successfully",
     "beforeExpiry": "before expiry"
   },
@@ -428,6 +428,7 @@
     "namePlaceholder": "Enter name",
     "saveBtn": "Save",
     "formErrors": "Please fix the following errors:",
+    "autoRenewalInfo": "For {{type}}, we automatically send renewal offers by email at {{days}} before expiry. If you want an additional reminder earlier, set it here.",
     "alertTypes": {
       "RCA": "Mandatory Auto Insurance (RCA)",
       "ASR": "Road Insurance (ASR)",
