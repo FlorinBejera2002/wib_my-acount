@@ -138,11 +138,29 @@ export function PoliciesTable() {
   const [selectedPolicyId, setSelectedPolicyId] = useState<string | null>(
     searchParams.get('policyId')
   )
+  const [selectedTravellerIdx, setSelectedTravellerIdx] = useState<
+    number | null
+  >(null)
+
+  const openPolicy = (id: string) => {
+    setSelectedPolicyId(id)
+    setSelectedTravellerIdx(null)
+  }
+
+  const openTraveller = (policyId: string, travellerIdx: number) => {
+    setSelectedPolicyId(policyId)
+    setSelectedTravellerIdx(travellerIdx)
+  }
+
+  const closeSheet = () => {
+    setSelectedPolicyId(null)
+    setSelectedTravellerIdx(null)
+  }
 
   useEffect(() => {
     const paramId = searchParams.get('policyId')
     if (paramId) {
-      setSelectedPolicyId(paramId)
+      openPolicy(paramId)
       searchParams.delete('policyId')
       setSearchParams(searchParams, { replace: true })
     }
@@ -343,7 +361,10 @@ export function PoliciesTable() {
                     expanded={expanded}
                     firstDoc={firstDoc}
                     onToggle={() => toggleRow(policy.id)}
-                    onNavigate={() => setSelectedPolicyId(policy.id)}
+                    onNavigate={() => openPolicy(policy.id)}
+                    onSelectTraveller={(idx) =>
+                      openTraveller(policy.id, idx)
+                    }
                     t={t}
                   />
                 )
@@ -366,11 +387,15 @@ export function PoliciesTable() {
 
       <Sheet
         open={!!selectedPolicyId}
-        onOpenChange={(open) => !open && setSelectedPolicyId(null)}
+        onOpenChange={(open) => !open && closeSheet()}
       >
         <SheetContent className="sm:max-w-xl overflow-y-auto">
           {selectedPolicyId && (
-            <PolicyDetailPanel policyId={selectedPolicyId} />
+            <PolicyDetailPanel
+              policyId={selectedPolicyId}
+              travellerIndex={selectedTravellerIdx}
+              onSelectTraveller={setSelectedTravellerIdx}
+            />
           )}
         </SheetContent>
       </Sheet>
@@ -391,6 +416,7 @@ function PolicyRowGroup({
   firstDoc,
   onToggle,
   onNavigate,
+  onSelectTraveller,
   t
 }: {
   policy: Policy
@@ -401,6 +427,7 @@ function PolicyRowGroup({
   firstDoc?: { url: string; name: string }
   onToggle: () => void
   onNavigate: () => void
+  onSelectTraveller: (idx: number) => void
   t: (key: string, opts?: Record<string, unknown>) => string
 }) {
   return (
@@ -426,9 +453,12 @@ function PolicyRowGroup({
           <span className="font-medium text-gray-900">
             {policy.policyNumber}
           </span>
-          {expandable && (
+          {expandable && count > 1 && (
             <span className="ml-1 text-xs text-muted-foreground">
-              ({count})
+              {policy.insuranceComponents &&
+              policy.insuranceComponents.length > 0
+                ? `(${count})`
+                : `+${count - 1}`}
             </span>
           )}
         </TableCell>
@@ -478,10 +508,8 @@ function PolicyRowGroup({
             className="bg-gray-50/80 py-3 px-4 pl-12"
           >
             <TravellerSubTable
-              policyNumber={policy.policyNumber}
-              travellers={policy.travellers}
-              totalPremium={policy.premium}
-              onNavigate={onNavigate}
+              policy={policy}
+              onSelectTraveller={onSelectTraveller}
               t={t}
             />
           </TableCell>
@@ -514,27 +542,22 @@ function PolicyRowGroup({
 /* ═══════════════════════════════════════════════════════════════════════ */
 
 function TravellerSubTable({
-  policyNumber,
-  travellers,
-  totalPremium,
-  onNavigate,
+  policy,
+  onSelectTraveller,
   t
 }: {
-  policyNumber: string
-  travellers: NonNullable<Policy['travellers']>
-  totalPremium: number
-  onNavigate: () => void
+  policy: Policy
+  onSelectTraveller: (idx: number) => void
   t: (key: string, opts?: Record<string, unknown>) => string
 }) {
+  const travellers = policy.travellers!
   const premiumPerTraveller =
-    travellers.length > 0 ? totalPremium / travellers.length : 0
+    travellers.length > 0 ? policy.premium / travellers.length : 0
+
   return (
     <Table>
       <TableHeader>
         <TableRow className="hover:bg-transparent !border-b !border-slate-200/70">
-          <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">
-            {t('policies.policyRef')}
-          </TableHead>
           <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">
             {t('policies.travellerName')}
           </TableHead>
@@ -543,9 +566,6 @@ function TravellerSubTable({
           </TableHead>
           <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">
             {t('policies.premium')}
-          </TableHead>
-          <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">
-            {t('policies.covers')}
           </TableHead>
           <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">
             {t('policies.pdf')}
@@ -559,11 +579,8 @@ function TravellerSubTable({
             <TableRow
               key={`trav-${idx}`}
               className="cursor-pointer hover:bg-gray-50/50"
-              onClick={onNavigate}
+              onClick={() => onSelectTraveller(idx)}
             >
-              <TableCell className="text-sm text-gray-700">
-                {policyNumber}
-              </TableCell>
               <TableCell className="text-sm font-medium text-gray-900">
                 {trav.name}
               </TableCell>
@@ -572,15 +589,6 @@ function TravellerSubTable({
               </TableCell>
               <TableCell className="text-sm text-gray-900">
                 {formatCurrency(premiumPerTraveller)}
-              </TableCell>
-              <TableCell className="text-sm">
-                {trav.covers && trav.covers.length > 0 ? (
-                  <span className="text-gray-700">
-                    {trav.covers.join(', ')}
-                  </span>
-                ) : (
-                  '—'
-                )}
               </TableCell>
               <TableCell className="text-sm">
                 {doc ? <PdfLink url={doc.url} label={doc.name} /> : null}
@@ -631,10 +639,6 @@ function ComponentSubTable({
       <TableBody>
         {components.map((comp, idx) => {
           const doc = comp.documents[0]
-          const typeLabel =
-            comp.type === 'pad'
-              ? t('policies.componentPAD')
-              : t('policies.componentFacultative')
           return (
             <TableRow
               key={`comp-${idx}`}
@@ -645,9 +649,7 @@ function ComponentSubTable({
                 {comp.policyNumber}
               </TableCell>
               <TableCell className="text-sm">
-                <Badge variant="outline" className="text-xs font-medium">
-                  {typeLabel}
-                </Badge>
+                <InsuranceTypeBadge type={comp.type} />
               </TableCell>
               <TableCell className="text-sm text-gray-700">
                 {comp.insurerName}

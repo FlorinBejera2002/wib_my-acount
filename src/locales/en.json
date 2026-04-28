@@ -44,7 +44,9 @@
     "PAD": "PAD",
     "RCA": "RCA",
     "RCP": "RCP",
-    "TRAVEL": "Travel"
+    "TRAVEL": "Travel",
+    "FACULTATIVE": "Facultative",
+    "PAD_FACULTATIVE": "PAD + Facultative"
   },
   "policyDocType": {
     "POLICY": "Policy",
@@ -271,7 +273,11 @@
     "cnp": "CNP",
     "covers": "Covers",
     "travellersSubtitle": "Per-person premium breakdown",
-    "phone": "Phone"
+    "phone": "Phone",
+    "otherTravellers": "Other travellers",
+    "viewDetails": "View details",
+    "startDate": "Start date",
+    "endDate": "End date"
   },
   "quotes": {
     "title": "My Quotes",

@@ -4,7 +4,6 @@
       "Bash(xxd:*)",
       "Bash(head:*)",
       "Bash(cp:*)",
-      "Bash(grep quote-detail:*)",
       "WebSearch",
       "WebFetch(domain:www.npmjs.com)",
       "WebFetch(domain:github.com)",

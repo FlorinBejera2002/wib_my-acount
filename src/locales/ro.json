@@ -44,7 +44,9 @@
     "PAD": "PAD",
     "RCA": "RCA",
     "RCP": "RCP",
-    "TRAVEL": "Călătorie"
+    "TRAVEL": "Călătorie",
+    "FACULTATIVE": "Facultativă",
+    "PAD_FACULTATIVE": "PAD + Facultativă"
   },
   "policyDocType": {
     "POLICY": "Poliță",
@@ -279,7 +281,11 @@
     "cnp": "CNP",
     "covers": "Acoperiri",
     "travellersSubtitle": "Detalii primă per persoană",
-    "phone": "Telefon"
+    "phone": "Telefon",
+    "otherTravellers": "Ceilalți călători",
+    "viewDetails": "Vezi detalii",
+    "startDate": "Data început",
+    "endDate": "Data sfârșit"
   },
   "quotes": {
     "title": "Cotațiile Mele",

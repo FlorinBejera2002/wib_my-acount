@@ -44,7 +44,9 @@
     "PAD": "PAD",
     "RCA": "RCA",
     "RCP": "RCP",
-    "TRAVEL": "Utazás"
+    "TRAVEL": "Utazás",
+    "FACULTATIVE": "Fakultatív",
+    "PAD_FACULTATIVE": "PAD + Fakultatív"
   },
   "policyDocType": {
     "POLICY": "Kötvény",
@@ -271,7 +273,11 @@
     "cnp": "CNP",
     "covers": "Fedezetek",
     "travellersSubtitle": "Díj felosztása személyenként",
-    "phone": "Telefon"
+    "phone": "Telefon",
+    "otherTravellers": "Többi utazó",
+    "viewDetails": "Részletek",
+    "startDate": "Kezdő dátum",
+    "endDate": "Befejező dátum"
   },
   "quotes": {
     "title": "Ajánlataim",
