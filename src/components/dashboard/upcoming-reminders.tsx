@@ -50,9 +50,9 @@ export function UpcomingReminders({ reminders }: UpcomingRemindersProps) {
             return (
               <div
                 key={reminder.id}
-                className="flex items-start gap-3 rounded-lg border border-slate-200 bg-slate-50/30 p-3 transition-all hover:bg-slate-50/50 hover:border-slate-300"
+                className="flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50/30 p-3 transition-all hover:bg-slate-50/50 hover:border-slate-300"
               >
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-100">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-100">
                   <Bell className="h-4 w-4 text-slate-600" />
                 </div>
                 <div className="min-w-0 flex-1">
