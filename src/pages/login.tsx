@@ -2,22 +2,33 @@ import logo from '@/assets/logo.svg'
 import { EmailOtpStep } from '@/components/auth/email-otp-step'
 import { LoginForm } from '@/components/auth/login-form'
 import { TotpStep } from '@/components/auth/totp-step'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card'
 import { useLogin, useVerifyTwoFactor } from '@/hooks/use-auth'
 import type { LoginFormValues } from '@/lib/validators'
 import { useAuthStore } from '@/stores/auth-store'
-import { CheckCircle2 } from 'lucide-react'
+import { CheckCircle2, LogIn, Shield, ShieldCheck } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, Navigate } from 'react-router-dom'
 
 type LoginStep = 'credentials' | 'two-factor' | 'success'
+
+const stepConfig = {
+  credentials: {
+    icon: LogIn,
+    titleKey: 'auth.login.title',
+    descKey: 'auth.login.description'
+  },
+  'two-factor': {
+    icon: Shield,
+    titleKey: 'auth.twoFactor.title',
+    descKey: ''
+  },
+  success: {
+    icon: ShieldCheck,
+    titleKey: 'auth.login.successTitle',
+    descKey: 'auth.login.successDescription'
+  }
+} as const
 
 export default function LoginPage() {
   const { t } = useTranslation()
@@ -71,43 +82,35 @@ export default function LoginPage() {
     setStep('credentials')
   }
 
+  const config = stepConfig[step]
+  const StepIcon = config.icon
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-100 px-4">
-      <div className="w-full max-w-xl space-y-6 rounded-lg bg-white p-6 sm:p-12">
-        <div className="text-center">
-          <img src={logo} alt="asigurari.ro" className="mx-auto mb-4 h-10" />
-        </div>
+    <div className="flex min-h-dvh flex-col sm:items-center sm:justify-center bg-zinc-100">
+      <div className="flex flex-1 flex-col sm:flex-initial w-full sm:max-w-md sm:p-4">
+        <div className="flex flex-1 flex-col sm:flex-initial bg-white sm:rounded-xl sm:shadow-sm overflow-hidden">
+          {/* Logo */}
+          <div className="px-6 pt-6 pb-4 text-center">
+            <img src={logo} alt="asigurari.ro" className="mx-auto h-8" />
+          </div>
 
-        <Card className="shadow-sm">
-          <CardHeader className="text-center">
-            {step === 'credentials' && (
-              <>
-                <CardTitle className="text-gray-900">
-                  {t('auth.login.title')}
-                </CardTitle>
-                <CardDescription className="text-gray-400">
-                  {t('auth.login.description')}
-                </CardDescription>
-              </>
-            )}
-            {step === 'two-factor' && (
-              <CardTitle className="text-gray-900">
-                {t('auth.twoFactor.title')}
-              </CardTitle>
-            )}
-            {step === 'success' && (
-              <>
-                <CardTitle className="text-gray-900">
-                  {t('auth.login.successTitle')}
-                </CardTitle>
-                <CardDescription className="text-gray-400">
-                  {t('auth.login.successDescription')}
-                </CardDescription>
-              </>
-            )}
-          </CardHeader>
+          {/* Gradient banner */}
+          <div className="bg-gradient-to-br from-blue-900 to-blue-500 px-6 py-8">
+            <div className="text-center">
+              <h1 className="text-xl font-bold text-white">
+                {t(config.titleKey)}
+              </h1>
+              {config.descKey && (
+                <p className="text-sm text-blue-200 mt-1">
+                  {t(config.descKey)}
+                </p>
+              )}
+            </div>
+          </div>
 
-          <CardContent>
+          {/* Form section */}
+          <div className="flex-1 px-6 py-8 sm:px-8">
+
             {step === 'credentials' && (
               <LoginForm
                 onSubmit={handleLogin}
@@ -135,37 +138,37 @@ export default function LoginPage() {
             {step === 'success' && (
               <div className="flex flex-col items-center gap-3 py-6">
                 <CheckCircle2 className="h-16 w-16 text-accent-green animate-bounce" />
-                <p className="text-sm text-gray-400">
+                <p className="text-sm text-muted-foreground">
                   {t('auth.login.preparingDashboard')}
                 </p>
               </div>
             )}
-          </CardContent>
-        </Card>
 
-        {step === 'credentials' && (
-          <div className="space-y-2 text-center">
-            <p className="text-sm text-gray-400">
-              {t('auth.noAccount')}{' '}
-              <Link
-                to="/register"
-                className="font-medium text-primary hover:text-primary/80 transition-colors"
-              >
-                {t('auth.createAccountLink')}
-              </Link>
-            </p>
-            <p className="text-sm text-gray-400">
-              <Link
-                to="/forgot-password"
-                className="font-medium text-primary hover:text-primary/80 transition-colors"
-              >
-                {t('auth.forgotPassword')}
-              </Link>
-            </p>
+            {step === 'credentials' && (
+              <div className="mt-6 space-y-2 text-center">
+                <p className="text-sm text-muted-foreground">
+                  {t('auth.noAccount')}{' '}
+                  <Link
+                    to="/register"
+                    className="font-medium text-blue-800 hover:text-blue-900 transition-colors"
+                  >
+                    {t('auth.createAccountLink')}
+                  </Link>
+                </p>
+                <p className="text-sm">
+                  <Link
+                    to="/forgot-password"
+                    className="font-medium text-blue-800 hover:text-blue-900 transition-colors"
+                  >
+                    {t('auth.forgotPassword')}
+                  </Link>
+                </p>
+              </div>
+            )}
           </div>
-        )}
+        </div>
 
-        <p className="text-center text-xs text-gray-400">
+        <p className="text-center text-xs text-gray-400 py-4">
           {t('common.copyright')}
         </p>
       </div>

@@ -1,15 +1,9 @@
 import logo from '@/assets/logo.svg'
 import { RegisterForm } from '@/components/auth/register-form'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card'
 import { useRegister } from '@/hooks/use-register'
 import type { RegisterFormValues } from '@/lib/validators'
 import { useAuthStore } from '@/stores/auth-store'
+import { UserPlus } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Link, Navigate } from 'react-router-dom'
 
@@ -23,47 +17,47 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-100 px-4">
-      <div className="w-full max-w-xl space-y-6 rounded-lg bg-white p-6 sm:p-12">
-        <div className="text-center">
-          <img src={logo} alt="asigurari.ro" className="mx-auto mb-4 h-10" />
-          <h1 className="text-xl font-bold text-gray-900">
-            {t('auth.register.pageTitle')}
-          </h1>
-          <p className="mt-1 text-sm text-gray-400">
-            {t('auth.register.pageSubtitle')}
-          </p>
-        </div>
+    <div className="flex min-h-dvh flex-col sm:items-center sm:justify-center bg-zinc-100">
+      <div className="flex flex-1 flex-col sm:flex-initial w-full sm:max-w-md sm:p-4">
+        <div className="flex flex-1 flex-col sm:flex-initial bg-white sm:rounded-xl sm:shadow-sm overflow-hidden">
+          {/* Logo */}
+          <div className="px-6 pt-6 pb-4 text-center">
+            <img src={logo} alt="asigurari.ro" className="mx-auto h-8" />
+          </div>
 
-        <Card className="shadow-sm">
-          <CardHeader className="text-center">
-            <CardTitle className="text-gray-900">
-              {t('auth.register.title')}
-            </CardTitle>
-            <CardDescription className="text-gray-400">
-              {t('auth.register.description')}
-            </CardDescription>
-          </CardHeader>
+          {/* Gradient banner */}
+          <div className="bg-gradient-to-br from-blue-900 to-blue-500 px-6 py-8">
+            <div className="text-center">
+              <h1 className="text-xl font-bold text-white">
+                {t('auth.register.title')}
+              </h1>
+              <p className="text-sm text-blue-200 mt-1">
+                {t('auth.register.description')}
+              </p>
+            </div>
+          </div>
 
-          <CardContent>
+          {/* Form section */}
+          <div className="flex-1 px-6 py-8 sm:px-8">
+
             <RegisterForm
               onSubmit={(data: RegisterFormValues) => registerMutation.mutate(data)}
               isLoading={registerMutation.isPending}
             />
-          </CardContent>
-        </Card>
 
-        <p className="text-center text-sm text-gray-400">
-          {t('auth.hasAccount')}{' '}
-          <Link
-            to="/login"
-            className="font-medium text-accent-green hover:text-accent-green-hover transition-colors"
-          >
-            {t('auth.loginLink')}
-          </Link>
-        </p>
+            <p className="mt-6 text-center text-sm text-muted-foreground">
+              {t('auth.hasAccount')}{' '}
+              <Link
+                to="/login"
+                className="font-medium text-blue-800 hover:text-blue-900 transition-colors"
+              >
+                {t('auth.loginLink')}
+              </Link>
+            </p>
+          </div>
+        </div>
 
-        <p className="text-center text-xs text-gray-400">
+        <p className="text-center text-xs text-gray-400 py-4">
           {t('common.copyright')}
         </p>
       </div>

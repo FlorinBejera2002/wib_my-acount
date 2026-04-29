@@ -3,13 +3,6 @@ import { ForgotPasswordForm } from '@/components/auth/forgot-password-form'
 import { ResetPasswordForm } from '@/components/auth/reset-password-form'
 import { TwoFactorForm } from '@/components/auth/two-factor-form'
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card'
-import {
   useForgotPassword,
   useResetPassword,
   useVerifyResetCode
@@ -19,12 +12,35 @@ import type {
   ResetPasswordFormValues
 } from '@/lib/validators'
 import { useAuthStore } from '@/stores/auth-store'
-import { CheckCircle2 } from 'lucide-react'
+import { CheckCircle2, KeyRound, Lock, Mail } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, Navigate } from 'react-router-dom'
 
 type ResetStep = 'email' | 'verify-code' | 'new-password' | 'success'
+
+const stepConfig = {
+  email: {
+    icon: Mail,
+    titleKey: 'auth.forgotPasswordForm.title',
+    descKey: 'auth.forgotPasswordForm.description'
+  },
+  'verify-code': {
+    icon: KeyRound,
+    titleKey: 'auth.verifyCode.title',
+    descKey: 'auth.verifyCode.description'
+  },
+  'new-password': {
+    icon: Lock,
+    titleKey: 'auth.newPassword.title',
+    descKey: 'auth.newPassword.description'
+  },
+  success: {
+    icon: CheckCircle2,
+    titleKey: 'auth.resetPassword.successTitle',
+    descKey: 'auth.resetPassword.successDescription'
+  }
+} as const
 
 export default function ForgotPasswordPage() {
   const { t } = useTranslation()
@@ -76,64 +92,34 @@ export default function ForgotPasswordPage() {
     )
   }
 
+  const config = stepConfig[step]
+  const StepIcon = config.icon
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-100 px-4">
-      <div className="w-full max-w-xl space-y-6 rounded-lg bg-white p-6 sm:p-12">
-        <div className="text-center">
-          <img src={logo} alt="asigurari.ro" className="mx-auto mb-4 h-10" />
-          <h1 className="text-xl font-bold text-gray-900">
-            {t('auth.resetPassword.pageTitle')}
-          </h1>
-          <p className="mt-1 text-sm text-gray-400">
-            {t('auth.resetPassword.pageSubtitle')}
-          </p>
-        </div>
+    <div className="flex min-h-dvh flex-col sm:items-center sm:justify-center bg-zinc-100">
+      <div className="flex flex-1 flex-col sm:flex-initial w-full sm:max-w-md sm:p-4">
+        <div className="flex flex-1 flex-col sm:flex-initial bg-white sm:rounded-xl sm:shadow-sm overflow-hidden">
+          {/* Gradient banner */}
+          <div className="bg-gradient-to-br from-blue-900 to-blue-500 px-6 py-10">
+            <div className="text-center">
+              <div className="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-white/10">
+                <StepIcon className="h-5 w-5 text-white" />
+              </div>
+              <h1 className="text-xl font-bold text-white">
+                {t(config.titleKey)}
+              </h1>
+              <p className="text-sm text-blue-200 mt-1">
+                {t(config.descKey)}
+              </p>
+            </div>
+          </div>
 
-        <Card className="shadow-sm">
-          <CardHeader className="text-center">
-            {step === 'email' && (
-              <>
-                <CardTitle className="text-gray-900">
-                  {t('auth.forgotPasswordForm.title')}
-                </CardTitle>
-                <CardDescription className="text-gray-400">
-                  {t('auth.forgotPasswordForm.description')}
-                </CardDescription>
-              </>
-            )}
-            {step === 'verify-code' && (
-              <>
-                <CardTitle className="text-gray-900">
-                  {t('auth.verifyCode.title')}
-                </CardTitle>
-                <CardDescription className="text-gray-400">
-                  {t('auth.verifyCode.description')}
-                </CardDescription>
-              </>
-            )}
-            {step === 'new-password' && (
-              <>
-                <CardTitle className="text-gray-900">
-                  {t('auth.newPassword.title')}
-                </CardTitle>
-                <CardDescription className="text-gray-400">
-                  {t('auth.newPassword.description')}
-                </CardDescription>
-              </>
-            )}
-            {step === 'success' && (
-              <>
-                <CardTitle className="text-gray-900">
-                  {t('auth.resetPassword.successTitle')}
-                </CardTitle>
-                <CardDescription className="text-gray-400">
-                  {t('auth.resetPassword.successDescription')}
-                </CardDescription>
-              </>
-            )}
-          </CardHeader>
+          {/* Form section */}
+          <div className="flex-1 px-6 py-8 sm:px-8">
+            <div className="text-center mb-6">
+              <img src={logo} alt="asigurari.ro" className="mx-auto h-8" />
+            </div>
 
-          <CardContent>
             {step === 'email' && (
               <ForgotPasswordForm
                 onSubmit={handleForgotPassword}
@@ -158,33 +144,33 @@ export default function ForgotPasswordPage() {
             {step === 'success' && (
               <div className="flex flex-col items-center gap-3 py-6">
                 <CheckCircle2 className="h-16 w-16 text-accent-green animate-bounce" />
-                <p className="text-sm text-gray-400">
+                <p className="text-sm text-muted-foreground">
                   {t('auth.resetPassword.successMessage')}
                 </p>
                 <Link
                   to="/login"
-                  className="mt-2 text-sm font-medium text-accent-green hover:text-accent-green-hover transition-colors"
+                  className="mt-2 text-sm font-medium text-blue-800 hover:text-blue-900 transition-colors"
                 >
                   {t('auth.loginLink')}
                 </Link>
               </div>
             )}
-          </CardContent>
-        </Card>
 
-        {step !== 'success' && (
-          <p className="text-center text-sm text-gray-400">
-            {t('auth.rememberedPassword')}{' '}
-            <Link
-              to="/login"
-              className="font-medium text-accent-green hover:text-accent-green-hover transition-colors"
-            >
-              {t('auth.loginLink')}
-            </Link>
-          </p>
-        )}
+            {step !== 'success' && (
+              <p className="mt-6 text-center text-sm text-muted-foreground">
+                {t('auth.rememberedPassword')}{' '}
+                <Link
+                  to="/login"
+                  className="font-medium text-blue-800 hover:text-blue-900 transition-colors"
+                >
+                  {t('auth.loginLink')}
+                </Link>
+              </p>
+            )}
+          </div>
+        </div>
 
-        <p className="text-center text-xs text-gray-400">
+        <p className="text-center text-xs text-gray-400 py-4">
           {t('common.copyright')}
         </p>
       </div>
