@@ -1,5 +1,13 @@
 import type { Reminder } from '@/api/types'
 import { Button } from '@/components/ui/button'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
+} from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import {
@@ -586,6 +594,7 @@ export default function RemindersPage() {
   const { data: reminders, isLoading } = useReminders()
   const deleteReminder = useDeleteReminder()
   const [view, setView] = useState<'list' | 'add'>('list')
+  const [deleteId, setDeleteId] = useState<string | null>(null)
 
   const alerts = useMemo(
     () => reminders?.map(parseReminderToAlert),
@@ -654,11 +663,48 @@ export default function RemindersPage() {
             <AlertCard
               key={alert.id}
               alert={alert}
-              onDelete={(id) => deleteReminder.mutate(id)}
+              onDelete={(id) => setDeleteId(id)}
             />
           ))}
         </div>
       )}
+
+      <Dialog
+        open={deleteId !== null}
+        onOpenChange={(open) => {
+          if (!open) setDeleteId(null)
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-destructive">
+              <Trash2 className="h-5 w-5" />
+              {t('reminders.deleteConfirmTitle')}
+            </DialogTitle>
+            <DialogDescription>
+              {t('reminders.deleteConfirmDesc')}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteId(null)}>
+              {t('common.cancel')}
+            </Button>
+            <Button
+              variant="destructive"
+              disabled={deleteReminder.isPending}
+              onClick={() => {
+                if (deleteId) {
+                  deleteReminder.mutate(deleteId, {
+                    onSuccess: () => setDeleteId(null)
+                  })
+                }
+              }}
+            >
+              {t('reminders.deleteConfirmBtn')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

@@ -1,4 +1,4 @@
-import defaultAvatarSrc from '@/assets/default-avatar.jpg'
+import defaultAvatarSrc from '@/assets/default-avatar.png'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { useEffect, useState } from 'react'
 
@@ -68,7 +68,7 @@ export function ProfileAvatar({
       <AvatarImage
         src={finalPhotoUrl || defaultAvatarSrc}
         alt={`${firstName} ${lastName}`}
-        className={isDefault ? 'scale-[1.35]' : undefined}
+        className={isDefault ? 'scale-[1.6]' : undefined}
       />
       <AvatarFallback className="bg-primary text-white font-semibold">
         {`${firstName?.[0] || ''}${lastName?.[0] || ''}`.toUpperCase()}

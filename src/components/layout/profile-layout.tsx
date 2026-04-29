@@ -28,11 +28,11 @@ export function ProfileLayout() {
     <div className="space-y-6">
       {/* Profile Hero Card */}
       <Card className="shadow-sm overflow-hidden">
-        <div className="h-24 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent" />
-        <div className="px-4 sm:px-6 pb-6 -mt-12">
-          <div className="flex flex-col sm:flex-row sm:items-end gap-4 sm:gap-5">
+        <div className="h-24 bg-gradient-to-br from-blue-900 to-blue-500 relative overflow-hidden" />
+        <div className="relative px-4 sm:px-6 pb-6 -mt-12">
+          <div className="flex flex-col sm:flex-row sm:items-end gap-3 sm:gap-5">
             {profile ? (
-              <div className="mx-auto sm:mx-0 rounded-full shadow-lg ring-4 ring-white">
+              <div className="mx-auto sm:mx-0 rounded-full shadow-lg ring-4 ring-white shrink-0">
                 <ProfileAvatar
                   firstName={profile.firstName ?? ''}
                   lastName={profile.lastName ?? ''}
@@ -44,20 +44,22 @@ export function ProfileLayout() {
             ) : (
               <Skeleton className="h-24 w-24 rounded-full" />
             )}
-            <div className="pb-1 flex-1 min-w-0 text-center sm:text-left">
+            <div className="pb-1 flex-1 min-w-0 text-center sm:text-left overflow-hidden">
               {profile ? (
-                <>
-                  <h1 className="text-xl font-bold text-gray-900 truncate">
+                <div className="space-y-1">
+                  <h1 className="text-lg sm:text-xl font-bold text-gray-900 md:text-white truncate">
                     {profile.firstName} {profile.lastName}
                   </h1>
-                  <p className="text-sm text-gray-500">{profile.email}</p>
+                  <p className="text-sm text-gray-500 truncate">
+                    {profile.email}
+                  </p>
                   <p className="text-xs text-gray-400 mt-0.5 truncate">
                     {t('profile.clientSince', {
                       date: formatDate(profile.createdAt, 'MMMM yyyy'),
                       id: profile.id
                     })}
                   </p>
-                </>
+                </div>
               ) : (
                 <div className="space-y-2">
                   <Skeleton className="h-6 w-48" />

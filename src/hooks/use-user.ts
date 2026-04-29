@@ -65,9 +65,8 @@ export function useUpdatePreferences() {
   return useMutation({
     mutationFn: updatePreferencesFn,
     onSuccess: (data) => {
-      queryClient.setQueryData<UserProfile | undefined>(
-        ['profile'],
-        (old) => (old ? { ...old, preferences: data.preferences } : old)
+      queryClient.setQueryData<UserProfile | undefined>(['profile'], (old) =>
+        old ? { ...old, preferences: data.preferences } : old
       )
       if (data.preferences?.language) {
         i18n.changeLanguage(data.preferences.language)

@@ -27,7 +27,8 @@ export function PreferencesForm() {
     formState: { isDirty }
   } = useForm<UpdatePreferencesRequest>({
     values: {
-      language: profile?.preferences?.language ?? 'ro'
+      language: profile?.preferences?.language ?? 'ro',
+      notifications: profile?.preferences?.notifications ?? true
     }
   })
 

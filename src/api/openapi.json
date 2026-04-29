@@ -35,7 +35,12 @@
                   "oneOf": [
                     {
                       "title": "FullLoginResponse",
-                      "required": ["requires_2fa", "access_token", "refresh_token", "user"],
+                      "required": [
+                        "requires_2fa",
+                        "access_token",
+                        "refresh_token",
+                        "user"
+                      ],
                       "properties": {
                         "requires_2fa": { "type": "boolean" },
                         "access_token": { "type": "string" },
@@ -53,11 +58,18 @@
                     },
                     {
                       "title": "TwoFactorRequiredResponse",
-                      "required": ["requires_2fa", "pre_auth_token", "two_factor_method"],
+                      "required": [
+                        "requires_2fa",
+                        "pre_auth_token",
+                        "two_factor_method"
+                      ],
                       "properties": {
                         "requires_2fa": { "type": "boolean" },
                         "pre_auth_token": { "type": "string" },
-                        "two_factor_method": { "type": "string", "enum": ["totp", "email"] }
+                        "two_factor_method": {
+                          "type": "string",
+                          "enum": ["totp", "email"]
+                        }
                       },
                       "type": "object"
                     }
@@ -80,7 +92,11 @@
                 "required": ["email", "password"],
                 "properties": {
                   "email": { "type": "string", "format": "email" },
-                  "password": { "type": "string", "format": "password", "minLength": 8 },
+                  "password": {
+                    "type": "string",
+                    "format": "password",
+                    "minLength": 8
+                  },
                   "confirmPassword": { "type": "string", "format": "password" },
                   "firstName": { "type": "string", "maxLength": 100 },
                   "lastName": { "type": "string", "maxLength": 100 },
@@ -218,13 +234,38 @@
         "type": "object"
       },
       "PolicyResponse": {
-        "required": ["id", "policyNumber", "type", "status", "startDate", "endDate", "premium", "currency", "createdAt", "updatedAt"],
+        "required": [
+          "id",
+          "policyNumber",
+          "type",
+          "status",
+          "startDate",
+          "endDate",
+          "premium",
+          "currency",
+          "createdAt",
+          "updatedAt"
+        ],
         "properties": {
           "id": { "type": "string" },
           "legacyId": { "type": "string", "nullable": true },
           "policyNumber": { "type": "string" },
-          "type": { "type": "string", "enum": ["rca", "casco", "home", "health", "travel", "life", "other"] },
-          "status": { "type": "string", "enum": ["active", "expired", "cancelled", "pending"] },
+          "type": {
+            "type": "string",
+            "enum": [
+              "rca",
+              "casco",
+              "home",
+              "health",
+              "travel",
+              "life",
+              "other"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active", "expired", "cancelled", "pending"]
+          },
           "insurer": { "type": "string", "nullable": true },
           "startDate": { "type": "string", "format": "date" },
           "endDate": { "type": "string", "format": "date" },
@@ -237,15 +278,40 @@
         "type": "object"
       },
       "QuoteResponse": {
-        "required": ["id", "type", "status", "currency", "createdAt", "updatedAt"],
+        "required": [
+          "id",
+          "type",
+          "status",
+          "currency",
+          "createdAt",
+          "updatedAt"
+        ],
         "properties": {
           "id": { "type": "string" },
           "legacyId": { "type": "string", "nullable": true },
-          "type": { "type": "string", "enum": ["rca", "casco", "home", "health", "travel", "life", "other"] },
-          "status": { "type": "string", "enum": ["draft", "submitted", "accepted", "expired", "converted"] },
+          "type": {
+            "type": "string",
+            "enum": [
+              "rca",
+              "casco",
+              "home",
+              "health",
+              "travel",
+              "life",
+              "other"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": ["draft", "submitted", "accepted", "expired", "converted"]
+          },
           "premium": { "type": "number", "format": "float", "nullable": true },
           "currency": { "type": "string" },
-          "validUntil": { "type": "string", "format": "date", "nullable": true },
+          "validUntil": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
           "quoteData": { "type": "object" },
           "createdAt": { "type": "string", "format": "date-time" },
           "updatedAt": { "type": "string", "format": "date-time" }
@@ -253,7 +319,14 @@
         "type": "object"
       },
       "ReminderResponse": {
-        "required": ["id", "title", "remindAt", "isDone", "createdAt", "updatedAt"],
+        "required": [
+          "id",
+          "title",
+          "remindAt",
+          "isDone",
+          "createdAt",
+          "updatedAt"
+        ],
         "properties": {
           "id": { "type": "string" },
           "title": { "type": "string" },
@@ -266,7 +339,16 @@
         "type": "object"
       },
       "UserProfile": {
-        "required": ["id", "email", "username", "country", "twoFactorEnabled", "preferences", "source", "createdAt"],
+        "required": [
+          "id",
+          "email",
+          "username",
+          "country",
+          "twoFactorEnabled",
+          "preferences",
+          "source",
+          "createdAt"
+        ],
         "properties": {
           "id": { "type": "string" },
           "email": { "type": "string" },
@@ -282,15 +364,22 @@
           "address": { "type": "object" },
           "company": { "type": "object" },
           "twoFactorEnabled": { "type": "boolean" },
-          "twoFactorMethod": { "type": "string", "enum": ["totp", "email"], "nullable": true },
+          "twoFactorMethod": {
+            "type": "string",
+            "enum": ["totp", "email"],
+            "nullable": true
+          },
           "preferences": {
             "properties": {
-              "language": { "type": "string", "enum": ["ro", "en", "fr", "de"] },
+              "language": { "type": "string", "enum": ["ro", "en", "hu"] },
               "notifications": { "type": "boolean" }
             },
             "type": "object"
           },
-          "source": { "type": "string", "enum": ["registration", "legacy_sync"] },
+          "source": {
+            "type": "string",
+            "enum": ["registration", "legacy_sync"]
+          },
           "createdAt": { "type": "string", "format": "date-time" }
         },
         "type": "object"

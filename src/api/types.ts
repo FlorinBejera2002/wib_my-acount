@@ -152,7 +152,7 @@ export interface TwoFactorMessageResponse {
 // ==================== User ====================
 
 export interface UserPreferences {
-  language: 'ro' | 'en' | 'fr' | 'de'
+  language: 'ro' | 'en' | 'hu'
   notifications: boolean
 }
 
@@ -184,7 +184,7 @@ export interface UpdateProfileRequest {
 }
 
 export interface UpdatePreferencesRequest {
-  language?: 'ro' | 'en' | 'fr' | 'de'
+  language?: 'ro' | 'en' | 'hu'
   notifications?: boolean
 }
 

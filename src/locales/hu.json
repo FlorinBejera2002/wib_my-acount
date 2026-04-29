@@ -320,7 +320,7 @@
     "phoneLabel": "Telefon",
     "saving": "Mentés...",
     "saveChanges": "Változtatások mentése",
-    "clientSince": "Ügyfél {{date}} óta - ID: {{id}}",
+    "clientSince": "Ügyfél {{date}} óta",
     "fileTooLarge": "A fájl mérete nem haladhatja meg az 5 MB-ot",
     "tabs": {
       "personal": "Személyes adatok",
@@ -410,6 +410,9 @@
     "addAlert": "Riasztás hozzáadása",
     "noAlerts": "Nincsenek lejárati riasztások.",
     "deleteBtn": "Törlés",
+    "deleteConfirmTitle": "Törölje a riasztást?",
+    "deleteConfirmDesc": "Biztosan törölni szeretné ezt a lejárati riasztást? Ez a művelet nem vonható vissza.",
+    "deleteConfirmBtn": "Riasztás törlése",
     "licensePlate": "Rendszám:",
     "shortAddress": "Rövid cím:",
     "name": "Név:",

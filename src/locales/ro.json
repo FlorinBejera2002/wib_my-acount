@@ -328,7 +328,7 @@
     "phoneLabel": "Telefon",
     "saving": "Se salvează...",
     "saveChanges": "Salvează modificările",
-    "clientSince": "Client din {{date}} - ID: {{id}}",
+    "clientSince": "Client din {{date}}",
     "fileTooLarge": "Fișierul trebuie să fie mai mic de 5MB",
     "tabs": {
       "personal": "Informații personale",
@@ -418,6 +418,9 @@
     "addAlert": "Adaugati alerta",
     "noAlerts": "Nu există alerte de expirare.",
     "deleteBtn": "Stergeti",
+    "deleteConfirmTitle": "Ștergeți alerta?",
+    "deleteConfirmDesc": "Sunteți sigur că doriți să ștergeți această alertă de expirare? Acțiunea nu poate fi anulată.",
+    "deleteConfirmBtn": "Șterge alerta",
     "licensePlate": "Numar auto:",
     "shortAddress": "Adresa pe scurt:",
     "name": "Nume:",
