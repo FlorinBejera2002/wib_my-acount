@@ -351,6 +351,7 @@
     "currentSession": "Jelenlegi munkamenet",
     "lastActivity": "Utolsó tevékenység: {{date}}",
     "terminate": "Befejezés",
+    "sessionCreated": "Munkamenet létrehozva: {{date}}",
     "securityInfo": "Biztonsági információk",
     "securityInfoSubtitle": "A fiókja biztonságával kapcsolatos részletek",
     "lastLogin": "Utolsó bejelentkezés",

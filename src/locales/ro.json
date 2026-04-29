@@ -359,6 +359,7 @@
     "currentSession": "Sesiune curentă",
     "lastActivity": "Ultima activitate: {{date}}",
     "terminate": "Încheie",
+    "sessionCreated": "Sesiune creată: {{date}}",
     "securityInfo": "Informații securitate",
     "securityInfoSubtitle": "Detalii despre securitatea contului tău",
     "lastLogin": "Ultima autentificare",

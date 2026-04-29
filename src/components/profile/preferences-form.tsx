@@ -1,12 +1,7 @@
 import type { UpdatePreferencesRequest } from '@/api/types'
 import { Button } from '@/components/ui/button'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
+import { CardSectionHeader } from '@/components/ui/card-icon-header'
 import { Label } from '@/components/ui/label'
 import {
   Select,
@@ -43,10 +38,7 @@ export function PreferencesForm() {
   if (isLoading) {
     return (
       <Card className="shadow-sm">
-        <CardHeader>
-          <Skeleton className="h-6 w-40" />
-          <Skeleton className="h-4 w-64" />
-        </CardHeader>
+        <CardSectionHeader title="" />
         <CardContent className="space-y-4">
           <Skeleton className="h-10 w-full" />
           <Skeleton className="h-10 w-full" />
@@ -57,10 +49,10 @@ export function PreferencesForm() {
 
   return (
     <Card className="shadow-sm">
-      <CardHeader>
-        <CardTitle>{t('preferences.title')}</CardTitle>
-        <CardDescription>{t('preferences.subtitle')}</CardDescription>
-      </CardHeader>
+      <CardSectionHeader
+        title={t('preferences.title')}
+        description={t('preferences.subtitle')}
+      />
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="grid gap-4 sm:grid-cols-2">

@@ -1,3 +1,4 @@
+import defaultAvatarSrc from '@/assets/default-avatar.jpg'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { useEffect, useState } from 'react'
 
@@ -40,7 +41,6 @@ export function ProfileAvatar({
   userId
 }: ProfileAvatarProps) {
   const [storedPhotoUrl, setStoredPhotoUrl] = useState<string | null>(null)
-  const initials = `${firstName?.[0] || ''}${lastName?.[0] || ''}`.toUpperCase()
 
   useEffect(() => {
     if (userId) {
@@ -61,13 +61,17 @@ export function ProfileAvatar({
   // Use stored photo if available, otherwise use prop
   const finalPhotoUrl = photoUrl || storedPhotoUrl
 
+  const isDefault = !finalPhotoUrl
+
   return (
     <Avatar className={sizeClasses[size]}>
-      {finalPhotoUrl && (
-        <AvatarImage src={finalPhotoUrl} alt={`${firstName} ${lastName}`} />
-      )}
+      <AvatarImage
+        src={finalPhotoUrl || defaultAvatarSrc}
+        alt={`${firstName} ${lastName}`}
+        className={isDefault ? 'scale-[1.35]' : undefined}
+      />
       <AvatarFallback className="bg-primary text-white font-semibold">
-        {initials}
+        {`${firstName?.[0] || ''}${lastName?.[0] || ''}`.toUpperCase()}
       </AvatarFallback>
     </Avatar>
   )

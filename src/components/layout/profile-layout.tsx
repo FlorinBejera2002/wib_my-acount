@@ -32,19 +32,17 @@ export function ProfileLayout() {
         <div className="px-4 sm:px-6 pb-6 -mt-12">
           <div className="flex flex-col sm:flex-row sm:items-end gap-4 sm:gap-5">
             {profile ? (
-              <div className="mx-auto sm:mx-0">
-                <div className="rounded-full border-4 border-white shadow-sm">
-                  <ProfileAvatar
-                    firstName={profile.firstName ?? ''}
-                    lastName={profile.lastName ?? ''}
-                    photoUrl={undefined}
-                    size="lg"
-                    userId={profile.id}
-                  />
-                </div>
+              <div className="mx-auto sm:mx-0 rounded-full shadow-lg ring-4 ring-white">
+                <ProfileAvatar
+                  firstName={profile.firstName ?? ''}
+                  lastName={profile.lastName ?? ''}
+                  photoUrl={undefined}
+                  size="lg"
+                  userId={profile.id}
+                />
               </div>
             ) : (
-              <Skeleton className="h-24 w-24 rounded-full border-4 border-white" />
+              <Skeleton className="h-24 w-24 rounded-full" />
             )}
             <div className="pb-1 flex-1 min-w-0 text-center sm:text-left">
               {profile ? (
@@ -53,7 +51,7 @@ export function ProfileLayout() {
                     {profile.firstName} {profile.lastName}
                   </h1>
                   <p className="text-sm text-gray-500">{profile.email}</p>
-                  <p className="text-xs text-gray-400 mt-0.5">
+                  <p className="text-xs text-gray-400 mt-0.5 truncate">
                     {t('profile.clientSince', {
                       date: formatDate(profile.createdAt, 'MMMM yyyy'),
                       id: profile.id

@@ -1,11 +1,23 @@
-import type { DashboardStats } from '@/api/types'
+import type { Reminder } from '@/api/types'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ArrowRight, Bell, Calendar } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 
+function getExpiryDate(reminder: Reminder): string {
+  if (reminder.note) {
+    try {
+      const parsed = JSON.parse(reminder.note)
+      if (parsed.expiryDate) return parsed.expiryDate
+    } catch {
+      // fallback
+    }
+  }
+  return reminder.remindAt
+}
+
 interface UpcomingRemindersProps {
-  reminders: DashboardStats['reminders']['upcoming']
+  reminders: Reminder[]
 }
 
 export function UpcomingReminders({ reminders }: UpcomingRemindersProps) {
@@ -30,9 +42,9 @@ export function UpcomingReminders({ reminders }: UpcomingRemindersProps) {
       <CardContent>
         <div className="grid gap-3 grid-cols-1 lg:grid-cols-2">
           {reminders.map((reminder) => {
-            const remindDate = new Date(reminder.remindAt)
+            const expiryDate = new Date(getExpiryDate(reminder))
             const daysLeft = Math.ceil(
-              (remindDate.getTime() - Date.now()) / 86400000
+              (expiryDate.getTime() - Date.now()) / 86400000
             )
 
             return (
@@ -50,7 +62,7 @@ export function UpcomingReminders({ reminders }: UpcomingRemindersProps) {
                   <div className="mt-1 flex items-center gap-1.5 text-xs text-slate-500">
                     <Calendar className="h-3 w-3 shrink-0" />
                     <span>
-                      {remindDate.toLocaleDateString(i18n.language, {
+                      {expiryDate.toLocaleDateString(i18n.language, {
                         day: 'numeric',
                         month: 'short',
                         year: 'numeric'

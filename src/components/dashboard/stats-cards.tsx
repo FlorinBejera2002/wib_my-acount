@@ -7,11 +7,13 @@ import { useTranslation } from 'react-i18next'
 interface StatsCardsProps {
   stats: DashboardStats | undefined
   isLoading: boolean
+  reminderCount?: number
 }
 
 function getStatValue(
   stats: DashboardStats | undefined,
-  key: string
+  key: string,
+  reminderCount?: number
 ): number {
   if (!stats) return 0
   switch (key) {
@@ -22,7 +24,7 @@ function getStatValue(
     case 'expiringSoon':
       return stats.policies.expiringSoon.length
     case 'totalReminders':
-      return stats.reminders.total
+      return reminderCount ?? stats.reminders.total
     default:
       return 0
   }
@@ -59,7 +61,7 @@ const cards = [
   }
 ]
 
-export function StatsCards({ stats, isLoading }: StatsCardsProps) {
+export function StatsCards({ stats, isLoading, reminderCount }: StatsCardsProps) {
   const { t } = useTranslation()
 
   return (
@@ -81,7 +83,7 @@ export function StatsCards({ stats, isLoading }: StatsCardsProps) {
                   <Skeleton className="mt-2 h-8 w-16" />
                 ) : (
                   <p className="mt-1 text-3xl font-bold text-gray-900">
-                    {getStatValue(stats, card.key)}
+                    {getStatValue(stats, card.key, reminderCount)}
                   </p>
                 )}
               </div>

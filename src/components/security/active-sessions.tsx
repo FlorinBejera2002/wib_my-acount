@@ -1,12 +1,7 @@
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
+import { CardSectionHeader } from '@/components/ui/card-icon-header'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
   useSessions,
@@ -14,8 +9,18 @@ import {
   useTerminateSession
 } from '@/hooks/use-sessions'
 import { formatDateTime } from '@/lib/utils'
-import { Globe, Loader2, Monitor, Smartphone } from 'lucide-react'
+import {
+  ChevronDown,
+  ChevronUp,
+  Globe,
+  Loader2,
+  Monitor,
+  Smartphone
+} from 'lucide-react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+
+const VISIBLE_COUNT = 5
 
 function getDeviceIcon(ua: string) {
   const lower = ua.toLowerCase()
@@ -29,19 +34,46 @@ function getDeviceIcon(ua: string) {
   return Monitor
 }
 
+function parseUserAgent(ua: string): string {
+  const lower = ua.toLowerCase()
+
+  let browser = ''
+  if (lower.includes('edg')) browser = 'Edge'
+  else if (lower.includes('opr') || lower.includes('opera')) browser = 'Opera'
+  else if (lower.includes('chrome') || lower.includes('chromium'))
+    browser = 'Chrome'
+  else if (lower.includes('firefox')) browser = 'Firefox'
+  else if (lower.includes('safari')) browser = 'Safari'
+
+  let os = ''
+  if (lower.includes('windows')) os = 'Windows'
+  else if (lower.includes('mac os') || lower.includes('macos')) os = 'macOS'
+  else if (lower.includes('linux')) os = 'Linux'
+  else if (lower.includes('android')) os = 'Android'
+  else if (
+    lower.includes('iphone') ||
+    lower.includes('ipad') ||
+    lower.includes('ios')
+  )
+    os = 'iOS'
+
+  if (browser && os) return `${browser} — ${os}`
+  if (browser) return browser
+  if (os) return os
+  return ua.length > 40 ? `${ua.slice(0, 40)}…` : ua
+}
+
 export function ActiveSessions() {
   const { t } = useTranslation()
   const { data: sessions, isLoading } = useSessions()
   const terminateSession = useTerminateSession()
   const terminateAll = useTerminateAllSessions()
+  const [expanded, setExpanded] = useState(false)
 
   if (isLoading) {
     return (
       <Card className="shadow-sm">
-        <CardHeader>
-          <Skeleton className="h-6 w-40" />
-          <Skeleton className="h-4 w-64" />
-        </CardHeader>
+        <CardSectionHeader title="" />
         <CardContent className="space-y-4">
           {Array.from({ length: 3 }).map((_, i) => (
             <Skeleton key={i} className="h-20 w-full" />
@@ -51,45 +83,49 @@ export function ActiveSessions() {
     )
   }
 
+  const totalCount = sessions?.length ?? 0
+  const hasMore = totalCount > VISIBLE_COUNT
+  const visibleSessions = expanded
+    ? sessions
+    : sessions?.slice(0, VISIBLE_COUNT)
+
   return (
     <Card className="shadow-sm">
-      <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <CardTitle>{t('security.activeSessions')}</CardTitle>
-          <CardDescription>
-            {t('security.activeSessionsSubtitle')}
-          </CardDescription>
-        </div>
-        {sessions && sessions.length > 1 && (
-          <Button
-            variant="destructive"
-            size="sm"
-            onClick={() => terminateAll.mutate()}
-            disabled={terminateAll.isPending}
-          >
-            {terminateAll.isPending ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : null}
-            {t('security.terminateAll')}
-          </Button>
-        )}
-      </CardHeader>
+      <CardSectionHeader
+        title={t('security.activeSessions')}
+        description={t('security.activeSessionsSubtitle')}
+        action={
+          sessions && sessions.length > 1 ? (
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={() => terminateAll.mutate()}
+              disabled={terminateAll.isPending}
+            >
+              {terminateAll.isPending ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : null}
+              {t('security.terminateAll')}
+            </Button>
+          ) : undefined
+        }
+      />
       <CardContent className="space-y-3">
-        {sessions?.map((session) => {
+        {visibleSessions?.map((session) => {
           const DeviceIcon = getDeviceIcon(session.userAgent)
           return (
             <div
               key={session.id}
-              className={`flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 rounded-lg border p-4${
-                session.current
-                  ? ' border-primary/40 bg-primary/5'
-                  : ''
-              }`}
+              className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 rounded-lg border border-gray-100 p-3"
             >
-              <DeviceIcon className="h-8 w-8 text-muted-foreground" />
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-100">
+                <DeviceIcon className="h-4 w-4 text-slate-600" />
+              </div>
               <div className="flex-1 space-y-1">
                 <div className="flex items-center gap-2">
-                  <p className="text-sm font-medium">{session.userAgent}</p>
+                  <p className="text-sm font-medium">
+                    {parseUserAgent(session.userAgent)}
+                  </p>
                   {session.current && (
                     <Badge className="bg-green-100 text-green-800 border-0 text-xs font-medium">
                       {t('security.currentSession')}
@@ -99,13 +135,13 @@ export function ActiveSessions() {
                 <div className="flex items-center gap-3 text-xs text-muted-foreground">
                   <span className="flex items-center gap-1">
                     <Globe className="h-3 w-3" />
-                    IP: {session.ip}
+                    IP: {session.ipAddress}
                   </span>
                 </div>
-                {session.createdAt && (
+                {session.startedAt && (
                   <p className="text-xs text-muted-foreground">
                     {t('security.sessionCreated', {
-                      date: formatDateTime(session.createdAt)
+                      date: formatDateTime(session.startedAt)
                     })}
                   </p>
                 )}
@@ -130,6 +166,27 @@ export function ActiveSessions() {
             </div>
           )
         })}
+
+        {hasMore && (
+          <Button
+            variant="ghost"
+            size="sm"
+            className="w-full text-muted-foreground"
+            onClick={() => setExpanded(!expanded)}
+          >
+            {expanded ? (
+              <>
+                <ChevronUp className="mr-2 h-4 w-4" />
+                {t('common.showLess')}
+              </>
+            ) : (
+              <>
+                <ChevronDown className="mr-2 h-4 w-4" />
+                {t('common.showMore')} ({totalCount - VISIBLE_COUNT})
+              </>
+            )}
+          </Button>
+        )}
       </CardContent>
     </Card>
   )

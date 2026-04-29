@@ -4,13 +4,27 @@ import { RecentPolicies } from '@/components/dashboard/recent-policies'
 import { StatsCards } from '@/components/dashboard/stats-cards'
 import { UpcomingReminders } from '@/components/dashboard/upcoming-reminders'
 import { useDashboardStats } from '@/hooks/use-dashboard-stats'
+import { useReminders } from '@/hooks/use-reminders'
 import { useProfile } from '@/hooks/use-user'
+import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
 export default function DashboardPage() {
   const { t } = useTranslation()
   const { data: stats, isLoading: statsLoading } = useDashboardStats()
   const { data: profile } = useProfile()
+  const { data: reminders } = useReminders()
+
+  const activeReminders = useMemo(() => {
+    if (!reminders) return []
+    return reminders
+      .filter((r) => !r.isDone)
+      .sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      )
+      .slice(0, 4)
+  }, [reminders])
 
   return (
     <div className="space-y-6">
@@ -21,7 +35,11 @@ export default function DashboardPage() {
         <p className="text-sm text-gray-400">{t('dashboard.subtitle')}</p>
       </div>
 
-      <StatsCards stats={stats} isLoading={statsLoading} />
+      <StatsCards
+        stats={stats}
+        isLoading={statsLoading}
+        reminderCount={activeReminders.length}
+      />
 
       {stats && stats.policies.expiringSoon.length > 0 && (
         <ExpiringAlert policies={stats.policies.expiringSoon} />
@@ -32,8 +50,8 @@ export default function DashboardPage() {
         <RecentPolicies />
       </div>
 
-      {stats && stats.reminders.upcoming.length > 0 && (
-        <UpcomingReminders reminders={stats.reminders.upcoming} />
+      {activeReminders.length > 0 && (
+        <UpcomingReminders reminders={activeReminders} />
       )}
     </div>
   )

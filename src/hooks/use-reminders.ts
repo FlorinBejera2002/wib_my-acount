@@ -57,6 +57,7 @@ export function useCreateReminder() {
     mutationFn: createReminderFn,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['reminders'] })
+      queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] })
       toast.success(i18n.t('toast.alertCreated'))
     },
     onError: () => {
@@ -72,6 +73,7 @@ export function useUpdateReminder() {
     mutationFn: updateReminderFn,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['reminders'] })
+      queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] })
       toast.success(i18n.t('toast.alertUpdated'))
     },
     onError: () => {
@@ -87,6 +89,7 @@ export function useDeleteReminder() {
     mutationFn: deleteReminderFn,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['reminders'] })
+      queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] })
       toast.success(i18n.t('toast.alertDeleted'))
     },
     onError: () => {

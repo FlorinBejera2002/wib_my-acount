@@ -1,10 +1,5 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
+import { CardSectionHeader } from '@/components/ui/card-icon-header'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useProfile } from '@/hooks/use-user'
 import { formatDateTime } from '@/lib/utils'
@@ -18,10 +13,7 @@ export function LoginHistory() {
   if (isLoading) {
     return (
       <Card className="shadow-sm">
-        <CardHeader>
-          <Skeleton className="h-6 w-48" />
-          <Skeleton className="h-4 w-64" />
-        </CardHeader>
+        <CardSectionHeader title="" />
         <CardContent className="space-y-3">
           {Array.from({ length: 2 }).map((_, i) => (
             <Skeleton key={i} className="h-12 w-full" />
@@ -33,30 +25,34 @@ export function LoginHistory() {
 
   return (
     <Card className="shadow-sm">
-      <CardHeader>
-        <CardTitle>{t('security.securityInfo')}</CardTitle>
-        <CardDescription>{t('security.securityInfoSubtitle')}</CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="flex items-center gap-3 rounded-lg border p-4">
-          <ShieldCheck className="h-5 w-5 text-green-600" />
+      <CardSectionHeader
+        title={t('security.securityInfo')}
+        description={t('security.securityInfoSubtitle')}
+      />
+      <CardContent className="space-y-3">
+        <div className="flex items-center gap-3 rounded-lg border border-gray-100 p-3">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-50">
+            <ShieldCheck className="h-4 w-4 text-emerald-600" />
+          </div>
           <div>
-            <p className="text-sm font-medium">{t('security.accountCreated')}</p>
-            <p className="text-sm text-muted-foreground">
-              {profile?.createdAt
-                ? formatDateTime(profile.createdAt)
-                : '—'}
+            <p className="text-sm font-medium">
+              {t('security.accountCreated')}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              {profile?.createdAt ? formatDateTime(profile.createdAt) : '—'}
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-3 rounded-lg border p-4">
-          <Shield className="h-5 w-5 text-blue-600" />
+        <div className="flex items-center gap-3 rounded-lg border border-gray-100 p-3">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-50">
+            <Shield className="h-4 w-4 text-blue-600" />
+          </div>
           <div>
             <p className="text-sm font-medium">
               {t('security.twoFactorStatus')}
             </p>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-xs text-muted-foreground">
               {profile?.twoFactorEnabled
                 ? t('security.twoFactorEnabled')
                 : t('security.twoFactorDisabled')}

@@ -6,13 +6,8 @@ import { LoginHistory } from '@/components/security/login-history'
 import { DeleteAccountDialog } from '@/components/settings/delete-account-dialog'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
+import { CardSectionHeader } from '@/components/ui/card-icon-header'
 import { useProfile } from '@/hooks/use-user'
 import { ShieldCheck, ShieldOff } from 'lucide-react'
 import { useState } from 'react'
@@ -26,26 +21,25 @@ function TwoFactorSection() {
   const [setupOpen, setSetupOpen] = useState(false)
   const [disableOpen, setDisableOpen] = useState(false)
 
-  const methodLabel = twoFactorMethod === 'email'
-    ? t('twoFactor.section.enabledMethodEmail')
-    : t('twoFactor.section.enabledMethodTotp')
+  const methodLabel =
+    twoFactorMethod === 'email'
+      ? t('twoFactor.section.enabledMethodEmail')
+      : t('twoFactor.section.enabledMethodTotp')
 
   return (
     <>
       <Card className="shadow-sm">
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div className="space-y-1">
-              <CardTitle>{t('twoFactor.section.title')}</CardTitle>
-              <CardDescription>{t('twoFactor.section.subtitle')}</CardDescription>
-            </div>
-            {twoFactorEnabled && (
+        <CardSectionHeader
+          title={t('twoFactor.section.title')}
+          description={t('twoFactor.section.subtitle')}
+          action={
+            twoFactorEnabled ? (
               <Badge className="bg-green-100 text-green-800 border-0 font-medium">
                 {t('twoFactor.section.activeBadge')}
               </Badge>
-            )}
-          </div>
-        </CardHeader>
+            ) : undefined
+          }
+        />
         <CardContent>
           {twoFactorEnabled ? (
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -90,7 +84,10 @@ function TwoFactorSection() {
       </Card>
 
       <TwoFactorSetupDialog open={setupOpen} onOpenChange={setSetupOpen} />
-      <TwoFactorDisableDialog open={disableOpen} onOpenChange={setDisableOpen} />
+      <TwoFactorDisableDialog
+        open={disableOpen}
+        onOpenChange={setDisableOpen}
+      />
     </>
   )
 }
@@ -100,14 +97,12 @@ function DangerZone() {
 
   return (
     <Card className="shadow-sm border-destructive/30">
-      <CardContent className="pt-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm font-medium">{t('settings.deleteAccountTitle')}</p>
-            <p className="text-sm text-muted-foreground">
-              {t('settings.deleteAccountDesc')}
-            </p>
-          </div>
+      <CardSectionHeader
+        title={t('settings.deleteAccountTitle')}
+        description={t('settings.deleteAccountDesc')}
+      />
+      <CardContent>
+        <div className="flex items-center justify-end">
           <DeleteAccountDialog />
         </div>
       </CardContent>
@@ -117,7 +112,7 @@ function DangerZone() {
 
 export default function SecurityPage() {
   return (
-    <div className="grid gap-6 lg:grid-cols-2">
+    <div className="grid gap-6 lg:grid-cols-2 lg:items-start">
       <div className="space-y-6">
         <ChangePasswordForm />
         <TwoFactorSection />

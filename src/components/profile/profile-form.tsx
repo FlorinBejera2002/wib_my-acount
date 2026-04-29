@@ -1,11 +1,6 @@
 import { Button } from '@/components/ui/button'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
+import { CardSectionHeader } from '@/components/ui/card-icon-header'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -53,10 +48,7 @@ export function ProfileForm() {
   if (isLoading) {
     return (
       <Card className="shadow-sm">
-        <CardHeader>
-          <Skeleton className="h-6 w-40" />
-          <Skeleton className="h-4 w-64" />
-        </CardHeader>
+        <CardSectionHeader title="" />
         <CardContent className="space-y-4">
           <Skeleton className="h-10 w-full" />
           <Skeleton className="h-10 w-full" />
@@ -68,10 +60,10 @@ export function ProfileForm() {
 
   return (
     <Card className="shadow-sm">
-      <CardHeader>
-        <CardTitle>{t('profile.title')}</CardTitle>
-        <CardDescription>{t('profile.subtitle')}</CardDescription>
-      </CardHeader>
+      <CardSectionHeader
+        title={t('profile.title')}
+        description={t('profile.subtitle')}
+      />
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-2">

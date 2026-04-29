@@ -351,6 +351,7 @@
     "currentSession": "Current session",
     "lastActivity": "Last activity: {{date}}",
     "terminate": "Terminate",
+    "sessionCreated": "Session created: {{date}}",
     "securityInfo": "Security information",
     "securityInfoSubtitle": "Details about your account security",
     "lastLogin": "Last login",
