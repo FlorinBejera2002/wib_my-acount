@@ -3,7 +3,6 @@ import { RegisterForm } from '@/components/auth/register-form'
 import { useRegister } from '@/hooks/use-register'
 import type { RegisterFormValues } from '@/lib/validators'
 import { useAuthStore } from '@/stores/auth-store'
-import { UserPlus } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Link, Navigate } from 'react-router-dom'
 
@@ -39,9 +38,10 @@ export default function RegisterPage() {
 
           {/* Form section */}
           <div className="flex-1 px-6 py-8 sm:px-8">
-
             <RegisterForm
-              onSubmit={(data: RegisterFormValues) => registerMutation.mutate(data)}
+              onSubmit={(data: RegisterFormValues) =>
+                registerMutation.mutate(data)
+              }
               isLoading={registerMutation.isPending}
             />
 

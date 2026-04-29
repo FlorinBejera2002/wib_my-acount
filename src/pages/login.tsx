@@ -35,7 +35,9 @@ export default function LoginPage() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
   const [step, setStep] = useState<LoginStep>('credentials')
   const [preAuthToken, setPreAuthToken] = useState('')
-  const [twoFactorMethod, setTwoFactorMethod] = useState<'totp' | 'email'>('totp')
+  const [twoFactorMethod, setTwoFactorMethod] = useState<'totp' | 'email'>(
+    'totp'
+  )
 
   const loginMutation = useLogin()
   const twoFactorMutation = useVerifyTwoFactor()
@@ -65,8 +67,11 @@ export default function LoginPage() {
           setStep('success')
         },
         onError: (err: unknown) => {
-          const status = (err as { response?: { status?: number } })?.response?.status
-          const errorCode = (err as { response?: { data?: { error?: { code?: string } } } })?.response?.data?.error?.code
+          const status = (err as { response?: { status?: number } })?.response
+            ?.status
+          const errorCode = (
+            err as { response?: { data?: { error?: { code?: string } } } }
+          )?.response?.data?.error?.code
           if (errorCode === 'INVALID_PRE_AUTH_TOKEN' || status === 401) {
             handleExpired()
           } else {
@@ -83,7 +88,6 @@ export default function LoginPage() {
   }
 
   const config = stepConfig[step]
-  const StepIcon = config.icon
 
   return (
     <div className="flex min-h-dvh flex-col sm:items-center sm:justify-center bg-zinc-100">
@@ -110,7 +114,6 @@ export default function LoginPage() {
 
           {/* Form section */}
           <div className="flex-1 px-6 py-8 sm:px-8">
-
             {step === 'credentials' && (
               <LoginForm
                 onSubmit={handleLogin}
