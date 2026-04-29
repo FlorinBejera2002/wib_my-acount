@@ -42,7 +42,7 @@ export function ProfileLayout() {
                 />
               </div>
             ) : (
-              <Skeleton className="h-24 w-24 rounded-full" />
+              <Skeleton className="h-24 w-24 rounded-full mx-auto sm:mx-0 shrink-0" />
             )}
             <div className="pb-1 flex-1 min-w-0 text-center sm:text-left overflow-hidden">
               {profile ? (
@@ -62,8 +62,9 @@ export function ProfileLayout() {
                 </div>
               ) : (
                 <div className="space-y-2">
-                  <Skeleton className="h-6 w-48" />
-                  <Skeleton className="h-4 w-36" />
+                  <Skeleton className="h-6 w-48 mx-auto sm:mx-0" />
+                  <Skeleton className="h-4 w-36 mx-auto sm:mx-0" />
+                  <Skeleton className="h-3.5 w-44 mx-auto sm:mx-0" />
                 </div>
               )}
             </div>

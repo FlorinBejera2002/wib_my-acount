@@ -608,20 +608,30 @@ export default function RemindersPage() {
   if (isLoading) {
     return (
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <Skeleton className="h-7 w-44" />
-          <Skeleton className="h-9 w-40" />
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="space-y-1.5">
+            <Skeleton className="h-7 w-44" />
+            <Skeleton className="h-4 w-56" />
+          </div>
+          <Skeleton className="h-9 w-full sm:w-40" />
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
           {[1, 2, 3, 4].map((i) => (
             <div
               key={i}
-              className="rounded-xl border border-gray-100 bg-white p-5 space-y-3"
+              className="rounded-xl border border-gray-200/80 bg-white shadow-sm overflow-hidden"
             >
-              <Skeleton className="h-5 w-32" />
-              <div className="grid grid-cols-2 gap-2">
-                <Skeleton className="h-14 w-full rounded-lg" />
-                <Skeleton className="h-14 w-full rounded-lg" />
+              <div className="flex items-center justify-between bg-slate-50/60 px-4 py-3 border-b border-gray-100">
+                <Skeleton className="h-6 w-24 rounded-md" />
+                <Skeleton className="h-7 w-7 rounded-md" />
+              </div>
+              <div className="p-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <Skeleton className="h-14 w-full rounded-lg" />
+                  <Skeleton className="h-14 w-full rounded-lg" />
+                  <Skeleton className="h-14 w-full rounded-lg" />
+                  <Skeleton className="h-14 w-full rounded-lg" />
+                </div>
               </div>
             </div>
           ))}

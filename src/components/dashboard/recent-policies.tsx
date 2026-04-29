@@ -107,9 +107,19 @@ export function RecentPolicies() {
       </CardHeader>
       <CardContent className="px-0 pb-0">
         {isLoading ? (
-          <div className="space-y-1 px-6 pb-6">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <Skeleton key={i} className="h-14 w-full rounded-lg" />
+          <div className="divide-y divide-gray-100">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div
+                key={i}
+                className="flex items-center gap-3 px-4 sm:px-6 py-3.5"
+              >
+                <div className="min-w-0 flex-1 space-y-2">
+                  <Skeleton className="h-5 w-16 rounded-md" />
+                  <Skeleton className="h-4 w-32" />
+                  <Skeleton className="h-4 w-44" />
+                </div>
+                <Skeleton className="h-3 w-16 shrink-0" />
+              </div>
             ))}
           </div>
         ) : sortedPolicies.length === 0 ? (
