@@ -178,7 +178,7 @@ export function RegisterForm({ onSubmit, isLoading }: RegisterFormProps) {
 
       <Button
         type="submit"
-        className="w-full"
+        className="w-full bg-blue-800 hover:bg-blue-900 text-white"
         disabled={isLoading}
       >
         {isLoading ? (

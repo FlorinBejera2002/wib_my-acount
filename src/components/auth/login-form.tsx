@@ -83,7 +83,7 @@ export function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
 
       <Button
         type="submit"
-        className="w-full"
+        className="w-full bg-blue-800 hover:bg-blue-900 text-white"
         disabled={isLoading}
       >
         {isLoading ? (
