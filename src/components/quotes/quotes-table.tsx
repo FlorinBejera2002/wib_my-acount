@@ -173,11 +173,10 @@ export function QuotesTable() {
       cell: ({ row }) => <InsuranceTypeBadge type={row.original.type} />
     },
     {
-      accessorKey: 'productDetails',
+      accessorKey: 'vehicleOrProperty',
       header: t('quotes.productDetails'),
       cell: ({ row }) => {
-        const text =
-          row.original.productDetails ?? row.original.vehicleOrProperty ?? '—'
+        const text = row.original.vehicleOrProperty ?? '—'
         return <ExpandableCell text={text} />
       }
     },
@@ -412,10 +411,10 @@ function QuoteCard({
           </div>
 
           {/* Product details — expandable, full width */}
-          {(quote.productDetails ?? quote.vehicleOrProperty) && (
+          {quote.vehicleOrProperty && (
             <ExpandableText
               label={t('quotes.productDetails')}
-              text={(quote.productDetails ?? quote.vehicleOrProperty) as string}
+              text={quote.vehicleOrProperty}
               t={t}
             />
           )}

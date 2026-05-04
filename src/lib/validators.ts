@@ -133,8 +133,7 @@ export type UpdateProfileFormValues = z.infer<
 >
 
 export const notificationSettingsSchema = z.object({
-  email: z.boolean(),
-  push: z.boolean()
+  notifications: z.boolean()
 })
 
 export type NotificationSettingsFormValues = z.infer<

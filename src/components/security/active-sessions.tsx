@@ -146,13 +146,13 @@ export function ActiveSessions() {
                 <div className="flex items-center gap-3 text-xs text-muted-foreground">
                   <span className="flex items-center gap-1">
                     <Globe className="h-3 w-3" />
-                    IP: {session.ipAddress}
+                    IP: {session.ip}
                   </span>
                 </div>
-                {session.startedAt && (
+                {session.createdAt && (
                   <p className="text-xs text-muted-foreground">
                     {t('security.sessionCreated', {
-                      date: formatDateTime(session.startedAt)
+                      date: formatDateTime(session.createdAt)
                     })}
                   </p>
                 )}

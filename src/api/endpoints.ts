@@ -18,7 +18,6 @@ export const ENDPOINTS = {
     UPDATE_PROFILE: '/user/profile',
     UPDATE_PREFERENCES: '/user/preferences',
     CHANGE_PASSWORD: '/user/password',
-    EXPORT_DATA: '/user/export-data',
     DELETE_ACCOUNT: '/user/account'
   },
   QUOTES: {

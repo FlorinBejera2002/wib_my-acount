@@ -210,6 +210,14 @@ export type QuoteType =
   | 'rcp'
   | 'travel'
 
+export interface QuoteDocument {
+  id: string
+  name: string
+  type: 'OFFER' | 'COMPARISON' | 'INVOICE' | 'OTHER'
+  url: string
+  size: number
+}
+
 export type QuoteStatus =
   | 'draft'
   | 'submitted'
@@ -223,14 +231,16 @@ export interface Quote {
   quoteNumber?: string | null
   type: QuoteType
   status: QuoteStatus
+  insurerName?: string | null
   premium?: number | null
   currency: string
+  validFrom?: string | null
   validUntil?: string | null
   quoteData?: Record<string, unknown>
-  productDetails?: string | null
   vehicleOrProperty?: string | null
   insuredDetails?: string | null
   offerUrl?: string | null
+  documents?: QuoteDocument[]
   createdAt: string
   updatedAt: string
 }
@@ -295,11 +305,14 @@ export interface Policy {
   endDate: string
   premium: number
   currency: string
+  daysUntilExpiry: number
+  autoRenew: boolean
+  sourceQuoteId?: string | null
   coverageDetails?: Record<string, unknown>
   documents?: PolicyDocument[]
   travellers?: PolicyTraveller[]
   insuranceComponents?: InsuranceComponent[]
-  insuranceType?: string
+  insuranceType?: 'pad' | 'facultative' | 'pad_facultative'
   createdAt: string
   updatedAt: string
 }
@@ -308,11 +321,10 @@ export interface Policy {
 
 export interface Session {
   id: string
-  ipAddress: string
+  ip: string
   userAgent: string
   lastActivityAt: string
-  startedAt: string
-  expiresAt: string
+  createdAt: string
   current: boolean
 }
 
@@ -389,22 +401,6 @@ export interface DashboardStats {
     }>
     total: number
   }
-  monthlyActivity?: Array<{
-    month: string
-    quotes: number
-    policies: number
-  }>
-}
-
-// ==================== GDPR Export ====================
-
-export interface ExportDataResponse {
-  exportedAt: string
-  profile: Record<string, unknown>
-  policies: Record<string, unknown>[]
-  quotes: Record<string, unknown>[]
-  notifications: Record<string, unknown>[]
-  reminders: Record<string, unknown>[]
 }
 
 // ==================== Error ====================
