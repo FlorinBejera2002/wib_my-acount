@@ -77,7 +77,7 @@ export function AppHeader() {
         <span className="flex-1 text-center text-base font-semibold text-foreground truncate px-2">
           {pageTitle}
         </span>
-        <SidebarTrigger className="text-blue-800" />
+        <SidebarTrigger className="text-blue-800 hover:text-blue-900" />
       </div>
 
       {/* Desktop: breadcrumbs */}
