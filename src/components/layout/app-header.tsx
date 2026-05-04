@@ -70,11 +70,11 @@ export function AppHeader() {
   const breadcrumbs = getBreadcrumbs(location.pathname, t)
 
   return (
-    <header className="flex h-14 items-center border-b bg-card px-4 lg:px-6">
+    <header className="flex h-16 items-center border-b bg-card px-4 lg:px-6">
       {/* Mobile: logo | centered title | hamburger */}
       <div className="flex w-full items-center md:hidden">
-        <img src={icon} alt="asigurari.ro" className="h-7 w-7 shrink-0" />
-        <span className="flex-1 text-center text-sm font-semibold text-foreground truncate px-2">
+        <img src={icon} alt="asigurari.ro" className="h-8 w-8 shrink-0" />
+        <span className="flex-1 text-center text-base font-semibold text-foreground truncate px-2">
           {pageTitle}
         </span>
         <SidebarTrigger />
