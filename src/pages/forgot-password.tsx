@@ -93,33 +93,28 @@ export default function ForgotPasswordPage() {
   }
 
   const config = stepConfig[step]
-  const StepIcon = config.icon
 
   return (
     <div className="flex min-h-dvh flex-col sm:items-center sm:justify-center bg-zinc-100">
       <div className="flex flex-1 flex-col sm:flex-initial w-full sm:max-w-md sm:p-4">
         <div className="flex flex-1 flex-col sm:flex-initial bg-white sm:rounded-xl sm:shadow-sm overflow-hidden">
-          {/* Gradient banner */}
-          <div className="bg-gradient-to-br from-blue-900 to-blue-500 px-6 py-10">
-            <div className="text-center">
-              <div className="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-white/10">
-                <StepIcon className="h-5 w-5 text-white" />
-              </div>
-              <h1 className="text-xl font-bold text-white">
+          {/* Header */}
+          <div className="px-6 pt-8 pb-2 text-center">
+            <img src={logo} alt="asigurari.ro" className="mx-auto h-8 mb-6" />
+
+            <div>
+              <div className="h-px bg-gradient-to-r from-transparent via-blue-800 to-transparent mb-4" />
+              <h1 className="text-xl font-bold text-gray-900">
                 {t(config.titleKey)}
               </h1>
-              <p className="text-sm text-blue-200 mt-1">
-                {t(config.descKey)}
-              </p>
             </div>
+            <p className="text-sm text-muted-foreground mt-1">
+              {t(config.descKey)}
+            </p>
           </div>
 
           {/* Form section */}
           <div className="flex-1 px-6 py-8 sm:px-8">
-            <div className="text-center mb-6">
-              <img src={logo} alt="asigurari.ro" className="mx-auto h-8" />
-            </div>
-
             {step === 'email' && (
               <ForgotPasswordForm
                 onSubmit={handleForgotPassword}
@@ -131,6 +126,7 @@ export default function ForgotPasswordPage() {
               <TwoFactorForm
                 onSubmit={handleVerifyCode}
                 isLoading={verifyResetCodeMutation.isPending}
+                preAuthToken={resetToken}
               />
             )}
 

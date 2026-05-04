@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { useResend2FACode } from '@/hooks/use-two-factor'
 import { Loader2 } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -8,13 +9,19 @@ import { useTranslation } from 'react-i18next'
 interface TwoFactorFormProps {
   onSubmit: (code: string) => void
   isLoading: boolean
+  preAuthToken: string
 }
 
 const CODE_LENGTH = 6
 const RESEND_TIMER = 60
 
-export function TwoFactorForm({ onSubmit, isLoading }: TwoFactorFormProps) {
+export function TwoFactorForm({
+  onSubmit,
+  isLoading,
+  preAuthToken
+}: TwoFactorFormProps) {
   const { t } = useTranslation()
+  const resendMutation = useResend2FACode()
   const [digits, setDigits] = useState<string[]>(
     new Array(CODE_LENGTH).fill('')
   )
@@ -88,6 +95,7 @@ export function TwoFactorForm({ onSubmit, isLoading }: TwoFactorFormProps) {
   }
 
   const handleResend = () => {
+    resendMutation.mutate({ pre_auth_token: preAuthToken })
     setResendTimer(RESEND_TIMER)
     setDigits(new Array(CODE_LENGTH).fill(''))
     inputRefs.current[0]?.focus()
@@ -143,9 +151,17 @@ export function TwoFactorForm({ onSubmit, isLoading }: TwoFactorFormProps) {
             variant="ghost"
             size="sm"
             onClick={handleResend}
+            disabled={resendMutation.isPending}
             className="text-primary hover:text-primary/80 hover:bg-primary/10"
           >
-            {t('auth.resendCode')}
+            {resendMutation.isPending ? (
+              <>
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                {t('auth.resending')}
+              </>
+            ) : (
+              t('auth.resendCode')
+            )}
           </Button>
         )}
       </div>

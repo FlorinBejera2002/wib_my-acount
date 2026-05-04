@@ -93,23 +93,20 @@ export default function LoginPage() {
     <div className="flex min-h-dvh flex-col sm:items-center sm:justify-center bg-zinc-100">
       <div className="flex flex-1 flex-col sm:flex-initial w-full sm:max-w-md sm:p-4">
         <div className="flex flex-1 flex-col sm:flex-initial bg-white sm:rounded-xl sm:shadow-sm overflow-hidden">
-          {/* Logo */}
-          <div className="px-6 pt-6 pb-4 text-center">
-            <img src={logo} alt="asigurari.ro" className="mx-auto h-8" />
-          </div>
-
-          {/* Gradient banner */}
-          <div className="bg-gradient-to-br from-blue-900 to-blue-500 px-6 py-8">
-            <div className="text-center">
-              <h1 className="text-xl font-bold text-white">
+          {/* Header */}
+          <div className="px-6 pt-8 pb-2 text-center">
+            <img src={logo} alt="asigurari.ro" className="mx-auto h-8 mb-6" />
+            <div>
+              <div className="h-px bg-gradient-to-r from-transparent via-blue-800 to-transparent mb-4" />
+              <h1 className="text-xl font-bold text-gray-900">
                 {t(config.titleKey)}
               </h1>
-              {config.descKey && (
-                <p className="text-sm text-blue-200 mt-1">
-                  {t(config.descKey)}
-                </p>
-              )}
             </div>
+            {config.descKey && (
+              <p className="text-sm text-muted-foreground mt-1">
+                {t(config.descKey)}
+              </p>
+            )}
           </div>
 
           {/* Form section */}
