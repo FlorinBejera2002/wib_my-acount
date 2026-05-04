@@ -93,7 +93,7 @@ export function AppSidebar() {
           <img
             src={logo}
             alt="asigurari.ro"
-            className="h-9 w-6/7 group-data-[collapsible=icon]:hidden"
+            className="h-7 w-auto group-data-[collapsible=icon]:hidden"
           />
           <img
             src={icon}

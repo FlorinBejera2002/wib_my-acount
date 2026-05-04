@@ -1,12 +1,26 @@
+import icon from '@/assets/Icon.svg'
 import { SidebarTrigger } from '@/components/ui/sidebar'
 import { useTranslation } from 'react-i18next'
 import { Link, useLocation } from 'react-router-dom'
 
-const breadcrumbMap: Record<string, string> = {
+const pageTitleMap: Record<string, string> = {
   '/dashboard': 'nav.dashboard',
   '/quotes': 'nav.quotes',
   '/policies': 'nav.policies',
-  '/profile': 'nav.profile'
+  '/profile': 'nav.profile',
+  '/reminders': 'nav.expiryAlerts'
+}
+
+function getPageTitle(
+  pathname: string,
+  t: (key: string, options?: Record<string, string>) => string
+) {
+  const parts = pathname.split('/').filter(Boolean)
+  if (parts.length === 0) return ''
+
+  const firstPath = `/${parts[0]}`
+  const labelKey = pageTitleMap[firstPath]
+  return labelKey ? t(labelKey) : ''
 }
 
 function getBreadcrumbs(
@@ -19,7 +33,7 @@ function getBreadcrumbs(
   if (parts.length === 0) return crumbs
 
   const firstPath = `/${parts[0]}`
-  const labelKey = breadcrumbMap[firstPath]
+  const labelKey = pageTitleMap[firstPath]
   if (labelKey) {
     crumbs.push({ label: t(labelKey), href: firstPath })
   }
@@ -52,14 +66,25 @@ function getBreadcrumbs(
 export function AppHeader() {
   const { t } = useTranslation()
   const location = useLocation()
+  const pageTitle = getPageTitle(location.pathname, t)
   const breadcrumbs = getBreadcrumbs(location.pathname, t)
 
   return (
-    <header className="flex h-14 items-center gap-4 border-b bg-card px-4 lg:px-6">
-      <nav className="flex items-center gap-1.5 text-sm min-w-0 overflow-hidden">
+    <header className="flex h-14 items-center border-b bg-card px-4 lg:px-6">
+      {/* Mobile: logo | centered title | hamburger */}
+      <div className="flex w-full items-center md:hidden">
+        <img src={icon} alt="asigurari.ro" className="h-7 w-7 shrink-0" />
+        <span className="flex-1 text-center text-sm font-semibold text-foreground truncate px-2">
+          {pageTitle}
+        </span>
+        <SidebarTrigger />
+      </div>
+
+      {/* Desktop: breadcrumbs */}
+      <nav className="hidden md:flex items-center gap-1.5 text-sm min-w-0 overflow-hidden">
         <Link
           to="/dashboard"
-          className="hidden sm:inline text-muted-foreground hover:text-foreground shrink-0"
+          className="text-muted-foreground hover:text-foreground shrink-0"
         >
           {t('common.home')}
         </Link>
@@ -68,7 +93,7 @@ export function AppHeader() {
             key={crumb.href}
             className="flex items-center gap-1.5 min-w-0"
           >
-            <span className="hidden sm:inline text-muted-foreground">/</span>
+            <span className="text-muted-foreground">/</span>
             <Link
               to={crumb.href}
               className="font-medium text-foreground truncate"
@@ -78,8 +103,6 @@ export function AppHeader() {
           </span>
         ))}
       </nav>
-
-      <SidebarTrigger className="ml-auto md:hidden" />
     </header>
   )
 }
