@@ -77,7 +77,7 @@ export function AppHeader() {
         <span className="flex-1 text-center text-base font-semibold text-foreground truncate px-2">
           {pageTitle}
         </span>
-        <SidebarTrigger />
+        <SidebarTrigger className="text-blue-800" />
       </div>
 
       {/* Desktop: breadcrumbs */}
@@ -89,10 +89,7 @@ export function AppHeader() {
           {t('common.home')}
         </Link>
         {breadcrumbs.map((crumb) => (
-          <span
-            key={crumb.href}
-            className="flex items-center gap-1.5 min-w-0"
-          >
+          <span key={crumb.href} className="flex items-center gap-1.5 min-w-0">
             <span className="text-muted-foreground">/</span>
             <Link
               to={crumb.href}
