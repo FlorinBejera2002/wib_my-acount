@@ -1,4 +1,4 @@
-import loginHero from '@/assets/login-hero.svg'
+import loginHero from '@/assets/login-hero.png'
 import logo from '@/assets/logo.svg'
 import { ForgotPasswordForm } from '@/components/auth/forgot-password-form'
 import { ResetPasswordForm } from '@/components/auth/reset-password-form'
@@ -98,22 +98,12 @@ export default function ForgotPasswordPage() {
   return (
     <div className="flex min-h-dvh bg-zinc-100">
       {/* Image panel — desktop only, takes remaining space */}
-      <div className="hidden lg:block lg:flex-1 relative">
+      <div className="hidden lg:flex lg:flex-1 items-center justify-center bg-gradient-to-br from-slate-100 to-blue-100 p-12">
         <img
           src={loginHero}
           alt=""
-          className="absolute inset-0 h-full w-full object-cover"
+          className="max-h-[70vh] w-auto object-contain drop-shadow-xl blur-sm"
         />
-        <div className="absolute inset-0 flex flex-col items-center justify-center p-12">
-          <img
-            src={logo}
-            alt="asigurari.ro"
-            className="h-10 brightness-0 invert"
-          />
-          <p className="mt-4 text-lg font-light text-white/70 text-center">
-            {t(config.descKey)}
-          </p>
-        </div>
       </div>
 
       {/* Form panel — fixed narrow width on desktop */}

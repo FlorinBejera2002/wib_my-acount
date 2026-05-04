@@ -1,4 +1,3 @@
-import { Separator } from '@/components/ui/separator'
 import { SidebarTrigger } from '@/components/ui/sidebar'
 import { useTranslation } from 'react-i18next'
 import { Link, useLocation } from 'react-router-dom'
@@ -57,10 +56,6 @@ export function AppHeader() {
 
   return (
     <header className="flex h-14 items-center gap-4 border-b bg-card px-4 lg:px-6">
-      <SidebarTrigger />
-
-      <Separator orientation="vertical" className="h-6" />
-
       <nav className="flex items-center gap-1.5 text-sm min-w-0 overflow-hidden">
         <Link
           to="/dashboard"
@@ -83,6 +78,8 @@ export function AppHeader() {
           </span>
         ))}
       </nav>
+
+      <SidebarTrigger className="ml-auto md:hidden" />
     </header>
   )
 }

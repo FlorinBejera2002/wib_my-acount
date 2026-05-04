@@ -135,15 +135,21 @@ export function AppSidebar() {
                       tooltip={t(item.labelKey)}
                       className={cn(
                         'h-10 rounded-lg transition-[background-color] duration-150',
-                        isActive
-                          ? 'bg-gray-100 text-gray-900 font-medium hover:bg-gray-100'
-                          : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700'
+                        isMobile
+                          ? isActive
+                            ? 'bg-blue-50 text-blue-800 font-medium hover:bg-blue-50'
+                            : 'text-blue-700 hover:bg-blue-50 hover:text-blue-800'
+                          : isActive
+                            ? 'bg-gray-100 text-gray-900 font-medium hover:bg-gray-100'
+                            : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700'
                       )}
                     >
                       <item.icon
                         className={cn(
                           'min-w-5 min-h-5 group-data-[collapsible=icon]:h-5 group-data-[collapsible=icon]:w-5 transition-colors',
-                          isActive ? 'text-gray-700' : 'text-gray-400'
+                          isMobile
+                            ? 'text-blue-700'
+                            : isActive ? 'text-gray-700' : 'text-gray-400'
                         )}
                       />
                       <span className="flex-1 group-data-[collapsible=icon]:hidden">
