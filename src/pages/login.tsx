@@ -93,12 +93,13 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-dvh bg-zinc-100">
       {/* Image panel — desktop only, takes remaining space */}
-      <div className="hidden lg:flex lg:flex-1 items-center justify-center bg-gradient-to-br from-slate-100 to-blue-100 p-12">
+      <div className="hidden lg:flex lg:flex-1 relative items-center justify-center bg-gradient-to-br from-slate-100 to-blue-100 p-12">
         <img
           src={loginHero}
           alt=""
-          className="max-h-[70vh] w-auto object-contain drop-shadow-xl blur-sm"
+          className="max-h-[70vh] w-auto object-contain drop-shadow-xl"
         />
+        <div className="absolute inset-0 bg-black/30" />
       </div>
 
       {/* Form panel — fixed narrow width on desktop */}
