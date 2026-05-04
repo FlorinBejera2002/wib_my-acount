@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 900" fill="none">
+  <rect width="800" height="900" fill="#0f172a"/>
+  <rect width="800" height="900" fill="url(#grad)" opacity="0.6"/>
+  <defs>
+    <linearGradient id="grad" x1="0" y1="0" x2="800" y2="900">
+      <stop offset="0%" stop-color="#1e3a5f"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+  </defs>
+  <!-- Abstract shapes -->
+  <circle cx="650" cy="150" r="200" fill="#1e40af" opacity="0.08"/>
+  <circle cx="100" cy="700" r="250" fill="#1e40af" opacity="0.06"/>
+  <circle cx="400" cy="450" r="300" fill="#1e40af" opacity="0.04"/>
+  <!-- Shield icon -->
+  <g transform="translate(320, 320)" opacity="0.15">
+    <path d="M80 0L160 40V100C160 155 128 206 80 224C32 206 0 155 0 100V40L80 0Z" fill="white"/>
+    <path d="M70 120L40 90L52 78L70 96L108 58L120 70L70 120Z" fill="#0f172a"/>
+  </g>
+</svg>

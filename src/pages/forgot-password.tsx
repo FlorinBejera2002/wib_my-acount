@@ -1,3 +1,4 @@
+import loginHero from '@/assets/login-hero.svg'
 import logo from '@/assets/logo.svg'
 import { ForgotPasswordForm } from '@/components/auth/forgot-password-form'
 import { ResetPasswordForm } from '@/components/auth/reset-password-form'
@@ -95,74 +96,99 @@ export default function ForgotPasswordPage() {
   const config = stepConfig[step]
 
   return (
-    <div className="flex min-h-dvh flex-col sm:items-center sm:justify-center bg-zinc-100">
-      <div className="flex flex-1 flex-col sm:flex-initial w-full sm:max-w-md sm:p-4">
-        <div className="flex flex-1 flex-col sm:flex-initial bg-white sm:rounded-xl sm:shadow-sm overflow-hidden">
-          {/* Header */}
-          <div className="px-6 pt-8 pb-2 text-center">
-            <img src={logo} alt="asigurari.ro" className="mx-auto h-8 mb-6" />
+    <div className="flex min-h-dvh bg-zinc-100">
+      {/* Image panel — desktop only, takes remaining space */}
+      <div className="hidden lg:block lg:flex-1 relative">
+        <img
+          src={loginHero}
+          alt=""
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+        <div className="absolute inset-0 flex flex-col items-center justify-center p-12">
+          <img
+            src={logo}
+            alt="asigurari.ro"
+            className="h-10 brightness-0 invert"
+          />
+          <p className="mt-4 text-lg font-light text-white/70 text-center">
+            {t(config.descKey)}
+          </p>
+        </div>
+      </div>
 
-            <div>
-              <div className="h-px bg-gradient-to-r from-transparent via-blue-800 to-transparent mb-4" />
-              <h1 className="text-xl font-bold text-gray-900">
+      {/* Form panel — fixed narrow width on desktop */}
+      <div className="flex flex-col bg-white lg:w-[450px] lg:shrink-0">
+        <div className="flex flex-1 flex-col items-center justify-center px-6 sm:px-12">
+          <div className="w-full max-w-sm">
+            {/* Header */}
+            <div className="pb-2 text-center">
+              <img
+                src={logo}
+                alt="asigurari.ro"
+                className="mx-auto h-10 mb-6"
+              />
+              <div className="flex justify-center">
+                <div className="h-px bg-gradient-to-r from-transparent via-blue-800 to-transparent mb-4 w-full" />
+              </div>
+              <h1 className="text-xl font-bold text-gray-900 pt-8">
                 {t(config.titleKey)}
               </h1>
-            </div>
-            <p className="text-sm text-muted-foreground mt-1">
-              {t(config.descKey)}
-            </p>
-          </div>
-
-          {/* Form section */}
-          <div className="flex-1 px-6 py-8 sm:px-8">
-            {step === 'email' && (
-              <ForgotPasswordForm
-                onSubmit={handleForgotPassword}
-                isLoading={forgotPasswordMutation.isPending}
-              />
-            )}
-
-            {step === 'verify-code' && (
-              <TwoFactorForm
-                onSubmit={handleVerifyCode}
-                isLoading={verifyResetCodeMutation.isPending}
-                preAuthToken={resetToken}
-              />
-            )}
-
-            {step === 'new-password' && (
-              <ResetPasswordForm
-                onSubmit={handleResetPassword}
-                isLoading={resetPasswordMutation.isPending}
-              />
-            )}
-
-            {step === 'success' && (
-              <div className="flex flex-col items-center gap-3 py-6">
-                <CheckCircle2 className="h-16 w-16 text-accent-green animate-bounce" />
-                <p className="text-sm text-muted-foreground">
-                  {t('auth.resetPassword.successMessage')}
-                </p>
-                <Link
-                  to="/login"
-                  className="mt-2 text-sm font-medium text-blue-800 hover:text-blue-900 transition-colors"
-                >
-                  {t('auth.loginLink')}
-                </Link>
-              </div>
-            )}
-
-            {step !== 'success' && (
-              <p className="mt-6 text-center text-sm text-muted-foreground">
-                {t('auth.rememberedPassword')}{' '}
-                <Link
-                  to="/login"
-                  className="font-medium text-blue-800 hover:text-blue-900 transition-colors"
-                >
-                  {t('auth.loginLink')}
-                </Link>
+              <p className="text-sm text-muted-foreground mt-1">
+                {t(config.descKey)}
               </p>
-            )}
+            </div>
+
+            {/* Form section */}
+            <div className="py-8">
+              {step === 'email' && (
+                <ForgotPasswordForm
+                  onSubmit={handleForgotPassword}
+                  isLoading={forgotPasswordMutation.isPending}
+                />
+              )}
+
+              {step === 'verify-code' && (
+                <TwoFactorForm
+                  onSubmit={handleVerifyCode}
+                  isLoading={verifyResetCodeMutation.isPending}
+                  preAuthToken={resetToken}
+                />
+              )}
+
+              {step === 'new-password' && (
+                <ResetPasswordForm
+                  onSubmit={handleResetPassword}
+                  isLoading={resetPasswordMutation.isPending}
+                />
+              )}
+
+              {step === 'success' && (
+                <div className="flex flex-col items-center gap-3 py-6">
+                  <CheckCircle2 className="h-16 w-16 text-accent-green animate-bounce" />
+                  <p className="text-sm text-muted-foreground">
+                    {t('auth.resetPassword.successMessage')}
+                  </p>
+                  <Link
+                    to="/login"
+                    className="mt-2 text-sm font-medium text-blue-800 hover:text-blue-900 transition-colors"
+                  >
+                    {t('auth.loginLink')}
+                  </Link>
+                </div>
+              )}
+
+              {step !== 'success' && (
+                <p className="mt-6 text-center text-sm text-muted-foreground">
+                  {t('auth.rememberedPassword')}{' '}
+                  <Link
+                    to="/login"
+                    className="font-medium text-blue-800 hover:text-blue-900 transition-colors"
+                  >
+                    {t('auth.loginLink')}
+                  </Link>
+                </p>
+              )}
+            </div>
           </div>
         </div>
 
