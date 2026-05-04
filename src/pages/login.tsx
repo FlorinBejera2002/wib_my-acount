@@ -92,8 +92,8 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-dvh bg-zinc-100">
-      {/* Image panel — desktop only, takes remaining space */}
-      <div className="hidden lg:flex lg:flex-1 relative items-center justify-center bg-gradient-to-br from-slate-100 to-blue-100 p-12">
+      {/* Image panel — desktop only */}
+      <div className="hidden lg:flex lg:flex-1 relative items-center justify-center bg-[#0f172a] p-12">
         <img
           src={loginHero}
           alt=""
