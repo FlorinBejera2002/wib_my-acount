@@ -77,12 +77,16 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-white lg:bg-zinc-50 p-0 lg:p-6">
+    <div className="flex min-h-screen lg:items-center lg:justify-center bg-white lg:bg-zinc-50 p-0 lg:p-6">
       {/* ── Single card split in two halves ── */}
       <div className="flex w-full lg:max-w-[1300px] min-h-screen lg:min-h-[700px] overflow-hidden lg:rounded-xl bg-white lg:shadow-sm lg:border lg:border-gray-100">
         {/* ── Left: Form ── */}
         <div className="flex flex-[1.3] flex-col justify-between px-8 py-10 sm:px-12 lg:px-16">
-          <img src={logo} alt="WIB" className="h-8 w-auto self-start" />
+          <img
+            src={logo}
+            alt="WIB"
+            className="h-8 w-auto self-center md:self-start"
+          />
 
           <div className="flex flex-1 items-center w-full">
             <div className="w-full py-8">

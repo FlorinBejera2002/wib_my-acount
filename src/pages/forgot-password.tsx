@@ -110,7 +110,7 @@ export default function ForgotPasswordPage() {
   ]
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-white lg:bg-zinc-50 p-0 lg:p-6">
+    <div className="flex min-h-screen lg:items-center lg:justify-center bg-white lg:bg-zinc-50 p-0 lg:p-6">
       {/* Same card as Login */}
       <div className="flex w-full lg:max-w-[1300px] min-h-screen lg:min-h-[700px] overflow-hidden lg:rounded-xl bg-white lg:shadow-sm lg:border lg:border-gray-100">
         {/* Left: Form Side */}
@@ -118,7 +118,7 @@ export default function ForgotPasswordPage() {
           <img
             src={logo}
             alt="asigurari.ro"
-            className="h-8 w-auto self-start"
+            className="h-8 w-auto self-center md:self-start"
           />
 
           <div className="flex flex-1 items-center">
