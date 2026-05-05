@@ -321,7 +321,7 @@ export interface Policy {
 
 export interface Session {
   id: string
-  ip: string
+  ipAddress: string
   userAgent: string
   lastActivityAt: string
   createdAt: string
