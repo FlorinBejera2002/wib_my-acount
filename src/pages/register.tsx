@@ -45,9 +45,9 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 p-4 lg:p-6">
+    <div className="flex min-h-screen items-center justify-center bg-white lg:bg-zinc-50 p-0 lg:p-6">
       {/* Single card split in two halves - exact same as Login */}
-      <div className="flex w-full max-w-[1300px] min-h-[700px] overflow-hidden rounded-xl bg-white shadow-sm border border-gray-100">
+      <div className="flex w-full lg:max-w-[1300px] min-h-screen lg:min-h-[700px] overflow-hidden lg:rounded-xl bg-white lg:shadow-sm lg:border lg:border-gray-100">
         {/* Left: Form */}
         <div className="flex flex-[1.3] flex-col justify-between px-8 py-10 sm:px-12 lg:px-16">
           <img
