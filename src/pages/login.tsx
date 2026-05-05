@@ -8,7 +8,6 @@ import { useAuthStore } from '@/stores/auth-store'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
   Bell,
-  Check,
   CheckCircle2,
   CircleCheckBig,
   ClockArrowUp,
@@ -68,6 +67,7 @@ export default function LoginPage() {
       { pre_auth_token: preAuthToken, totp_code: code },
       {
         onSuccess: () => setStep('success'),
+        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
         onError: (err: any) => {
           if (err?.response?.status === 401) setStep('credentials')
           else setError(t('auth.twoFactor.invalidCode'))
@@ -77,15 +77,15 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-100 p-4 lg:p-6">
+    <div className="flex min-h-screen items-center justify-center bg-zinc-50 p-4 lg:p-6">
       {/* ── Single card split in two halves ── */}
-      <div className="flex w-full max-w-[1300px] min-h-[700px] overflow-hidden rounded-2xl bg-white shadow-sm border border-gray-100">
+      <div className="flex w-full max-w-[1300px] min-h-[700px] overflow-hidden rounded-xl bg-white shadow-sm border border-gray-100">
         {/* ── Left: Form ── */}
         <div className="flex flex-[1.3] flex-col justify-between px-8 py-10 sm:px-12 lg:px-16">
           <img src={logo} alt="WIB" className="h-8 w-auto self-start" />
 
-          <div className="flex flex-1 items-center">
-            <div className="w-full max-w-[400px] py-8">
+          <div className="flex flex-1 items-center w-full">
+            <div className="w-full py-8">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={step}
@@ -174,7 +174,7 @@ export default function LoginPage() {
             {t('auth.welcome.description')}
           </p>
 
-          <ul className="mt-10 space-y-6">
+          <ul className="mt-8 space-y-4">
             {benefits.map(({ key }) => (
               <li key={key} className="flex items-start gap-3 group">
                 <CircleCheckBig className="h-4 w-4 text-green-600 mt-1" />

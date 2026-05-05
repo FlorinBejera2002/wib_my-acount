@@ -1,74 +1,141 @@
-import loginHero from '@/assets/login-hero.png'
 import logo from '@/assets/logo.svg'
 import { RegisterForm } from '@/components/auth/register-form'
 import { useRegister } from '@/hooks/use-register'
 import type { RegisterFormValues } from '@/lib/validators'
 import { useAuthStore } from '@/stores/auth-store'
+import { AnimatePresence, motion } from 'framer-motion'
+import { CheckCircle2, CircleCheckBig } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, Navigate } from 'react-router-dom'
+
+type RegisterStep = 'form' | 'success'
+
+const benefits = [
+  { key: 'auth.welcome.benefit1' },
+  { key: 'auth.welcome.benefit4' },
+  { key: 'auth.welcome.benefit2' },
+  { key: 'auth.welcome.benefit3' }
+]
 
 export default function RegisterPage() {
   const { t } = useTranslation()
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
   const registerMutation = useRegister()
 
+  const [step, setStep] = useState<RegisterStep>('form')
+
+  useEffect(() => {
+    if (step === 'success') {
+      const timer = setTimeout(() => {
+        window.location.href = '/dashboard'
+      }, 1600)
+      return () => clearTimeout(timer)
+    }
+  }, [step])
+
   if (isAuthenticated) {
     return <Navigate to="/dashboard" replace={true} />
   }
 
+  const handleSubmit = (data: RegisterFormValues) => {
+    registerMutation.mutate(data, {
+      onSuccess: () => setStep('success')
+    })
+  }
+
   return (
-    <div className="flex min-h-dvh bg-zinc-100">
-      {/* Image panel — desktop only */}
-      <div className="hidden lg:flex lg:flex-1 relative items-center justify-center p-12">
-        <img
-          src={loginHero}
-          alt=""
-          className="max-h-[70vh] w-auto object-contain drop-shadow-xl"
-        />
-        <div className="absolute inset-0 bg-black/30" />
-      </div>
+    <div className="flex min-h-screen items-center justify-center bg-zinc-50 p-4 lg:p-6">
+      {/* Single card split in two halves - exact same as Login */}
+      <div className="flex w-full max-w-[1300px] min-h-[700px] overflow-hidden rounded-xl bg-white shadow-sm border border-gray-100">
+        {/* Left: Form */}
+        <div className="flex flex-[1.3] flex-col justify-between px-8 py-10 sm:px-12 lg:px-16">
+          <img
+            src={logo}
+            alt="asigurari.ro"
+            className="h-8 w-auto self-start"
+          />
 
-      {/* Form panel — fixed narrow width on desktop */}
-      <div className="flex flex-col bg-white lg:w-[450px] lg:shrink-0">
-        <div className="flex flex-1 flex-col items-center justify-center px-6 sm:px-12">
-          <div className="w-full max-w-sm">
-            {/* Header */}
-            <div className="pb-2 text-center">
-              <img src={logo} alt="asigurari.ro" className="mx-auto h-8 mb-6" />
-              <div className="h-px bg-gradient-to-r from-transparent via-blue-800 to-transparent mb-4" />
-              <h1 className="text-xl font-bold text-gray-900 pt-8">
-                {t('auth.register.title')}
-              </h1>
-              <p className="text-sm text-muted-foreground mt-1">
-                {t('auth.register.description')}
-              </p>
-            </div>
-
-            {/* Form section */}
-            <div className="py-8">
-              <RegisterForm
-                onSubmit={(data: RegisterFormValues) =>
-                  registerMutation.mutate(data)
-                }
-                isLoading={registerMutation.isPending}
-              />
-
-              <p className="mt-6 text-center text-sm text-muted-foreground">
-                {t('auth.hasAccount')}{' '}
-                <Link
-                  to="/login"
-                  className="font-medium text-blue-800 hover:text-blue-900 transition-colors"
+          <div className="flex flex-1 items-center">
+            <div className="w-full max-w-[400px] py-8">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={step}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  transition={{ duration: 0.2 }}
                 >
-                  {t('auth.loginLink')}
-                </Link>
-              </p>
+                  {step === 'success' ? (
+                    <div className="flex flex-col items-center text-center py-4">
+                      <div className="h-16 w-16 rounded-full bg-emerald-50 flex items-center justify-center mb-5">
+                        <CheckCircle2 className="h-8 w-8 text-emerald-500" />
+                      </div>
+                      <h3 className="text-lg font-bold text-gray-900">
+                        {t('auth.register.successTitle')}
+                      </h3>
+                      <p className="text-sm text-gray-500 mt-1.5">
+                        {t('auth.register.successDescription')}
+                      </p>
+                    </div>
+                  ) : (
+                    <>
+                      <h1 className="text-2xl font-bold text-gray-900">
+                        {t('auth.register.title')}
+                      </h1>
+                      <p className="text-sm text-gray-400 mt-2 mb-10">
+                        {t('auth.register.description')}
+                      </p>
+
+                      <RegisterForm
+                        onSubmit={handleSubmit}
+                        isLoading={registerMutation.isPending}
+                      />
+
+                      <p className="mt-6 text-sm text-gray-500">
+                        {t('auth.hasAccount')}{' '}
+                        <Link
+                          to="/login"
+                          className="font-semibold text-blue-800 hover:text-blue-900 transition-colors"
+                        >
+                          {t('auth.loginLink')}
+                        </Link>
+                      </p>
+                    </>
+                  )}
+                </motion.div>
+              </AnimatePresence>
             </div>
           </div>
+
+          <p className="text-[11px] text-gray-400">{t('common.copyright')}</p>
         </div>
 
-        <p className="text-center text-xs text-gray-400 py-4">
-          {t('common.copyright')}
-        </p>
+        {/* Right: Info panel (exact same as Login) */}
+        <div className="hidden lg:flex lg:w-4/7 shrink-0 flex-col justify-center bg-blue-50/80 px-12 py-14">
+          <h2 className="text-xl font-bold text-gray-900">
+            {t('auth.welcome.title')}
+          </h2>
+          <p className="text-sm text-gray-500 leading-relaxed mt-2">
+            {t('auth.welcome.description')}
+          </p>
+
+          <ul className="mt-8 space-y-4">
+            {benefits.map(({ key }) => (
+              <li key={key} className="flex items-start gap-3 group">
+                <CircleCheckBig className="h-4 w-4 text-green-600 mt-1" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-base font-semibold text-gray-900">
+                    {t(`${key}Title`)}
+                  </p>
+                  <p className="text-sm text-gray-600 leading-relaxed mt-1">
+                    {t(`${key}Desc`)}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </div>
   )

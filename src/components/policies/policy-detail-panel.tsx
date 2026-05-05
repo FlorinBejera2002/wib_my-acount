@@ -1,3 +1,4 @@
+import type { Policy } from '@/api/types'
 import { Badge } from '@/components/ui/badge'
 import {
   Dialog,
@@ -12,7 +13,6 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { usePolicy } from '@/hooks/use-policies'
 import { useCreateReminder } from '@/hooks/use-reminders'
 import { cn, formatCurrency, formatDate } from '@/lib/utils'
-import type { Policy } from '@/api/types'
 import {
   AlertCircle,
   Bell,
@@ -52,9 +52,7 @@ const AUTO_EMAIL_DAYS: Record<string, number[]> = {
 }
 
 function formatAutoDays(days: number[]): string {
-  return days
-    .map((d) => (d === 1 ? '1 zi' : `${d} zile`))
-    .join(', ')
+  return days.map((d) => (d === 1 ? '1 zi' : `${d} zile`)).join(', ')
 }
 
 function computeRemindDate(endDate: string, days: number): string {
@@ -81,10 +79,9 @@ function ReminderDialog({
   )
 
   const policyType = (policy.insuranceType ?? policy.type).toLowerCase()
-  const typeName = t(
-    `insuranceType.${policyType.toUpperCase()}`,
-    { defaultValue: policy.type }
-  )
+  const typeName = t(`insuranceType.${policyType.toUpperCase()}`, {
+    defaultValue: policy.type
+  })
   const autoDays = AUTO_EMAIL_DAYS[policyType] ?? [30, 10, 1]
 
   const handleSubmit = () => {
@@ -418,7 +415,7 @@ export function PolicyDetailPanel({
                 </h3>
                 <span
                   className={cn(
-                    'pointer-events-none ml-auto flex h-5 min-w-[20px] items-center justify-center rounded-full text-[11px] text-center group-data-[collapsible=icon]:hidden border-gray-200 text-blue-800 font-normal shadow-[inset_0_1px_5px_0_rgba(0,0,0,0.1),inset_0_-1px_5px_0_rgba(0,0,0,0.1)]'
+                    'pointer-events-none ml-auto flex h-5 min-w-[20px] items-center justify-center rounded-full text-[9px] text-center group-data-[collapsible=icon]:hidden border-gray-200 text-blue-800 font-normal border'
                   )}
                 >
                   {otherTravellers.length}
@@ -488,14 +485,41 @@ export function PolicyDetailPanel({
   }
 
   /* ── Component-specific view (PAD / Facultativă) ── */
-  const resolvedComponents = policy.insuranceComponents && policy.insuranceComponents.length > 0
-    ? policy.insuranceComponents
-    : policy.insuranceType === 'pad_facultative'
-      ? [
-          { type: 'pad' as const, policyNumber: policy.policyNumber, insurerName: policy.insurerName ?? policy.insurer ?? '—', premium: policy.premium / 2, startDate: policy.startDate, endDate: policy.endDate, documents: [] as { id: string; name: string; type: string; url: string }[] },
-          { type: 'facultative' as const, policyNumber: policy.policyNumber, insurerName: policy.insurerName ?? policy.insurer ?? '—', premium: policy.premium / 2, startDate: policy.startDate, endDate: policy.endDate, documents: [] as { id: string; name: string; type: string; url: string }[] }
-        ]
-      : null
+  const resolvedComponents =
+    policy.insuranceComponents && policy.insuranceComponents.length > 0
+      ? policy.insuranceComponents
+      : policy.insuranceType === 'pad_facultative'
+        ? [
+            {
+              type: 'pad' as const,
+              policyNumber: policy.policyNumber,
+              insurerName: policy.insurerName ?? policy.insurer ?? '—',
+              premium: policy.premium / 2,
+              startDate: policy.startDate,
+              endDate: policy.endDate,
+              documents: [] as {
+                id: string
+                name: string
+                type: string
+                url: string
+              }[]
+            },
+            {
+              type: 'facultative' as const,
+              policyNumber: policy.policyNumber,
+              insurerName: policy.insurerName ?? policy.insurer ?? '—',
+              premium: policy.premium / 2,
+              startDate: policy.startDate,
+              endDate: policy.endDate,
+              documents: [] as {
+                id: string
+                name: string
+                type: string
+                url: string
+              }[]
+            }
+          ]
+        : null
 
   if (
     componentIndex != null &&
@@ -825,14 +849,31 @@ export function PolicyDetailPanel({
 
       {/* ── Insurance Components (PAD + Facultativă) ── */}
       {(() => {
-        const components = policy.insuranceComponents && policy.insuranceComponents.length > 0
-          ? policy.insuranceComponents
-          : policy.insuranceType === 'pad_facultative'
-            ? [
-                { type: 'pad' as const, policyNumber: policy.policyNumber, insurerName: policy.insurerName ?? policy.insurer ?? '—', premium: policy.premium / 2, startDate: policy.startDate, endDate: policy.endDate, documents: [] },
-                { type: 'facultative' as const, policyNumber: policy.policyNumber, insurerName: policy.insurerName ?? policy.insurer ?? '—', premium: policy.premium / 2, startDate: policy.startDate, endDate: policy.endDate, documents: [] }
-              ]
-            : null
+        const components =
+          policy.insuranceComponents && policy.insuranceComponents.length > 0
+            ? policy.insuranceComponents
+            : policy.insuranceType === 'pad_facultative'
+              ? [
+                  {
+                    type: 'pad' as const,
+                    policyNumber: policy.policyNumber,
+                    insurerName: policy.insurerName ?? policy.insurer ?? '—',
+                    premium: policy.premium / 2,
+                    startDate: policy.startDate,
+                    endDate: policy.endDate,
+                    documents: []
+                  },
+                  {
+                    type: 'facultative' as const,
+                    policyNumber: policy.policyNumber,
+                    insurerName: policy.insurerName ?? policy.insurer ?? '—',
+                    premium: policy.premium / 2,
+                    startDate: policy.startDate,
+                    endDate: policy.endDate,
+                    documents: []
+                  }
+                ]
+              : null
         if (!components) return null
         return (
           <>

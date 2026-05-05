@@ -155,7 +155,10 @@ export function AppSidebar() {
                           'group-data-[collapsible=icon]:h-5 group-data-[collapsible=icon]:w-5 transition-colors',
                           isMobile
                             ? 'min-w-6 min-h-6 text-blue-700'
-                            : cn('min-w-5 min-h-5', isActive ? 'text-gray-700' : 'text-gray-400')
+                            : cn(
+                                'min-w-5 min-h-5',
+                                isActive ? 'text-gray-700' : 'text-gray-400'
+                              )
                         )}
                       />
                       <span className="flex-1 group-data-[collapsible=icon]:hidden">
@@ -164,10 +167,10 @@ export function AppSidebar() {
                       {count !== undefined && (
                         <span
                           className={cn(
-                            'pointer-events-none ml-auto flex h-5 min-w-[20px] items-center justify-center rounded-full text-[11px] text-center group-data-[collapsible=icon]:hidden',
+                            'pointer-events-none ml-auto flex h-5 min-w-[20px] items-center justify-center rounded-full text-[9px] text-center group-data-[collapsible=icon]:hidden',
                             isActive
-                              ? 'border-gray-200 text-blue-800 font-normal shadow-[inset_0_1px_5px_0_rgba(0,0,0,0.1),inset_0_-1px_5px_0_rgba(0,0,0,0.1)]'
-                              : 'border-gray-200 text-blue-800 font-normal shadow-[inset_0_1px_5px_0_rgba(0,0,0,0.1),inset_0_-1px_5px_0_rgba(0,0,0,0.1)]'
+                              ? 'border-gray-200 text-blue-800 font-normal border self'
+                              : 'border-gray-200 text-blue-800 font-normal border self'
                           )}
                         >
                           {count}

@@ -1,4 +1,3 @@
-import loginHero from '@/assets/login-hero.png'
 import logo from '@/assets/logo.svg'
 import { ForgotPasswordForm } from '@/components/auth/forgot-password-form'
 import { ResetPasswordForm } from '@/components/auth/reset-password-form'
@@ -13,7 +12,14 @@ import type {
   ResetPasswordFormValues
 } from '@/lib/validators'
 import { useAuthStore } from '@/stores/auth-store'
-import { CheckCircle2, KeyRound, Lock, Mail } from 'lucide-react'
+import { AnimatePresence, motion } from 'framer-motion'
+import {
+  CheckCircle2,
+  CircleCheckBig,
+  KeyRound,
+  Lock,
+  Mail
+} from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, Navigate } from 'react-router-dom'
@@ -46,6 +52,7 @@ const stepConfig = {
 export default function ForgotPasswordPage() {
   const { t } = useTranslation()
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
+
   const [step, setStep] = useState<ResetStep>('email')
   const [email, setEmail] = useState('')
   const [resetToken, setResetToken] = useState('')
@@ -95,97 +102,130 @@ export default function ForgotPasswordPage() {
 
   const config = stepConfig[step]
 
+  const benefits = [
+    { key: 'auth.welcome.benefit1' },
+    { key: 'auth.welcome.benefit4' },
+    { key: 'auth.welcome.benefit2' },
+    { key: 'auth.welcome.benefit3' }
+  ]
+
   return (
-    <div className="flex min-h-dvh bg-zinc-100">
-      {/* Image panel — desktop only */}
-      <div className="hidden lg:flex lg:flex-1 relative items-center justify-center p-12">
-        <img
-          src={loginHero}
-          alt=""
-          className="max-h-[70vh] w-auto object-contain drop-shadow-xl"
-        />
-        <div className="absolute inset-0 bg-black/30" />
-      </div>
+    <div className="flex min-h-screen items-center justify-center bg-zinc-50 p-4 lg:p-6">
+      {/* Same card as Login */}
+      <div className="flex w-full max-w-[1300px] min-h-[700px] overflow-hidden rounded-xl bg-white shadow-sm border border-gray-100">
+        {/* Left: Form Side */}
+        <div className="flex flex-[1.3] flex-col justify-between px-8 py-10 sm:px-12 lg:px-16">
+          <img
+            src={logo}
+            alt="asigurari.ro"
+            className="h-8 w-auto self-start"
+          />
 
-      {/* Form panel — fixed narrow width on desktop */}
-      <div className="flex flex-col bg-white lg:w-[450px] lg:shrink-0">
-        <div className="flex flex-1 flex-col items-center justify-center px-6 sm:px-12">
-          <div className="w-full max-w-sm">
-            {/* Header */}
-            <div className="pb-2 text-center">
-              <img
-                src={logo}
-                alt="asigurari.ro"
-                className="mx-auto h-10 mb-6"
-              />
-              <div className="flex justify-center">
-                <div className="h-px bg-gradient-to-r from-transparent via-blue-800 to-transparent mb-4 w-full" />
-              </div>
-              <h1 className="text-xl font-bold text-gray-900 pt-8">
-                {t(config.titleKey)}
-              </h1>
-              <p className="text-sm text-muted-foreground mt-1">
-                {t(config.descKey)}
-              </p>
-            </div>
+          <div className="flex flex-1 items-center">
+            <div className="w-full max-w-[400px] py-8">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={step}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  {step === 'success' ? (
+                    <div className="flex flex-col items-center text-center py-4">
+                      <div className="h-16 w-16 rounded-full bg-emerald-50 flex items-center justify-center mb-5">
+                        <CheckCircle2 className="h-8 w-8 text-emerald-500" />
+                      </div>
+                      <h3 className="text-lg font-bold text-gray-900">
+                        {t(config.titleKey)}
+                      </h3>
+                      <p className="text-sm text-gray-500 mt-1.5">
+                        {t(config.descKey)}
+                      </p>
+                      <Link
+                        to="/login"
+                        className="mt-6 inline-block text-sm font-medium text-blue-800 hover:text-blue-900 transition-colors"
+                      >
+                        {t('auth.loginLink')}
+                      </Link>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="mb-8">
+                        <h1 className="text-2xl font-bold text-gray-900">
+                          {t(config.titleKey)}
+                        </h1>
+                        <p className="text-sm text-gray-400 mt-2">
+                          {t(config.descKey)}
+                        </p>
+                      </div>
 
-            {/* Form section */}
-            <div className="py-8">
-              {step === 'email' && (
-                <ForgotPasswordForm
-                  onSubmit={handleForgotPassword}
-                  isLoading={forgotPasswordMutation.isPending}
-                />
-              )}
+                      {step === 'email' && (
+                        <ForgotPasswordForm
+                          onSubmit={handleForgotPassword}
+                          isLoading={forgotPasswordMutation.isPending}
+                        />
+                      )}
 
-              {step === 'verify-code' && (
-                <TwoFactorForm
-                  onSubmit={handleVerifyCode}
-                  isLoading={verifyResetCodeMutation.isPending}
-                  preAuthToken={resetToken}
-                />
-              )}
+                      {step === 'verify-code' && (
+                        <TwoFactorForm
+                          onSubmit={handleVerifyCode}
+                          isLoading={verifyResetCodeMutation.isPending}
+                          preAuthToken={''}
+                        />
+                      )}
 
-              {step === 'new-password' && (
-                <ResetPasswordForm
-                  onSubmit={handleResetPassword}
-                  isLoading={resetPasswordMutation.isPending}
-                />
-              )}
+                      {step === 'new-password' && (
+                        <ResetPasswordForm
+                          onSubmit={handleResetPassword}
+                          isLoading={resetPasswordMutation.isPending}
+                        />
+                      )}
 
-              {step === 'success' && (
-                <div className="flex flex-col items-center gap-3 py-6">
-                  <CheckCircle2 className="h-16 w-16 text-accent-green animate-bounce" />
-                  <p className="text-sm text-muted-foreground">
-                    {t('auth.resetPassword.successMessage')}
-                  </p>
-                  <Link
-                    to="/login"
-                    className="mt-2 text-sm font-medium text-blue-800 hover:text-blue-900 transition-colors"
-                  >
-                    {t('auth.loginLink')}
-                  </Link>
-                </div>
-              )}
-
-              {step !== 'success' && (
-                <p className="mt-6 text-center text-sm text-muted-foreground">
-                  {t('auth.rememberedPassword')}{' '}
-                  <Link
-                    to="/login"
-                    className="font-medium text-blue-800 hover:text-blue-900 transition-colors"
-                  >
-                    {t('auth.loginLink')}
-                  </Link>
-                </p>
-              )}
+                      <p className="mt-6 text-sm text-gray-500 text-center">
+                        {t('auth.rememberedPassword')}{' '}
+                        <Link
+                          to="/login"
+                          className="font-semibold text-blue-800 hover:text-blue-900 transition-colors"
+                        >
+                          {t('auth.loginLink')}
+                        </Link>
+                      </p>
+                    </>
+                  )}
+                </motion.div>
+              </AnimatePresence>
             </div>
           </div>
+
+          <p className="text-[11px] text-gray-400">{t('common.copyright')}</p>
         </div>
 
-        <p className="text-center text-xs text-gray-400 py-4">
-          {t('common.copyright')}
-        </p>
+        {/* Right: Info Panel — identical to Login */}
+        <div className="hidden lg:flex lg:w-4/7 shrink-0 flex-col justify-center bg-blue-50/80 px-12 py-14">
+          <h2 className="text-xl font-bold text-gray-900">
+            {t('auth.welcome.title')}
+          </h2>
+          <p className="text-sm text-gray-500 leading-relaxed mt-2">
+            {t('auth.welcome.description')}
+          </p>
+
+          <ul className="mt-8 space-y-4">
+            {benefits.map(({ key }) => (
+              <li key={key} className="flex items-start gap-3 group">
+                <CircleCheckBig className="h-4 w-4 text-green-600 mt-1" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-base font-semibold text-gray-900">
+                    {t(`${key}Title`)}
+                  </p>
+                  <p className="text-sm text-gray-600 leading-relaxed mt-1">
+                    {t(`${key}Desc`)}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </div>
   )
