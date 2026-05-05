@@ -7,6 +7,7 @@ import { Eye, EyeOff, Loader2 } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router-dom'
 
 interface LoginFormProps {
   onSubmit: (data: LoginFormValues) => void
@@ -32,9 +33,9 @@ export function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
   })
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-7">
       <div className="space-y-2">
-        <Label htmlFor="email" className="text-gray-900">
+        <Label htmlFor="email" className="text-slate-700 text-sm font-medium">
           {t('auth.emailLabel')}
         </Label>
         <Input
@@ -43,6 +44,7 @@ export function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
           placeholder={t('auth.emailPlaceholder')}
           autoComplete="email"
           autoFocus={true}
+          className="h-11 border-slate-200 focus-visible:ring-blue-800/20 focus-visible:border-blue-800"
           {...register('email')}
         />
         {errors.email && (
@@ -51,7 +53,10 @@ export function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="password" className="text-gray-900">
+        <Label
+          htmlFor="password"
+          className="text-slate-700 text-sm font-medium"
+        >
           {t('auth.passwordLabel')}
         </Label>
         <div className="relative">
@@ -60,13 +65,13 @@ export function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
             type={showPassword ? 'text' : 'password'}
             placeholder={t('auth.passwordPlaceholder')}
             autoComplete="current-password"
-            className="pr-10"
+            className="h-11 pr-10 border-slate-200 focus-visible:ring-blue-800/20 focus-visible:border-blue-800"
             {...register('password')}
           />
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-900 transition-colors"
+            className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
             tabIndex={-1}
           >
             {showPassword ? (
@@ -79,11 +84,19 @@ export function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
         {errors.password && (
           <p className="text-sm text-destructive">{errors.password.message}</p>
         )}
+        <div className="flex justify-end pt-0.5">
+          <Link
+            to="/forgot-password"
+            className="text-xs text-blue-800 hover:text-blue-900 font-medium transition-colors"
+          >
+            {t('auth.forgotPassword')}
+          </Link>
+        </div>
       </div>
 
       <Button
         type="submit"
-        className="w-full bg-blue-800 hover:bg-blue-900 text-white"
+        className="w-full h-11 bg-blue-800 hover:bg-blue-900 text-white font-medium"
         disabled={isLoading}
       >
         {isLoading ? (

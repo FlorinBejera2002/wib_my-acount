@@ -131,6 +131,18 @@
       "title": "Two-step verification",
       "description": "We sent a verification code to your email address"
     },
+    "welcome": {
+      "title": "Your insurance account",
+      "description": "Manage all your policies and quotes from one place, simply and quickly.",
+      "benefit1Title": "Policies & documents",
+      "benefit1Desc": "View all your insurance, download documents and track expiry dates.",
+      "benefit2Title": "Expiry alerts",
+      "benefit2Desc": "Receive personalised notifications days before your policies or documents expire.",
+      "benefit3Title": "Secure account",
+      "benefit3Desc": "Two-factor authentication, active session management and full account control.",
+      "benefit4Title": "Full history",
+      "benefit4Desc": "All your policies and quotes, from the very first offer requested on the site."
+    },
     "noAccount": "Don't have an account?",
     "createAccountLink": "Create an account",
     "forgotPassword": "Forgot your password?",

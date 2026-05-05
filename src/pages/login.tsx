@@ -1,4 +1,3 @@
-import loginHero from '@/assets/login-hero.png'
 import logo from '@/assets/logo.svg'
 import { EmailOtpStep } from '@/components/auth/email-otp-step'
 import { LoginForm } from '@/components/auth/login-form'
@@ -6,30 +5,28 @@ import { TotpStep } from '@/components/auth/totp-step'
 import { useLogin, useVerifyTwoFactor } from '@/hooks/use-auth'
 import type { LoginFormValues } from '@/lib/validators'
 import { useAuthStore } from '@/stores/auth-store'
-import { CheckCircle2, LogIn, Shield, ShieldCheck } from 'lucide-react'
-import { useState } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
+import {
+  Bell,
+  Check,
+  CheckCircle2,
+  CircleCheckBig,
+  ClockArrowUp,
+  FileText,
+  ShieldCheck
+} from 'lucide-react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, Navigate } from 'react-router-dom'
 
 type LoginStep = 'credentials' | 'two-factor' | 'success'
 
-const stepConfig = {
-  credentials: {
-    icon: LogIn,
-    titleKey: 'auth.login.title',
-    descKey: 'auth.login.description'
-  },
-  'two-factor': {
-    icon: Shield,
-    titleKey: 'auth.twoFactor.title',
-    descKey: ''
-  },
-  success: {
-    icon: ShieldCheck,
-    titleKey: 'auth.login.successTitle',
-    descKey: 'auth.login.successDescription'
-  }
-} as const
+const benefits = [
+  { icon: FileText, key: 'auth.welcome.benefit1' },
+  { icon: ClockArrowUp, key: 'auth.welcome.benefit4' },
+  { icon: Bell, key: 'auth.welcome.benefit2' },
+  { icon: ShieldCheck, key: 'auth.welcome.benefit3' }
+] as const
 
 export default function LoginPage() {
   const { t } = useTranslation()
@@ -43,9 +40,16 @@ export default function LoginPage() {
   const loginMutation = useLogin()
   const twoFactorMutation = useVerifyTwoFactor()
 
-  if (isAuthenticated) {
-    return <Navigate to="/dashboard" replace={true} />
-  }
+  useEffect(() => {
+    if (step === 'success') {
+      const timer = setTimeout(() => {
+        window.location.href = '/dashboard'
+      }, 1600)
+      return () => clearTimeout(timer)
+    }
+  }, [step])
+
+  if (isAuthenticated) return <Navigate to="/dashboard" replace={true} />
 
   const handleLogin = (data: LoginFormValues) => {
     loginMutation.mutate(data, {
@@ -63,126 +67,129 @@ export default function LoginPage() {
     twoFactorMutation.mutate(
       { pre_auth_token: preAuthToken, totp_code: code },
       {
-        onSuccess: () => {
-          setPreAuthToken('')
-          setStep('success')
-        },
-        onError: (err: unknown) => {
-          const status = (err as { response?: { status?: number } })?.response
-            ?.status
-          const errorCode = (
-            err as { response?: { data?: { error?: { code?: string } } } }
-          )?.response?.data?.error?.code
-          if (errorCode === 'INVALID_PRE_AUTH_TOKEN' || status === 401) {
-            handleExpired()
-          } else {
-            setError(t('auth.twoFactor.invalidCode'))
-          }
+        onSuccess: () => setStep('success'),
+        onError: (err: any) => {
+          if (err?.response?.status === 401) setStep('credentials')
+          else setError(t('auth.twoFactor.invalidCode'))
         }
       }
     )
   }
 
-  const handleExpired = () => {
-    setPreAuthToken('')
-    setStep('credentials')
-  }
-
-  const config = stepConfig[step]
-
   return (
-    <div className="flex min-h-dvh bg-zinc-100">
-      {/* Image panel — desktop only */}
-      <div className="hidden lg:flex lg:flex-1 relative items-center justify-center p-12">
-        <img
-          src={loginHero}
-          alt=""
-          className="max-h-[70vh] w-auto object-contain drop-shadow-xl"
-        />
-        <div className="absolute inset-0 bg-black/30" />
-      </div>
+    <div className="flex min-h-screen items-center justify-center bg-zinc-100 p-4 lg:p-6">
+      {/* ── Single card split in two halves ── */}
+      <div className="flex w-full max-w-[1300px] min-h-[700px] overflow-hidden rounded-2xl bg-white shadow-sm border border-gray-100">
+        {/* ── Left: Form ── */}
+        <div className="flex flex-[1.3] flex-col justify-between px-8 py-10 sm:px-12 lg:px-16">
+          <img src={logo} alt="WIB" className="h-8 w-auto self-start" />
 
-      {/* Form panel — fixed narrow width on desktop */}
-      <div className="flex flex-col bg-white lg:w-[450px] lg:shrink-0">
-        <div className="flex flex-1 flex-col items-center justify-center px-6 sm:px-12">
-          <div className="w-full max-w-sm">
-            {/* Header */}
-            <div className="pb-2 text-center">
-              <img src={logo} alt="asigurari.ro" className="mx-auto h-8 mb-6" />
-              <div className="h-px bg-gradient-to-r from-transparent via-blue-800 to-transparent mb-4" />
-              <h1 className="text-xl font-bold text-gray-900 pt-8">
-                {t(config.titleKey)}
-              </h1>
-              {config.descKey && (
-                <p className="text-sm text-muted-foreground mt-1">
-                  {t(config.descKey)}
-                </p>
-              )}
-            </div>
+          <div className="flex flex-1 items-center">
+            <div className="w-full max-w-[400px] py-8">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={step}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  {step === 'success' ? (
+                    <div className="flex flex-col items-center text-center py-4">
+                      <div className="h-16 w-16 rounded-full bg-emerald-50 flex items-center justify-center mb-5">
+                        <CheckCircle2 className="h-8 w-8 text-emerald-500" />
+                      </div>
+                      <h3 className="text-lg font-bold text-gray-900">
+                        {t('auth.login.successTitle')}
+                      </h3>
+                      <p className="text-sm text-gray-500 mt-1.5">
+                        {t('auth.login.successDescription')}
+                      </p>
+                    </div>
+                  ) : (
+                    <>
+                      <h1 className="text-2xl font-bold text-gray-900">
+                        {step === 'credentials'
+                          ? t('auth.login.title')
+                          : t('auth.twoFactor.title')}
+                      </h1>
+                      <p className="text-sm text-gray-400 mt-2 mb-10">
+                        {step === 'credentials'
+                          ? t('auth.login.description')
+                          : twoFactorMethod === 'totp'
+                            ? t('auth.twoFactor.totpDescription')
+                            : t('auth.twoFactor.emailDescription')}
+                      </p>
 
-            {/* Form section */}
-            <div className="py-8">
-              {step === 'credentials' && (
-                <LoginForm
-                  onSubmit={handleLogin}
-                  isLoading={loginMutation.isPending}
-                />
-              )}
+                      {step === 'credentials' && (
+                        <LoginForm
+                          onSubmit={handleLogin}
+                          isLoading={loginMutation.isPending}
+                        />
+                      )}
 
-              {step === 'two-factor' && twoFactorMethod === 'totp' && (
-                <TotpStep
-                  onSubmit={handleVerify}
-                  isLoading={twoFactorMutation.isPending}
-                  onExpired={handleExpired}
-                />
-              )}
+                      {step === 'two-factor' &&
+                        (twoFactorMethod === 'totp' ? (
+                          <TotpStep
+                            onSubmit={handleVerify}
+                            isLoading={twoFactorMutation.isPending}
+                            onExpired={() => setStep('credentials')}
+                          />
+                        ) : (
+                          <EmailOtpStep
+                            preAuthToken={preAuthToken}
+                            onSubmit={handleVerify}
+                            isLoading={twoFactorMutation.isPending}
+                            onExpired={() => setStep('credentials')}
+                          />
+                        ))}
 
-              {step === 'two-factor' && twoFactorMethod === 'email' && (
-                <EmailOtpStep
-                  preAuthToken={preAuthToken}
-                  onSubmit={handleVerify}
-                  isLoading={twoFactorMutation.isPending}
-                  onExpired={handleExpired}
-                />
-              )}
-
-              {step === 'success' && (
-                <div className="flex flex-col items-center gap-3 py-6">
-                  <CheckCircle2 className="h-16 w-16 text-accent-green animate-bounce" />
-                  <p className="text-sm text-muted-foreground">
-                    {t('auth.login.preparingDashboard')}
-                  </p>
-                </div>
-              )}
-
-              {step === 'credentials' && (
-                <div className="mt-6 space-y-2 text-center">
-                  <p className="text-sm text-muted-foreground">
-                    {t('auth.noAccount')}{' '}
-                    <Link
-                      to="/register"
-                      className="font-medium text-blue-800 hover:text-blue-900 transition-colors"
-                    >
-                      {t('auth.createAccountLink')}
-                    </Link>
-                  </p>
-                  <p className="text-sm">
-                    <Link
-                      to="/forgot-password"
-                      className="font-medium text-blue-800 hover:text-blue-900 transition-colors"
-                    >
-                      {t('auth.forgotPassword')}
-                    </Link>
-                  </p>
-                </div>
-              )}
+                      {step === 'credentials' && (
+                        <p className="mt-6 text-sm text-gray-500">
+                          {t('auth.noAccount')}{' '}
+                          <Link
+                            to="/register"
+                            className="font-semibold text-blue-800 hover:text-blue-900 transition-colors"
+                          >
+                            {t('auth.createAccountLink')}
+                          </Link>
+                        </p>
+                      )}
+                    </>
+                  )}
+                </motion.div>
+              </AnimatePresence>
             </div>
           </div>
+
+          <p className="text-[11px] text-gray-400">{t('common.copyright')}</p>
         </div>
 
-        <p className="text-center text-xs text-gray-400 py-4">
-          {t('common.copyright')}
-        </p>
+        {/* ── Right: Info panel ── */}
+        <div className="hidden lg:flex lg:w-4/7 shrink-0 flex-col justify-center bg-blue-50/80 px-12 py-14">
+          <h2 className="text-xl font-bold text-gray-900">
+            {t('auth.welcome.title')}
+          </h2>
+          <p className="text-sm text-gray-500 leading-relaxed mt-2">
+            {t('auth.welcome.description')}
+          </p>
+
+          <ul className="mt-10 space-y-6">
+            {benefits.map(({ key }) => (
+              <li key={key} className="flex items-start gap-3 group">
+                <CircleCheckBig className="h-4 w-4 text-green-600 mt-1" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-base font-semibold text-gray-900">
+                    {t(`${key}Title`)}
+                  </p>
+                  <p className="text-sm text-gray-600 leading-relaxed mt-1">
+                    {t(`${key}Desc`)}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </div>
   )

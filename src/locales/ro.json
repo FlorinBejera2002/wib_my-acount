@@ -139,6 +139,18 @@
       "invalidCode": "Cod invalid sau expirat. Încercați din nou.",
       "rateLimited": "Prea multe încercări. Așteptați și reîncercați."
     },
+    "welcome": {
+      "title": "Contul tău de asigurări",
+      "description": "Gestionează toate polițele și cotațiile tale dintr-un singur loc, simplu și rapid.",
+      "benefit1Title": "Polițe și documente",
+      "benefit1Desc": "Vizualizează toate asigurările, descarcă documente și urmărește termenele de expirare.",
+      "benefit2Title": "Alerte de expirare",
+      "benefit2Desc": "Primești notificări personalizate cu zile înainte ca polițele sau documentele să expire.",
+      "benefit3Title": "Cont securizat",
+      "benefit3Desc": "Autentificare în doi pași, gestionare sesiuni active și control deplin al contului.",
+      "benefit4Title": "Istoric complet",
+      "benefit4Desc": "Toate polițele și cotațiile tale, de la prima ofertă solicitată pe site."
+    },
     "noAccount": "Nu ai un cont?",
     "createAccountLink": "Creează un cont",
     "forgotPassword": "Ai uitat parola?",

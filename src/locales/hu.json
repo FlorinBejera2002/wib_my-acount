@@ -131,6 +131,18 @@
       "title": "Kétlépcsős azonosítás",
       "description": "Ellenőrző kódot küldtünk az e-mail címére"
     },
+    "welcome": {
+      "title": "Biztosítási fiókja",
+      "description": "Kezelje az összes kötvényét és ajánlatát egy helyen, egyszerűen és gyorsan.",
+      "benefit1Title": "Kötvények és dokumentumok",
+      "benefit1Desc": "Tekintse meg biztosításait, töltse le a dokumentumokat és kövesse a lejárati dátumokat.",
+      "benefit2Title": "Lejárati értesítések",
+      "benefit2Desc": "Személyre szabott értesítéseket kap napokkal a kötvények vagy dokumentumok lejárta előtt.",
+      "benefit3Title": "Biztonságos fiók",
+      "benefit3Desc": "Kétlépcsős azonosítás, aktív munkamenetek kezelése és teljes fiókvezérlés.",
+      "benefit4Title": "Teljes előzmény",
+      "benefit4Desc": "Minden kötvénye és ajánlata, az oldalon kért legelső ajánlattól kezdve."
+    },
     "noAccount": "Nincs fiókja?",
     "createAccountLink": "Fiók létrehozása",
     "forgotPassword": "Elfelejtette jelszavát?",
