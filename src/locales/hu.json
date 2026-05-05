@@ -341,7 +341,7 @@
   },
   "preferences": {
     "title": "Beállítások",
-    "subtitle": "Nyelv, időzóna és értesítések konfigurálása",
+    "subtitle": "Nyelv konfigurálása",
     "language": "Nyelv",
     "romanian": "Română",
     "english": "English",

@@ -341,7 +341,7 @@
   },
   "preferences": {
     "title": "Preferences",
-    "subtitle": "Configure language, timezone and notifications",
+    "subtitle": "Configure language",
     "language": "Language",
     "romanian": "Română",
     "english": "English",
