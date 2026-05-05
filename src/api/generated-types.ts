@@ -4,321 +4,2237 @@
  */
 
 export interface paths {
-  '/api/auth/login': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    post: operations['post_api_auth_login']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/api/auth/register': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    post: operations['post_api_auth_register']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/api/auth/two-factor': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    post: operations['post_api_auth_two_factor']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/api/auth/refresh': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    post: operations['post_api_auth_refresh']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
+    "/api/auth/login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Login with email and password */
+        post: operations["post_api_auth_login"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/public-key": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get RSA public key */
+        get: operations["get_api_auth_public_key"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/register": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Register a new account */
+        post: operations["post_api_auth_register"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/two-factor": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Complete login with 2FA code */
+        post: operations["post_api_auth_two_factor"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/refresh": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Refresh access token */
+        post: operations["post_api_auth_refresh"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/logout": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Logout and revoke session */
+        post: operations["post_api_auth_logout"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/forgot-password": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Request password reset OTP */
+        post: operations["post_api_auth_forgot_password"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/verify-reset-code": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Verify password reset OTP */
+        post: operations["post_api_auth_verify_reset_code"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/reset-password": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Reset password with reset token */
+        post: operations["post_api_auth_reset_password"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/2fa/enable": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Enable two-factor authentication */
+        post: operations["post_api_auth_two_factor_enable"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/2fa/confirm": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Confirm TOTP 2FA setup */
+        post: operations["post_api_auth_two_factor_confirm"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/2fa/resend-code": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Resend 2FA email code */
+        post: operations["post_api_auth_two_factor_resend_code"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/2fa/disable": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Disable two-factor authentication */
+        post: operations["post_api_auth_two_factor_disable"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/user/dashboard/stats": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get dashboard statistics */
+        get: operations["get_api_dashboard_stats"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/user/notifications": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List all notifications */
+        get: operations["get_api_notifications_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/user/notifications/{id}/read": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Mark notification as read */
+        patch: operations["patch_api_notifications_mark_read"];
+        trace?: never;
+    };
+    "/api/user/notifications/read-all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Mark all notifications as read */
+        patch: operations["patch_api_notifications_mark_all_read"];
+        trace?: never;
+    };
+    "/api/user/notifications/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete notification */
+        delete: operations["delete_api_notifications_delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/user/policies": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List policies */
+        get: operations["get_api_policies_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/user/policies/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get policy details */
+        get: operations["get_api_policies_detail"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/user/quotes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List quotes */
+        get: operations["get_api_quotes_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/user/quotes/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get quote details */
+        get: operations["get_api_quotes_detail"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/user/reminders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List reminders */
+        get: operations["get_api_reminders_list"];
+        put?: never;
+        /** Create reminder */
+        post: operations["post_api_reminders_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/user/reminders/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Update reminder */
+        put: operations["put_api_reminders_update"];
+        post?: never;
+        /** Delete reminder */
+        delete: operations["delete_api_reminders_delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/user/sessions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List active sessions */
+        get: operations["get_api_sessions_list"];
+        put?: never;
+        post?: never;
+        /** Revoke all other sessions */
+        delete: operations["delete_api_sessions_delete_all"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/user/sessions/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Revoke a specific session */
+        delete: operations["delete_api_sessions_delete_one"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/user/profile": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get user profile */
+        get: operations["get_api_user_profile_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update user profile */
+        patch: operations["patch_api_user_profile_update"];
+        trace?: never;
+    };
+    "/api/user/preferences": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update user preferences */
+        patch: operations["patch_api_user_preferences_update"];
+        trace?: never;
+    };
+    "/api/user/password": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Change password */
+        post: operations["post_api_user_password_change"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/user/account": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Request account deletion */
+        post: operations["post_api_user_account_delete"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
-export type webhooks = Record<string, never>
+export type webhooks = Record<string, never>;
 export interface components {
-  schemas: {
-    ErrorResponse: {
-      error: {
-        code: string
-        message: string
-        details?: Record<string, never>
-      }
-    }
-    PolicyResponse: {
-      id: string
-      legacyId?: string | null
-      policyNumber: string
-      /** @enum {string} */
-      type: 'rca' | 'casco' | 'home' | 'health' | 'travel' | 'life' | 'other'
-      /** @enum {string} */
-      status: 'active' | 'expired' | 'cancelled' | 'pending'
-      insurer?: string | null
-      /** Format: date */
-      startDate: string
-      /** Format: date */
-      endDate: string
-      /** Format: float */
-      premium: number
-      currency: string
-      coverageDetails?: Record<string, never>
-      /** Format: date-time */
-      createdAt: string
-      /** Format: date-time */
-      updatedAt: string
-    }
-    QuoteResponse: {
-      id: string
-      legacyId?: string | null
-      /** @enum {string} */
-      type: 'rca' | 'casco' | 'home' | 'health' | 'travel' | 'life' | 'other'
-      /** @enum {string} */
-      status: 'draft' | 'submitted' | 'accepted' | 'expired' | 'converted'
-      /** Format: float */
-      premium?: number | null
-      currency: string
-      /** Format: date */
-      validUntil?: string | null
-      quoteData?: Record<string, never>
-      /** Format: date-time */
-      createdAt: string
-      /** Format: date-time */
-      updatedAt: string
-    }
-    ReminderResponse: {
-      id: string
-      title: string
-      note?: string | null
-      /** Format: date-time */
-      remindAt: string
-      isDone: boolean
-      /** Format: date-time */
-      createdAt: string
-      /** Format: date-time */
-      updatedAt: string
-    }
-    UserProfile: {
-      id: string
-      email: string
-      username: string
-      parentUsername?: string | null
-      firstName?: string | null
-      lastName?: string | null
-      fullName?: string | null
-      phone?: string | null
-      country: string
-      person?: Record<string, never>
-      contact?: Record<string, never>
-      address?: Record<string, never>
-      company?: Record<string, never>
-      twoFactorEnabled: boolean
-      /** @enum {string|null} */
-      twoFactorMethod?: 'totp' | 'email' | null
-      preferences: {
-        /** @enum {string} */
-        language?: 'ro' | 'en' | 'hu'
-        notifications?: boolean
-      }
-      /** @enum {string} */
-      source: 'registration' | 'legacy_sync'
-      /** Format: date-time */
-      createdAt: string
-    }
-  }
-  responses: never
-  parameters: never
-  requestBodies: never
-  headers: never
-  pathItems: never
-}
-export type $defs = Record<string, never>
-export interface operations {
-  post_api_auth_login: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': {
-          /** Format: email */
-          email: string
-          /** Format: password */
-          password: string
-        }
-      }
-    }
-    responses: {
-      /** @description Login successful */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json':
-            | {
-                requires_2fa: boolean
-                access_token: string
-                refresh_token: string
-                user: {
-                  id?: string
-                  username?: string
-                  /** Format: email */
-                  email?: string
-                }
-              }
-            | {
-                requires_2fa: boolean
-                pre_auth_token: string
+    schemas: {
+        ErrorResponse: {
+            error: {
+                code: string;
+                message: string;
+                details?: {
+                    [key: string]: string[];
+                };
+            };
+        };
+        PolicyResponse: {
+            id: string;
+            policyNumber: string;
+            /** @enum {string} */
+            type: "rca" | "casco" | "home" | "health" | "travel" | "life" | "other";
+            /** @enum {string} */
+            status: "active" | "expired" | "cancelled" | "pending";
+            insurerName?: string | null;
+            vehicleOrProperty?: string | null;
+            policyDetails?: string | null;
+            /** Format: float */
+            premium: number;
+            currency: string;
+            /** Format: date-time */
+            startDate: string;
+            /** Format: date-time */
+            endDate: string;
+            daysUntilExpiry: number;
+            autoRenew: boolean;
+            sourceQuoteId?: string | null;
+            documents?: components["schemas"]["PolicyDocument"][];
+            /** @enum {string|null} */
+            insuranceType?: "pad" | "facultative" | "pad_facultative" | null;
+            insuranceComponents?: components["schemas"]["InsuranceComponent"][];
+            travellers?: components["schemas"]["Traveller"][];
+            coverageDetails?: Record<string, never>;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        PolicyDocument: {
+            id: string;
+            name: string;
+            /** @enum {string} */
+            type: "POLICY" | "CERTIFICATE" | "AMENDMENT" | "OTHER";
+            url: string;
+            size: number;
+        };
+        InsuranceComponent: {
+            /** @enum {string} */
+            type: "pad" | "facultative";
+            policyNumber: string;
+            insurerName: string;
+            /** Format: float */
+            premium: number;
+            /** Format: date-time */
+            startDate: string;
+            /** Format: date-time */
+            endDate: string;
+            documents: components["schemas"]["PolicyDocument"][];
+        };
+        Traveller: {
+            name: string;
+            cnp?: string | null;
+            phone?: string | null;
+            documents: components["schemas"]["PolicyDocument"][];
+        };
+        QuoteResponse: {
+            id: string;
+            quoteNumber?: string | null;
+            /** @enum {string} */
+            type: "rca" | "casco" | "home" | "health" | "travel" | "life" | "other";
+            /** @enum {string} */
+            status: "draft" | "submitted" | "accepted" | "expired" | "converted";
+            insurerName?: string | null;
+            vehicleOrProperty?: string | null;
+            insuredDetails?: string | null;
+            /** Format: float */
+            premium?: number | null;
+            currency: string;
+            /** Format: date-time */
+            validFrom?: string | null;
+            /** Format: date-time */
+            validUntil?: string | null;
+            offerUrl?: string | null;
+            documents?: {
+                id: string;
+                name: string;
                 /** @enum {string} */
-                two_factor_method: 'totp' | 'email'
-              }
-        }
-      }
-    }
-  }
-  post_api_auth_register: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': {
-          /** Format: email */
-          email: string
-          /** Format: password */
-          password: string
-          /** Format: password */
-          confirmPassword?: string
-          firstName?: string
-          lastName?: string
-          phone?: string
-          username?: string
-        }
-      }
-    }
-    responses: {
-      /** @description Registration successful */
-      201: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            access_token: string
-            refresh_token: string
-            user: {
-              id?: string
-              username?: string
-              /** Format: email */
-              email?: string
-            }
-          }
-        }
-      }
-    }
-  }
-  post_api_auth_two_factor: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': {
-          pre_auth_token: string
-          totp_code: string
-        }
-      }
-    }
-    responses: {
-      /** @description 2FA verification successful */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            access_token: string
-            refresh_token: string
-            user: {
-              id?: string
-              username?: string
-              /** Format: email */
-              email?: string
-            }
-          }
-        }
-      }
-    }
-  }
-  post_api_auth_refresh: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': {
-          refresh_token: string
-        }
-      }
-    }
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            access_token: string
-            refresh_token: string
-          }
-        }
-      }
-    }
-  }
+                type: "OFFER" | "COMPARISON" | "INVOICE" | "OTHER";
+                url: string;
+                size: number;
+            }[];
+            quoteData?: Record<string, never>;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        ReminderResponse: {
+            id: string;
+            title: string;
+            note?: string | null;
+            /** Format: date-time */
+            remindAt: string;
+            isDone: boolean;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        UserProfile: {
+            id: string;
+            email: string;
+            username: string;
+            parentUsername?: string | null;
+            firstName?: string | null;
+            lastName?: string | null;
+            fullName?: string | null;
+            phone?: string | null;
+            country: string;
+            person?: Record<string, never>;
+            contact?: Record<string, never>;
+            address?: Record<string, never>;
+            company?: Record<string, never>;
+            twoFactorEnabled: boolean;
+            /** @enum {string|null} */
+            twoFactorMethod?: "totp" | "email" | null;
+            preferences: {
+                /** @enum {string} */
+                language?: "ro" | "en" | "fr" | "de";
+                notifications?: boolean;
+            };
+            /** @enum {string} */
+            source: "registration" | "legacy_sync";
+            /** Format: date-time */
+            createdAt: string;
+        };
+        TwoFactorVerifyRequest: {
+            pre_auth_token: string;
+            totp_code: string;
+        };
+        RefreshRequest: {
+            refresh_token: string;
+        };
+        ForgotPasswordRequest: {
+            email: string;
+        };
+        VerifyResetCodeRequest: {
+            email: string;
+            code: string;
+        };
+        ResetPasswordRequest: {
+            reset_token: string;
+            new_password: string;
+        };
+        Confirm2FARequest: {
+            totp_code: string;
+        };
+        Disable2FARequest: {
+            password: string;
+        };
+        CreateReminderRequest: {
+            title: string;
+            remindAt: string;
+            note?: string | null;
+        };
+        UpdateReminderRequest: {
+            title?: string | null;
+            remindAt?: string | null;
+            note?: string | null;
+            isDone?: boolean | null;
+        };
+        UpdateProfileRequest: {
+            firstName?: string | null;
+            lastName?: string | null;
+            phone?: string | null;
+        };
+        UpdatePreferencesRequest: {
+            /** @enum {string|null} */
+            language?: "ro" | "en" | "fr" | "de" | null;
+            notifications?: boolean | null;
+        };
+        ChangePasswordRequest: {
+            current_password: string;
+            new_password: string;
+        };
+    };
+    responses: never;
+    parameters: never;
+    requestBodies: never;
+    headers: never;
+    pathItems: never;
+}
+export type $defs = Record<string, never>;
+export interface operations {
+    post_api_auth_login: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** Format: email */
+                    email: string;
+                    /** Format: password */
+                    password: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Login successful (with or without 2FA) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example false */
+                        requires_2fa: boolean;
+                        access_token: string;
+                        refresh_token: string;
+                        user: {
+                            id?: string;
+                            username?: string;
+                        };
+                    } | {
+                        /** @example true */
+                        requires_2fa: boolean;
+                        pre_auth_token: string;
+                        /** @enum {string} */
+                        two_factor_method: "totp" | "email";
+                    };
+                };
+            };
+            /** @description Invalid credentials */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many login attempts */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_api_auth_public_key: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Public key returned */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data?: {
+                            public_key?: string;
+                            /** @example RS256 */
+                            algorithm?: string;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    post_api_auth_register: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** Format: email */
+                    email: string;
+                    /** Format: password */
+                    password: string;
+                    /** Format: password */
+                    confirmPassword?: string;
+                    firstName?: string;
+                    lastName?: string;
+                    phone?: string;
+                    username?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Registration successful */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        access_token: string;
+                        refresh_token: string;
+                        user: {
+                            id?: string;
+                            username?: string;
+                        };
+                    };
+                };
+            };
+            /** @description Email or username already exists */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Rate limit exceeded */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_api_auth_two_factor: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    pre_auth_token: string;
+                    totp_code: string;
+                };
+            };
+        };
+        responses: {
+            /** @description 2FA verification successful */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        access_token: string;
+                        refresh_token: string;
+                        user: {
+                            id?: string;
+                            username?: string;
+                        };
+                    };
+                };
+            };
+            /** @description Invalid or expired 2FA code */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Rate limit exceeded */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_api_auth_refresh: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    refresh_token: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Token refreshed successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        access_token: string;
+                        refresh_token: string;
+                    };
+                };
+            };
+            /** @description Invalid or expired refresh token */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Rate limit exceeded */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_api_auth_logout: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Logged out */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_api_auth_forgot_password: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** Format: email */
+                    email: string;
+                };
+            };
+        };
+        responses: {
+            /** @description OTP sent */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Rate limit exceeded */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_api_auth_verify_reset_code: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** Format: email */
+                    email: string;
+                    code: string;
+                };
+            };
+        };
+        responses: {
+            /** @description OTP verified */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        reset_token: string;
+                    };
+                };
+            };
+            /** @description Invalid or expired OTP */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Rate limit exceeded */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_api_auth_reset_password: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    reset_token: string;
+                    /** Format: password */
+                    new_password: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Password reset successful */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid or expired reset token */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_api_auth_two_factor_enable: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @enum {string} */
+                    method?: "totp" | "email";
+                };
+            };
+        };
+        responses: {
+            /** @description 2FA setup initiated or enabled */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        secret: string;
+                        provisioningUri: string;
+                    } | {
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Invalid 2FA method */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_api_auth_two_factor_confirm: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    totp_code: string;
+                };
+            };
+        };
+        responses: {
+            /** @description 2FA confirmed and active */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid TOTP code */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_api_auth_two_factor_resend_code: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    pre_auth_token: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Code resent */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid pre-auth token or wrong 2FA method */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Rate limit exceeded */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_api_auth_two_factor_disable: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** Format: password */
+                    password: string;
+                };
+            };
+        };
+        responses: {
+            /** @description 2FA disabled */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid password */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_api_dashboard_stats: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Dashboard statistics */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        policies?: {
+                            total?: number;
+                            active?: number;
+                            byType?: Record<string, never>;
+                            expiringSoon?: {
+                                id?: string;
+                                policyNumber?: string;
+                                type?: string;
+                                /** Format: date */
+                                endDate?: string;
+                            }[];
+                        };
+                        quotes?: {
+                            total?: number;
+                            pending?: number;
+                        };
+                        notifications?: {
+                            unread?: number;
+                            total?: number;
+                        };
+                        reminders?: {
+                            upcoming?: {
+                                id?: string;
+                                title?: string;
+                                /** Format: date-time */
+                                remindAt?: string;
+                            }[];
+                            total?: number;
+                        };
+                    };
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_api_notifications_list: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Notification list */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        notifications?: {
+                            id?: string;
+                            /** @enum {string} */
+                            type?: "policy_expiry" | "quote_accepted" | "system" | "reminder";
+                            title?: string;
+                            body?: string;
+                            meta?: Record<string, never>;
+                            isRead?: boolean;
+                            /** Format: date-time */
+                            createdAt?: string;
+                        }[];
+                    };
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    patch_api_notifications_mark_read: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Updated notification */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        id?: string;
+                        type?: string;
+                        title?: string;
+                        body?: string;
+                        meta?: Record<string, never>;
+                        isRead?: boolean;
+                        /** Format: date-time */
+                        createdAt?: string;
+                    };
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Notification not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    patch_api_notifications_mark_all_read: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description All marked as read */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    delete_api_notifications_delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Notification deleted */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Notification not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_api_policies_list: {
+        parameters: {
+            query?: {
+                page?: number;
+                limit?: number;
+                status?: "active" | "expired" | "cancelled" | "pending";
+                type?: "rca" | "casco" | "home" | "health" | "travel" | "life" | "other";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Paginated policy list */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data?: components["schemas"]["PolicyResponse"][];
+                        total?: number;
+                        page?: number;
+                        limit?: number;
+                        pages?: number;
+                    };
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_api_policies_detail: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Policy details */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PolicyResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Policy not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_api_quotes_list: {
+        parameters: {
+            query?: {
+                page?: number;
+                limit?: number;
+                status?: "draft" | "submitted" | "accepted" | "expired" | "converted";
+                type?: "rca" | "casco" | "home" | "health" | "travel" | "life" | "other";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Paginated quote list */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data?: components["schemas"]["QuoteResponse"][];
+                        total?: number;
+                        page?: number;
+                        limit?: number;
+                        pages?: number;
+                    };
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_api_quotes_detail: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Quote details */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QuoteResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Quote not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_api_reminders_list: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Reminder list */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        reminders?: components["schemas"]["ReminderResponse"][];
+                    };
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_api_reminders_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    title: string;
+                    /** Format: date-time */
+                    remindAt: string;
+                    note?: string | null;
+                };
+            };
+        };
+        responses: {
+            /** @description Reminder created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReminderResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    put_api_reminders_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    title?: string;
+                    /** Format: date-time */
+                    remindAt?: string;
+                    note?: string | null;
+                    isDone?: boolean;
+                };
+            };
+        };
+        responses: {
+            /** @description Updated reminder */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReminderResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Reminder not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    delete_api_reminders_delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Reminder deleted */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Reminder not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_api_sessions_list: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Session list */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        sessions?: {
+                            id?: string;
+                            ip?: string;
+                            userAgent?: string;
+                            /** Format: date-time */
+                            lastActivityAt?: string;
+                            /** Format: date-time */
+                            createdAt?: string;
+                            current?: boolean;
+                        }[];
+                    };
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    delete_api_sessions_delete_all: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description All other sessions revoked */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    delete_api_sessions_delete_one: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Session revoked */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Session not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_api_user_profile_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description User profile */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserProfile"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    patch_api_user_profile_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    firstName?: string;
+                    lastName?: string;
+                    phone?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Updated profile */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserProfile"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    patch_api_user_preferences_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @enum {string} */
+                    language?: "ro" | "en" | "fr" | "de";
+                    notifications?: boolean;
+                };
+            };
+        };
+        responses: {
+            /** @description Updated preferences */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        preferences?: {
+                            language?: string;
+                            notifications?: boolean;
+                        };
+                    };
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_api_user_password_change: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** Format: password */
+                    current_password: string;
+                    /** Format: password */
+                    new_password: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Password changed */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid current password */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error or same password */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_api_user_account_delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Deletion request submitted */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
 }
