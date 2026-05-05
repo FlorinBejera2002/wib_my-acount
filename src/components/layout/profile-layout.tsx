@@ -55,7 +55,7 @@ export function ProfileLayout() {
                   </p>
                   <p className="text-xs text-gray-400 mt-0.5 truncate">
                     {t('profile.clientSince', {
-                      date: formatDate(profile.createdAt, 'MMMM yyyy'),
+                      date: formatDate(profile.createdAt),
                       id: profile.id
                     })}
                   </p>

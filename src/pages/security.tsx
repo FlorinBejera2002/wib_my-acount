@@ -2,7 +2,6 @@ import { TwoFactorDisableDialog } from '@/components/auth/two-factor-disable-dia
 import { TwoFactorSetupDialog } from '@/components/auth/two-factor-setup-dialog'
 import { ActiveSessions } from '@/components/security/active-sessions'
 import { ChangePasswordForm } from '@/components/security/change-password-form'
-import { LoginHistory } from '@/components/security/login-history'
 import { DeleteAccountDialog } from '@/components/settings/delete-account-dialog'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -116,7 +115,6 @@ export default function SecurityPage() {
       <div className="space-y-6">
         <ChangePasswordForm />
         <TwoFactorSection />
-        <LoginHistory />
         <DangerZone />
       </div>
       <ActiveSessions />
