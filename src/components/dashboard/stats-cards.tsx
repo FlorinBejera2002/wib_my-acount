@@ -61,7 +61,11 @@ const cards = [
   }
 ]
 
-export function StatsCards({ stats, isLoading, reminderCount }: StatsCardsProps) {
+export function StatsCards({
+  stats,
+  isLoading,
+  reminderCount
+}: StatsCardsProps) {
   const { t } = useTranslation()
 
   return (
@@ -72,7 +76,7 @@ export function StatsCards({ stats, isLoading, reminderCount }: StatsCardsProps)
         return (
           <div
             key={card.key}
-            className="rounded-xl bg-white p-5 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200"
+            className="rounded-xl bg-white p-5 shadow-sm border border-gray-100"
           >
             <div className="flex items-start justify-between">
               <div>
