@@ -10,6 +10,8 @@ interface TwoFactorFormProps {
   onSubmit: (code: string) => void
   isLoading: boolean
   preAuthToken: string
+  onResend?: () => void
+  isResending?: boolean
 }
 
 const CODE_LENGTH = 6
@@ -18,7 +20,9 @@ const RESEND_TIMER = 60
 export function TwoFactorForm({
   onSubmit,
   isLoading,
-  preAuthToken
+  preAuthToken,
+  onResend,
+  isResending
 }: TwoFactorFormProps) {
   const { t } = useTranslation()
   const resendMutation = useResend2FACode()
@@ -95,11 +99,17 @@ export function TwoFactorForm({
   }
 
   const handleResend = () => {
-    resendMutation.mutate({ pre_auth_token: preAuthToken })
+    if (onResend) {
+      onResend()
+    } else {
+      resendMutation.mutate({ pre_auth_token: preAuthToken })
+    }
     setResendTimer(RESEND_TIMER)
     setDigits(new Array(CODE_LENGTH).fill(''))
     inputRefs.current[0]?.focus()
   }
+
+  const isResendPending = isResending || resendMutation.isPending
 
   const formatTimer = (seconds: number) => {
     const m = Math.floor(seconds / 60)
@@ -151,10 +161,10 @@ export function TwoFactorForm({
             variant="ghost"
             size="sm"
             onClick={handleResend}
-            disabled={resendMutation.isPending}
+            disabled={isResendPending}
             className="text-primary hover:text-primary/80 hover:bg-primary/10"
           >
-            {resendMutation.isPending ? (
+            {isResendPending ? (
               <>
                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                 {t('auth.resending')}

@@ -91,7 +91,8 @@ api.interceptors.response.use(
       ENDPOINTS.AUTH.REFRESH,
       ENDPOINTS.AUTH.FORGOT_PASSWORD,
       ENDPOINTS.AUTH.RESET_PASSWORD,
-      ENDPOINTS.AUTH.VERIFY_RESET_CODE
+      ENDPOINTS.AUTH.VERIFY_RESET_CODE,
+      ENDPOINTS.AUTH.RESEND_2FA_CODE
     ]
     if (
       error.response?.status !== 401 ||

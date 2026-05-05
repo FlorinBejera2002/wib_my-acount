@@ -22,7 +22,7 @@ import {
 } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link, Navigate } from 'react-router-dom'
+import { Link, Navigate, useSearchParams } from 'react-router-dom'
 
 type ResetStep = 'email' | 'verify-code' | 'new-password' | 'success'
 
@@ -53,8 +53,13 @@ export default function ForgotPasswordPage() {
   const { t } = useTranslation()
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
 
-  const [step, setStep] = useState<ResetStep>('email')
-  const [email, setEmail] = useState('')
+  const [searchParams, setSearchParams] = useSearchParams()
+  const validSteps: ResetStep[] = ['email', 'verify-code', 'new-password', 'success']
+  const stepParam = searchParams.get('step')
+  const step: ResetStep = validSteps.includes(stepParam as ResetStep)
+    ? (stepParam as ResetStep)
+    : 'email'
+  const email = searchParams.get('email') || ''
   const [resetToken, setResetToken] = useState('')
 
   const forgotPasswordMutation = useForgotPassword()
@@ -68,8 +73,7 @@ export default function ForgotPasswordPage() {
   const handleForgotPassword = (data: ForgotPasswordFormValues) => {
     forgotPasswordMutation.mutate(data, {
       onSuccess: () => {
-        setEmail(data.email)
-        setStep('verify-code')
+        setSearchParams({ step: 'verify-code', email: data.email }, { replace: true })
       }
     })
   }
@@ -80,7 +84,7 @@ export default function ForgotPasswordPage() {
       {
         onSuccess: (response) => {
           setResetToken(response.resetToken)
-          setStep('new-password')
+          setSearchParams({ step: 'new-password', email }, { replace: true })
         }
       }
     )
@@ -94,7 +98,7 @@ export default function ForgotPasswordPage() {
       },
       {
         onSuccess: () => {
-          setStep('success')
+          setSearchParams({ step: 'success' }, { replace: true })
         }
       }
     )
@@ -172,6 +176,10 @@ export default function ForgotPasswordPage() {
                           onSubmit={handleVerifyCode}
                           isLoading={verifyResetCodeMutation.isPending}
                           preAuthToken={''}
+                          onResend={() =>
+                            forgotPasswordMutation.mutate({ email })
+                          }
+                          isResending={forgotPasswordMutation.isPending}
                         />
                       )}
 
