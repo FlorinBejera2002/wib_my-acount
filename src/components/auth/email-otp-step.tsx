@@ -16,7 +16,12 @@ interface EmailOtpStepProps {
 
 const RESEND_COOLDOWN = 60
 
-export function EmailOtpStep({ preAuthToken, onSubmit, isLoading, onExpired }: EmailOtpStepProps) {
+export function EmailOtpStep({
+  preAuthToken,
+  onSubmit,
+  isLoading,
+  onExpired
+}: EmailOtpStepProps) {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const [code, setCode] = useState('')
@@ -73,7 +78,8 @@ export function EmailOtpStep({ preAuthToken, onSubmit, isLoading, onExpired }: E
           setCode('')
         },
         onError: (err: unknown) => {
-          const status = (err as { response?: { status?: number } })?.response?.status
+          const status = (err as { response?: { status?: number } })?.response
+            ?.status
           if (status === 422) {
             toast.error(t('auth.twoFactor.sessionExpired'))
             onExpired()
@@ -93,7 +99,9 @@ export function EmailOtpStep({ preAuthToken, onSubmit, isLoading, onExpired }: E
       <Input
         value={code}
         onChange={handleChange}
-        onKeyDown={(e) => { if (e.key === 'Enter') handleSubmit() }}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') handleSubmit()
+        }}
         placeholder="000000"
         maxLength={6}
         inputMode="numeric"
@@ -102,9 +110,7 @@ export function EmailOtpStep({ preAuthToken, onSubmit, isLoading, onExpired }: E
         disabled={isLoading}
       />
 
-      {error && (
-        <p className="text-sm text-destructive text-center">{error}</p>
-      )}
+      {error && <p className="text-sm text-destructive text-center">{error}</p>}
 
       <Button
         className="w-full"

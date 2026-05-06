@@ -10,7 +10,11 @@ interface TotpStepProps {
   onExpired: () => void
 }
 
-export function TotpStep({ onSubmit, isLoading, onExpired: _onExpired }: TotpStepProps) {
+export function TotpStep({
+  onSubmit,
+  isLoading,
+  onExpired: _onExpired
+}: TotpStepProps) {
   const { t } = useTranslation()
   const [code, setCode] = useState('')
   const [error, setError] = useState('')
@@ -36,7 +40,9 @@ export function TotpStep({ onSubmit, isLoading, onExpired: _onExpired }: TotpSte
       <Input
         value={code}
         onChange={handleChange}
-        onKeyDown={(e) => { if (e.key === 'Enter') handleSubmit() }}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') handleSubmit()
+        }}
         placeholder="000000"
         maxLength={6}
         inputMode="numeric"
@@ -45,9 +51,7 @@ export function TotpStep({ onSubmit, isLoading, onExpired: _onExpired }: TotpSte
         disabled={isLoading}
       />
 
-      {error && (
-        <p className="text-sm text-destructive text-center">{error}</p>
-      )}
+      {error && <p className="text-sm text-destructive text-center">{error}</p>}
 
       <Button
         className="w-full"

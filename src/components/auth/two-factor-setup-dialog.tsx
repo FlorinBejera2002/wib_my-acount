@@ -9,7 +9,14 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { useConfirm2FA, useEnable2FA } from '@/hooks/use-two-factor'
-import { CheckCircle2, Copy, Loader2, Mail, ShieldCheck, Smartphone } from 'lucide-react'
+import {
+  CheckCircle2,
+  Copy,
+  Loader2,
+  Mail,
+  ShieldCheck,
+  Smartphone
+} from 'lucide-react'
 import { QRCodeSVG } from 'qrcode.react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -86,9 +93,13 @@ export function TwoFactorSetupDialog({
   const isPending = enable2FA.isPending || confirm2FA.isPending
 
   return (
-    <Dialog open={open} onOpenChange={(o) => { if (!isPending) onOpenChange(o) }}>
+    <Dialog
+      open={open}
+      onOpenChange={(o) => {
+        if (!isPending) onOpenChange(o)
+      }}
+    >
       <DialogContent className="sm:max-w-md">
-
         {step === 'method' && (
           <>
             <DialogHeader>
@@ -111,7 +122,9 @@ export function TwoFactorSetupDialog({
                     : 'border-gray-200 hover:border-gray-300'
                 }`}
               >
-                <Smartphone className={`h-5 w-5 shrink-0 ${method === 'totp' ? 'text-primary' : 'text-gray-400'}`} />
+                <Smartphone
+                  className={`h-5 w-5 shrink-0 ${method === 'totp' ? 'text-primary' : 'text-gray-400'}`}
+                />
                 <div>
                   <p className="text-sm font-medium text-gray-900">
                     {t('twoFactor.setup.methodTotp')}
@@ -131,7 +144,9 @@ export function TwoFactorSetupDialog({
                     : 'border-gray-200 hover:border-gray-300'
                 }`}
               >
-                <Mail className={`h-5 w-5 shrink-0 ${method === 'email' ? 'text-primary' : 'text-gray-400'}`} />
+                <Mail
+                  className={`h-5 w-5 shrink-0 ${method === 'email' ? 'text-primary' : 'text-gray-400'}`}
+                />
                 <div>
                   <p className="text-sm font-medium text-gray-900">
                     {t('twoFactor.setup.methodEmail')}
@@ -144,11 +159,17 @@ export function TwoFactorSetupDialog({
             </div>
 
             <DialogFooter>
-              <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isPending}>
+              <Button
+                variant="outline"
+                onClick={() => onOpenChange(false)}
+                disabled={isPending}
+              >
                 {t('common.cancel')}
               </Button>
               <Button onClick={handleContinue} disabled={isPending}>
-                {enable2FA.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                {enable2FA.isPending ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : null}
                 {t('twoFactor.setup.continue')}
               </Button>
             </DialogFooter>
@@ -159,26 +180,39 @@ export function TwoFactorSetupDialog({
           <>
             <DialogHeader>
               <DialogTitle>{t('twoFactor.setup.qrTitle')}</DialogTitle>
-              <DialogDescription>{t('twoFactor.setup.qrDescription')}</DialogDescription>
+              <DialogDescription>
+                {t('twoFactor.setup.qrDescription')}
+              </DialogDescription>
             </DialogHeader>
             <div className="flex flex-col items-center gap-4 py-2">
               <div className="rounded-lg border p-3">
                 <QRCodeSVG value={provisioningUri} size={200} />
               </div>
               <div className="w-full space-y-1">
-                <p className="text-xs text-gray-500">{t('twoFactor.setup.manualEntry')}</p>
+                <p className="text-xs text-gray-500">
+                  {t('twoFactor.setup.manualEntry')}
+                </p>
                 <div className="flex items-center gap-2">
                   <code className="flex-1 rounded bg-gray-100 px-3 py-2 font-mono text-sm tracking-widest break-all">
                     {secret}
                   </code>
-                  <Button variant="outline" size="sm" onClick={handleCopy} className="shrink-0">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleCopy}
+                    className="shrink-0"
+                  >
                     <Copy className="h-4 w-4" />
                   </Button>
                 </div>
               </div>
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setStep('method')} disabled={isPending}>
+              <Button
+                variant="outline"
+                onClick={() => setStep('method')}
+                disabled={isPending}
+              >
                 {t('common.back')}
               </Button>
               <Button onClick={() => setStep('confirm')}>
@@ -192,12 +226,16 @@ export function TwoFactorSetupDialog({
           <>
             <DialogHeader>
               <DialogTitle>{t('twoFactor.setup.confirmTitle')}</DialogTitle>
-              <DialogDescription>{t('twoFactor.setup.confirmDescription')}</DialogDescription>
+              <DialogDescription>
+                {t('twoFactor.setup.confirmDescription')}
+              </DialogDescription>
             </DialogHeader>
             <div className="py-2">
               <Input
                 value={code}
-                onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                onChange={(e) =>
+                  setCode(e.target.value.replace(/\D/g, '').slice(0, 6))
+                }
                 placeholder="000000"
                 maxLength={6}
                 inputMode="numeric"
@@ -206,11 +244,20 @@ export function TwoFactorSetupDialog({
               />
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setStep('qr')} disabled={isPending}>
+              <Button
+                variant="outline"
+                onClick={() => setStep('qr')}
+                disabled={isPending}
+              >
                 {t('common.back')}
               </Button>
-              <Button onClick={handleConfirm} disabled={code.length !== 6 || isPending}>
-                {confirm2FA.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+              <Button
+                onClick={handleConfirm}
+                disabled={code.length !== 6 || isPending}
+              >
+                {confirm2FA.isPending ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : null}
                 {t('twoFactor.setup.verify')}
               </Button>
             </DialogFooter>
@@ -221,17 +268,20 @@ export function TwoFactorSetupDialog({
           <>
             <DialogHeader>
               <DialogTitle>{t('twoFactor.setup.successTitle')}</DialogTitle>
-              <DialogDescription>{t('twoFactor.setup.successDescription')}</DialogDescription>
+              <DialogDescription>
+                {t('twoFactor.setup.successDescription')}
+              </DialogDescription>
             </DialogHeader>
             <div className="flex justify-center py-6">
               <CheckCircle2 className="h-16 w-16 text-accent-green" />
             </div>
             <DialogFooter>
-              <Button onClick={() => onOpenChange(false)}>{t('twoFactor.setup.done')}</Button>
+              <Button onClick={() => onOpenChange(false)}>
+                {t('twoFactor.setup.done')}
+              </Button>
             </DialogFooter>
           </>
         )}
-
       </DialogContent>
     </Dialog>
   )

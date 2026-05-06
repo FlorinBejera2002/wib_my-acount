@@ -753,7 +753,9 @@ function PolicyRowGroup({
         </TableCell>
 
         <TableCell>
-          <HoverCell text={policy.policyDetails ?? policy.vehicleOrProperty ?? '—'} />
+          <HoverCell
+            text={policy.policyDetails ?? policy.vehicleOrProperty ?? '—'}
+          />
         </TableCell>
 
         <TableCell className="text-sm text-gray-900">

@@ -69,7 +69,7 @@ export function TwoFactorDisableDialog({
               if (e.key === 'Enter' && password) handleDisable()
             }}
             autoComplete="current-password"
-            autoFocus
+            autoFocus={true}
           />
         </div>
         <DialogFooter>

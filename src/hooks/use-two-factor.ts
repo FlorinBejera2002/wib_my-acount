@@ -12,12 +12,19 @@ import { useAuthStore } from '@/stores/auth-store'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
-const enable2FAFn = async (data: Enable2FARequest): Promise<Enable2FAResponse> => {
-  const { data: response } = await api.post<Enable2FAResponse>(ENDPOINTS.AUTH.ENABLE_2FA, data)
+const enable2FAFn = async (
+  data: Enable2FARequest
+): Promise<Enable2FAResponse> => {
+  const { data: response } = await api.post<Enable2FAResponse>(
+    ENDPOINTS.AUTH.ENABLE_2FA,
+    data
+  )
   return response
 }
 
-const resend2FACodeFn = async (data: { pre_auth_token: string }): Promise<TwoFactorMessageResponse> => {
+const resend2FACodeFn = async (data: {
+  pre_auth_token: string
+}): Promise<TwoFactorMessageResponse> => {
   const { data: response } = await api.post<TwoFactorMessageResponse>(
     ENDPOINTS.AUTH.RESEND_2FA_CODE,
     data

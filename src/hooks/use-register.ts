@@ -9,7 +9,9 @@ import type { AxiosError } from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 
-const registerFn = async (data: RegisterFormValues): Promise<RegisterResponse> => {
+const registerFn = async (
+  data: RegisterFormValues
+): Promise<RegisterResponse> => {
   const { data: response } = await api.post<RegisterResponse>(
     ENDPOINTS.AUTH.REGISTER,
     {
@@ -27,7 +29,11 @@ export function useRegister() {
   const login = useAuthStore((s) => s.login)
   const navigate = useNavigate()
 
-  return useMutation<RegisterResponse, AxiosError<{ error?: { code?: string } }>, RegisterFormValues>({
+  return useMutation<
+    RegisterResponse,
+    AxiosError<{ error?: { code?: string } }>,
+    RegisterFormValues
+  >({
     mutationFn: registerFn,
     onSuccess: (response) => {
       login(response.user, response.accessToken, response.refreshToken)

@@ -54,7 +54,12 @@ export default function ForgotPasswordPage() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
 
   const [searchParams, setSearchParams] = useSearchParams()
-  const validSteps: ResetStep[] = ['email', 'verify-code', 'new-password', 'success']
+  const validSteps: ResetStep[] = [
+    'email',
+    'verify-code',
+    'new-password',
+    'success'
+  ]
   const stepParam = searchParams.get('step')
   const step: ResetStep = validSteps.includes(stepParam as ResetStep)
     ? (stepParam as ResetStep)
@@ -73,7 +78,10 @@ export default function ForgotPasswordPage() {
   const handleForgotPassword = (data: ForgotPasswordFormValues) => {
     forgotPasswordMutation.mutate(data, {
       onSuccess: () => {
-        setSearchParams({ step: 'verify-code', email: data.email }, { replace: true })
+        setSearchParams(
+          { step: 'verify-code', email: data.email },
+          { replace: true }
+        )
       }
     })
   }
