@@ -212,7 +212,7 @@
 }
 
 /*
- * ?? Custom scrollbar (green accent) ??????????
+ * ?? Custom scrollbar (blue accent) ??????????
  */
 ::-webkit-scrollbar {
   width: 6px;
@@ -224,16 +224,16 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--accent-green);
+  background: var(--primary);
   border-radius: 0;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--accent-green-hover);
+  background: color-mix(in srgb, var(--primary) 80%, black);
 }
 
 /* Firefox */
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--accent-green) transparent;
+  scrollbar-color: var(--primary) transparent;
 }
