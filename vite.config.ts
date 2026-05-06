@@ -17,6 +17,46 @@ export default defineConfig(({ mode }) => {
         '@': path.resolve(__dirname, './src')
       }
     },
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (id.includes('node_modules')) {
+              // Specific react-* packages first (before the broad react check)
+              if (id.includes('react-router')) {
+                return 'router'
+              }
+              if (
+                id.includes('date-fns') ||
+                id.includes('react-hook-form') ||
+                id.includes('@tanstack')
+              ) {
+                return 'utils-vendor'
+              }
+              // Core React only: react, react-dom, scheduler
+              if (
+                /[/\\]node_modules[/\\](react|react-dom|scheduler)[/\\]/.test(
+                  id
+                )
+              ) {
+                return 'react-vendor'
+              }
+              if (id.includes('@radix-ui')) {
+                return 'ui-vendor'
+              }
+              if (id.includes('lucide')) {
+                return 'icons'
+              }
+              if (id.includes('sonner')) {
+                return 'toast'
+              }
+              return 'vendor'
+            }
+          }
+        }
+      },
+      chunkSizeWarningLimit: 800
+    },
     server: {
       port: 5173,
       proxy: {
