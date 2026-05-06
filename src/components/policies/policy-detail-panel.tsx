@@ -347,7 +347,9 @@ export function PolicyDetailPanel({
           </div>
 
           {/* Coverage Period */}
-          <div className="flex items-center gap-3 px-4 py-3 transition-colors border-b border-gray-100">
+          <div
+            className={`flex items-center gap-3 px-4 py-3 transition-colors ${policy.status === 'active' ? 'border-b border-gray-100' : ''}`}
+          >
             <div className="flex-1">
               <p className="text-[10px] font-medium uppercase tracking-wider text-gray-400 mb-0.5">
                 {t('policies.coveragePeriod')}
@@ -725,7 +727,7 @@ export function PolicyDetailPanel({
       {/* ── Details List ── */}
       <div className="space-y-0">
         {/* Premium */}
-        <div className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50/50 transition-colors border-b border-gray-100">
+        <div className="flex items-center gap-3 px-4 py-3 border-b border-gray-100">
           <div className="flex-1 min-w-0">
             <p className="text-[10px] font-medium uppercase tracking-wider text-gray-400 mb-0.5">
               {t('policies.insurancePremium')}
@@ -737,7 +739,7 @@ export function PolicyDetailPanel({
         </div>
 
         {/* Insurer */}
-        <div className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50/50 transition-colors border-b border-gray-100">
+        <div className="flex items-center gap-3 px-4 py-3 border-b border-gray-100">
           <div className="flex-1 min-w-0">
             <p className="text-[10px] font-medium uppercase tracking-wider text-gray-400 mb-0.5">
               {t('policies.insurer')}
@@ -749,7 +751,7 @@ export function PolicyDetailPanel({
         </div>
 
         {/* Coverage Period */}
-        <div className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50/50 transition-colors border-b border-gray-100">
+        <div className="flex items-center gap-3 px-4 py-3">
           <div className="flex-1">
             <p className="text-[10px] font-medium uppercase tracking-wider text-gray-400 mb-0.5">
               {t('policies.coveragePeriod')}
@@ -763,7 +765,7 @@ export function PolicyDetailPanel({
         {/* Days Until Expiry + Reminder */}
         {policy.status === 'active' && (
           <>
-            <div className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50/50 transition-colors border-b border-gray-100">
+            <div className="flex items-center gap-3 px-4 py-3 border-b border-gray-100">
               <div className="flex-1">
                 <p className="text-[10px] font-medium uppercase tracking-wider text-gray-400 mb-0.5">
                   {t('policies.daysUntilExpiry')}
@@ -791,7 +793,7 @@ export function PolicyDetailPanel({
 
         {/* Policy Details / Vehicle */}
         {(policy.policyDetails ?? policy.vehicleOrProperty) && (
-          <div className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50/50 transition-colors">
+          <div className="flex items-center gap-3 px-4 py-3">
             <div className="flex-1 min-w-0">
               <p className="text-[10px] font-medium uppercase tracking-wider text-gray-400 mb-0.5">
                 {t('policies.policyDetails')}
