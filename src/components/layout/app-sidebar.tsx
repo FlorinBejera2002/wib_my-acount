@@ -139,8 +139,8 @@ export function AppSidebar() {
                           ? cn(
                               'h-12 !text-base',
                               isActive
-                                ? 'bg-blue-50 text-blue-800 font-medium hover:bg-blue-50'
-                                : 'text-blue-700 hover:bg-blue-50 hover:text-blue-800'
+                                ? 'bg-gray-100 text-gray-900 font-medium hover:bg-gray-100'
+                                : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700'
                             )
                           : cn(
                               'h-10',
@@ -154,7 +154,10 @@ export function AppSidebar() {
                         className={cn(
                           'group-data-[collapsible=icon]:h-5 group-data-[collapsible=icon]:w-5 transition-colors',
                           isMobile
-                            ? 'min-w-6 min-h-6 text-blue-700'
+                            ? cn(
+                                'min-w-6 min-h-6',
+                                isActive ? 'text-gray-700' : 'text-gray-400'
+                              )
                             : cn(
                                 'min-w-5 min-h-5',
                                 isActive ? 'text-gray-700' : 'text-gray-400'
