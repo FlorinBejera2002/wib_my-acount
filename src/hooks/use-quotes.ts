@@ -2,6 +2,7 @@ import { api } from '@/api/axios-client'
 import { ENDPOINTS } from '@/api/endpoints'
 import type { PaginatedResponse, Quote, TableParams } from '@/api/types'
 import { useQuery } from '@tanstack/react-query'
+import { useUserActivity } from './use-user-activity'
 
 const fetchQuotes = async (
   params: TableParams
@@ -18,10 +19,16 @@ const fetchQuote = async (id: string): Promise<Quote> => {
   return data
 }
 
+const POLL_INTERVAL = 5 * 60 * 1000
+
 export function useQuotes(params: TableParams) {
+  const isUserActive = useUserActivity()
+
   return useQuery({
     queryKey: ['quotes', params],
-    queryFn: () => fetchQuotes(params)
+    queryFn: () => fetchQuotes(params),
+    refetchInterval: isUserActive ? POLL_INTERVAL : false,
+    refetchIntervalInBackground: false,
   })
 }
 

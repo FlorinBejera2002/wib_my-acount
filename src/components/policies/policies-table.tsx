@@ -7,7 +7,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
-import { Sheet, SheetContent } from '@/components/ui/sheet'
+import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
   Table,
@@ -472,6 +472,7 @@ export function PoliciesTable() {
         onOpenChange={(open) => !open && closeSheet()}
       >
         <SheetContent className="w-full md:max-w-xl overflow-y-auto">
+          <SheetTitle className="sr-only">Policy details</SheetTitle>
           {selectedPolicyId && (
             <PolicyDetailPanel
               policyId={selectedPolicyId}
