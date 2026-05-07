@@ -192,6 +192,12 @@ export function PoliciesTable() {
     setSelectedComponentIdx(null)
   }
 
+  const openComponent = (policyId: string, componentIdx: number) => {
+    setSelectedPolicyId(policyId)
+    setSelectedTravellerIdx(null)
+    setSelectedComponentIdx(componentIdx)
+  }
+
   const closeSheet = () => {
     setSelectedPolicyId(null)
     setSelectedTravellerIdx(null)
@@ -396,6 +402,7 @@ export function PoliciesTable() {
                 onToggle={() => toggleRow(policy.id)}
                 onNavigate={() => openPolicy(policy.id)}
                 onSelectTraveller={(idx) => openTraveller(policy.id, idx)}
+                onSelectComponent={(idx) => openComponent(policy.id, idx)}
                 t={t}
               />
             )
@@ -447,6 +454,7 @@ export function PoliciesTable() {
                     onToggle={() => toggleRow(policy.id)}
                     onNavigate={() => openPolicy(policy.id)}
                     onSelectTraveller={(idx) => openTraveller(policy.id, idx)}
+                    onSelectComponent={(idx) => openComponent(policy.id, idx)}
                     t={t}
                   />
                 )
@@ -482,10 +490,6 @@ export function PoliciesTable() {
                 setSelectedComponentIdx(null)
               }}
               componentIndex={selectedComponentIdx}
-              onSelectComponent={(idx) => {
-                setSelectedComponentIdx(idx)
-                setSelectedTravellerIdx(null)
-              }}
             />
           )}
         </SheetContent>
@@ -508,6 +512,7 @@ function PolicyCard({
   onToggle,
   onNavigate,
   onSelectTraveller,
+  onSelectComponent,
   t
 }: {
   policy: Policy
@@ -519,6 +524,7 @@ function PolicyCard({
   onToggle: () => void
   onNavigate: () => void
   onSelectTraveller: (idx: number) => void
+  onSelectComponent: (idx: number) => void
   t: (key: string, opts?: Record<string, unknown>) => string
 }) {
   const handleClick = () => {
@@ -672,7 +678,7 @@ function PolicyCard({
                   <div
                     key={`comp-${idx}`}
                     className="flex items-center gap-3 rounded-lg bg-white border border-gray-100 px-3.5 py-2.5 cursor-pointer transition-colors hover:border-gray-200 hover:shadow-sm"
-                    onClick={onNavigate}
+                    onClick={() => onSelectComponent(idx)}
                   >
                     <div className="flex-1 min-w-0">
                       <InsuranceTypeBadge type={comp.type} />
@@ -706,6 +712,7 @@ function PolicyRowGroup({
   onToggle,
   onNavigate,
   onSelectTraveller,
+  onSelectComponent,
   t
 }: {
   policy: Policy
@@ -717,6 +724,7 @@ function PolicyRowGroup({
   onToggle: () => void
   onNavigate: () => void
   onSelectTraveller: (idx: number) => void
+  onSelectComponent: (idx: number) => void
   t: (key: string, opts?: Record<string, unknown>) => string
 }) {
   return (
@@ -808,7 +816,7 @@ function PolicyRowGroup({
             >
               <ComponentSubTable
                 components={policy.insuranceComponents}
-                onNavigate={onNavigate}
+                onSelectComponent={onSelectComponent}
                 t={t}
               />
             </TableCell>
@@ -840,6 +848,9 @@ function TravellerSubTable({
       <TableHeader>
         <TableRow className="hover:bg-transparent !border-b !border-slate-200/70">
           <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">
+            {t('policies.policyRef')}
+          </TableHead>
+          <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">
             {t('policies.travellerName')}
           </TableHead>
           <TableHead className="text-xs font-medium text-slate-500 uppercase tracking-wide">
@@ -862,6 +873,9 @@ function TravellerSubTable({
               className="cursor-pointer hover:bg-gray-50/50"
               onClick={() => onSelectTraveller(idx)}
             >
+              <TableCell className="text-sm font-medium text-gray-900">
+                {policy.policyNumber}
+              </TableCell>
               <TableCell className="text-sm font-medium text-gray-900">
                 {trav.name}
               </TableCell>
@@ -888,11 +902,11 @@ function TravellerSubTable({
 
 function ComponentSubTable({
   components,
-  onNavigate,
+  onSelectComponent,
   t
 }: {
   components: NonNullable<Policy['insuranceComponents']>
-  onNavigate: () => void
+  onSelectComponent: (idx: number) => void
   t: (key: string, opts?: Record<string, unknown>) => string
 }) {
   return (
@@ -923,7 +937,7 @@ function ComponentSubTable({
             <TableRow
               key={`comp-${idx}`}
               className="cursor-pointer hover:bg-gray-50/50"
-              onClick={onNavigate}
+              onClick={() => onSelectComponent(idx)}
             >
               <TableCell className="text-sm text-gray-700">
                 {comp.policyNumber}

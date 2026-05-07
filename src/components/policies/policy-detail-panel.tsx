@@ -23,7 +23,6 @@ import {
   FileText,
   Inbox,
   Info,
-  Layers,
   Users
 } from 'lucide-react'
 import { useState } from 'react'
@@ -209,14 +208,12 @@ export function PolicyDetailPanel({
   policyId,
   travellerIndex,
   onSelectTraveller,
-  componentIndex,
-  onSelectComponent
+  componentIndex
 }: {
   policyId: string
   travellerIndex?: number | null
   onSelectTraveller?: (idx: number) => void
   componentIndex?: number | null
-  onSelectComponent?: (idx: number) => void
 }) {
   const { t } = useTranslation()
   const { data: policy, isLoading, isError } = usePolicy(policyId)
@@ -279,9 +276,6 @@ export function PolicyDetailPanel({
     policy.travellers[travellerIndex]
   ) {
     const trav = policy.travellers[travellerIndex]
-    const otherTravellers = policy.travellers
-      .map((p, i) => ({ name: p.name, cnp: p.cnp, index: i }))
-      .filter((_, i) => i !== travellerIndex)
     const premiumPerTraveller =
       policy.travellers.length > 0
         ? policy.premium / policy.travellers.length
@@ -338,7 +332,7 @@ export function PolicyDetailPanel({
               <p className="text-[10px] font-medium uppercase tracking-wider text-gray-400 mb-0.5">
                 {t('policies.insurancePremium')}
               </p>
-              <p className="text-sm font-semibold text-green-600 truncate">
+              <p className="text-sm font-semibold text-gray-900 truncate">
                 {formatCurrency(premiumPerTraveller)}
               </p>
             </div>
@@ -441,50 +435,6 @@ export function PolicyDetailPanel({
           )}
         </div>
 
-        {/* ── Other travellers ── */}
-        {otherTravellers.length > 0 && (
-          <>
-            <Separator />
-            <div className="space-y-3">
-              <div className="flex items-center gap-2">
-                <Users className="h-4 w-4 text-gray-500" />
-                <h3 className="text-sm font-semibold text-gray-900">
-                  {t('policies.otherTravellers')}
-                </h3>
-                <span
-                  className={cn(
-                    'pointer-events-none ml-auto flex h-5 min-w-[20px] items-center justify-center rounded-full text-[9px] text-center group-data-[collapsible=icon]:hidden border-gray-200 text-blue-800 font-normal border'
-                  )}
-                >
-                  {otherTravellers.length}
-                </span>
-              </div>
-              <div className="space-y-2">
-                {otherTravellers.map((other) => (
-                  <button
-                    key={other.index}
-                    type="button"
-                    onClick={() => onSelectTraveller?.(other.index)}
-                    className="group flex w-full items-center gap-3 rounded-lg border border-gray-100 bg-white px-4 py-3 text-left transition-colors duration-200 hover:bg-gray-50/70 hover:border-gray-200 focus:outline-none focus:ring-1 focus:ring-gray-300"
-                  >
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-900 truncate">
-                        {other.name}
-                      </p>
-                      <p className="text-xs text-muted-foreground font-mono">
-                        {other.cnp}
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-2 shrink-0">
-                      <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-gray-600 transition-colors" />
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-          </>
-        )}
-
         {/* ── Documents ── */}
         <Separator />
         <div className="space-y-3">
@@ -568,14 +518,6 @@ export function PolicyDetailPanel({
     const compDaysUntilExpiry = Math.ceil(
       (new Date(comp.endDate).getTime() - Date.now()) / 86400000
     )
-    const otherComponents = resolvedComponents
-      .map((c, i) => ({
-        type: c.type,
-        policyNumber: c.policyNumber,
-        insurerName: c.insurerName,
-        index: i
-      }))
-      .filter((_, i) => i !== componentIndex)
 
     return (
       <div className="space-y-5">
@@ -628,7 +570,7 @@ export function PolicyDetailPanel({
               <p className="text-[10px] font-medium uppercase tracking-wider text-gray-400 mb-0.5">
                 {t('policies.insurancePremium')}
               </p>
-              <p className="text-sm font-semibold text-green-600 truncate">
+              <p className="text-sm font-semibold text-gray-900 truncate">
                 {formatCurrency(comp.premium)}
               </p>
             </div>
@@ -698,39 +640,6 @@ export function PolicyDetailPanel({
             </div>
           )}
         </div>
-
-        {/* ── Other component ── */}
-        {otherComponents.length > 0 && (
-          <>
-            <Separator />
-            <div className="space-y-3">
-              <div className="flex items-center gap-2">
-                <Layers className="h-4 w-4 text-gray-500" />
-                <h3 className="text-sm font-semibold text-gray-900">
-                  {t('policies.components')}
-                </h3>
-              </div>
-              <div className="space-y-2">
-                {otherComponents.map((other) => (
-                  <button
-                    key={other.index}
-                    type="button"
-                    onClick={() => onSelectComponent?.(other.index)}
-                    className="group flex w-full items-center gap-3 rounded-lg border border-gray-100 bg-gray-50/50 px-4 py-3 text-left transition-colors duration-200 hover:bg-gray-100/70 hover:border-gray-200 focus:outline-none focus:ring-1 focus:ring-gray-300"
-                  >
-                    <div className="flex-1 min-w-0">
-                      <InsuranceTypeBadge type={other.type} />
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {other.insurerName} — {other.policyNumber}
-                      </p>
-                    </div>
-                    <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-gray-600 transition-colors shrink-0" />
-                  </button>
-                ))}
-              </div>
-            </div>
-          </>
-        )}
 
         {/* ── Documents ── */}
         <Separator />
@@ -936,73 +845,6 @@ export function PolicyDetailPanel({
           </div>
         </>
       )}
-
-      {/* ── Insurance Components (PAD + Facultativă) ── */}
-      {(() => {
-        const components =
-          policy.insuranceComponents && policy.insuranceComponents.length > 0
-            ? policy.insuranceComponents
-            : policy.insuranceType === 'pad_facultative'
-              ? [
-                  {
-                    type: 'pad' as const,
-                    policyNumber: policy.policyNumber,
-                    insurerName: policy.insurerName ?? policy.insurer ?? '—',
-                    premium: policy.premium / 2,
-                    startDate: policy.startDate,
-                    endDate: policy.endDate,
-                    documents: []
-                  },
-                  {
-                    type: 'facultative' as const,
-                    policyNumber: policy.policyNumber,
-                    insurerName: policy.insurerName ?? policy.insurer ?? '—',
-                    premium: policy.premium / 2,
-                    startDate: policy.startDate,
-                    endDate: policy.endDate,
-                    documents: []
-                  }
-                ]
-              : null
-        if (!components) return null
-        return (
-          <>
-            <Separator />
-            <div className="space-y-3">
-              <div className="flex items-center gap-2">
-                <Layers className="h-4 w-4 text-gray-500" />
-                <h3 className="text-sm font-semibold text-gray-900">
-                  {t('policies.components')}
-                </h3>
-                <Badge
-                  variant="outline"
-                  className="ml-auto text-[10px] font-medium"
-                >
-                  {components.length}
-                </Badge>
-              </div>
-              <div className="space-y-2">
-                {components.map((comp, idx) => (
-                  <button
-                    key={`comp-${idx}`}
-                    type="button"
-                    onClick={() => onSelectComponent?.(idx)}
-                    className="group flex w-full items-center gap-3 rounded-lg border border-gray-100 bg-gray-50/50 px-4 py-3 text-left transition-colors duration-200 hover:bg-gray-100/70 hover:border-gray-200 focus:outline-none focus:ring-1 focus:ring-gray-300"
-                  >
-                    <div className="flex-1 min-w-0">
-                      <InsuranceTypeBadge type={comp.type} />
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {comp.insurerName} — {comp.policyNumber}
-                      </p>
-                    </div>
-                    <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-gray-600 transition-colors shrink-0" />
-                  </button>
-                ))}
-              </div>
-            </div>
-          </>
-        )
-      })()}
 
       {/* ── Documents ── */}
       <Separator />
