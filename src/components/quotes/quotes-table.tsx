@@ -1,9 +1,9 @@
 import { DataTable } from '@/components/data-table/data-table'
 import type { ColumnDef } from '@tanstack/react-table'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import type { Quote, QuoteStatus, TableParams } from '@/api/types'
+import type { Quote, TableParams } from '@/api/types'
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header'
 import { InsuranceTypeBadge } from '@/components/ui/insurance-type-badge'
 import {
@@ -24,21 +24,6 @@ import {
   Inbox,
   Plus
 } from 'lucide-react'
-
-const getSimplifiedStatus = (status: QuoteStatus) => {
-  if (status === 'expired') {
-    return {
-      labelKey: 'quoteStatus.EXPIRED',
-      dot: 'bg-red-500',
-      text: 'text-red-600'
-    }
-  }
-  return {
-    labelKey: 'quoteStatus.ACTIVE',
-    dot: 'bg-accent-green',
-    text: 'text-accent-green'
-  }
-}
 
 const filterConfigs = [
   {
@@ -61,14 +46,6 @@ const filterConfigs = [
         labelKey: 'insuranceType.ACCIDENTS_TRAVELER'
       },
       { value: 'breakdown', labelKey: 'insuranceType.BREAKDOWN' }
-    ]
-  },
-  {
-    key: 'status',
-    labelKey: 'policies.status',
-    options: [
-      { value: 'active', labelKey: 'quoteStatus.ACTIVE' },
-      { value: 'expired', labelKey: 'quoteStatus.EXPIRED' }
     ]
   }
 ]
@@ -121,39 +98,8 @@ export function QuotesTable() {
     search: ''
   })
 
-  const [statusFilter, setStatusFilter] = useState<string | undefined>(
-    undefined
-  )
-  const [dateFrom, _setDateFrom] = useState('')
-  const [dateTo, _setDateTo] = useState('')
-
   const { data, isLoading, isError } = useQuotes(params)
-
-  const filteredData = useMemo(() => {
-    if (!data?.data) return []
-    let items = data.data
-    if (statusFilter === 'active') {
-      items = items.filter((q) => q.status !== 'expired')
-    } else if (statusFilter === 'expired') {
-      items = items.filter((q) => q.status === 'expired')
-    }
-    if (dateFrom) {
-      const from = new Date(dateFrom)
-      items = items.filter((q) => new Date(q.createdAt) >= from)
-    }
-    if (dateTo) {
-      const to = new Date(dateTo)
-      to.setHours(23, 59, 59, 999)
-      items = items.filter((q) => new Date(q.createdAt) <= to)
-    }
-    return items.sort((a, b) => {
-      const aExpired = a.status === 'expired'
-      const bExpired = b.status === 'expired'
-      if (aExpired === bExpired) return 0
-      if (aExpired && !bExpired) return 1
-      return -1
-    })
-  }, [data?.data, statusFilter, dateFrom, dateTo])
+  const filteredData = data?.data ?? []
 
   const columns: ColumnDef<Quote>[] = [
     {
@@ -189,29 +135,19 @@ export function QuotesTable() {
       }
     },
     {
-      accessorKey: 'status',
-      header: t('policies.status'),
-      cell: ({ row }) => {
-        const config = getSimplifiedStatus(row.original.status)
-        return (
-          <div className="flex items-center gap-2">
-            <span className={`h-2 w-2 rounded-full ${config.dot}`} />
-            <span className={`text-sm font-medium ${config.text}`}>
-              {t(config.labelKey)}
-            </span>
-          </div>
-        )
-      }
-    },
-    {
       accessorKey: 'createdAt',
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title={t('quotes.dateTime')} />
       ),
       cell: ({ row }) => (
-        <span className="text-sm text-gray-700">
-          {formatDate(row.original.createdAt)}
-        </span>
+        <div className="flex flex-col">
+          <span className="text-sm text-gray-700">
+            {formatDate(row.original.createdAt)}
+          </span>
+          <span className="text-xs text-gray-400">
+            {formatDate(row.original.createdAt, 'HH:mm')}
+          </span>
+        </div>
       )
     },
     {
@@ -236,41 +172,28 @@ export function QuotesTable() {
     }
   ]
 
-  const handleFilterChange = (key: string, value: string) => {
-    if (key === 'status') {
-      setStatusFilter(value === 'ALL' ? undefined : value)
-    } else {
-      setParams((prev) => ({
-        ...prev,
-        [key]: value === 'ALL' ? undefined : value
-      }))
-    }
-  }
-
   return (
     <div>
       {/* Filters */}
       <div className="flex items-center gap-2 pb-4">
-        {filterConfigs.map((config) => (
+        {filterConfigs.map((filter) => (
           <Select
-            key={config.key}
-            value={
-              config.key === 'status'
-                ? statusFilter || 'ALL'
-                : (params as unknown as Record<string, string | undefined>)[
-                    config.key
-                  ] || 'ALL'
+            key={filter.key}
+            value={params.type ?? 'all'}
+            onValueChange={(val) =>
+              setParams((prev) => ({
+                ...prev,
+                type: val === 'all' ? undefined : val,
+                page: 1
+              }))
             }
-            onValueChange={(v) => handleFilterChange(config.key, v)}
           >
-            <SelectTrigger className="h-9 w-[130px] md:w-[160px]">
-              <SelectValue placeholder={t(config.labelKey)} />
+            <SelectTrigger className="w-44 h-9 text-sm">
+              <SelectValue placeholder={t(filter.labelKey)} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="ALL">
-                {t('policies.allFilter', { label: t(config.labelKey) })}
-              </SelectItem>
-              {config.options.map((opt) => (
+              <SelectItem value="all">{t('common.all')}</SelectItem>
+              {filter.options.map((opt) => (
                 <SelectItem key={opt.value} value={opt.value}>
                   {t(opt.labelKey)}
                 </SelectItem>
@@ -373,8 +296,6 @@ function QuoteCard({
   quote: Quote
   t: (key: string, opts?: Record<string, unknown>) => string
 }) {
-  const config = getSimplifiedStatus(quote.status)
-
   return (
     <div className="rounded-xl border border-gray-200/80 bg-gray-50/50 shadow-[0_1px_4px_rgba(0,0,0,0.04)] overflow-hidden">
       {/* ── Header ── */}
@@ -382,12 +303,6 @@ function QuoteCard({
         <span className="font-bold text-gray-900 text-sm truncate">
           {quote.quoteNumber ?? quote.id}
         </span>
-        <div className="flex items-center gap-2 shrink-0">
-          <span className={`h-2 w-2 rounded-full ${config.dot}`} />
-          <span className={`text-xs font-medium ${config.text}`}>
-            {t(config.labelKey)}
-          </span>
-        </div>
       </div>
 
       {/* ── Body ── */}
@@ -407,6 +322,9 @@ function QuoteCard({
             </p>
             <p className="text-sm font-semibold text-gray-800">
               {formatDate(quote.createdAt)}
+            </p>
+            <p className="text-xs text-gray-400 mt-0.5">
+              {formatDate(quote.createdAt, 'HH:mm')}
             </p>
           </div>
 

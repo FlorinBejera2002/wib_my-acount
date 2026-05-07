@@ -19,7 +19,9 @@
     "home": "Home",
     "showMore": "Show more",
     "showLess": "Show less",
-    "newQuote": "Request a quote"
+    "newQuote": "Request a quote",
+    "copy": "Copy",
+    "copied": "Copied"
   },
   "policyStatus": {
     "ACTIVE": "Active",

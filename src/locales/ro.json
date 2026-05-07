@@ -19,7 +19,9 @@
     "home": "Acasă",
     "showMore": "Mai mult",
     "showLess": "Mai puțin",
-    "newQuote": "Solicită o cotație"
+    "newQuote": "Solicită o cotație",
+    "copy": "Copiază",
+    "copied": "Copiat"
   },
   "policyStatus": {
     "ACTIVE": "Activă",

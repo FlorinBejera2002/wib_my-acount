@@ -19,7 +19,9 @@
     "home": "Kezdőlap",
     "showMore": "Több",
     "showLess": "Kevesebb",
-    "newQuote": "Ajánlatkérés"
+    "newQuote": "Ajánlatkérés",
+    "copy": "Másolás",
+    "copied": "Másolva"
   },
   "policyStatus": {
     "ACTIVE": "Aktív",

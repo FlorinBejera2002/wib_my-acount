@@ -18,6 +18,7 @@ import {
   Bell,
   Check,
   ChevronRight,
+  Copy,
   Download,
   FileText,
   Inbox,
@@ -219,6 +220,15 @@ export function PolicyDetailPanel({
 }) {
   const { t } = useTranslation()
   const { data: policy, isLoading, isError } = usePolicy(policyId)
+  const [copiedId, setCopiedId] = useState(false)
+
+  const handleCopyId = async () => {
+    if (policy?.id) {
+      await navigator.clipboard.writeText(policy.id)
+      setCopiedId(true)
+      setTimeout(() => setCopiedId(false), 2000)
+    }
+  }
 
   if (isLoading) {
     return (
@@ -296,6 +306,32 @@ export function PolicyDetailPanel({
 
         {/* ── Details List ── */}
         <div className="space-y-0">
+          {/* Quote Ref */}
+          {policy.id && (
+            <div className="flex items-center gap-3 px-4 py-3 transition-colors border-b border-gray-100">
+              <div className="flex-1 min-w-0">
+                <p className="text-[10px] font-medium uppercase tracking-wider text-gray-400 mb-0.5">
+                  {t('policies.sourceQuote')}
+                </p>
+                <p className="text-sm font-semibold text-gray-900 truncate">
+                  {policy.id}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={handleCopyId}
+                className="flex items-center justify-center w-8 h-8 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors duration-200"
+                title={copiedId ? t('common.copied') : t('common.copy')}
+              >
+                {copiedId ? (
+                  <Check className="h-4 w-4 text-green-600" />
+                ) : (
+                  <Copy className="h-4 w-4" />
+                )}
+              </button>
+            </div>
+          )}
+
           {/* Premium */}
           <div className="flex items-center gap-3 px-4 py-3 transition-colors border-b border-gray-100">
             <div className="flex-1 min-w-0">
@@ -560,6 +596,32 @@ export function PolicyDetailPanel({
 
         {/* ── Details List ── */}
         <div className="space-y-0">
+          {/* Quote Ref */}
+          {policy.id && (
+            <div className="flex items-center gap-3 px-4 py-3 transition-colors border-b border-gray-100">
+              <div className="flex-1 min-w-0">
+                <p className="text-[10px] font-medium uppercase tracking-wider text-gray-400 mb-0.5">
+                  {t('policies.sourceQuote')}
+                </p>
+                <p className="text-sm font-semibold text-gray-900 truncate">
+                  {policy.id}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={handleCopyId}
+                className="flex items-center justify-center w-8 h-8 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors duration-200"
+                title={copiedId ? t('common.copied') : t('common.copy')}
+              >
+                {copiedId ? (
+                  <Check className="h-4 w-4 text-green-600" />
+                ) : (
+                  <Copy className="h-4 w-4" />
+                )}
+              </button>
+            </div>
+          )}
+
           {/* Premium */}
           <div className="flex items-center gap-3 px-4 py-3 transition-colors border-b border-gray-100">
             <div className="flex-1 min-w-0">
@@ -726,6 +788,32 @@ export function PolicyDetailPanel({
 
       {/* ── Details List ── */}
       <div className="space-y-0">
+        {/* Quote Ref */}
+        {policy.id && (
+          <div className="flex items-center gap-3 px-4 py-3 border-b border-gray-100">
+            <div className="flex-1 min-w-0">
+              <p className="text-[10px] font-medium uppercase tracking-wider text-gray-400 mb-0.5">
+                {t('policies.sourceQuote')}
+              </p>
+              <p className="text-sm font-semibold text-gray-900 truncate">
+                {policy.id}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={handleCopyId}
+              className="flex items-center justify-center w-8 h-8 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors duration-200"
+              title={copiedId ? t('common.copied') : t('common.copy')}
+            >
+              {copiedId ? (
+                <Check className="h-4 w-4 text-green-600" />
+              ) : (
+                <Copy className="h-4 w-4" />
+              )}
+            </button>
+          </div>
+        )}
+
         {/* Premium */}
         <div className="flex items-center gap-3 px-4 py-3 border-b border-gray-100">
           <div className="flex-1 min-w-0">
