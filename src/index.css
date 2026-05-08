@@ -200,6 +200,24 @@
 }
 
 /*
+ * ?? Autofill override ????????????????????????
+ *    Chrome autofill bg s? umple toat? în?l?imea input-ului.
+ */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 100px var(--background) inset;
+  -webkit-text-fill-color: inherit;
+  caret-color: inherit;
+}
+
+.dark input:-webkit-autofill,
+.dark input:-webkit-autofill:hover,
+.dark input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 100px var(--background) inset;
+}
+
+/*
  * ?? Hide scrollbar utility ???????????????????
  */
 .hide-scrollbar::-webkit-scrollbar {
