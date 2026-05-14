@@ -300,7 +300,18 @@
     "autoRenewalInfo": "Automatikusan küldünk megújítási ajánlatokat e-mailben {{days}} nappal a lejárat előtt. Ha korábban szeretne emlékeztetőt, válasszon az alábbiak közül.",
     "notifyBefore": "További emlékeztető",
     "reminderSuccess": "Emlékeztető sikeresen beállítva",
-    "beforeExpiry": "a lejárat előtt"
+    "beforeExpiry": "a lejárat előtt",
+    "product": {
+      "plate": "Rendszám",
+      "vinMasked": "Alvázszám",
+      "address": "Cím",
+      "propertyType": "Ingatlan típusa",
+      "areaSqm": "Terület",
+      "floor": "Emelet",
+      "builtYear": "Építési év",
+      "destination": "Úti cél",
+      "days": "Napok"
+    }
   },
   "quotes": {
     "title": "Ajánlataim",

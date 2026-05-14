@@ -19,7 +19,14 @@ import {
 } from '@/components/ui/table'
 import { usePolicies } from '@/hooks/use-policies'
 import { cn, formatCurrency, formatDate } from '@/lib/utils'
-import { AlertCircle, Download, Inbox, X } from 'lucide-react'
+import {
+  AlertCircle,
+  ChevronDown,
+  ChevronRight,
+  Download,
+  Inbox,
+  X
+} from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useSearchParams } from 'react-router-dom'
@@ -29,6 +36,35 @@ import { PolicyDetailPanel } from './policy-detail-panel'
 import { PolicyStatusBadge } from './policy-status-badge'
 
 const COL_COUNT = 9
+
+const VEHICLE_TYPES = new Set([
+  'rca',
+  'casco',
+  'casco_econom',
+  'casco_perfect_cover',
+  'cmr',
+  'breakdown'
+])
+
+function getPolicyDetail(policy: Policy): string {
+  const product = policy.data?.product
+  if (!product || Array.isArray(product)) return '—'
+  const p = product as Record<string, unknown>
+
+  if (VEHICLE_TYPES.has(policy.type)) {
+    return String(p.plate ?? '—')
+  }
+  if (policy.type === 'home') {
+    return String(p.address ?? '—')
+  }
+  if (policy.type === 'travel') {
+    const dest = p.destination
+    const days = p.days
+    if (dest && days) return `${dest} · ${days} zile`
+    return String(dest ?? days ?? '—')
+  }
+  return policy.data?.insured?.name ?? '—'
+}
 
 const computeDaysUntilExpiry = (endDate: string): number =>
   Math.ceil((new Date(endDate).getTime() - Date.now()) / 86400000)
@@ -136,6 +172,57 @@ function HoverCell({
   )
 }
 
+/* ── Package grouping ─────────────────────────────────────────────────── */
+
+const GROUPABLE_TYPES = new Set(['home', 'travel'])
+
+type TableItem =
+  | { kind: 'single'; policy: Policy }
+  | {
+      kind: 'group'
+      policyType: string
+      quoteRef: string
+      policies: Policy[]
+      totalPremium: number
+    }
+
+function buildTableItems(policies: Policy[]): TableItem[] {
+  const byQuoteRef = new Map<string, Policy[]>()
+
+  for (const policy of policies) {
+    if (GROUPABLE_TYPES.has(policy.type) && policy.quoteRef) {
+      const arr = byQuoteRef.get(policy.quoteRef) ?? []
+      arr.push(policy)
+      byQuoteRef.set(policy.quoteRef, arr)
+    }
+  }
+
+  const addedGroups = new Set<string>()
+  const items: TableItem[] = []
+
+  for (const policy of policies) {
+    if (GROUPABLE_TYPES.has(policy.type) && policy.quoteRef) {
+      const group = byQuoteRef.get(policy.quoteRef)!
+      if (group.length >= 2) {
+        if (!addedGroups.has(policy.quoteRef)) {
+          addedGroups.add(policy.quoteRef)
+          items.push({
+            kind: 'group',
+            policyType: policy.type,
+            quoteRef: policy.quoteRef,
+            policies: group,
+            totalPremium: group.reduce((sum, p) => sum + p.premium, 0)
+          })
+        }
+        continue
+      }
+    }
+    items.push({ kind: 'single', policy })
+  }
+
+  return items
+}
+
 /* ── Main export ──────────────────────────────────────────────────────── */
 
 export function PoliciesTable() {
@@ -167,6 +254,7 @@ export function PoliciesTable() {
   })
   const [dateFrom, setDateFrom] = useState('')
   const [dateTo, setDateTo] = useState('')
+  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set())
 
   const { data, isLoading, isError } = usePolicies(params)
 
@@ -190,6 +278,16 @@ export function PoliciesTable() {
       return -1
     })
   }, [data?.data, dateFrom, dateTo])
+
+  const tableItems = useMemo(() => buildTableItems(filteredData), [filteredData])
+
+  const toggleGroup = (quoteRef: string) =>
+    setExpandedGroups((prev) => {
+      const next = new Set(prev)
+      if (next.has(quoteRef)) next.delete(quoteRef)
+      else next.add(quoteRef)
+      return next
+    })
 
   const handleFilterChange = (key: string, value: string) =>
     setParams((prev) => ({
@@ -309,18 +407,29 @@ export function PoliciesTable() {
 
       {/* ═══ Mobile / Tablet card list (< lg) ═══ */}
       <div className="flex flex-col gap-5 lg:hidden">
-        {filteredData.length > 0 ? (
-          filteredData.map((policy) => {
-            const days = computeDaysUntilExpiry(policy.endDate)
-            const firstDoc = policy.documents?.[0]
-
+        {tableItems.length > 0 ? (
+          tableItems.map((item) => {
+            if (item.kind === 'group') {
+              return (
+                <PackageCard
+                  key={`group-${item.quoteRef}`}
+                  item={item}
+                  isExpanded={expandedGroups.has(item.quoteRef)}
+                  onToggle={() => toggleGroup(item.quoteRef)}
+                  onNavigate={openPolicy}
+                  t={t}
+                />
+              )
+            }
+            const days = computeDaysUntilExpiry(item.policy.endDate)
+            const firstDoc = item.policy.documents?.[0]
             return (
               <PolicyCard
-                key={policy.id}
-                policy={policy}
+                key={item.policy.id}
+                policy={item.policy}
                 days={days}
                 firstDoc={firstDoc}
-                onNavigate={() => openPolicy(policy.id)}
+                onNavigate={() => openPolicy(item.policy.id)}
                 t={t}
               />
             )
@@ -351,12 +460,98 @@ export function PoliciesTable() {
           </TableHeader>
 
           <TableBody>
-            {filteredData.length > 0 ? (
-              filteredData.map((policy) => {
+            {tableItems.length > 0 ? (
+              tableItems.flatMap((item) => {
+                if (item.kind === 'group') {
+                  const rep = item.policies[0]
+                  if (!rep) return []
+                  const days = computeDaysUntilExpiry(rep.endDate)
+                  const isExpanded = expandedGroups.has(item.quoteRef)
+
+                  const rows = [
+                    <TableRow
+                      key={`group-${item.quoteRef}`}
+                      className="cursor-pointer transition-colors hover:bg-gray-50/50"
+                      onClick={() => toggleGroup(item.quoteRef)}
+                    >
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          {isExpanded ? (
+                            <ChevronDown className="h-4 w-4 text-gray-400 shrink-0" />
+                          ) : (
+                            <ChevronRight className="h-4 w-4 text-gray-400 shrink-0" />
+                          )}
+                          <span className="font-medium text-gray-700">
+                            {item.quoteRef}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <InsuranceTypeBadge
+                          type={
+                            item.policyType === 'home'
+                              ? 'pad_facultative'
+                              : item.policyType
+                          }
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <HoverCell text={rep.insurer ?? '—'} />
+                      </TableCell>
+                      <TableCell>
+                        <HoverCell text={getPolicyDetail(rep)} />
+                      </TableCell>
+                      <TableCell className="text-sm font-semibold text-gray-900">
+                        {formatCurrency(item.totalPremium)}
+                      </TableCell>
+                      <TableCell>
+                        <PolicyStatusBadge status={rep.status} />
+                      </TableCell>
+                      <TableCell className="text-sm text-gray-700">
+                        {formatDate(rep.endDate)}
+                      </TableCell>
+                      <TableCell>
+                        {rep.status === 'active' ? (
+                          <ExpiryBadge days={days} t={t} />
+                        ) : (
+                          '—'
+                        )}
+                      </TableCell>
+                      <TableCell className="text-sm text-muted-foreground">
+                        —
+                      </TableCell>
+                    </TableRow>
+                  ]
+
+                  if (isExpanded) {
+                    rows.push(
+                      <TableRow
+                        key={`group-${item.quoteRef}-sub`}
+                        className="hover:bg-transparent border-0"
+                      >
+                        <TableCell
+                          colSpan={COL_COUNT}
+                          className="bg-gray-50/80 py-3 px-4 pl-12"
+                        >
+                          <SubTable
+                            policies={item.policies}
+                            policyType={item.policyType}
+                            onSelect={openPolicy}
+                            t={t}
+                          />
+                        </TableCell>
+                      </TableRow>
+                    )
+                  }
+
+                  return rows
+                }
+
+                const { policy } = item
                 const days = computeDaysUntilExpiry(policy.endDate)
                 const firstDoc = policy.documents?.[0]
 
-                return (
+                return [
                   <TableRow
                     key={policy.id}
                     className="cursor-pointer transition-colors hover:bg-gray-50/50"
@@ -379,7 +574,7 @@ export function PoliciesTable() {
                     </TableCell>
 
                     <TableCell>
-                      <HoverCell text={policy.data?.insured?.name ?? '—'} />
+                      <HoverCell text={getPolicyDetail(policy)} />
                     </TableCell>
 
                     <TableCell className="text-sm text-gray-900">
@@ -408,7 +603,7 @@ export function PoliciesTable() {
                       ) : null}
                     </TableCell>
                   </TableRow>
-                )
+                ]
               })
             ) : (
               <TableRow>
@@ -437,6 +632,135 @@ export function PoliciesTable() {
           )}
         </SheetContent>
       </Sheet>
+    </div>
+  )
+}
+
+/* ═══════════════════════════════════════════════════════════════════════ */
+/*  PackageCard – mobile home package (< lg)                             */
+/* ═══════════════════════════════════════════════════════════════════════ */
+
+function PackageCard({
+  item,
+  isExpanded,
+  onToggle,
+  onNavigate,
+  t
+}: {
+  item: { policyType: string; quoteRef: string; policies: Policy[]; totalPremium: number }
+  isExpanded: boolean
+  onToggle: () => void
+  onNavigate: (id: string) => void
+  t: (key: string, opts?: Record<string, unknown>) => string
+}) {
+  const rep = item.policies[0]
+  if (!rep) return null
+  const days = computeDaysUntilExpiry(rep.endDate)
+
+  return (
+    <div className="rounded-xl border border-gray-200/80 bg-gray-50/50 shadow-[0_1px_4px_rgba(0,0,0,0.04)] overflow-hidden">
+      {/* ── Header ── */}
+      <div
+        className="flex items-center justify-between gap-3 px-4 py-3 bg-gray-100/60 cursor-pointer"
+        onClick={onToggle}
+      >
+        <div className="flex items-center gap-2 min-w-0">
+          {isExpanded ? (
+            <ChevronDown className="h-4 w-4 text-gray-400 shrink-0" />
+          ) : (
+            <ChevronRight className="h-4 w-4 text-gray-400 shrink-0" />
+          )}
+          <span className="font-bold text-gray-900 text-sm truncate">
+            {item.quoteRef}
+          </span>
+        </div>
+        <PolicyStatusBadge status={rep.status} />
+      </div>
+
+      {/* ── Summary ── */}
+      <div className="px-4 py-4">
+        <InsuranceTypeBadge
+          type={item.policyType === 'home' ? 'pad_facultative' : item.policyType}
+          className="px-2 py-0.5 text-[11px] gap-1 [&_svg]:h-3 [&_svg]:w-3"
+        />
+
+        <div className="grid grid-cols-2 gap-2 mt-3">
+          <div className="rounded-lg bg-white border border-gray-100 px-3 py-2.5">
+            <p className="text-[10px] font-medium uppercase tracking-wider text-gray-400 mb-0.5">
+              {t('policies.premium')}
+            </p>
+            <p className="text-sm font-bold text-gray-900">
+              {formatCurrency(item.totalPremium)}
+            </p>
+          </div>
+
+          <div className="rounded-lg bg-white border border-gray-100 px-3 py-2.5">
+            <p className="text-[10px] font-medium uppercase tracking-wider text-gray-400 mb-0.5">
+              {t('policies.expiry')}
+            </p>
+            <p className="text-sm font-semibold text-gray-800">
+              {formatDate(rep.endDate)}
+            </p>
+          </div>
+
+          {rep.status === 'active' && days >= 0 && (
+            <div className="rounded-lg bg-white border border-gray-100 px-3 py-2.5">
+              <p className="text-[10px] font-medium uppercase tracking-wider text-gray-400 mb-0.5">
+                {t('policies.daysLeft')}
+              </p>
+              <p
+                className={cn(
+                  'text-sm font-semibold',
+                  days <= 7 ? 'text-red-600' : 'text-gray-800'
+                )}
+              >
+                {t('policies.daysCount', { days })}
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* ── Sub-policies (expanded) ── */}
+      {isExpanded && (
+        <div className="border-t border-gray-100 divide-y divide-gray-100">
+          {item.policies.map((sub) => (
+            <div
+              key={sub.id}
+              className="px-4 py-3 cursor-pointer hover:bg-gray-50 transition-colors"
+              onClick={() => onNavigate(sub.id)}
+            >
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <p className="text-sm font-bold text-gray-900 truncate">
+                    {sub.policyNumber}
+                  </p>
+                  <p className="text-xs text-gray-500 truncate mt-0.5">
+                    {sub.insurer ?? '—'}
+                  </p>
+                </div>
+                <div className="flex flex-col items-end gap-1 shrink-0">
+                  <InsuranceTypeBadge
+                    type={sub.insuranceType ?? sub.type}
+                    className="px-2 py-0.5 text-[11px] gap-1 [&_svg]:h-3 [&_svg]:w-3"
+                  />
+                  <span className="text-xs font-semibold text-gray-700">
+                    {formatCurrency(sub.premium)}
+                  </span>
+                </div>
+              </div>
+              {sub.documents?.[0] && (
+                <div className="mt-2">
+                  <PdfLink
+                    url={sub.documents[0].url}
+                    label={sub.documents[0].name}
+                  />
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
@@ -537,5 +861,96 @@ function PolicyCard({
         </div>
       </div>
     </div>
+  )
+}
+
+/* ═══════════════════════════════════════════════════════════════════════ */
+/*  SubTable – nested table inside expanded group row (desktop)          */
+/* ═══════════════════════════════════════════════════════════════════════ */
+
+function SubTable({
+  policies,
+  policyType,
+  onSelect,
+  t
+}: {
+  policies: Policy[]
+  policyType: string
+  onSelect: (id: string) => void
+  t: (key: string, opts?: Record<string, unknown>) => string
+}) {
+  const isTravel = policyType === 'travel'
+  const headers = isTravel
+    ? [
+        t('policies.policyRef'),
+        t('policies.travellerName'),
+        t('policies.cnp'),
+        t('policies.premium'),
+        t('policies.pdf')
+      ]
+    : [
+        t('policies.policyRef'),
+        t('policies.type'),
+        t('policies.insurer'),
+        t('policies.premium'),
+        t('policies.pdf')
+      ]
+
+  return (
+    <Table>
+      <TableHeader>
+        <TableRow className="hover:bg-transparent !border-b !border-slate-200/70">
+          {headers.map((label) => (
+            <TableHead
+              key={label}
+              className="text-xs font-medium text-slate-500 uppercase tracking-wide"
+            >
+              {label}
+            </TableHead>
+          ))}
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {policies.map((sub) => {
+          const doc = sub.documents?.[0]
+          return (
+            <TableRow
+              key={sub.id}
+              className="cursor-pointer hover:bg-gray-50/50"
+              onClick={() => onSelect(sub.id)}
+            >
+              <TableCell className="text-sm font-medium text-gray-900">
+                {sub.policyNumber}
+              </TableCell>
+              {isTravel ? (
+                <>
+                  <TableCell className="text-sm font-medium text-gray-900">
+                    {sub.data?.insured?.name ?? '—'}
+                  </TableCell>
+                  <TableCell className="text-sm text-gray-700">
+                    {sub.data?.insured?.cnp ?? '—'}
+                  </TableCell>
+                </>
+              ) : (
+                <>
+                  <TableCell>
+                    <InsuranceTypeBadge type={sub.insuranceType ?? sub.type} />
+                  </TableCell>
+                  <TableCell className="text-sm text-gray-700">
+                    {sub.insurer ?? '—'}
+                  </TableCell>
+                </>
+              )}
+              <TableCell className="text-sm text-gray-900">
+                {formatCurrency(sub.premium)}
+              </TableCell>
+              <TableCell>
+                {doc ? <PdfLink url={doc.url} label={doc.name} /> : null}
+              </TableCell>
+            </TableRow>
+          )
+        })}
+      </TableBody>
+    </Table>
   )
 }

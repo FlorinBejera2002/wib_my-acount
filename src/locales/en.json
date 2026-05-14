@@ -300,7 +300,18 @@
     "autoRenewalInfo": "We automatically send you renewal offers by email at {{days}} before expiry. If you want an additional reminder earlier, choose below.",
     "notifyBefore": "Additional reminder",
     "reminderSuccess": "Reminder set successfully",
-    "beforeExpiry": "before expiry"
+    "beforeExpiry": "before expiry",
+    "product": {
+      "plate": "License plate",
+      "vinMasked": "VIN",
+      "address": "Address",
+      "propertyType": "Property type",
+      "areaSqm": "Area",
+      "floor": "Floor",
+      "builtYear": "Year built",
+      "destination": "Destination",
+      "days": "Days"
+    }
   },
   "quotes": {
     "title": "My Quotes",

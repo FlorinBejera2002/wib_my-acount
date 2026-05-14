@@ -47,5 +47,8 @@ export const ENDPOINTS = {
   },
   DASHBOARD: {
     STATS: '/user/dashboard/stats'
+  },
+  SYNC: {
+    REFRESH: '/user/sync/refresh'
   }
 } as const

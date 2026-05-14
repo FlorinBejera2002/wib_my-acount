@@ -1,9 +1,12 @@
+import { useSyncRefresh } from '@/hooks/use-sync-refresh'
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
 import { Outlet } from 'react-router-dom'
 import { AppHeader } from './app-header'
 import { AppSidebar } from './app-sidebar'
 
 export function AppLayout() {
+  useSyncRefresh()
+
   return (
     <SidebarProvider>
       <AppSidebar />

@@ -1,0 +1,43 @@
+import { api } from '@/api/axios-client'
+import { ENDPOINTS } from '@/api/endpoints'
+import { useAuthStore } from '@/stores/auth-store'
+import { useEffect, useRef } from 'react'
+import { useUserActivity } from './use-user-activity'
+
+const SYNC_INTERVAL = 10 * 60 * 1000
+
+export function useSyncRefresh() {
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
+  const isActive = useUserActivity()
+
+  // Refs so the interval callback always reads current values
+  // without needing to recreate the interval on every change.
+  const isActiveRef = useRef(isActive)
+  const isPendingRef = useRef(false)
+
+  useEffect(() => {
+    isActiveRef.current = isActive
+  }, [isActive])
+
+  useEffect(() => {
+    if (!isAuthenticated) return
+
+    const sync = async () => {
+      if (isPendingRef.current) return
+      if (!isActiveRef.current) return
+      if (document.visibilityState !== 'visible') return
+
+      isPendingRef.current = true
+      try {
+        await api.post(ENDPOINTS.SYNC.REFRESH)
+      } catch {
+        // background task — errors are intentionally swallowed
+      } finally {
+        isPendingRef.current = false
+      }
+    }
+
+    const id = setInterval(sync, SYNC_INTERVAL)
+    return () => clearInterval(id)
+  }, [isAuthenticated])
+}

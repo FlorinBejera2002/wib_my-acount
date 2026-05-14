@@ -26,6 +26,40 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { PolicyStatusBadge } from './policy-status-badge'
 
+type ProductField = {
+  key: string
+  labelKey: string
+  mono?: boolean
+  suffix?: string
+}
+
+const VEHICLE_FIELDS: ProductField[] = [
+  { key: 'plate', labelKey: 'policies.product.plate', mono: true },
+  { key: 'vinMasked', labelKey: 'policies.product.vinMasked', mono: true }
+]
+
+const HOME_FIELDS: ProductField[] = [
+  { key: 'address', labelKey: 'policies.product.address' },
+  { key: 'type', labelKey: 'policies.product.propertyType' },
+  { key: 'areaSqm', labelKey: 'policies.product.areaSqm', suffix: ' mp' },
+  { key: 'floor', labelKey: 'policies.product.floor' },
+  { key: 'builtYear', labelKey: 'policies.product.builtYear' }
+]
+
+const PRODUCT_FIELDS: Record<string, ProductField[]> = {
+  rca: VEHICLE_FIELDS,
+  casco: VEHICLE_FIELDS,
+  casco_econom: VEHICLE_FIELDS,
+  casco_perfect_cover: VEHICLE_FIELDS,
+  cmr: VEHICLE_FIELDS,
+  breakdown: VEHICLE_FIELDS,
+  home: HOME_FIELDS,
+  travel: [
+    { key: 'destination', labelKey: 'policies.product.destination' },
+    { key: 'days', labelKey: 'policies.product.days' }
+  ]
+}
+
 const NOTIFY_OPTIONS = [
   { key: '3_MONTHS', days: 90 },
   { key: '6_MONTHS', days: 180 }
@@ -302,6 +336,39 @@ export function PolicyDetailPanel({ policyId }: { policyId: string }) {
             </p>
           </div>
         </div>
+
+        {/* Product fields (type-specific) */}
+        {(() => {
+          const product = policy.data?.product
+          const fields = PRODUCT_FIELDS[policy.type] ?? []
+          if (!product || Array.isArray(product) || fields.length === 0)
+            return null
+          const productMap = product as Record<string, unknown>
+          return fields.map((field) => {
+            const value = productMap[field.key]
+            if (value === undefined || value === null) return null
+            return (
+              <div
+                key={field.key}
+                className="flex items-center gap-3 px-4 py-3 border-b border-gray-100"
+              >
+                <div className="flex-1 min-w-0">
+                  <p className="text-[10px] font-medium uppercase tracking-wider text-gray-400 mb-0.5">
+                    {t(field.labelKey)}
+                  </p>
+                  <p
+                    className={cn(
+                      'text-sm font-semibold text-gray-900 truncate',
+                      field.mono && 'font-mono'
+                    )}
+                  >
+                    {`${value}${field.suffix ?? ''}`}
+                  </p>
+                </div>
+              </div>
+            )
+          })
+        })()}
 
         {/* Insured person */}
         {policy.data?.insured?.name && (

@@ -308,7 +308,18 @@
     "autoRenewalInfo": "Îți trimitem automat pe email oferte de reînnoire la {{days}} înainte de expirare. Dacă vrei un reminder suplimentar mai devreme, alege mai jos.",
     "notifyBefore": "Reminder suplimentar",
     "reminderSuccess": "Reminder-ul a fost setat cu succes",
-    "beforeExpiry": "înainte de expirare"
+    "beforeExpiry": "înainte de expirare",
+    "product": {
+      "plate": "Număr înmatriculare",
+      "vinMasked": "Serie VIN",
+      "address": "Adresă",
+      "propertyType": "Tip proprietate",
+      "areaSqm": "Suprafață",
+      "floor": "Etaj",
+      "builtYear": "Anul construcției",
+      "destination": "Destinație",
+      "days": "Zile"
+    }
   },
   "quotes": {
     "title": "Cotațiile Mele",
