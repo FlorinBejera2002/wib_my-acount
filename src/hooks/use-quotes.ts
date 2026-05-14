@@ -28,7 +28,7 @@ export function useQuotes(params: TableParams) {
     queryKey: ['quotes', params],
     queryFn: () => fetchQuotes(params),
     refetchInterval: isUserActive ? POLL_INTERVAL : false,
-    refetchIntervalInBackground: false,
+    refetchIntervalInBackground: false
   })
 }
 

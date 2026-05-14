@@ -141,7 +141,7 @@ export type NotificationSettingsFormValues = z.infer<
 >
 
 export const preferencesSchema = z.object({
-  language: z.enum(['ro', 'en', 'hu'])
+  language: z.enum(['ro', 'en', 'fr', 'de'])
 })
 
 export type PreferencesFormValues = z.infer<typeof preferencesSchema>

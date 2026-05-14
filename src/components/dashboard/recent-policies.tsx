@@ -142,10 +142,7 @@ export function RecentPolicies() {
                         {policy.policyNumber}
                       </p>
                       <span className="text-sm text-gray-700 max-w-[230px] truncate block">
-                        {policy.policyDetails ??
-                          policy.vehicleOrProperty ??
-                          policy.insurer ??
-                          '—'}
+                        {policy.data?.insured?.name ?? policy.insurer ?? '—'}
                       </span>
                     </div>
                     <div className="flex shrink-0 flex-col items-end gap-1">

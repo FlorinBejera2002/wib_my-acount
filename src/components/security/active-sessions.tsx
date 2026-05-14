@@ -146,7 +146,7 @@ export function ActiveSessions() {
                 <div className="flex items-center gap-3 text-xs text-muted-foreground">
                   <span className="flex items-center gap-1">
                     <Globe className="h-3 w-3" />
-                    IP: {session.ipAddress}
+                    IP: {session.ip}
                   </span>
                 </div>
                 {session.createdAt && (

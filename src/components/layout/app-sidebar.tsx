@@ -215,7 +215,7 @@ export function AppSidebar() {
                     : (user?.username ?? '')}
                 </span>
                 <span className="truncate text-xs text-gray-400">
-                  {profile?.email || user?.email}
+                  {profile?.email}
                 </span>
               </div>
               <ChevronsUpDown className="h-4 w-4 shrink-0 text-gray-300 group-data-[collapsible=icon]:hidden" />
@@ -229,9 +229,7 @@ export function AppSidebar() {
                     ? `${profile.firstName} ${profile.lastName}`
                     : (user?.username ?? '')}
                 </p>
-                <p className="text-xs text-gray-500">
-                  {profile?.email || user?.email}
-                </p>
+                <p className="text-xs text-gray-500">{profile?.email}</p>
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />

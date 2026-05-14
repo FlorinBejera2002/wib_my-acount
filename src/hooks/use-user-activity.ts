@@ -5,7 +5,7 @@ const ACTIVITY_EVENTS = [
   'mousedown',
   'keydown',
   'scroll',
-  'touchstart',
+  'touchstart'
 ] as const
 
 export function useUserActivity(idleThreshold = 5 * 60 * 1000) {

@@ -35,7 +35,6 @@ export interface TableParams {
 export interface LoginUser {
   id: string
   username: string
-  email: string
 }
 
 export interface LoginRequest {
@@ -152,7 +151,7 @@ export interface TwoFactorMessageResponse {
 // ==================== User ====================
 
 export interface UserPreferences {
-  language: 'ro' | 'en' | 'hu'
+  language: 'ro' | 'en' | 'fr' | 'de'
   notifications: boolean
 }
 
@@ -184,7 +183,7 @@ export interface UpdateProfileRequest {
 }
 
 export interface UpdatePreferencesRequest {
-  language?: 'ro' | 'en' | 'hu'
+  language?: 'ro' | 'en' | 'fr' | 'de'
   notifications?: boolean
 }
 
@@ -193,126 +192,87 @@ export interface ChangePasswordRequest {
   new_password: string
 }
 
-// ==================== Quotes ====================
+// ==================== Shared ====================
 
-export type QuoteType =
+export type InsuranceType =
+  | 'rca'
+  | 'casco'
+  | 'casco_econom'
+  | 'casco_perfect_cover'
+  | 'pad'
+  | 'home'
+  | 'travel'
+  | 'health'
+  | 'life'
   | 'accidents'
   | 'accidents_taxi'
   | 'accidents_traveler'
   | 'breakdown'
-  | 'casco'
-  | 'casco_econom'
   | 'cmr'
-  | 'health'
-  | 'home'
-  | 'pad'
-  | 'rca'
   | 'rcp'
-  | 'travel'
+  | 'other'
 
-export interface QuoteDocument {
+export interface PolicyDocument {
   id: string
   name: string
-  type: 'OFFER' | 'COMPARISON' | 'INVOICE' | 'OTHER'
+  type: 'POLICY' | 'CERTIFICATE' | 'AMENDMENT' | 'OTHER'
   url: string
   size: number
 }
 
-export type QuoteStatus =
-  | 'draft'
-  | 'submitted'
-  | 'accepted'
-  | 'expired'
-  | 'converted'
+export interface InsuredData {
+  name?: string
+  cnp?: string
+}
+
+// ==================== Quotes ====================
+
+export type QuoteType = InsuranceType
 
 export interface Quote {
   id: string
-  legacyId?: string | null
-  quoteNumber?: string | null
+  quoteRef?: string | null
   type: QuoteType
-  status: QuoteStatus
-  insurerName?: string | null
-  premium?: number | null
-  currency: string
-  validFrom?: string | null
-  validUntil?: string | null
-  quoteData?: Record<string, unknown>
-  vehicleOrProperty?: string | null
-  insuredDetails?: string | null
+  quoteDate?: string | null
+  quoteStartDate?: string | null
+  active: boolean
   offerUrl?: string | null
-  documents?: QuoteDocument[]
+  documents?: PolicyDocument[]
+  data?: {
+    product?: Record<string, unknown>
+    insured?: InsuredData
+  }
   createdAt: string
   updatedAt: string
 }
 
 // ==================== Policies ====================
 
-export type PolicyType =
-  | 'accidents'
-  | 'accidents_taxi'
-  | 'accidents_traveler'
-  | 'breakdown'
-  | 'casco'
-  | 'casco_econom'
-  | 'cmr'
-  | 'health'
-  | 'home'
-  | 'pad'
-  | 'rca'
-  | 'rcp'
-  | 'travel'
+export type PolicyType = InsuranceType
 
 export type PolicyStatus = 'active' | 'expired' | 'cancelled' | 'pending'
 
-export interface PolicyDocument {
-  id: string
-  name: string
-  type: string
-  url: string
-  size?: number
-}
-
-export interface PolicyTraveller {
-  name: string
-  cnp: string
-  phone?: string
-  premium?: number
-  covers?: string[]
-  documents: PolicyDocument[]
-}
-
-export interface InsuranceComponent {
-  type: 'pad' | 'facultative'
-  policyNumber: string
-  insurerName: string
-  premium: number
-  startDate: string
-  endDate: string
-  documents: PolicyDocument[]
-}
-
 export interface Policy {
   id: string
-  legacyId?: string | null
+  policySeries?: string | null
   policyNumber: string
+  transactionId?: string | null
   type: PolicyType
   status: PolicyStatus
   insurer?: string | null
-  insurerName?: string | null
-  vehicleOrProperty?: string | null
-  policyDetails?: string | null
-  startDate: string
-  endDate: string
+  active: boolean
+  quoteRef?: string | null
+  documents?: PolicyDocument[]
+  insuranceType?: 'pad' | 'facultative' | 'pad_facultative' | null
+  data?: {
+    product?: Record<string, unknown>
+    insured?: InsuredData
+  }
   premium: number
   currency: string
+  startDate: string
+  endDate: string
   daysUntilExpiry: number
-  autoRenew: boolean
-  sourceQuoteId?: string | null
-  coverageDetails?: Record<string, unknown>
-  documents?: PolicyDocument[]
-  travellers?: PolicyTraveller[]
-  insuranceComponents?: InsuranceComponent[]
-  insuranceType?: 'pad' | 'facultative' | 'pad_facultative'
   createdAt: string
   updatedAt: string
 }
@@ -321,7 +281,7 @@ export interface Policy {
 
 export interface Session {
   id: string
-  ipAddress: string
+  ip: string
   userAgent: string
   lastActivityAt: string
   createdAt: string

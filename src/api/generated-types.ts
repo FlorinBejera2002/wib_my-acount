@@ -13,7 +13,16 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Login with email and password */
+        /**
+         * Login with email and password
+         * @description Authenticates the user via email + password. Handled by the `json_login` firewall.
+         *
+         *     **Without 2FA**: returns `access_token`, `refresh_token`, and a `user` summary.
+         *     **With 2FA enabled**: returns `requires_2fa: true`, a short-lived `pre_auth_token`, and the `two_factor_method`.
+         *     The client must then call `POST /auth/two-factor` with the pre-auth token and TOTP/email code.
+         *
+         *     Rate limited: 5 attempts/minute per IP.
+         */
         post: operations["post_api_auth_login"];
         delete?: never;
         options?: never;
@@ -28,7 +37,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get RSA public key */
+        /**
+         * Get RSA public key
+         * @description Returns the RSA public key used for JWT signature verification. Used by the legacy Symfony 3.4 backend.
+         */
         get: operations["get_api_auth_public_key"];
         put?: never;
         post?: never;
@@ -47,7 +59,16 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Register a new account */
+        /**
+         * Register a new account
+         * @description Creates a new user account. If a matching legacy user is found by username, the account is automatically
+         *     linked and profile data (person, contact, address, company) is hydrated from the legacy system.
+         *
+         *     On success, returns tokens immediately (user is auto-logged-in).
+         *     Accepts both camelCase (`firstName`) and snake_case (`first_name`) for backward compatibility.
+         *
+         *     Rate limited: 10 registrations/hour per IP.
+         */
         post: operations["post_api_auth_register"];
         delete?: never;
         options?: never;
@@ -64,7 +85,15 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Complete login with 2FA code */
+        /**
+         * Complete login with 2FA code
+         * @description Second step of the login flow when 2FA is enabled. The client submits the pre-auth token
+         *     received from POST /auth/login along with the 6-digit TOTP or email OTP code.
+         *
+         *     On success, returns full `access_token` and `refresh_token`.
+         *
+         *     Rate limited: 5 attempts/5 minutes per IP.
+         */
         post: operations["post_api_auth_two_factor"];
         delete?: never;
         options?: never;
@@ -81,7 +110,14 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Refresh access token */
+        /**
+         * Refresh access token
+         * @description Exchanges a valid refresh token for a new access_token + refresh_token pair.
+         *     The old refresh token is consumed (single-use). If the token is invalid, expired,
+         *     or already revoked, returns 401.
+         *
+         *     Rate limited: 10 requests/minute per IP.
+         */
         post: operations["post_api_auth_refresh"];
         delete?: never;
         options?: never;
@@ -98,7 +134,10 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Logout and revoke session */
+        /**
+         * Logout and revoke session
+         * @description Revokes the current session's refresh token and session record. Requires a valid JWT.
+         */
         post: operations["post_api_auth_logout"];
         delete?: never;
         options?: never;
@@ -115,7 +154,13 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Request password reset OTP */
+        /**
+         * Request password reset OTP
+         * @description Sends a 6-digit OTP to the user's email address. Always returns success even if the email
+         *     is not registered (to prevent email enumeration).
+         *
+         *     Rate limited: 3 requests/hour per IP.
+         */
         post: operations["post_api_auth_forgot_password"];
         delete?: never;
         options?: never;
@@ -132,7 +177,13 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Verify password reset OTP */
+        /**
+         * Verify password reset OTP
+         * @description Validates the 6-digit OTP sent via email. On success, returns a one-time `reset_token`
+         *     that must be used with POST /auth/reset-password.
+         *
+         *     Rate limited: 5 attempts/15 minutes per IP.
+         */
         post: operations["post_api_auth_verify_reset_code"];
         delete?: never;
         options?: never;
@@ -149,7 +200,11 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Reset password with reset token */
+        /**
+         * Reset password with reset token
+         * @description Sets a new password using the reset token obtained from POST /auth/verify-reset-code.
+         *     Revokes all existing refresh tokens for the user (forces re-login on all devices).
+         */
         post: operations["post_api_auth_reset_password"];
         delete?: never;
         options?: never;
@@ -166,7 +221,12 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Enable two-factor authentication */
+        /**
+         * Enable two-factor authentication
+         * @description Initiates 2FA setup. For `method=totp`, returns a TOTP secret and provisioning URI (for QR code).
+         *     The client must then call POST /auth/2fa/confirm with a valid TOTP code to activate it.
+         *     For `method=email`, 2FA is enabled immediately using email-based OTP codes.
+         */
         post: operations["post_api_auth_two_factor_enable"];
         delete?: never;
         options?: never;
@@ -183,7 +243,10 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Confirm TOTP 2FA setup */
+        /**
+         * Confirm TOTP 2FA setup
+         * @description Verifies the first TOTP code to confirm the secret is set up correctly. After this call, 2FA is fully active.
+         */
         post: operations["post_api_auth_two_factor_confirm"];
         delete?: never;
         options?: never;
@@ -200,7 +263,13 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Resend 2FA email code */
+        /**
+         * Resend 2FA email code
+         * @description Resends the 2FA email OTP code during the login flow. Requires a valid pre_auth_token
+         *     and only works when the user's 2FA method is "email".
+         *
+         *     Rate limited: 3 requests/10 minutes per IP.
+         */
         post: operations["post_api_auth_two_factor_resend_code"];
         delete?: never;
         options?: never;
@@ -217,7 +286,10 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Disable two-factor authentication */
+        /**
+         * Disable two-factor authentication
+         * @description Disables 2FA for the authenticated user. Requires current password for confirmation.
+         */
         post: operations["post_api_auth_two_factor_disable"];
         delete?: never;
         options?: never;
@@ -232,7 +304,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get dashboard statistics */
+        /**
+         * Get dashboard statistics
+         * @description Returns aggregated counts and highlights for the authenticated user.
+         */
         get: operations["get_api_dashboard_stats"];
         put?: never;
         post?: never;
@@ -449,6 +524,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/user/sync/refresh": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Refresh sync */
+        get: operations["get_api_sync_refresh"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/user/profile": {
         parameters: {
             query?: never;
@@ -531,37 +623,6 @@ export interface components {
                 };
             };
         };
-        PolicyResponse: {
-            id: string;
-            policyNumber: string;
-            /** @enum {string} */
-            type: "rca" | "casco" | "home" | "health" | "travel" | "life" | "other";
-            /** @enum {string} */
-            status: "active" | "expired" | "cancelled" | "pending";
-            insurerName?: string | null;
-            vehicleOrProperty?: string | null;
-            policyDetails?: string | null;
-            /** Format: float */
-            premium: number;
-            currency: string;
-            /** Format: date-time */
-            startDate: string;
-            /** Format: date-time */
-            endDate: string;
-            daysUntilExpiry: number;
-            autoRenew: boolean;
-            sourceQuoteId?: string | null;
-            documents?: components["schemas"]["PolicyDocument"][];
-            /** @enum {string|null} */
-            insuranceType?: "pad" | "facultative" | "pad_facultative" | null;
-            insuranceComponents?: components["schemas"]["InsuranceComponent"][];
-            travellers?: components["schemas"]["Traveller"][];
-            coverageDetails?: Record<string, never>;
-            /** Format: date-time */
-            createdAt: string;
-            /** Format: date-time */
-            updatedAt: string;
-        };
         PolicyDocument: {
             id: string;
             name: string;
@@ -570,52 +631,60 @@ export interface components {
             url: string;
             size: number;
         };
-        InsuranceComponent: {
-            /** @enum {string} */
-            type: "pad" | "facultative";
+        PolicyResponse: {
+            id: string;
+            policySeries?: string | null;
             policyNumber: string;
-            insurerName: string;
+            transactionId?: string | null;
+            /** @enum {string} */
+            type: "rca" | "casco" | "casco_econom" | "casco_perfect_cover" | "pad" | "home" | "travel" | "health" | "life" | "accidents" | "accidents_taxi" | "accidents_traveler" | "breakdown" | "cmr" | "rcp" | "other";
+            /** @enum {string} */
+            status: "active" | "expired" | "cancelled" | "pending";
+            insurer?: string | null;
+            active: boolean;
+            quoteRef?: string | null;
+            documents?: components["schemas"]["PolicyDocument"][];
+            /** @enum {string|null} */
+            insuranceType?: "pad" | "facultative" | "pad_facultative" | null;
+            data?: {
+                product?: Record<string, never>;
+                insured?: {
+                    name?: string;
+                    cnp?: string;
+                };
+            };
             /** Format: float */
             premium: number;
+            currency: string;
             /** Format: date-time */
             startDate: string;
             /** Format: date-time */
             endDate: string;
-            documents: components["schemas"]["PolicyDocument"][];
-        };
-        Traveller: {
-            name: string;
-            cnp?: string | null;
-            phone?: string | null;
-            documents: components["schemas"]["PolicyDocument"][];
+            daysUntilExpiry: number;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
         };
         QuoteResponse: {
             id: string;
-            quoteNumber?: string | null;
+            quoteRef?: string | null;
             /** @enum {string} */
-            type: "rca" | "casco" | "home" | "health" | "travel" | "life" | "other";
-            /** @enum {string} */
-            status: "draft" | "submitted" | "accepted" | "expired" | "converted";
-            insurerName?: string | null;
-            vehicleOrProperty?: string | null;
-            insuredDetails?: string | null;
-            /** Format: float */
-            premium?: number | null;
-            currency: string;
+            type: "rca" | "casco" | "casco_econom" | "casco_perfect_cover" | "pad" | "home" | "travel" | "health" | "life" | "accidents" | "accidents_taxi" | "accidents_traveler" | "breakdown" | "cmr" | "rcp" | "other";
             /** Format: date-time */
-            validFrom?: string | null;
+            quoteDate?: string | null;
             /** Format: date-time */
-            validUntil?: string | null;
+            quoteStartDate?: string | null;
+            active: boolean;
             offerUrl?: string | null;
-            documents?: {
-                id: string;
-                name: string;
-                /** @enum {string} */
-                type: "OFFER" | "COMPARISON" | "INVOICE" | "OTHER";
-                url: string;
-                size: number;
-            }[];
-            quoteData?: Record<string, never>;
+            documents?: components["schemas"]["PolicyDocument"][];
+            data?: {
+                product?: Record<string, never>;
+                insured?: {
+                    name?: string;
+                    cnp?: string;
+                };
+            };
             /** Format: date-time */
             createdAt: string;
             /** Format: date-time */
@@ -660,50 +729,37 @@ export interface components {
             /** Format: date-time */
             createdAt: string;
         };
-        TwoFactorVerifyRequest: {
-            pre_auth_token: string;
-            totp_code: string;
-        };
-        RefreshRequest: {
-            refresh_token: string;
-        };
-        ForgotPasswordRequest: {
-            email: string;
-        };
-        VerifyResetCodeRequest: {
-            email: string;
-            code: string;
-        };
-        ResetPasswordRequest: {
-            reset_token: string;
-            new_password: string;
-        };
-        Confirm2FARequest: {
-            totp_code: string;
-        };
-        Disable2FARequest: {
-            password: string;
-        };
         CreateReminderRequest: {
             title: string;
             remindAt: string;
-            note?: string | null;
+            /** @default null */
+            note: string | null;
         };
         UpdateReminderRequest: {
-            title?: string | null;
-            remindAt?: string | null;
-            note?: string | null;
+            /** @default null */
+            title: string | null;
+            /** @default null */
+            remindAt: string | null;
+            /** @default null */
+            note: string | null;
             isDone?: boolean | null;
         };
         UpdateProfileRequest: {
-            firstName?: string | null;
-            lastName?: string | null;
-            phone?: string | null;
+            /** @default null */
+            firstName: string | null;
+            /** @default null */
+            lastName: string | null;
+            /** @default null */
+            phone: string | null;
         };
         UpdatePreferencesRequest: {
-            /** @enum {string|null} */
-            language?: "ro" | "en" | "fr" | "de" | null;
-            notifications?: boolean | null;
+            /**
+             * @default null
+             * @enum {string|null}
+             */
+            language: "ro" | "en" | "fr" | "de" | null;
+            /** @default null */
+            notifications: boolean | null;
         };
         ChangePasswordRequest: {
             current_password: string;
@@ -728,9 +784,15 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
-                    /** Format: email */
+                    /**
+                     * Format: email
+                     * @example user@example.com
+                     */
                     email: string;
-                    /** Format: password */
+                    /**
+                     * Format: password
+                     * @example secret123
+                     */
                     password: string;
                 };
             };
@@ -745,15 +807,19 @@ export interface operations {
                     "application/json": {
                         /** @example false */
                         requires_2fa: boolean;
+                        /** @description RS256 JWT (15 min TTL) */
                         access_token: string;
+                        /** @description Opaque refresh token (7 day TTL) */
                         refresh_token: string;
                         user: {
+                            /** @description HMAC-SHA256 hashed user ID */
                             id?: string;
                             username?: string;
                         };
                     } | {
                         /** @example true */
                         requires_2fa: boolean;
+                        /** @description Short-lived JWT (5 min TTL, scope=pre_auth) */
                         pre_auth_token: string;
                         /** @enum {string} */
                         two_factor_method: "totp" | "email";
@@ -797,6 +863,7 @@ export interface operations {
                 content: {
                     "application/json": {
                         data?: {
+                            /** @description PEM-encoded RSA public key */
                             public_key?: string;
                             /** @example RS256 */
                             algorithm?: string;
@@ -816,21 +883,34 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
-                    /** Format: email */
+                    /**
+                     * Format: email
+                     * @example newuser@example.com
+                     */
                     email: string;
-                    /** Format: password */
+                    /**
+                     * Format: password
+                     * @example securePass1
+                     */
                     password: string;
-                    /** Format: password */
+                    /**
+                     * Format: password
+                     * @description Optional password confirmation
+                     */
                     confirmPassword?: string;
+                    /** @example Ion */
                     firstName?: string;
+                    /** @example Popescu */
                     lastName?: string;
+                    /** @example +40712345678 */
                     phone?: string;
+                    /** @description Derived from email prefix if omitted */
                     username?: string;
                 };
             };
         };
         responses: {
-            /** @description Registration successful */
+            /** @description Registration successful — user is auto-logged-in */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -885,7 +965,12 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
+                    /** @description Pre-auth JWT from login response */
                     pre_auth_token: string;
+                    /**
+                     * @description 6-digit TOTP or email OTP code
+                     * @example 123456
+                     */
                     totp_code: string;
                 };
             };
@@ -946,6 +1031,7 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
+                    /** @description Opaque refresh token from login/previous refresh */
                     refresh_token: string;
                 };
             };
@@ -1008,6 +1094,7 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
+                        /** @example Logged out successfully. */
                         message?: string;
                     };
                 };
@@ -1033,19 +1120,23 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
-                    /** Format: email */
+                    /**
+                     * Format: email
+                     * @example user@example.com
+                     */
                     email: string;
                 };
             };
         };
         responses: {
-            /** @description OTP sent */
+            /** @description OTP sent (or silently ignored if email not found) */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": {
+                        /** @example If an account exists for this email, a reset code has been sent. */
                         message?: string;
                     };
                 };
@@ -1080,20 +1171,28 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
-                    /** Format: email */
+                    /**
+                     * Format: email
+                     * @example user@example.com
+                     */
                     email: string;
+                    /**
+                     * @description 6-digit OTP from email
+                     * @example 123456
+                     */
                     code: string;
                 };
             };
         };
         responses: {
-            /** @description OTP verified */
+            /** @description OTP verified — reset token returned */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": {
+                        /** @description One-time reset token for POST /auth/reset-password */
                         reset_token: string;
                     };
                 };
@@ -1137,6 +1236,7 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
+                    /** @description Token from POST /auth/verify-reset-code */
                     reset_token: string;
                     /** Format: password */
                     new_password: string;
@@ -1151,6 +1251,7 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
+                        /** @example Password has been reset successfully. */
                         message?: string;
                     };
                 };
@@ -1185,7 +1286,11 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
-                    /** @enum {string} */
+                    /**
+                     * @description Defaults to "totp" if omitted
+                     * @example totp
+                     * @enum {string}
+                     */
                     method?: "totp" | "email";
                 };
             };
@@ -1198,9 +1303,12 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
+                        /** @description Base32-encoded TOTP secret */
                         secret: string;
+                        /** @description otpauth:// URI for QR code generation */
                         provisioningUri: string;
                     } | {
+                        /** @example Email two-factor authentication has been enabled. */
                         message?: string;
                     };
                 };
@@ -1235,6 +1343,7 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
+                    /** @example 123456 */
                     totp_code: string;
                 };
             };
@@ -1247,6 +1356,7 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
+                        /** @example Two-factor authentication has been enabled. */
                         message?: string;
                     };
                 };
@@ -1281,6 +1391,7 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
+                    /** @description Pre-auth JWT from login response */
                     pre_auth_token: string;
                 };
             };
@@ -1293,6 +1404,7 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
+                        /** @example A new verification code has been sent to your email. */
                         message?: string;
                     };
                 };
@@ -1327,7 +1439,10 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
-                    /** Format: password */
+                    /**
+                     * Format: password
+                     * @description Current account password
+                     */
                     password: string;
                 };
             };
@@ -1340,6 +1455,7 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
+                        /** @example Two-factor authentication has been disabled. */
                         message?: string;
                     };
                 };
@@ -1480,36 +1596,21 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": {
-                        id?: string;
-                        type?: string;
-                        title?: string;
-                        body?: string;
-                        meta?: Record<string, never>;
-                        isRead?: boolean;
-                        /** Format: date-time */
-                        createdAt?: string;
-                    };
-                };
+                content?: never;
             };
             /** @description Unauthorized */
             401: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
+                content?: never;
             };
             /** @description Notification not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
+                content?: never;
             };
         };
     };
@@ -1527,20 +1628,14 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": {
-                        message?: string;
-                    };
-                };
+                content?: never;
             };
             /** @description Unauthorized */
             401: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
+                content?: never;
             };
         };
     };
@@ -1567,18 +1662,14 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
+                content?: never;
             };
             /** @description Notification not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
+                content?: never;
             };
         };
     };
@@ -1588,7 +1679,7 @@ export interface operations {
                 page?: number;
                 limit?: number;
                 status?: "active" | "expired" | "cancelled" | "pending";
-                type?: "rca" | "casco" | "home" | "health" | "travel" | "life" | "other";
+                type?: "rca" | "casco" | "casco_econom" | "casco_perfect_cover" | "pad" | "home" | "travel" | "health" | "life" | "accidents" | "accidents_taxi" | "accidents_traveler" | "breakdown" | "cmr" | "rcp" | "other";
             };
             header?: never;
             path?: never;
@@ -1616,9 +1707,7 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
+                content?: never;
             };
         };
     };
@@ -1647,18 +1736,14 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
+                content?: never;
             };
             /** @description Policy not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
+                content?: never;
             };
         };
     };
@@ -1667,8 +1752,8 @@ export interface operations {
             query?: {
                 page?: number;
                 limit?: number;
-                status?: "draft" | "submitted" | "accepted" | "expired" | "converted";
-                type?: "rca" | "casco" | "home" | "health" | "travel" | "life" | "other";
+                active?: boolean;
+                type?: "rca" | "casco" | "casco_econom" | "casco_perfect_cover" | "pad" | "home" | "travel" | "health" | "life" | "accidents" | "accidents_taxi" | "accidents_traveler" | "breakdown" | "cmr" | "rcp" | "other";
             };
             header?: never;
             path?: never;
@@ -1696,9 +1781,7 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
+                content?: never;
             };
         };
     };
@@ -1727,18 +1810,14 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
+                content?: never;
             };
             /** @description Quote not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
+                content?: never;
             };
         };
     };
@@ -1767,9 +1846,7 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
+                content?: never;
             };
         };
     };
@@ -1782,12 +1859,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": {
-                    title: string;
-                    /** Format: date-time */
-                    remindAt: string;
-                    note?: string | null;
-                };
+                "application/json": components["schemas"]["CreateReminderRequest"];
             };
         };
         responses: {
@@ -1805,18 +1877,14 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
+                content?: never;
             };
             /** @description Validation error */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
+                content?: never;
             };
         };
     };
@@ -1831,13 +1899,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": {
-                    title?: string;
-                    /** Format: date-time */
-                    remindAt?: string;
-                    note?: string | null;
-                    isDone?: boolean;
-                };
+                "application/json": components["schemas"]["UpdateReminderRequest"];
             };
         };
         responses: {
@@ -1855,27 +1917,21 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
+                content?: never;
             };
             /** @description Reminder not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
+                content?: never;
             };
             /** @description Validation error */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
+                content?: never;
             };
         };
     };
@@ -1902,18 +1958,14 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
+                content?: never;
             };
             /** @description Reminder not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
+                content?: never;
             };
         };
     };
@@ -1951,9 +2003,7 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
+                content?: never;
             };
         };
     };
@@ -1978,9 +2028,7 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
+                content?: never;
             };
         };
     };
@@ -2007,18 +2055,49 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
+                content?: never;
             };
             /** @description Session not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
+                content?: never;
+            };
+        };
+    };
+    get_api_sync_refresh: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Sync refresh result */
+            200: {
+                headers: {
+                    [name: string]: unknown;
                 };
+                content: {
+                    "application/json": {
+                        hasChanges?: boolean;
+                        newPolicies?: number;
+                        updatedPolicies?: number;
+                        newQuotes?: number;
+                        updatedQuotes?: number;
+                        /** Format: date-time */
+                        syncedAt?: string;
+                    };
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
@@ -2045,9 +2124,7 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
+                content?: never;
             };
         };
     };
@@ -2060,11 +2137,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": {
-                    firstName?: string;
-                    lastName?: string;
-                    phone?: string;
-                };
+                "application/json": components["schemas"]["UpdateProfileRequest"];
             };
         };
         responses: {
@@ -2082,18 +2155,14 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
+                content?: never;
             };
             /** @description Validation error */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
+                content?: never;
             };
         };
     };
@@ -2106,11 +2175,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": {
-                    /** @enum {string} */
-                    language?: "ro" | "en" | "fr" | "de";
-                    notifications?: boolean;
-                };
+                "application/json": components["schemas"]["UpdatePreferencesRequest"];
             };
         };
         responses: {
@@ -2119,32 +2184,21 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": {
-                        preferences?: {
-                            language?: string;
-                            notifications?: boolean;
-                        };
-                    };
-                };
+                content?: never;
             };
             /** @description Unauthorized */
             401: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
+                content?: never;
             };
             /** @description Validation error */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
+                content?: never;
             };
         };
     };
@@ -2157,12 +2211,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": {
-                    /** Format: password */
-                    current_password: string;
-                    /** Format: password */
-                    new_password: string;
-                };
+                "application/json": components["schemas"]["ChangePasswordRequest"];
             };
         };
         responses: {
@@ -2171,38 +2220,28 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": {
-                        message?: string;
-                    };
-                };
+                content?: never;
             };
             /** @description Invalid current password */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
+                content?: never;
             };
             /** @description Unauthorized */
             401: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
+                content?: never;
             };
             /** @description Validation error or same password */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
+                content?: never;
             };
         };
     };
@@ -2220,20 +2259,14 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": {
-                        message?: string;
-                    };
-                };
+                content?: never;
             };
             /** @description Unauthorized */
             401: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
+                content?: never;
             };
         };
     };

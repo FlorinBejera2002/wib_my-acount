@@ -103,13 +103,13 @@ export function QuotesTable() {
 
   const columns: ColumnDef<Quote>[] = [
     {
-      accessorKey: 'quoteNumber',
+      accessorKey: 'quoteRef',
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title={t('quotes.quoteRef')} />
       ),
       cell: ({ row }) => (
         <span className="font-medium text-gray-900">
-          {row.original.quoteNumber ?? row.original.id}
+          {row.original.quoteRef ?? row.original.id}
         </span>
       )
     },
@@ -119,18 +119,18 @@ export function QuotesTable() {
       cell: ({ row }) => <InsuranceTypeBadge type={row.original.type} />
     },
     {
-      accessorKey: 'vehicleOrProperty',
+      accessorKey: 'data.insured.name',
       header: t('quotes.productDetails'),
       cell: ({ row }) => {
-        const text = row.original.vehicleOrProperty ?? '—'
+        const text = row.original.data?.insured?.name ?? '—'
         return <ExpandableCell text={text} />
       }
     },
     {
-      accessorKey: 'insuredDetails',
+      accessorKey: 'data.insured.cnp',
       header: t('quotes.insuredDetails'),
       cell: ({ row }) => {
-        const text = row.original.insuredDetails ?? '—'
+        const text = row.original.data?.insured?.cnp ?? '—'
         return <ExpandableCell text={text} />
       }
     },
@@ -301,7 +301,7 @@ function QuoteCard({
       {/* ── Header ── */}
       <div className="flex items-center justify-between gap-3 px-4 py-3 bg-gray-100/60">
         <span className="font-bold text-gray-900 text-sm truncate">
-          {quote.quoteNumber ?? quote.id}
+          {quote.quoteRef ?? quote.id}
         </span>
       </div>
 
@@ -329,19 +329,19 @@ function QuoteCard({
           </div>
 
           {/* Product details — expandable, full width */}
-          {quote.vehicleOrProperty && (
+          {quote.data?.insured?.name && (
             <ExpandableText
               label={t('quotes.productDetails')}
-              text={quote.vehicleOrProperty}
+              text={quote.data.insured.name}
               t={t}
             />
           )}
 
           {/* Insured details — expandable, full width */}
-          {quote.insuredDetails && (
+          {quote.data?.insured?.cnp && (
             <ExpandableText
               label={t('quotes.insuredDetails')}
-              text={quote.insuredDetails}
+              text={quote.data.insured.cnp}
               t={t}
             />
           )}

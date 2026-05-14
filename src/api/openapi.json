@@ -17,18 +17,32 @@
     "paths": {
         "/api/auth/login": {
             "post": {
-                "tags": ["Auth"],
+                "tags": [
+                    "Auth"
+                ],
                 "summary": "Login with email and password",
+                "description": "Authenticates the user via email + password. Handled by the `json_login` firewall.\n\n**Without 2FA**: returns `access_token`, `refresh_token`, and a `user` summary.\n**With 2FA enabled**: returns `requires_2fa: true`, a short-lived `pre_auth_token`, and the `two_factor_method`.\nThe client must then call `POST /auth/two-factor` with the pre-auth token and TOTP/email code.\n\nRate limited: 5 attempts/minute per IP.",
                 "operationId": "post_api_auth_login",
                 "requestBody": {
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
-                                "required": ["email", "password"],
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
                                 "properties": {
-                                    "email": { "type": "string", "format": "email" },
-                                    "password": { "type": "string", "format": "password" }
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "user@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "secret123"
+                                    }
                                 },
                                 "type": "object"
                             }
@@ -44,15 +58,34 @@
                                     "oneOf": [
                                         {
                                             "title": "FullLoginResponse",
-                                            "required": ["requires_2fa", "access_token", "refresh_token", "user"],
+                                            "required": [
+                                                "requires_2fa",
+                                                "access_token",
+                                                "refresh_token",
+                                                "user"
+                                            ],
                                             "properties": {
-                                                "requires_2fa": { "type": "boolean", "example": false },
-                                                "access_token": { "type": "string" },
-                                                "refresh_token": { "type": "string" },
+                                                "requires_2fa": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "access_token": {
+                                                    "description": "RS256 JWT (15 min TTL)",
+                                                    "type": "string"
+                                                },
+                                                "refresh_token": {
+                                                    "description": "Opaque refresh token (7 day TTL)",
+                                                    "type": "string"
+                                                },
                                                 "user": {
                                                     "properties": {
-                                                        "id": { "type": "string" },
-                                                        "username": { "type": "string" }
+                                                        "id": {
+                                                            "description": "HMAC-SHA256 hashed user ID",
+                                                            "type": "string"
+                                                        },
+                                                        "username": {
+                                                            "type": "string"
+                                                        }
                                                     },
                                                     "type": "object"
                                                 }
@@ -61,11 +94,27 @@
                                         },
                                         {
                                             "title": "TwoFactorRequiredResponse",
-                                            "required": ["requires_2fa", "pre_auth_token", "two_factor_method"],
+                                            "required": [
+                                                "requires_2fa",
+                                                "pre_auth_token",
+                                                "two_factor_method"
+                                            ],
                                             "properties": {
-                                                "requires_2fa": { "type": "boolean", "example": true },
-                                                "pre_auth_token": { "type": "string" },
-                                                "two_factor_method": { "type": "string", "enum": ["totp", "email"] }
+                                                "requires_2fa": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                },
+                                                "pre_auth_token": {
+                                                    "description": "Short-lived JWT (5 min TTL, scope=pre_auth)",
+                                                    "type": "string"
+                                                },
+                                                "two_factor_method": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "totp",
+                                                        "email"
+                                                    ]
+                                                }
                                             },
                                             "type": "object"
                                         }
@@ -74,15 +123,36 @@
                             }
                         }
                     },
-                    "401": { "description": "Invalid credentials", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-                    "429": { "description": "Too many login attempts", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+                    "401": {
+                        "description": "Invalid credentials",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "Too many login attempts",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
                 }
             }
         },
         "/api/auth/public-key": {
             "get": {
-                "tags": ["Auth"],
+                "tags": [
+                    "Auth"
+                ],
                 "summary": "Get RSA public key",
+                "description": "Returns the RSA public key used for JWT signature verification. Used by the legacy Symfony 3.4 backend.",
                 "operationId": "get_api_auth_public_key",
                 "responses": {
                     "200": {
@@ -93,8 +163,14 @@
                                     "properties": {
                                         "data": {
                                             "properties": {
-                                                "public_key": { "type": "string" },
-                                                "algorithm": { "type": "string", "example": "RS256" }
+                                                "public_key": {
+                                                    "description": "PEM-encoded RSA public key",
+                                                    "type": "string"
+                                                },
+                                                "algorithm": {
+                                                    "type": "string",
+                                                    "example": "RS256"
+                                                }
                                             },
                                             "type": "object"
                                         }
@@ -109,23 +185,57 @@
         },
         "/api/auth/register": {
             "post": {
-                "tags": ["Auth"],
+                "tags": [
+                    "Auth"
+                ],
                 "summary": "Register a new account",
+                "description": "Creates a new user account. If a matching legacy user is found by username, the account is automatically\nlinked and profile data (person, contact, address, company) is hydrated from the legacy system.\n\nOn success, returns tokens immediately (user is auto-logged-in).\nAccepts both camelCase (`firstName`) and snake_case (`first_name`) for backward compatibility.\n\nRate limited: 10 registrations/hour per IP.",
                 "operationId": "post_api_auth_register",
                 "requestBody": {
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
-                                "required": ["email", "password"],
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
                                 "properties": {
-                                    "email": { "type": "string", "format": "email" },
-                                    "password": { "type": "string", "format": "password", "minLength": 8 },
-                                    "confirmPassword": { "type": "string", "format": "password" },
-                                    "firstName": { "type": "string", "maxLength": 100 },
-                                    "lastName": { "type": "string", "maxLength": 100 },
-                                    "phone": { "type": "string", "maxLength": 30 },
-                                    "username": { "type": "string" }
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "newuser@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "minLength": 8,
+                                        "example": "securePass1"
+                                    },
+                                    "confirmPassword": {
+                                        "description": "Optional password confirmation",
+                                        "type": "string",
+                                        "format": "password"
+                                    },
+                                    "firstName": {
+                                        "type": "string",
+                                        "maxLength": 100,
+                                        "example": "Ion"
+                                    },
+                                    "lastName": {
+                                        "type": "string",
+                                        "maxLength": 100,
+                                        "example": "Popescu"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "maxLength": 30,
+                                        "example": "+40712345678"
+                                    },
+                                    "username": {
+                                        "description": "Derived from email prefix if omitted",
+                                        "type": "string"
+                                    }
                                 },
                                 "type": "object"
                             }
@@ -134,18 +244,30 @@
                 },
                 "responses": {
                     "201": {
-                        "description": "Registration successful",
+                        "description": "Registration successful — user is auto-logged-in",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "required": ["access_token", "refresh_token", "user"],
+                                    "required": [
+                                        "access_token",
+                                        "refresh_token",
+                                        "user"
+                                    ],
                                     "properties": {
-                                        "access_token": { "type": "string" },
-                                        "refresh_token": { "type": "string" },
+                                        "access_token": {
+                                            "type": "string"
+                                        },
+                                        "refresh_token": {
+                                            "type": "string"
+                                        },
                                         "user": {
                                             "properties": {
-                                                "id": { "type": "string" },
-                                                "username": { "type": "string" }
+                                                "id": {
+                                                    "type": "string"
+                                                },
+                                                "username": {
+                                                    "type": "string"
+                                                }
                                             },
                                             "type": "object"
                                         }
@@ -155,26 +277,67 @@
                             }
                         }
                     },
-                    "409": { "description": "Email or username already exists", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-                    "422": { "description": "Validation error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-                    "429": { "description": "Rate limit exceeded", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+                    "409": {
+                        "description": "Email or username already exists",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "Rate limit exceeded",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
                 }
             }
         },
         "/api/auth/two-factor": {
             "post": {
-                "tags": ["Auth"],
+                "tags": [
+                    "Auth"
+                ],
                 "summary": "Complete login with 2FA code",
+                "description": "Second step of the login flow when 2FA is enabled. The client submits the pre-auth token\nreceived from POST /auth/login along with the 6-digit TOTP or email OTP code.\n\nOn success, returns full `access_token` and `refresh_token`.\n\nRate limited: 5 attempts/5 minutes per IP.",
                 "operationId": "post_api_auth_two_factor",
                 "requestBody": {
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
-                                "required": ["pre_auth_token", "totp_code"],
+                                "required": [
+                                    "pre_auth_token",
+                                    "totp_code"
+                                ],
                                 "properties": {
-                                    "pre_auth_token": { "type": "string" },
-                                    "totp_code": { "type": "string", "pattern": "^\\d{6}$" }
+                                    "pre_auth_token": {
+                                        "description": "Pre-auth JWT from login response",
+                                        "type": "string"
+                                    },
+                                    "totp_code": {
+                                        "description": "6-digit TOTP or email OTP code",
+                                        "type": "string",
+                                        "pattern": "^\\d{6}$",
+                                        "example": "123456"
+                                    }
                                 },
                                 "type": "object"
                             }
@@ -187,14 +350,26 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "required": ["access_token", "refresh_token", "user"],
+                                    "required": [
+                                        "access_token",
+                                        "refresh_token",
+                                        "user"
+                                    ],
                                     "properties": {
-                                        "access_token": { "type": "string" },
-                                        "refresh_token": { "type": "string" },
+                                        "access_token": {
+                                            "type": "string"
+                                        },
+                                        "refresh_token": {
+                                            "type": "string"
+                                        },
                                         "user": {
                                             "properties": {
-                                                "id": { "type": "string" },
-                                                "username": { "type": "string" }
+                                                "id": {
+                                                    "type": "string"
+                                                },
+                                                "username": {
+                                                    "type": "string"
+                                                }
                                             },
                                             "type": "object"
                                         }
@@ -204,25 +379,60 @@
                             }
                         }
                     },
-                    "400": { "description": "Invalid or expired 2FA code", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-                    "422": { "description": "Validation error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-                    "429": { "description": "Rate limit exceeded", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+                    "400": {
+                        "description": "Invalid or expired 2FA code",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "Rate limit exceeded",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
                 }
             }
         },
         "/api/auth/refresh": {
             "post": {
-                "tags": ["Auth"],
+                "tags": [
+                    "Auth"
+                ],
                 "summary": "Refresh access token",
+                "description": "Exchanges a valid refresh token for a new access_token + refresh_token pair.\nThe old refresh token is consumed (single-use). If the token is invalid, expired,\nor already revoked, returns 401.\n\nRate limited: 10 requests/minute per IP.",
                 "operationId": "post_api_auth_refresh",
                 "requestBody": {
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
-                                "required": ["refresh_token"],
+                                "required": [
+                                    "refresh_token"
+                                ],
                                 "properties": {
-                                    "refresh_token": { "type": "string" }
+                                    "refresh_token": {
+                                        "description": "Opaque refresh token from login/previous refresh",
+                                        "type": "string"
+                                    }
                                 },
                                 "type": "object"
                             }
@@ -235,74 +445,121 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "required": ["access_token", "refresh_token"],
+                                    "required": [
+                                        "access_token",
+                                        "refresh_token"
+                                    ],
                                     "properties": {
-                                        "access_token": { "type": "string" },
-                                        "refresh_token": { "type": "string" }
+                                        "access_token": {
+                                            "type": "string"
+                                        },
+                                        "refresh_token": {
+                                            "type": "string"
+                                        }
                                     },
                                     "type": "object"
                                 }
                             }
                         }
                     },
-                    "401": { "description": "Invalid or expired refresh token", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-                    "422": { "description": "Validation error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-                    "429": { "description": "Rate limit exceeded", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+                    "401": {
+                        "description": "Invalid or expired refresh token",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "Rate limit exceeded",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
                 }
             }
         },
         "/api/auth/logout": {
             "post": {
-                "tags": ["Auth"],
+                "tags": [
+                    "Auth"
+                ],
                 "summary": "Logout and revoke session",
+                "description": "Revokes the current session's refresh token and session record. Requires a valid JWT.",
                 "operationId": "post_api_auth_logout",
                 "responses": {
-                    "200": { "description": "Logged out", "content": { "application/json": { "schema": { "properties": { "message": { "type": "string" } }, "type": "object" } } } },
-                    "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+                    "200": {
+                        "description": "Logged out",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Logged out successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
                 },
-                "security": [{ "Bearer": [] }]
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ]
             }
         },
         "/api/auth/forgot-password": {
             "post": {
-                "tags": ["Auth"],
+                "tags": [
+                    "Auth"
+                ],
                 "summary": "Request password reset OTP",
+                "description": "Sends a 6-digit OTP to the user's email address. Always returns success even if the email\nis not registered (to prevent email enumeration).\n\nRate limited: 3 requests/hour per IP.",
                 "operationId": "post_api_auth_forgot_password",
                 "requestBody": {
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
-                                "required": ["email"],
+                                "required": [
+                                    "email"
+                                ],
                                 "properties": {
-                                    "email": { "type": "string", "format": "email" }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": { "description": "OTP sent", "content": { "application/json": { "schema": { "properties": { "message": { "type": "string" } }, "type": "object" } } } },
-                    "422": { "description": "Validation error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-                    "429": { "description": "Rate limit exceeded", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
-                }
-            }
-        },
-        "/api/auth/verify-reset-code": {
-            "post": {
-                "tags": ["Auth"],
-                "summary": "Verify password reset OTP",
-                "operationId": "post_api_auth_verify_reset_code",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": ["email", "code"],
-                                "properties": {
-                                    "email": { "type": "string", "format": "email" },
-                                    "code": { "type": "string", "pattern": "^\\d{6}$" }
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "user@example.com"
+                                    }
                                 },
                                 "type": "object"
                             }
@@ -311,39 +568,73 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "OTP verified",
+                        "description": "OTP sent (or silently ignored if email not found)",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "required": ["reset_token"],
                                     "properties": {
-                                        "reset_token": { "type": "string" }
+                                        "message": {
+                                            "type": "string",
+                                            "example": "If an account exists for this email, a reset code has been sent."
+                                        }
                                     },
                                     "type": "object"
                                 }
                             }
                         }
                     },
-                    "400": { "description": "Invalid or expired OTP", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-                    "422": { "description": "Validation error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-                    "429": { "description": "Rate limit exceeded", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "Rate limit exceeded",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
                 }
             }
         },
-        "/api/auth/reset-password": {
+        "/api/auth/verify-reset-code": {
             "post": {
-                "tags": ["Auth"],
-                "summary": "Reset password with reset token",
-                "operationId": "post_api_auth_reset_password",
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Verify password reset OTP",
+                "description": "Validates the 6-digit OTP sent via email. On success, returns a one-time `reset_token`\nthat must be used with POST /auth/reset-password.\n\nRate limited: 5 attempts/15 minutes per IP.",
+                "operationId": "post_api_auth_verify_reset_code",
                 "requestBody": {
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
-                                "required": ["reset_token", "new_password"],
+                                "required": [
+                                    "email",
+                                    "code"
+                                ],
                                 "properties": {
-                                    "reset_token": { "type": "string" },
-                                    "new_password": { "type": "string", "format": "password", "minLength": 8 }
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "user@example.com"
+                                    },
+                                    "code": {
+                                        "description": "6-digit OTP from email",
+                                        "type": "string",
+                                        "pattern": "^\\d{6}$",
+                                        "example": "123456"
+                                    }
                                 },
                                 "type": "object"
                             }
@@ -351,16 +642,138 @@
                     }
                 },
                 "responses": {
-                    "200": { "description": "Password reset successful", "content": { "application/json": { "schema": { "properties": { "message": { "type": "string" } }, "type": "object" } } } },
-                    "400": { "description": "Invalid or expired reset token", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-                    "422": { "description": "Validation error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+                    "200": {
+                        "description": "OTP verified — reset token returned",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "required": [
+                                        "reset_token"
+                                    ],
+                                    "properties": {
+                                        "reset_token": {
+                                            "description": "One-time reset token for POST /auth/reset-password",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid or expired OTP",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "Rate limit exceeded",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/reset-password": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Reset password with reset token",
+                "description": "Sets a new password using the reset token obtained from POST /auth/verify-reset-code.\nRevokes all existing refresh tokens for the user (forces re-login on all devices).",
+                "operationId": "post_api_auth_reset_password",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "reset_token",
+                                    "new_password"
+                                ],
+                                "properties": {
+                                    "reset_token": {
+                                        "description": "Token from POST /auth/verify-reset-code",
+                                        "type": "string"
+                                    },
+                                    "new_password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "minLength": 8
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Password reset successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Password has been reset successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid or expired reset token",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
                 }
             }
         },
         "/api/auth/2fa/enable": {
             "post": {
-                "tags": ["Auth"],
+                "tags": [
+                    "Auth"
+                ],
                 "summary": "Enable two-factor authentication",
+                "description": "Initiates 2FA setup. For `method=totp`, returns a TOTP secret and provisioning URI (for QR code).\nThe client must then call POST /auth/2fa/confirm with a valid TOTP code to activate it.\nFor `method=email`, 2FA is enabled immediately using email-based OTP codes.",
                 "operationId": "post_api_auth_two_factor_enable",
                 "requestBody": {
                     "required": true,
@@ -368,7 +781,15 @@
                         "application/json": {
                             "schema": {
                                 "properties": {
-                                    "method": { "type": "string", "enum": ["totp", "email"] }
+                                    "method": {
+                                        "description": "Defaults to \"totp\" if omitted",
+                                        "type": "string",
+                                        "enum": [
+                                            "totp",
+                                            "email"
+                                        ],
+                                        "example": "totp"
+                                    }
                                 },
                                 "type": "object"
                             }
@@ -384,17 +805,29 @@
                                     "oneOf": [
                                         {
                                             "title": "TotpSetupResponse",
-                                            "required": ["secret", "provisioningUri"],
+                                            "required": [
+                                                "secret",
+                                                "provisioningUri"
+                                            ],
                                             "properties": {
-                                                "secret": { "type": "string" },
-                                                "provisioningUri": { "type": "string" }
+                                                "secret": {
+                                                    "description": "Base32-encoded TOTP secret",
+                                                    "type": "string"
+                                                },
+                                                "provisioningUri": {
+                                                    "description": "otpauth:// URI for QR code generation",
+                                                    "type": "string"
+                                                }
                                             },
                                             "type": "object"
                                         },
                                         {
                                             "title": "EmailTwoFactorEnabledResponse",
                                             "properties": {
-                                                "message": { "type": "string" }
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "Email two-factor authentication has been enabled."
+                                                }
                                             },
                                             "type": "object"
                                         }
@@ -403,25 +836,56 @@
                             }
                         }
                     },
-                    "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-                    "422": { "description": "Invalid 2FA method", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Invalid 2FA method",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
                 },
-                "security": [{ "Bearer": [] }]
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ]
             }
         },
         "/api/auth/2fa/confirm": {
             "post": {
-                "tags": ["Auth"],
+                "tags": [
+                    "Auth"
+                ],
                 "summary": "Confirm TOTP 2FA setup",
+                "description": "Verifies the first TOTP code to confirm the secret is set up correctly. After this call, 2FA is fully active.",
                 "operationId": "post_api_auth_two_factor_confirm",
                 "requestBody": {
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
-                                "required": ["totp_code"],
+                                "required": [
+                                    "totp_code"
+                                ],
                                 "properties": {
-                                    "totp_code": { "type": "string", "pattern": "^\\d{6}$" }
+                                    "totp_code": {
+                                        "type": "string",
+                                        "pattern": "^\\d{6}$",
+                                        "example": "123456"
+                                    }
                                 },
                                 "type": "object"
                             }
@@ -429,26 +893,71 @@
                     }
                 },
                 "responses": {
-                    "200": { "description": "2FA confirmed and active", "content": { "application/json": { "schema": { "properties": { "message": { "type": "string" } }, "type": "object" } } } },
-                    "400": { "description": "Invalid TOTP code", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-                    "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+                    "200": {
+                        "description": "2FA confirmed and active",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Two-factor authentication has been enabled."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid TOTP code",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
                 },
-                "security": [{ "Bearer": [] }]
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ]
             }
         },
         "/api/auth/2fa/resend-code": {
             "post": {
-                "tags": ["Auth"],
+                "tags": [
+                    "Auth"
+                ],
                 "summary": "Resend 2FA email code",
+                "description": "Resends the 2FA email OTP code during the login flow. Requires a valid pre_auth_token\nand only works when the user's 2FA method is \"email\".\n\nRate limited: 3 requests/10 minutes per IP.",
                 "operationId": "post_api_auth_two_factor_resend_code",
                 "requestBody": {
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
-                                "required": ["pre_auth_token"],
+                                "required": [
+                                    "pre_auth_token"
+                                ],
                                 "properties": {
-                                    "pre_auth_token": { "type": "string" }
+                                    "pre_auth_token": {
+                                        "description": "Pre-auth JWT from login response",
+                                        "type": "string"
+                                    }
                                 },
                                 "type": "object"
                             }
@@ -456,25 +965,67 @@
                     }
                 },
                 "responses": {
-                    "200": { "description": "Code resent", "content": { "application/json": { "schema": { "properties": { "message": { "type": "string" } }, "type": "object" } } } },
-                    "422": { "description": "Invalid pre-auth token or wrong 2FA method", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-                    "429": { "description": "Rate limit exceeded", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+                    "200": {
+                        "description": "Code resent",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "A new verification code has been sent to your email."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Invalid pre-auth token or wrong 2FA method",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "Rate limit exceeded",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
                 }
             }
         },
         "/api/auth/2fa/disable": {
             "post": {
-                "tags": ["Auth"],
+                "tags": [
+                    "Auth"
+                ],
                 "summary": "Disable two-factor authentication",
+                "description": "Disables 2FA for the authenticated user. Requires current password for confirmation.",
                 "operationId": "post_api_auth_two_factor_disable",
                 "requestBody": {
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
-                                "required": ["password"],
+                                "required": [
+                                    "password"
+                                ],
                                 "properties": {
-                                    "password": { "type": "string", "format": "password" }
+                                    "password": {
+                                        "description": "Current account password",
+                                        "type": "string",
+                                        "format": "password"
+                                    }
                                 },
                                 "type": "object"
                             }
@@ -482,17 +1033,57 @@
                     }
                 },
                 "responses": {
-                    "200": { "description": "2FA disabled", "content": { "application/json": { "schema": { "properties": { "message": { "type": "string" } }, "type": "object" } } } },
-                    "400": { "description": "Invalid password", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-                    "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+                    "200": {
+                        "description": "2FA disabled",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Two-factor authentication has been disabled."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid password",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
                 },
-                "security": [{ "Bearer": [] }]
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ]
             }
         },
         "/api/user/dashboard/stats": {
             "get": {
-                "tags": ["Dashboard"],
+                "tags": [
+                    "Dashboard"
+                ],
                 "summary": "Get dashboard statistics",
+                "description": "Returns aggregated counts and highlights for the authenticated user.",
                 "operationId": "get_api_dashboard_stats",
                 "responses": {
                     "200": {
@@ -558,7 +1149,14 @@
                             }
                         }
                     },
-                    "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+                            }
+                        }
+                    }
                 },
                 "security": [{ "Bearer": [] }]
             }
@@ -608,27 +1206,9 @@
                 "operationId": "patch_api_notifications_mark_read",
                 "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
                 "responses": {
-                    "200": {
-                        "description": "Updated notification",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "id": { "type": "string" },
-                                        "type": { "type": "string" },
-                                        "title": { "type": "string" },
-                                        "body": { "type": "string" },
-                                        "meta": { "type": "object" },
-                                        "isRead": { "type": "boolean" },
-                                        "createdAt": { "type": "string", "format": "date-time" }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-                    "404": { "description": "Notification not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+                    "200": { "description": "Updated notification" },
+                    "401": { "description": "Unauthorized" },
+                    "404": { "description": "Notification not found" }
                 },
                 "security": [{ "Bearer": [] }]
             }
@@ -639,8 +1219,8 @@
                 "summary": "Mark all notifications as read",
                 "operationId": "patch_api_notifications_mark_all_read",
                 "responses": {
-                    "200": { "description": "All marked as read", "content": { "application/json": { "schema": { "properties": { "message": { "type": "string" } }, "type": "object" } } } },
-                    "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+                    "200": { "description": "All marked as read" },
+                    "401": { "description": "Unauthorized" }
                 },
                 "security": [{ "Bearer": [] }]
             }
@@ -653,8 +1233,8 @@
                 "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
                 "responses": {
                     "204": { "description": "Notification deleted" },
-                    "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-                    "404": { "description": "Notification not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+                    "401": { "description": "Unauthorized" },
+                    "404": { "description": "Notification not found" }
                 },
                 "security": [{ "Bearer": [] }]
             }
@@ -665,10 +1245,10 @@
                 "summary": "List policies",
                 "operationId": "get_api_policies_list",
                 "parameters": [
-                    { "name": "page", "in": "query", "required": false, "schema": { "type": "integer", "default": 1, "minimum": 1 } },
-                    { "name": "limit", "in": "query", "required": false, "schema": { "type": "integer", "default": 20, "maximum": 100, "minimum": 1 } },
-                    { "name": "status", "in": "query", "required": false, "schema": { "type": "string", "enum": ["active", "expired", "cancelled", "pending"] } },
-                    { "name": "type", "in": "query", "required": false, "schema": { "type": "string", "enum": ["rca", "casco", "home", "health", "travel", "life", "other"] } }
+                    { "name": "page", "in": "query", "schema": { "type": "integer", "default": 1 } },
+                    { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 20 } },
+                    { "name": "status", "in": "query", "schema": { "type": "string", "enum": ["active", "expired", "cancelled", "pending"] } },
+                    { "name": "type", "in": "query", "schema": { "type": "string", "enum": ["rca", "casco", "casco_econom", "casco_perfect_cover", "pad", "home", "travel", "health", "life", "accidents", "accidents_taxi", "accidents_traveler", "breakdown", "cmr", "rcp", "other"] } }
                 ],
                 "responses": {
                     "200": {
@@ -688,7 +1268,7 @@
                             }
                         }
                     },
-                    "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+                    "401": { "description": "Unauthorized" }
                 },
                 "security": [{ "Bearer": [] }]
             }
@@ -701,8 +1281,8 @@
                 "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
                 "responses": {
                     "200": { "description": "Policy details", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/PolicyResponse" } } } },
-                    "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-                    "404": { "description": "Policy not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+                    "401": { "description": "Unauthorized" },
+                    "404": { "description": "Policy not found" }
                 },
                 "security": [{ "Bearer": [] }]
             }
@@ -713,10 +1293,10 @@
                 "summary": "List quotes",
                 "operationId": "get_api_quotes_list",
                 "parameters": [
-                    { "name": "page", "in": "query", "required": false, "schema": { "type": "integer", "default": 1, "minimum": 1 } },
-                    { "name": "limit", "in": "query", "required": false, "schema": { "type": "integer", "default": 20, "maximum": 100, "minimum": 1 } },
-                    { "name": "status", "in": "query", "required": false, "schema": { "type": "string", "enum": ["draft", "submitted", "accepted", "expired", "converted"] } },
-                    { "name": "type", "in": "query", "required": false, "schema": { "type": "string", "enum": ["rca", "casco", "home", "health", "travel", "life", "other"] } }
+                    { "name": "page", "in": "query", "schema": { "type": "integer", "default": 1 } },
+                    { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 20 } },
+                    { "name": "active", "in": "query", "schema": { "type": "boolean" } },
+                    { "name": "type", "in": "query", "schema": { "type": "string", "enum": ["rca", "casco", "casco_econom", "casco_perfect_cover", "pad", "home", "travel", "health", "life", "accidents", "accidents_taxi", "accidents_traveler", "breakdown", "cmr", "rcp", "other"] } }
                 ],
                 "responses": {
                     "200": {
@@ -736,7 +1316,7 @@
                             }
                         }
                     },
-                    "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+                    "401": { "description": "Unauthorized" }
                 },
                 "security": [{ "Bearer": [] }]
             }
@@ -749,8 +1329,8 @@
                 "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
                 "responses": {
                     "200": { "description": "Quote details", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/QuoteResponse" } } } },
-                    "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-                    "404": { "description": "Quote not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+                    "401": { "description": "Unauthorized" },
+                    "404": { "description": "Quote not found" }
                 },
                 "security": [{ "Bearer": [] }]
             }
@@ -761,20 +1341,8 @@
                 "summary": "List reminders",
                 "operationId": "get_api_reminders_list",
                 "responses": {
-                    "200": {
-                        "description": "Reminder list",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "reminders": { "type": "array", "items": { "$ref": "#/components/schemas/ReminderResponse" } }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+                    "200": { "description": "Reminder list", "content": { "application/json": { "schema": { "properties": { "reminders": { "type": "array", "items": { "$ref": "#/components/schemas/ReminderResponse" } } }, "type": "object" } } } },
+                    "401": { "description": "Unauthorized" }
                 },
                 "security": [{ "Bearer": [] }]
             },
@@ -786,22 +1354,14 @@
                     "required": true,
                     "content": {
                         "application/json": {
-                            "schema": {
-                                "required": ["title", "remindAt"],
-                                "properties": {
-                                    "title": { "type": "string", "maxLength": 255 },
-                                    "remindAt": { "type": "string", "format": "date-time" },
-                                    "note": { "type": "string", "maxLength": 1000, "nullable": true }
-                                },
-                                "type": "object"
-                            }
+                            "schema": { "$ref": "#/components/schemas/CreateReminderRequest" }
                         }
                     }
                 },
                 "responses": {
                     "201": { "description": "Reminder created", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ReminderResponse" } } } },
-                    "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-                    "422": { "description": "Validation error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+                    "401": { "description": "Unauthorized" },
+                    "422": { "description": "Validation error" }
                 },
                 "security": [{ "Bearer": [] }]
             }
@@ -814,25 +1374,13 @@
                 "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
                 "requestBody": {
                     "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "title": { "type": "string", "maxLength": 255 },
-                                    "remindAt": { "type": "string", "format": "date-time" },
-                                    "note": { "type": "string", "maxLength": 1000, "nullable": true },
-                                    "isDone": { "type": "boolean" }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
+                    "content": { "application/json": { "schema": { "$ref": "#/components/schemas/UpdateReminderRequest" } } }
                 },
                 "responses": {
                     "200": { "description": "Updated reminder", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ReminderResponse" } } } },
-                    "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-                    "404": { "description": "Reminder not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-                    "422": { "description": "Validation error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+                    "401": { "description": "Unauthorized" },
+                    "404": { "description": "Reminder not found" },
+                    "422": { "description": "Validation error" }
                 },
                 "security": [{ "Bearer": [] }]
             },
@@ -843,8 +1391,8 @@
                 "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
                 "responses": {
                     "204": { "description": "Reminder deleted" },
-                    "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-                    "404": { "description": "Reminder not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+                    "401": { "description": "Unauthorized" },
+                    "404": { "description": "Reminder not found" }
                 },
                 "security": [{ "Bearer": [] }]
             }
@@ -881,7 +1429,7 @@
                             }
                         }
                     },
-                    "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+                    "401": { "description": "Unauthorized" }
                 },
                 "security": [{ "Bearer": [] }]
             },
@@ -891,7 +1439,7 @@
                 "operationId": "delete_api_sessions_delete_all",
                 "responses": {
                     "204": { "description": "All other sessions revoked" },
-                    "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+                    "401": { "description": "Unauthorized" }
                 },
                 "security": [{ "Bearer": [] }]
             }
@@ -904,8 +1452,37 @@
                 "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
                 "responses": {
                     "204": { "description": "Session revoked" },
-                    "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-                    "404": { "description": "Session not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+                    "401": { "description": "Unauthorized" },
+                    "404": { "description": "Session not found" }
+                },
+                "security": [{ "Bearer": [] }]
+            }
+        },
+        "/api/user/sync/refresh": {
+            "get": {
+                "tags": ["Sync"],
+                "summary": "Refresh sync",
+                "operationId": "get_api_sync_refresh",
+                "responses": {
+                    "200": {
+                        "description": "Sync refresh result",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "hasChanges": { "type": "boolean" },
+                                        "newPolicies": { "type": "integer" },
+                                        "updatedPolicies": { "type": "integer" },
+                                        "newQuotes": { "type": "integer" },
+                                        "updatedQuotes": { "type": "integer" },
+                                        "syncedAt": { "type": "string", "format": "date-time" }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": { "description": "Unauthorized" }
                 },
                 "security": [{ "Bearer": [] }]
             }
@@ -916,15 +1493,8 @@
                 "summary": "Get user profile",
                 "operationId": "get_api_user_profile_get",
                 "responses": {
-                    "200": {
-                        "description": "User profile",
-                        "content": {
-                            "application/json": {
-                                "schema": { "$ref": "#/components/schemas/UserProfile" }
-                            }
-                        }
-                    },
-                    "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+                    "200": { "description": "User profile", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/UserProfile" } } } },
+                    "401": { "description": "Unauthorized" }
                 },
                 "security": [{ "Bearer": [] }]
             },
@@ -934,23 +1504,12 @@
                 "operationId": "patch_api_user_profile_update",
                 "requestBody": {
                     "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "firstName": { "type": "string", "maxLength": 100 },
-                                    "lastName": { "type": "string", "maxLength": 100 },
-                                    "phone": { "type": "string", "maxLength": 30 }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
+                    "content": { "application/json": { "schema": { "$ref": "#/components/schemas/UpdateProfileRequest" } } }
                 },
                 "responses": {
                     "200": { "description": "Updated profile", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/UserProfile" } } } },
-                    "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-                    "422": { "description": "Validation error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+                    "401": { "description": "Unauthorized" },
+                    "422": { "description": "Validation error" }
                 },
                 "security": [{ "Bearer": [] }]
             }
@@ -962,40 +1521,12 @@
                 "operationId": "patch_api_user_preferences_update",
                 "requestBody": {
                     "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "language": { "type": "string", "enum": ["ro", "en", "fr", "de"] },
-                                    "notifications": { "type": "boolean" }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
+                    "content": { "application/json": { "schema": { "$ref": "#/components/schemas/UpdatePreferencesRequest" } } }
                 },
                 "responses": {
-                    "200": {
-                        "description": "Updated preferences",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "preferences": {
-                                            "properties": {
-                                                "language": { "type": "string" },
-                                                "notifications": { "type": "boolean" }
-                                            },
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-                    "422": { "description": "Validation error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+                    "200": { "description": "Updated preferences" },
+                    "401": { "description": "Unauthorized" },
+                    "422": { "description": "Validation error" }
                 },
                 "security": [{ "Bearer": [] }]
             }
@@ -1007,24 +1538,13 @@
                 "operationId": "post_api_user_password_change",
                 "requestBody": {
                     "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": ["current_password", "new_password"],
-                                "properties": {
-                                    "current_password": { "type": "string", "format": "password" },
-                                    "new_password": { "type": "string", "format": "password", "minLength": 8 }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
+                    "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ChangePasswordRequest" } } }
                 },
                 "responses": {
-                    "200": { "description": "Password changed", "content": { "application/json": { "schema": { "properties": { "message": { "type": "string" } }, "type": "object" } } } },
-                    "400": { "description": "Invalid current password", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-                    "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-                    "422": { "description": "Validation error or same password", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+                    "200": { "description": "Password changed" },
+                    "400": { "description": "Invalid current password" },
+                    "401": { "description": "Unauthorized" },
+                    "422": { "description": "Validation error or same password" }
                 },
                 "security": [{ "Bearer": [] }]
             }
@@ -1035,8 +1555,8 @@
                 "summary": "Request account deletion",
                 "operationId": "post_api_user_account_delete",
                 "responses": {
-                    "200": { "description": "Deletion request submitted", "content": { "application/json": { "schema": { "properties": { "message": { "type": "string" } }, "type": "object" } } } },
-                    "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+                    "200": { "description": "Deletion request submitted" },
+                    "401": { "description": "Unauthorized" }
                 },
                 "security": [{ "Bearer": [] }]
             }
@@ -1059,33 +1579,6 @@
                 },
                 "type": "object"
             },
-            "PolicyResponse": {
-                "required": ["id", "policyNumber", "type", "status", "startDate", "endDate", "premium", "currency", "daysUntilExpiry", "autoRenew", "createdAt", "updatedAt"],
-                "properties": {
-                    "id": { "type": "string" },
-                    "policyNumber": { "type": "string" },
-                    "type": { "type": "string", "enum": ["rca", "casco", "home", "health", "travel", "life", "other"] },
-                    "status": { "type": "string", "enum": ["active", "expired", "cancelled", "pending"] },
-                    "insurerName": { "type": "string", "nullable": true },
-                    "vehicleOrProperty": { "type": "string", "nullable": true },
-                    "policyDetails": { "type": "string", "nullable": true },
-                    "premium": { "type": "number", "format": "float" },
-                    "currency": { "type": "string" },
-                    "startDate": { "type": "string", "format": "date-time" },
-                    "endDate": { "type": "string", "format": "date-time" },
-                    "daysUntilExpiry": { "type": "integer" },
-                    "autoRenew": { "type": "boolean" },
-                    "sourceQuoteId": { "type": "string", "nullable": true },
-                    "documents": { "type": "array", "items": { "$ref": "#/components/schemas/PolicyDocument" } },
-                    "insuranceType": { "type": "string", "enum": ["pad", "facultative", "pad_facultative"], "nullable": true },
-                    "insuranceComponents": { "type": "array", "items": { "$ref": "#/components/schemas/InsuranceComponent" } },
-                    "travellers": { "type": "array", "items": { "$ref": "#/components/schemas/Traveller" } },
-                    "coverageDetails": { "type": "object" },
-                    "createdAt": { "type": "string", "format": "date-time" },
-                    "updatedAt": { "type": "string", "format": "date-time" }
-                },
-                "type": "object"
-            },
             "PolicyDocument": {
                 "required": ["id", "name", "type", "url", "size"],
                 "properties": {
@@ -1097,59 +1590,67 @@
                 },
                 "type": "object"
             },
-            "InsuranceComponent": {
-                "required": ["type", "policyNumber", "insurerName", "premium", "startDate", "endDate", "documents"],
+            "PolicyResponse": {
+                "required": ["id", "policyNumber", "type", "status", "active", "startDate", "endDate", "premium", "currency", "daysUntilExpiry", "createdAt", "updatedAt"],
                 "properties": {
-                    "type": { "type": "string", "enum": ["pad", "facultative"] },
+                    "id": { "type": "string" },
+                    "policySeries": { "type": "string", "nullable": true },
                     "policyNumber": { "type": "string" },
-                    "insurerName": { "type": "string" },
+                    "transactionId": { "type": "string", "nullable": true },
+                    "type": { "type": "string", "enum": ["rca", "casco", "casco_econom", "casco_perfect_cover", "pad", "home", "travel", "health", "life", "accidents", "accidents_taxi", "accidents_traveler", "breakdown", "cmr", "rcp", "other"] },
+                    "status": { "type": "string", "enum": ["active", "expired", "cancelled", "pending"] },
+                    "insurer": { "type": "string", "nullable": true },
+                    "active": { "type": "boolean" },
+                    "quoteRef": { "type": "string", "nullable": true },
+                    "documents": { "type": "array", "items": { "$ref": "#/components/schemas/PolicyDocument" } },
+                    "insuranceType": { "type": "string", "enum": ["pad", "facultative", "pad_facultative"], "nullable": true },
+                    "data": {
+                        "properties": {
+                            "product": { "type": "object" },
+                            "insured": {
+                                "properties": {
+                                    "name": { "type": "string" },
+                                    "cnp": { "type": "string" }
+                                },
+                                "type": "object"
+                            }
+                        },
+                        "type": "object"
+                    },
                     "premium": { "type": "number", "format": "float" },
+                    "currency": { "type": "string" },
                     "startDate": { "type": "string", "format": "date-time" },
                     "endDate": { "type": "string", "format": "date-time" },
-                    "documents": { "type": "array", "items": { "$ref": "#/components/schemas/PolicyDocument" } }
-                },
-                "type": "object"
-            },
-            "Traveller": {
-                "required": ["name", "documents"],
-                "properties": {
-                    "name": { "type": "string" },
-                    "cnp": { "type": "string", "nullable": true },
-                    "phone": { "type": "string", "nullable": true },
-                    "documents": { "type": "array", "items": { "$ref": "#/components/schemas/PolicyDocument" } }
+                    "daysUntilExpiry": { "type": "integer" },
+                    "createdAt": { "type": "string", "format": "date-time" },
+                    "updatedAt": { "type": "string", "format": "date-time" }
                 },
                 "type": "object"
             },
             "QuoteResponse": {
-                "required": ["id", "type", "status", "currency", "createdAt", "updatedAt"],
+                "required": ["id", "type", "active", "createdAt", "updatedAt"],
                 "properties": {
                     "id": { "type": "string" },
-                    "quoteNumber": { "type": "string", "nullable": true },
-                    "type": { "type": "string", "enum": ["rca", "casco", "home", "health", "travel", "life", "other"] },
-                    "status": { "type": "string", "enum": ["draft", "submitted", "accepted", "expired", "converted"] },
-                    "insurerName": { "type": "string", "nullable": true },
-                    "vehicleOrProperty": { "type": "string", "nullable": true },
-                    "insuredDetails": { "type": "string", "nullable": true },
-                    "premium": { "type": "number", "format": "float", "nullable": true },
-                    "currency": { "type": "string" },
-                    "validFrom": { "type": "string", "format": "date-time", "nullable": true },
-                    "validUntil": { "type": "string", "format": "date-time", "nullable": true },
+                    "quoteRef": { "type": "string", "nullable": true },
+                    "type": { "type": "string", "enum": ["rca", "casco", "casco_econom", "casco_perfect_cover", "pad", "home", "travel", "health", "life", "accidents", "accidents_taxi", "accidents_traveler", "breakdown", "cmr", "rcp", "other"] },
+                    "quoteDate": { "type": "string", "format": "date-time", "nullable": true },
+                    "quoteStartDate": { "type": "string", "format": "date-time", "nullable": true },
+                    "active": { "type": "boolean" },
                     "offerUrl": { "type": "string", "nullable": true },
-                    "documents": {
-                        "type": "array",
-                        "items": {
-                            "required": ["id", "name", "type", "url", "size"],
-                            "properties": {
-                                "id": { "type": "string" },
-                                "name": { "type": "string" },
-                                "type": { "type": "string", "enum": ["OFFER", "COMPARISON", "INVOICE", "OTHER"] },
-                                "url": { "type": "string" },
-                                "size": { "type": "integer" }
-                            },
-                            "type": "object"
-                        }
+                    "documents": { "type": "array", "items": { "$ref": "#/components/schemas/PolicyDocument" } },
+                    "data": {
+                        "properties": {
+                            "product": { "type": "object" },
+                            "insured": {
+                                "properties": {
+                                    "name": { "type": "string" },
+                                    "cnp": { "type": "string" }
+                                },
+                                "type": "object"
+                            }
+                        },
+                        "type": "object"
                     },
-                    "quoteData": { "type": "object" },
                     "createdAt": { "type": "string", "format": "date-time" },
                     "updatedAt": { "type": "string", "format": "date-time" }
                 },
@@ -1198,80 +1699,36 @@
                 },
                 "type": "object"
             },
-            "TwoFactorVerifyRequest": {
-                "required": ["pre_auth_token", "totp_code"],
-                "properties": {
-                    "pre_auth_token": { "type": "string" },
-                    "totp_code": { "type": "string", "minLength": 6, "maxLength": 6, "pattern": "\\d{6}" }
-                },
-                "type": "object"
-            },
-            "RefreshRequest": {
-                "required": ["refresh_token"],
-                "properties": { "refresh_token": { "type": "string" } },
-                "type": "object"
-            },
-            "ForgotPasswordRequest": {
-                "required": ["email"],
-                "properties": { "email": { "type": "string", "maxLength": 254 } },
-                "type": "object"
-            },
-            "VerifyResetCodeRequest": {
-                "required": ["email", "code"],
-                "properties": {
-                    "email": { "type": "string", "maxLength": 254 },
-                    "code": { "type": "string", "minLength": 6, "maxLength": 6, "pattern": "\\d{6}" }
-                },
-                "type": "object"
-            },
-            "ResetPasswordRequest": {
-                "required": ["reset_token", "new_password"],
-                "properties": {
-                    "reset_token": { "type": "string", "pattern": "[a-f0-9]{64}" },
-                    "new_password": { "type": "string", "minLength": 8 }
-                },
-                "type": "object"
-            },
-            "Confirm2FARequest": {
-                "required": ["totp_code"],
-                "properties": { "totp_code": { "type": "string", "pattern": "\\d{6}" } },
-                "type": "object"
-            },
-            "Disable2FARequest": {
-                "required": ["password"],
-                "properties": { "password": { "type": "string" } },
-                "type": "object"
-            },
             "CreateReminderRequest": {
                 "required": ["title", "remindAt"],
                 "properties": {
                     "title": { "type": "string", "maxLength": 255 },
                     "remindAt": { "type": "string" },
-                    "note": { "type": "string", "maxLength": 1000, "nullable": true }
+                    "note": { "type": "string", "default": null, "maxLength": 1000, "nullable": true }
                 },
                 "type": "object"
             },
             "UpdateReminderRequest": {
                 "properties": {
-                    "title": { "type": "string", "maxLength": 255, "nullable": true },
-                    "remindAt": { "type": "string", "nullable": true },
-                    "note": { "type": "string", "maxLength": 1000, "nullable": true },
+                    "title": { "type": "string", "default": null, "maxLength": 255, "nullable": true },
+                    "remindAt": { "type": "string", "default": null, "nullable": true },
+                    "note": { "type": "string", "default": null, "maxLength": 1000, "nullable": true },
                     "isDone": { "type": "boolean", "nullable": true }
                 },
                 "type": "object"
             },
             "UpdateProfileRequest": {
                 "properties": {
-                    "firstName": { "type": "string", "maxLength": 100, "nullable": true },
-                    "lastName": { "type": "string", "maxLength": 100, "nullable": true },
-                    "phone": { "type": "string", "maxLength": 30, "nullable": true }
+                    "firstName": { "type": "string", "default": null, "maxLength": 100, "nullable": true },
+                    "lastName": { "type": "string", "default": null, "maxLength": 100, "nullable": true },
+                    "phone": { "type": "string", "default": null, "maxLength": 30, "nullable": true }
                 },
                 "type": "object"
             },
             "UpdatePreferencesRequest": {
                 "properties": {
-                    "language": { "type": "string", "enum": ["ro", "en", "fr", "de"], "nullable": true },
-                    "notifications": { "type": "boolean", "nullable": true }
+                    "language": { "type": "string", "default": null, "enum": ["ro", "en", "fr", "de"], "nullable": true },
+                    "notifications": { "type": "boolean", "default": null, "nullable": true }
                 },
                 "type": "object"
             },
@@ -1287,7 +1744,7 @@
         "securitySchemes": {
             "Bearer": {
                 "type": "http",
-                "description": "RS256 JWT access token (15 min TTL)",
+                "description": "RS256 JWT access token (15 min TTL).",
                 "bearerFormat": "JWT",
                 "scheme": "bearer"
             }
@@ -1295,13 +1752,14 @@
     },
     "security": [{ "Bearer": [] }],
     "tags": [
-        { "name": "Auth", "description": "Authentication, registration, password reset, and 2FA management." },
-        { "name": "Dashboard", "description": "Aggregated dashboard statistics." },
-        { "name": "Notifications", "description": "User notifications." },
-        { "name": "Policies", "description": "Insurance policies." },
-        { "name": "Quotes", "description": "Insurance quotes." },
-        { "name": "Reminders", "description": "User-defined reminders." },
-        { "name": "Sessions", "description": "Multi-device session management." },
-        { "name": "User", "description": "User profile, preferences, password management, and account deletion." }
+        { "name": "Auth" },
+        { "name": "Dashboard" },
+        { "name": "Notifications" },
+        { "name": "Policies" },
+        { "name": "Quotes" },
+        { "name": "Reminders" },
+        { "name": "Sessions" },
+        { "name": "Sync" },
+        { "name": "User" }
     ]
 }
