@@ -4,11 +4,12 @@ import { useAuthStore } from '@/stores/auth-store'
 import { useEffect, useRef } from 'react'
 import { useUserActivity } from './use-user-activity'
 
-const SYNC_INTERVAL = 10 * 60 * 1000
+const SYNC_INTERVAL = 1 * 60 * 1000
+const IDLE_THRESHOLD = 30 * 60 * 1000
 
 export function useSyncRefresh() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
-  const isActive = useUserActivity()
+  const isActive = useUserActivity(IDLE_THRESHOLD)
 
   // Refs so the interval callback always reads current values
   // without needing to recreate the interval on every change.
