@@ -29,7 +29,7 @@ export function useSyncRefresh() {
 
       isPendingRef.current = true
       try {
-        await api.post(ENDPOINTS.SYNC.REFRESH)
+        await api.get(ENDPOINTS.SYNC.REFRESH)
       } catch {
         // background task — errors are intentionally swallowed
       } finally {
@@ -37,6 +37,7 @@ export function useSyncRefresh() {
       }
     }
 
+    sync()
     const id = setInterval(sync, SYNC_INTERVAL)
     return () => clearInterval(id)
   }, [isAuthenticated])
