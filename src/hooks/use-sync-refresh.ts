@@ -4,7 +4,7 @@ import { useAuthStore } from '@/stores/auth-store'
 import { useEffect, useRef } from 'react'
 import { useUserActivity } from './use-user-activity'
 
-const SYNC_INTERVAL = 1 * 60 * 1000
+const SYNC_INTERVAL = 10 * 60 * 1000
 const IDLE_THRESHOLD = 30 * 60 * 1000
 
 export function useSyncRefresh() {
