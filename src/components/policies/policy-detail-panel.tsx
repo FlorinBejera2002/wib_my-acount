@@ -429,7 +429,7 @@ export function PolicyDetailPanel({ policyId }: { policyId: string }) {
                   setDownloadingId(doc.fileId)
                   downloadDoc.mutate(
                     {
-                      policyId: policy.id,
+                      transactionId: policy.transactionId ?? '',
                       fileId: doc.fileId,
                       fileName: doc.name
                     },

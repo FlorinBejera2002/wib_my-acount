@@ -138,10 +138,10 @@ const filterConfigs = [
 /* ── Reusable tiny components ─────────────────────────────────────────── */
 
 function PdfButton({
-  policyId,
+  transactionId,
   doc
 }: {
-  policyId: string
+  transactionId: string | null | undefined
   doc?: PolicyDocument
 }) {
   const { t } = useTranslation()
@@ -170,7 +170,7 @@ function PdfButton({
       onClick={(e) => {
         e.stopPropagation()
         downloadDoc.mutate({
-          policyId,
+          transactionId: transactionId ?? '',
           fileId: doc.fileId,
           fileName: doc.name
         })
@@ -666,7 +666,7 @@ export function PoliciesTable() {
                     </TableCell>
 
                     <TableCell>
-                      <PdfButton policyId={policy.id} doc={firstDoc} />
+                      <PdfButton transactionId={policy.transactionId} doc={firstDoc} />
                     </TableCell>
                   </TableRow>
                 ]
@@ -823,7 +823,7 @@ function PackageCard({
                 </div>
               </div>
               <div className="mt-2">
-                <PdfButton policyId={sub.id} doc={sub.documents?.[0]} />
+                <PdfButton transactionId={sub.transactionId} doc={sub.documents?.[0]} />
               </div>
             </div>
           ))}
@@ -940,7 +940,7 @@ function PolicyCard({
         {/* Actions row */}
         <div className="flex items-center justify-between mt-3">
           <div>
-            <PdfButton policyId={policy.id} doc={firstDoc} />
+            <PdfButton transactionId={policy.transactionId} doc={firstDoc} />
           </div>
         </div>
       </div>
@@ -1029,7 +1029,7 @@ function SubTable({
                 {formatCurrency(sub.premium)}
               </TableCell>
               <TableCell>
-                <PdfButton policyId={sub.id} doc={doc} />
+                <PdfButton transactionId={sub.transactionId} doc={doc} />
               </TableCell>
             </TableRow>
           )

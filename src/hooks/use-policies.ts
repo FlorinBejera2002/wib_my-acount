@@ -36,16 +36,16 @@ export function usePolicy(id: string) {
 export function useDownloadPolicyDocument() {
   return useMutation({
     mutationFn: async ({
-      policyId,
+      transactionId,
       fileId,
       fileName
     }: {
-      policyId: string
+      transactionId: string
       fileId: string
       fileName: string
     }) => {
       const { data } = await api.get<Blob>(
-        ENDPOINTS.POLICIES.DOWNLOAD_DOCUMENT(policyId, fileId),
+        ENDPOINTS.POLICIES.DOWNLOAD_DOCUMENT(transactionId, fileId),
         { responseType: 'blob' }
       )
       const url = URL.createObjectURL(data)
