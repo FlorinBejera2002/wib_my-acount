@@ -334,6 +334,7 @@
     "insuredDetails": "Détails de l'assuré",
     "dateTime": "Date",
     "viewOffer": "Voir l'offre",
+    "noOfferUrl": "L'offre n'est pas disponible pour le moment",
     "reset": "Réinitialiser",
     "notFound": "Devis non trouvé",
     "backToQuotes": "Retour aux devis",

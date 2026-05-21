@@ -212,16 +212,6 @@ export type InsuranceType =
   | 'rcp'
   | 'other'
 
-export interface PolicyDocument {
-  fileId: string
-  fileType:
-    | 'policy_pdf'
-    | 'polita_locuinta_pad'
-    | 'polita_locuinta_facultativa'
-    | 'receipt'
-  name: string
-}
-
 export interface InsuredData {
   name?: string
   cnp?: string
@@ -238,8 +228,7 @@ export interface Quote {
   quoteDate?: string | null
   quoteStartDate?: string | null
   active: boolean
-  offerUrl?: string | null
-  documents?: PolicyDocument[]
+  quoteInputParamsId?: string | null
   data?: {
     product?: Record<string, unknown>
     insured?: InsuredData
@@ -265,7 +254,7 @@ export interface Policy {
   insurer?: string | null
   active: boolean
   quoteRef?: string | null
-  documents?: PolicyDocument[]
+  fileIds?: Record<string, string>
   insuranceType?: 'pad' | 'facultative' | null
   data?: {
     product?: Record<string, unknown>

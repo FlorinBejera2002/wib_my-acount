@@ -1,4 +1,3 @@
-import type { PolicyDocument } from '@/api/types'
 import { Badge } from '@/components/ui/badge'
 import { InsuranceTypeBadge } from '@/components/ui/insurance-type-badge'
 import {
@@ -139,15 +138,17 @@ const filterConfigs = [
 
 function PdfButton({
   transactionId,
-  doc
+  fileIds
 }: {
   transactionId: string | null | undefined
-  doc?: PolicyDocument
+  fileIds?: Record<string, string>
 }) {
   const { t } = useTranslation()
   const downloadDoc = useDownloadPolicyDocument()
 
-  if (!doc) {
+  const fileId = fileIds?.policy_pdf ?? Object.values(fileIds ?? {})[0]
+
+  if (!fileId) {
     return (
       <button
         type="button"
@@ -171,12 +172,10 @@ function PdfButton({
         e.stopPropagation()
         downloadDoc.mutate({
           transactionId: transactionId ?? '',
-          fileId: doc.fileId,
-          fileName: doc.name
+          fileId
         })
       }}
       className="inline-flex items-center gap-1.5 rounded-md border border-gray-150 bg-gray-50/40 px-3 py-1.5 text-xs font-medium text-blue-600 shadow-[0_1px_3px_rgba(0,0,0,0.04)] transition-colors hover:bg-gray-50 hover:text-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-      title={doc.name}
     >
       <Download className="h-3 w-3 shrink-0" />
       PDF
@@ -490,13 +489,11 @@ export function PoliciesTable() {
               )
             }
             const days = computeDaysUntilExpiry(item.policy.endDate)
-            const firstDoc = item.policy.documents?.[0]
             return (
               <PolicyCard
                 key={item.policy.id}
                 policy={item.policy}
                 days={days}
-                firstDoc={firstDoc}
                 onNavigate={() => openPolicy(item.policy.id)}
                 t={t}
               />
@@ -617,7 +614,6 @@ export function PoliciesTable() {
 
                 const { policy } = item
                 const days = computeDaysUntilExpiry(policy.endDate)
-                const firstDoc = policy.documents?.[0]
 
                 return [
                   <TableRow
@@ -666,7 +662,10 @@ export function PoliciesTable() {
                     </TableCell>
 
                     <TableCell>
-                      <PdfButton transactionId={policy.transactionId} doc={firstDoc} />
+                      <PdfButton
+                        transactionId={policy.transactionId}
+                        fileIds={policy.fileIds}
+                      />
                     </TableCell>
                   </TableRow>
                 ]
@@ -823,7 +822,10 @@ function PackageCard({
                 </div>
               </div>
               <div className="mt-2">
-                <PdfButton transactionId={sub.transactionId} doc={sub.documents?.[0]} />
+                <PdfButton
+                  transactionId={sub.transactionId}
+                  fileIds={sub.fileIds}
+                />
               </div>
             </div>
           ))}
@@ -840,13 +842,11 @@ function PackageCard({
 function PolicyCard({
   policy,
   days,
-  firstDoc,
   onNavigate,
   t
 }: {
   policy: Policy
   days: number
-  firstDoc?: PolicyDocument
   onNavigate: () => void
   t: (key: string, opts?: Record<string, unknown>) => string
 }) {
@@ -940,7 +940,10 @@ function PolicyCard({
         {/* Actions row */}
         <div className="flex items-center justify-between mt-3">
           <div>
-            <PdfButton transactionId={policy.transactionId} doc={firstDoc} />
+            <PdfButton
+              transactionId={policy.transactionId}
+              fileIds={policy.fileIds}
+            />
           </div>
         </div>
       </div>
@@ -995,45 +998,45 @@ function SubTable({
         </TableRow>
       </TableHeader>
       <TableBody>
-        {policies.map((sub) => {
-          const doc = sub.documents?.[0]
-          return (
-            <TableRow
-              key={sub.id}
-              className="cursor-pointer hover:bg-gray-50/50"
-              onClick={() => onSelect(sub.id)}
-            >
-              <TableCell className="text-sm font-medium text-gray-900">
-                {sub.policyNumber}
-              </TableCell>
-              {isTravel ? (
-                <>
-                  <TableCell className="text-sm font-medium text-gray-900">
-                    {sub.data?.insured?.name ?? '—'}
-                  </TableCell>
-                  <TableCell className="text-sm text-gray-700">
-                    {sub.data?.insured?.cnp ?? '—'}
-                  </TableCell>
-                </>
-              ) : (
-                <>
-                  <TableCell>
-                    <InsuranceTypeBadge type={sub.insuranceType ?? sub.type} />
-                  </TableCell>
-                  <TableCell className="text-sm text-gray-700">
-                    {sub.insurer ?? '—'}
-                  </TableCell>
-                </>
-              )}
-              <TableCell className="text-sm text-gray-900">
-                {formatCurrency(sub.premium)}
-              </TableCell>
-              <TableCell>
-                <PdfButton transactionId={sub.transactionId} doc={doc} />
-              </TableCell>
-            </TableRow>
-          )
-        })}
+        {policies.map((sub) => (
+          <TableRow
+            key={sub.id}
+            className="cursor-pointer hover:bg-gray-50/50"
+            onClick={() => onSelect(sub.id)}
+          >
+            <TableCell className="text-sm font-medium text-gray-900">
+              {sub.policyNumber}
+            </TableCell>
+            {isTravel ? (
+              <>
+                <TableCell className="text-sm font-medium text-gray-900">
+                  {sub.data?.insured?.name ?? '—'}
+                </TableCell>
+                <TableCell className="text-sm text-gray-700">
+                  {sub.data?.insured?.cnp ?? '—'}
+                </TableCell>
+              </>
+            ) : (
+              <>
+                <TableCell>
+                  <InsuranceTypeBadge type={sub.insuranceType ?? sub.type} />
+                </TableCell>
+                <TableCell className="text-sm text-gray-700">
+                  {sub.insurer ?? '—'}
+                </TableCell>
+              </>
+            )}
+            <TableCell className="text-sm text-gray-900">
+              {formatCurrency(sub.premium)}
+            </TableCell>
+            <TableCell>
+              <PdfButton
+                transactionId={sub.transactionId}
+                fileIds={sub.fileIds}
+              />
+            </TableCell>
+          </TableRow>
+        ))}
       </TableBody>
     </Table>
   )

@@ -19,9 +19,10 @@ import {
   SelectValue
 } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
-import { useQuotes } from '@/hooks/use-quotes'
+import { useGetQuoteOfferUrl, useQuotes } from '@/hooks/use-quotes'
 import { formatDate } from '@/lib/utils'
-import { AlertCircle, ExternalLink, Inbox, Plus } from 'lucide-react'
+import { AlertCircle, ExternalLink, Inbox, Loader2, Plus } from 'lucide-react'
+import { toast } from 'sonner'
 
 const filterConfigs = [
   {
@@ -170,6 +171,43 @@ function InsuredDetailsCell({ quote }: { quote: Quote }) {
   )
 }
 
+/* ── OfferUrlButton ── */
+
+function OfferUrlButton({ quote }: { quote: Quote }) {
+  const { t } = useTranslation()
+  const getOfferUrl = useGetQuoteOfferUrl()
+
+  if (!quote.quoteInputParamsId) {
+    return <span className="text-sm text-muted-foreground">—</span>
+  }
+
+  return (
+    <button
+      type="button"
+      disabled={getOfferUrl.isPending}
+      onClick={() => {
+        getOfferUrl.mutate(quote.quoteInputParamsId!, {
+          onSuccess: ({ offerUrl }) => {
+            if (offerUrl) {
+              window.open(offerUrl, '_blank', 'noopener,noreferrer')
+            } else {
+              toast.info(t('quotes.noOfferUrl'))
+            }
+          }
+        })
+      }}
+      className="inline-flex items-center gap-1.5 rounded-md border border-gray-150 bg-gray-50/40 px-3 py-1.5 text-xs font-medium text-blue-600 shadow-[0_1px_3px_rgba(0,0,0,0.04)] transition-colors hover:bg-gray-50 hover:text-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+    >
+      {getOfferUrl.isPending ? (
+        <Loader2 className="h-3 w-3 shrink-0 animate-spin" />
+      ) : (
+        <ExternalLink className="h-3 w-3 shrink-0" />
+      )}
+      {t('quotes.viewOffer')}
+    </button>
+  )
+}
+
 /* ── Main export ── */
 
 export function QuotesTable() {
@@ -231,22 +269,7 @@ export function QuotesTable() {
     {
       id: 'offerUrl',
       header: t('quotes.viewOffer'),
-      cell: ({ row }) => {
-        const url = row.original.offerUrl
-        if (!url)
-          return <span className="text-sm text-muted-foreground">—</span>
-        return (
-          <a
-            href={url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 rounded-md border border-gray-150 bg-gray-50/40 px-3 py-1.5 text-xs font-medium text-blue-600 shadow-[0_1px_3px_rgba(0,0,0,0.04)] transition-colors hover:bg-gray-50 hover:text-blue-700"
-          >
-            <ExternalLink className="h-3 w-3 shrink-0" />
-            {t('quotes.viewOffer')}
-          </a>
-        )
-      }
+      cell: ({ row }) => <OfferUrlButton quote={row.original} />
     }
   ]
 
@@ -411,17 +434,9 @@ function QuoteCard({
         </div>
 
         {/* Offer link */}
-        {quote.offerUrl && (
+        {quote.quoteInputParamsId && (
           <div className="mt-4">
-            <a
-              href={quote.offerUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-800 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-900"
-            >
-              <ExternalLink className="h-4 w-4 shrink-0" />
-              {t('quotes.viewOffer')}
-            </a>
+            <OfferUrlButton quote={quote} />
           </div>
         )}
       </div>

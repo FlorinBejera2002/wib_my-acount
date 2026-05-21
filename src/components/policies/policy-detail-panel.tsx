@@ -418,20 +418,19 @@ export function PolicyDetailPanel({ policyId }: { policyId: string }) {
             {t('policies.documents')}
           </h3>
         </div>
-        {policy.documents && policy.documents.length > 0 ? (
+        {policy.fileIds && Object.keys(policy.fileIds).length > 0 ? (
           <div className="space-y-2">
-            {policy.documents.map((doc) => (
+            {Object.entries(policy.fileIds).map(([fileType, fileId]) => (
               <button
-                key={doc.fileId}
+                key={fileId}
                 type="button"
-                disabled={downloadingId === doc.fileId}
+                disabled={downloadingId === fileId}
                 onClick={() => {
-                  setDownloadingId(doc.fileId)
+                  setDownloadingId(fileId)
                   downloadDoc.mutate(
                     {
                       transactionId: policy.transactionId ?? '',
-                      fileId: doc.fileId,
-                      fileName: doc.name
+                      fileId
                     },
                     { onSettled: () => setDownloadingId(null) }
                   )
@@ -439,7 +438,7 @@ export function PolicyDetailPanel({ policyId }: { policyId: string }) {
                 className="flex w-full items-center gap-3 rounded-lg border border-gray-100 bg-gray-50/50 px-4 py-3 text-sm text-blue-600 transition-colors hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Download className="h-4 w-4 shrink-0" />
-                {doc.name}
+                {t(`policies.fileType.${fileType}`, { defaultValue: fileType })}
               </button>
             ))}
           </div>

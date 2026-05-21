@@ -22,13 +22,15 @@ export const ENDPOINTS = {
   },
   QUOTES: {
     LIST: '/user/quotes',
-    DETAIL: (id: string) => `/user/quotes/${id}`
+    DETAIL: (id: string) => `/user/quotes/${id}`,
+    OFFER_URL: '/user/quotes/offer-url',
+    SYNC_STATES: '/user/quotes/sync-states'
   },
   POLICIES: {
     LIST: '/user/policies',
     DETAIL: (id: string) => `/user/policies/${id}`,
-    DOWNLOAD_DOCUMENT: (id: string, fileId: string) =>
-      `/user/policies/${id}/documents/${fileId}`
+    DOWNLOAD_DOCUMENT: (transactionId: string, fileId: string) =>
+      `/user/policies/download/${transactionId}/${fileId}`
   },
   SESSIONS: {
     LIST: '/user/sessions',

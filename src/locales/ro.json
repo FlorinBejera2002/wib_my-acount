@@ -342,6 +342,7 @@
     "insuredDetails": "Detalii persoană asigurată",
     "dateTime": "Dată",
     "viewOffer": "Vezi oferta",
+    "noOfferUrl": "Oferta nu este disponibilă momentan",
     "reset": "Resetează",
     "notFound": "Cotația nu a fost găsită",
     "backToQuotes": "Înapoi la cotații",

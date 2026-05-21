@@ -1,7 +1,7 @@
 import { api } from '@/api/axios-client'
 import { ENDPOINTS } from '@/api/endpoints'
 import type { PaginatedResponse, Quote, TableParams } from '@/api/types'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { useUserActivity } from './use-user-activity'
 
 const fetchQuotes = async (
@@ -37,5 +37,17 @@ export function useQuote(id: string) {
     queryKey: ['quotes', id],
     queryFn: () => fetchQuote(id),
     enabled: !!id
+  })
+}
+
+export function useGetQuoteOfferUrl() {
+  return useMutation({
+    mutationFn: async (quoteInputParamsId: string) => {
+      const { data } = await api.post<{ offerUrl: string | null }>(
+        ENDPOINTS.QUOTES.OFFER_URL,
+        { quote_input_params_id: quoteInputParamsId }
+      )
+      return data
+    }
   })
 }

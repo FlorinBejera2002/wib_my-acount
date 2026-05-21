@@ -334,6 +334,7 @@
     "insuredDetails": "Insured details",
     "dateTime": "Date",
     "viewOffer": "View offer",
+    "noOfferUrl": "Offer not available at the moment",
     "reset": "Reset",
     "notFound": "Quote not found",
     "backToQuotes": "Back to quotes",

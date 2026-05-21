@@ -37,25 +37,15 @@ export function useDownloadPolicyDocument() {
   return useMutation({
     mutationFn: async ({
       transactionId,
-      fileId,
-      fileName
+      fileId
     }: {
       transactionId: string
       fileId: string
-      fileName: string
     }) => {
-      const { data } = await api.get<Blob>(
-        ENDPOINTS.POLICIES.DOWNLOAD_DOCUMENT(transactionId, fileId),
-        { responseType: 'blob' }
+      const { data } = await api.get<{ downloadUrl: string }>(
+        ENDPOINTS.POLICIES.DOWNLOAD_DOCUMENT(transactionId, fileId)
       )
-      const url = URL.createObjectURL(data)
-      const link = document.createElement('a')
-      link.href = url
-      link.download = fileName
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-      URL.revokeObjectURL(url)
+      window.open(data.downloadUrl, '_blank', 'noopener,noreferrer')
     }
   })
 }
