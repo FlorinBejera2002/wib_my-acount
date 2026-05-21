@@ -310,7 +310,19 @@
       "floor": "Emelet",
       "builtYear": "Építési év",
       "destination": "Úti cél",
-      "days": "Napok"
+      "days": "Napok",
+      "make": "Márka",
+      "model": "Modell",
+      "year": "Gyártási év",
+      "description": "Leírás",
+      "type": "Típus",
+      "travellersCount": "Utasok száma",
+      "purpose": "Cél",
+      "vehicleType": "Jármű típusa",
+      "transportRoute": "Szállítási útvonal",
+      "insuredAmount": "Biztosított összeg",
+      "insuranceType": "Biztosítás típusa",
+      "category": "Kategória"
     }
   },
   "quotes": {
@@ -356,9 +368,11 @@
     "title": "Beállítások",
     "subtitle": "Nyelv konfigurálása",
     "language": "Nyelv",
-    "romanian": "Română",
-    "english": "English",
+    "romanian": "Román",
+    "english": "Angol",
     "hungarian": "Magyar",
+    "french": "Francia",
+    "german": "Német",
     "saving": "Mentés...",
     "savePreferences": "Beállítások mentése"
   },

@@ -1,3 +1,4 @@
+import type { PolicyDocument } from '@/api/types'
 import { Badge } from '@/components/ui/badge'
 import { InsuranceTypeBadge } from '@/components/ui/insurance-type-badge'
 import {
@@ -17,7 +18,12 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table'
-import { usePolicies } from '@/hooks/use-policies'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger
+} from '@/components/ui/tooltip'
+import { useDownloadPolicyDocument, usePolicies } from '@/hooks/use-policies'
 import { cn, formatCurrency, formatDate } from '@/lib/utils'
 import {
   AlertCircle,
@@ -30,6 +36,7 @@ import {
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useSearchParams } from 'react-router-dom'
+import { toast } from 'sonner'
 
 import type { Policy, TableParams } from '@/api/types'
 import { PolicyDetailPanel } from './policy-detail-panel'
@@ -37,33 +44,52 @@ import { PolicyStatusBadge } from './policy-status-badge'
 
 const COL_COUNT = 9
 
-const VEHICLE_TYPES = new Set([
-  'rca',
-  'casco',
-  'casco_econom',
-  'casco_perfect_cover',
-  'cmr',
-  'breakdown'
-])
-
-function getPolicyDetail(policy: Policy): string {
+function getProductEntries(policy: Policy): [string, string][] {
   const product = policy.data?.product
-  if (!product || Array.isArray(product)) return '—'
-  const p = product as Record<string, unknown>
+  if (!product || Array.isArray(product)) return []
+  return Object.entries(product as Record<string, unknown>)
+    .filter(
+      ([key, val]) =>
+        key !== 'system' && val !== null && val !== undefined && val !== ''
+    )
+    .map(([key, val]) => [key, String(val)])
+}
 
-  if (VEHICLE_TYPES.has(policy.type)) {
-    return String(p.plate ?? '—')
+function ProductDetailsCell({ policy }: { policy: Policy }) {
+  const { t } = useTranslation()
+  const entries = getProductEntries(policy)
+  if (entries.length === 0) {
+    return <span className="text-sm text-gray-400">—</span>
   }
-  if (policy.type === 'home') {
-    return String(p.address ?? '—')
-  }
-  if (policy.type === 'travel') {
-    const dest = p.destination
-    const days = p.days
-    if (dest && days) return `${dest} · ${days} zile`
-    return String(dest ?? days ?? '—')
-  }
-  return policy.data?.insured?.name ?? '—'
+  const summary = entries.map(([, val]) => val).join(' · ')
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild={true}>
+        <span className="text-sm text-gray-700 block max-w-[200px] truncate cursor-default">
+          {summary}
+        </span>
+      </TooltipTrigger>
+      <TooltipContent
+        side="bottom"
+        align="start"
+        className="bg-white text-gray-700 border border-gray-200 shadow-lg p-3 max-w-xs"
+      >
+        <div className="space-y-1">
+          {entries.map(([key, val]) => (
+            <div key={key} className="flex gap-2 text-xs">
+              <span className="text-gray-400 shrink-0">
+                {t(`policies.product.${key}`, {
+                  defaultValue: key.replace(/([A-Z])/g, ' $1').trim()
+                })}
+                :
+              </span>
+              <span className="font-medium">{val}</span>
+            </div>
+          ))}
+        </div>
+      </TooltipContent>
+    </Tooltip>
+  )
 }
 
 const computeDaysUntilExpiry = (endDate: string): number =>
@@ -111,19 +137,50 @@ const filterConfigs = [
 
 /* ── Reusable tiny components ─────────────────────────────────────────── */
 
-function PdfLink({ url, label }: { url: string; label?: string }) {
+function PdfButton({
+  policyId,
+  doc
+}: {
+  policyId: string
+  doc?: PolicyDocument
+}) {
+  const { t } = useTranslation()
+  const downloadDoc = useDownloadPolicyDocument()
+
+  if (!doc) {
+    return (
+      <button
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation()
+          toast.info(t('policies.noDocuments'))
+        }}
+        className="inline-flex items-center gap-1.5 rounded-md border border-gray-200 bg-gray-50/40 px-3 py-1.5 text-xs font-medium text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-500"
+      >
+        <Download className="h-3 w-3 shrink-0 opacity-40" />
+        <span className="line-through opacity-60">PDF</span>
+      </button>
+    )
+  }
+
   return (
-    <a
-      href={url}
-      target="_blank"
-      rel="noopener noreferrer"
-      onClick={(e) => e.stopPropagation()}
-      className="inline-flex items-center gap-1.5 rounded-md border border-gray-150 bg-gray-50/40 px-3 py-1.5 text-xs font-medium text-blue-600 shadow-[0_1px_3px_rgba(0,0,0,0.04)] transition-colors hover:bg-gray-50 hover:text-blue-700"
-      title={label}
+    <button
+      type="button"
+      disabled={downloadDoc.isPending}
+      onClick={(e) => {
+        e.stopPropagation()
+        downloadDoc.mutate({
+          policyId,
+          fileId: doc.fileId,
+          fileName: doc.name
+        })
+      }}
+      className="inline-flex items-center gap-1.5 rounded-md border border-gray-150 bg-gray-50/40 px-3 py-1.5 text-xs font-medium text-blue-600 shadow-[0_1px_3px_rgba(0,0,0,0.04)] transition-colors hover:bg-gray-50 hover:text-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+      title={doc.name}
     >
       <Download className="h-3 w-3 shrink-0" />
       PDF
-    </a>
+    </button>
   )
 }
 
@@ -159,16 +216,22 @@ function HoverCell({
     return <span className="text-sm text-gray-700">{text}</span>
   }
   return (
-    <div className="relative group/cell">
-      <span
-        className={`text-sm text-gray-700 block ${maxWidth} truncate cursor-default`}
+    <Tooltip>
+      <TooltipTrigger asChild={true}>
+        <span
+          className={`text-sm text-gray-700 block ${maxWidth} truncate cursor-default`}
+        >
+          {text}
+        </span>
+      </TooltipTrigger>
+      <TooltipContent
+        side="bottom"
+        align="start"
+        className="bg-white text-gray-700 border border-gray-200 shadow-lg max-w-xs whitespace-normal"
       >
         {text}
-      </span>
-      <div className="invisible opacity-0 group-hover/cell:visible group-hover/cell:opacity-100 transition-all duration-200 absolute z-50 left-0 top-full mt-1 max-w-xs rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 shadow-lg whitespace-normal">
-        {text}
-      </div>
-    </div>
+      </TooltipContent>
+    </Tooltip>
   )
 }
 
@@ -181,19 +244,20 @@ type TableItem =
   | {
       kind: 'group'
       policyType: string
-      quoteRef: string
+      groupKey: string
       policies: Policy[]
       totalPremium: number
     }
 
 function buildTableItems(policies: Policy[]): TableItem[] {
-  const byQuoteRef = new Map<string, Policy[]>()
+  const byGroupKey = new Map<string, Policy[]>()
 
   for (const policy of policies) {
-    if (GROUPABLE_TYPES.has(policy.type) && policy.quoteRef) {
-      const arr = byQuoteRef.get(policy.quoteRef) ?? []
+    const key = policy.quoteRef ?? policy.comboId
+    if (GROUPABLE_TYPES.has(policy.type) && key) {
+      const arr = byGroupKey.get(key) ?? []
       arr.push(policy)
-      byQuoteRef.set(policy.quoteRef, arr)
+      byGroupKey.set(key, arr)
     }
   }
 
@@ -201,15 +265,16 @@ function buildTableItems(policies: Policy[]): TableItem[] {
   const items: TableItem[] = []
 
   for (const policy of policies) {
-    if (GROUPABLE_TYPES.has(policy.type) && policy.quoteRef) {
-      const group = byQuoteRef.get(policy.quoteRef)!
+    const key = policy.quoteRef ?? policy.comboId
+    if (GROUPABLE_TYPES.has(policy.type) && key) {
+      const group = byGroupKey.get(key)!
       if (group.length >= 2) {
-        if (!addedGroups.has(policy.quoteRef)) {
-          addedGroups.add(policy.quoteRef)
+        if (!addedGroups.has(key)) {
+          addedGroups.add(key)
           items.push({
             kind: 'group',
             policyType: policy.type,
-            quoteRef: policy.quoteRef,
+            groupKey: key,
             policies: group,
             totalPremium: group.reduce((sum, p) => sum + p.premium, 0)
           })
@@ -239,7 +304,7 @@ export function PoliciesTable() {
   useEffect(() => {
     const paramId = searchParams.get('policyId')
     if (paramId) {
-      openPolicy(paramId)
+      setSelectedPolicyId(paramId)
       searchParams.delete('policyId')
       setSearchParams(searchParams, { replace: true })
     }
@@ -279,13 +344,16 @@ export function PoliciesTable() {
     })
   }, [data?.data, dateFrom, dateTo])
 
-  const tableItems = useMemo(() => buildTableItems(filteredData), [filteredData])
+  const tableItems = useMemo(
+    () => buildTableItems(filteredData),
+    [filteredData]
+  )
 
-  const toggleGroup = (quoteRef: string) =>
+  const toggleGroup = (key: string) =>
     setExpandedGroups((prev) => {
       const next = new Set(prev)
-      if (next.has(quoteRef)) next.delete(quoteRef)
-      else next.add(quoteRef)
+      if (next.has(key)) next.delete(key)
+      else next.add(key)
       return next
     })
 
@@ -412,10 +480,10 @@ export function PoliciesTable() {
             if (item.kind === 'group') {
               return (
                 <PackageCard
-                  key={`group-${item.quoteRef}`}
+                  key={`group-${item.groupKey}`}
                   item={item}
-                  isExpanded={expandedGroups.has(item.quoteRef)}
-                  onToggle={() => toggleGroup(item.quoteRef)}
+                  isExpanded={expandedGroups.has(item.groupKey)}
+                  onToggle={() => toggleGroup(item.groupKey)}
                   onNavigate={openPolicy}
                   t={t}
                 />
@@ -443,7 +511,7 @@ export function PoliciesTable() {
       </div>
 
       {/* ═══ Desktop table (lg+) ═══ */}
-      <div className="hidden lg:block rounded-xl border border-gray-100/80 bg-white shadow-[0_1px_4px_rgba(0,0,0,0.05)] overflow-x-auto hide-scrollbar">
+      <div className="hidden lg:block rounded-xl border border-gray-100/80 bg-white shadow-[0_1px_4px_rgba(0,0,0,0.05)] overflow-x-auto hide-scrollbar min-h-[420px]">
         <Table className="min-w-[900px]">
           <TableHeader className="bg-slate-50 [&_th]:text-slate-500 [&_th]:text-xs [&_th]:font-medium [&_th]:uppercase [&_th]:tracking-wider">
             <TableRow>
@@ -466,13 +534,13 @@ export function PoliciesTable() {
                   const rep = item.policies[0]
                   if (!rep) return []
                   const days = computeDaysUntilExpiry(rep.endDate)
-                  const isExpanded = expandedGroups.has(item.quoteRef)
+                  const isExpanded = expandedGroups.has(item.groupKey)
 
                   const rows = [
                     <TableRow
-                      key={`group-${item.quoteRef}`}
+                      key={`group-${item.groupKey}`}
                       className="cursor-pointer transition-colors hover:bg-gray-50/50"
-                      onClick={() => toggleGroup(item.quoteRef)}
+                      onClick={() => toggleGroup(item.groupKey)}
                     >
                       <TableCell>
                         <div className="flex items-center gap-2">
@@ -482,7 +550,7 @@ export function PoliciesTable() {
                             <ChevronRight className="h-4 w-4 text-gray-400 shrink-0" />
                           )}
                           <span className="font-medium text-gray-700">
-                            {item.quoteRef}
+                            {item.groupKey}
                           </span>
                         </div>
                       </TableCell>
@@ -499,7 +567,7 @@ export function PoliciesTable() {
                         <HoverCell text={rep.insurer ?? '—'} />
                       </TableCell>
                       <TableCell>
-                        <HoverCell text={getPolicyDetail(rep)} />
+                        <ProductDetailsCell policy={rep} />
                       </TableCell>
                       <TableCell className="text-sm font-semibold text-gray-900">
                         {formatCurrency(item.totalPremium)}
@@ -526,7 +594,7 @@ export function PoliciesTable() {
                   if (isExpanded) {
                     rows.push(
                       <TableRow
-                        key={`group-${item.quoteRef}-sub`}
+                        key={`group-${item.groupKey}-sub`}
                         className="hover:bg-transparent border-0"
                       >
                         <TableCell
@@ -574,7 +642,7 @@ export function PoliciesTable() {
                     </TableCell>
 
                     <TableCell>
-                      <HoverCell text={getPolicyDetail(policy)} />
+                      <ProductDetailsCell policy={policy} />
                     </TableCell>
 
                     <TableCell className="text-sm text-gray-900">
@@ -598,9 +666,7 @@ export function PoliciesTable() {
                     </TableCell>
 
                     <TableCell>
-                      {firstDoc ? (
-                        <PdfLink url={firstDoc.url} label={firstDoc.name} />
-                      ) : null}
+                      <PdfButton policyId={policy.id} doc={firstDoc} />
                     </TableCell>
                   </TableRow>
                 ]
@@ -647,7 +713,12 @@ function PackageCard({
   onNavigate,
   t
 }: {
-  item: { policyType: string; quoteRef: string; policies: Policy[]; totalPremium: number }
+  item: {
+    policyType: string
+    groupKey: string
+    policies: Policy[]
+    totalPremium: number
+  }
   isExpanded: boolean
   onToggle: () => void
   onNavigate: (id: string) => void
@@ -671,7 +742,7 @@ function PackageCard({
             <ChevronRight className="h-4 w-4 text-gray-400 shrink-0" />
           )}
           <span className="font-bold text-gray-900 text-sm truncate">
-            {item.quoteRef}
+            {item.groupKey}
           </span>
         </div>
         <PolicyStatusBadge status={rep.status} />
@@ -680,7 +751,9 @@ function PackageCard({
       {/* ── Summary ── */}
       <div className="px-4 py-4">
         <InsuranceTypeBadge
-          type={item.policyType === 'home' ? 'pad_facultative' : item.policyType}
+          type={
+            item.policyType === 'home' ? 'pad_facultative' : item.policyType
+          }
           className="px-2 py-0.5 text-[11px] gap-1 [&_svg]:h-3 [&_svg]:w-3"
         />
 
@@ -749,14 +822,9 @@ function PackageCard({
                   </span>
                 </div>
               </div>
-              {sub.documents?.[0] && (
-                <div className="mt-2">
-                  <PdfLink
-                    url={sub.documents[0].url}
-                    label={sub.documents[0].name}
-                  />
-                </div>
-              )}
+              <div className="mt-2">
+                <PdfButton policyId={sub.id} doc={sub.documents?.[0]} />
+              </div>
             </div>
           ))}
         </div>
@@ -778,7 +846,7 @@ function PolicyCard({
 }: {
   policy: Policy
   days: number
-  firstDoc?: { url: string; name: string }
+  firstDoc?: PolicyDocument
   onNavigate: () => void
   t: (key: string, opts?: Record<string, unknown>) => string
 }) {
@@ -805,6 +873,22 @@ function PolicyCard({
 
         {/* Mini-cards grid */}
         <div className="grid grid-cols-2 gap-2 mt-3">
+          {/* Product fields */}
+          {getProductEntries(policy).map(([key, val]) => (
+            <div
+              key={key}
+              className="rounded-lg bg-white border border-gray-100 px-3 py-2.5"
+            >
+              <p className="text-[10px] font-medium uppercase tracking-wider text-gray-400 mb-0.5">
+                {t(`policies.product.${key}`, {
+                  defaultValue: key.replace(/([A-Z])/g, ' $1').trim()
+                })}
+              </p>
+              <p className="text-sm font-semibold text-gray-800 truncate">
+                {val}
+              </p>
+            </div>
+          ))}
           {/* Premium */}
           <div className="rounded-lg bg-white border border-gray-100 px-3 py-2.5">
             <p className="text-[10px] font-medium uppercase tracking-wider text-gray-400 mb-0.5">
@@ -856,7 +940,7 @@ function PolicyCard({
         {/* Actions row */}
         <div className="flex items-center justify-between mt-3">
           <div>
-            {firstDoc && <PdfLink url={firstDoc.url} label={firstDoc.name} />}
+            <PdfButton policyId={policy.id} doc={firstDoc} />
           </div>
         </div>
       </div>
@@ -945,7 +1029,7 @@ function SubTable({
                 {formatCurrency(sub.premium)}
               </TableCell>
               <TableCell>
-                {doc ? <PdfLink url={doc.url} label={doc.name} /> : null}
+                <PdfButton policyId={sub.id} doc={doc} />
               </TableCell>
             </TableRow>
           )

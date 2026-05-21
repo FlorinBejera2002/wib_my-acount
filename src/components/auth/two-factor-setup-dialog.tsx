@@ -58,7 +58,7 @@ export function TwoFactorSetupDialog({
     if (code.length === 6 && step === 'confirm') {
       handleConfirm()
     }
-  }, [code])
+  }, [code, step])
 
   const handleContinue = () => {
     enable2FA.mutate(

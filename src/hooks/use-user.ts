@@ -6,6 +6,7 @@ import type {
   UserProfile
 } from '@/api/types'
 import i18n from '@/lib/i18n'
+import { useAuthStore } from '@/stores/auth-store'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
@@ -64,17 +65,34 @@ export function useUpdatePreferences() {
 
   return useMutation({
     mutationFn: updatePreferencesFn,
+    onMutate: (variables) => {
+      if (variables.language) {
+        // Apply immediately in UI
+        i18n.changeLanguage(variables.language)
+        // Persist locally so it survives page reload even if API rejects it
+        const store = useAuthStore.getState()
+        if (store.user) {
+          store.setUser({
+            ...store.user,
+            preferences: {
+              ...(store.user as UserProfile).preferences,
+              language: variables.language
+            }
+          } as UserProfile)
+        }
+      }
+    },
     onSuccess: (data) => {
       queryClient.setQueryData<UserProfile | undefined>(['profile'], (old) =>
         old ? { ...old, preferences: data.preferences } : old
       )
-      if (data.preferences?.language) {
-        i18n.changeLanguage(data.preferences.language)
-      }
       toast.success(i18n.t('toast.preferencesSaved'))
     },
-    onError: () => {
-      toast.error(i18n.t('toast.preferencesError'))
+    onError: (_err, variables) => {
+      // Language already changed locally — only show error if it wasn't a language-only failure
+      if (!variables.language) {
+        toast.error(i18n.t('toast.preferencesError'))
+      }
     }
   })
 }

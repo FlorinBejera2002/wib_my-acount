@@ -81,6 +81,9 @@ export function PreferencesForm() {
                       <SelectItem value="en">
                         {t('preferences.english')}
                       </SelectItem>
+                      <SelectItem value="hu">
+                        {t('preferences.hungarian')}
+                      </SelectItem>
                       <SelectItem value="fr">
                         {t('preferences.french')}
                       </SelectItem>

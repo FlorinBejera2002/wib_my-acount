@@ -1,4 +1,9 @@
 import { DataTable } from '@/components/data-table/data-table'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger
+} from '@/components/ui/tooltip'
 import type { ColumnDef } from '@tanstack/react-table'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -16,14 +21,7 @@ import {
 import { Skeleton } from '@/components/ui/skeleton'
 import { useQuotes } from '@/hooks/use-quotes'
 import { formatDate } from '@/lib/utils'
-import {
-  AlertCircle,
-  ChevronDown,
-  ChevronUp,
-  ExternalLink,
-  Inbox,
-  Plus
-} from 'lucide-react'
+import { AlertCircle, ExternalLink, Inbox, Plus } from 'lucide-react'
 
 const filterConfigs = [
   {
@@ -69,20 +67,106 @@ const quoteFormUrls: Record<string, string> = {
     'https://www.asigurari.ro/app/broker/cotatie/accidents_traveler/insured'
 }
 
-/* ── Hover-expandable text cell for desktop table ── */
-function ExpandableCell({ text }: { text: string }) {
-  if (text.length <= 40) {
-    return <span className="text-sm text-gray-700">{text}</span>
+const snakeToCamel = (key: string) =>
+  key.replace(/_([a-z])/g, (_, c: string) => c.toUpperCase())
+
+function getProductEntries(quote: Quote): [string, string][] {
+  const product = quote.data?.product
+  if (!product || Array.isArray(product)) return []
+  return Object.entries(product as Record<string, unknown>)
+    .filter(
+      ([key, val]) =>
+        key !== 'system' && val !== null && val !== undefined && val !== ''
+    )
+    .map(([key, val]) => [key, String(val)])
+}
+
+function getInsuredEntries(quote: Quote): [string, string][] {
+  const insured = quote.data?.insured
+  if (!insured || Array.isArray(insured)) return []
+  return Object.entries(insured as Record<string, unknown>)
+    .filter(
+      ([key, val]) =>
+        key !== 'system' && val !== null && val !== undefined && val !== ''
+    )
+    .map(([key, val]) => [key, String(val)])
+}
+
+function ProductDetailsCell({ quote }: { quote: Quote }) {
+  const { t } = useTranslation()
+  const entries = getProductEntries(quote)
+  if (entries.length === 0) {
+    return <span className="text-sm text-gray-400">—</span>
   }
+  const summary = entries.map(([, val]) => val).join(' · ')
   return (
-    <div className="relative group/cell">
-      <span className="text-sm text-gray-700 block max-w-[220px] truncate cursor-default">
-        {text}
-      </span>
-      <div className="invisible opacity-0 group-hover/cell:visible group-hover/cell:opacity-100 transition-all duration-200 absolute z-50 left-0 top-full mt-1 max-w-xs rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 shadow-lg whitespace-normal">
-        {text}
-      </div>
-    </div>
+    <Tooltip>
+      <TooltipTrigger asChild={true}>
+        <span className="text-sm text-gray-700 block max-w-[200px] truncate cursor-default">
+          {summary}
+        </span>
+      </TooltipTrigger>
+      <TooltipContent
+        side="bottom"
+        align="start"
+        className="bg-white text-gray-700 border border-gray-200 shadow-lg p-3 max-w-xs"
+      >
+        <div className="space-y-1">
+          {entries.map(([key, val]) => (
+            <div key={key} className="flex gap-2 text-xs">
+              <span className="text-gray-400 shrink-0">
+                {t(`policies.product.${snakeToCamel(key)}`, {
+                  defaultValue: snakeToCamel(key)
+                    .replace(/([A-Z])/g, ' $1')
+                    .trim()
+                })}
+                :
+              </span>
+              <span className="font-medium">{val}</span>
+            </div>
+          ))}
+        </div>
+      </TooltipContent>
+    </Tooltip>
+  )
+}
+
+function InsuredDetailsCell({ quote }: { quote: Quote }) {
+  const { t } = useTranslation()
+  const entries = getInsuredEntries(quote)
+  if (entries.length === 0) {
+    return <span className="text-sm text-gray-400">—</span>
+  }
+  const summary = entries.map(([, val]) => val).join(' · ')
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild={true}>
+        <span className="text-sm text-gray-700 block max-w-[200px] truncate cursor-default">
+          {summary}
+        </span>
+      </TooltipTrigger>
+      <TooltipContent
+        side="bottom"
+        align="start"
+        className="bg-white text-gray-700 border border-gray-200 shadow-lg p-3 max-w-xs"
+      >
+        <div className="space-y-1">
+          {entries.map(([key, val]) => (
+            <div key={key} className="flex gap-2 text-xs">
+              <span className="text-gray-400 shrink-0">
+                {t(`policies.insured.${snakeToCamel(key)}`, {
+                  defaultValue: snakeToCamel(key)
+                    .replace(/([A-Z])/g, ' $1')
+                    .trim()
+                })}
+                :
+              </span>
+              <span className="font-medium">{val}</span>
+            </div>
+          ))}
+        </div>
+      </TooltipContent>
+    </Tooltip>
   )
 }
 
@@ -119,20 +203,14 @@ export function QuotesTable() {
       cell: ({ row }) => <InsuranceTypeBadge type={row.original.type} />
     },
     {
-      accessorKey: 'data.insured.name',
+      id: 'productDetails',
       header: t('quotes.productDetails'),
-      cell: ({ row }) => {
-        const text = row.original.data?.insured?.name ?? '—'
-        return <ExpandableCell text={text} />
-      }
+      cell: ({ row }) => <ProductDetailsCell quote={row.original} />
     },
     {
-      accessorKey: 'data.insured.cnp',
+      id: 'insuredDetails',
       header: t('quotes.insuredDetails'),
-      cell: ({ row }) => {
-        const text = row.original.data?.insured?.cnp ?? '—'
-        return <ExpandableCell text={text} />
-      }
+      cell: ({ row }) => <InsuredDetailsCell quote={row.original} />
     },
     {
       accessorKey: 'createdAt',
@@ -244,51 +322,6 @@ export function QuotesTable() {
 /*  QuoteCard – mobile / tablet (< lg)                                   */
 /* ═══════════════════════════════════════════════════════════════════════ */
 
-function ExpandableText({
-  label,
-  text,
-  t
-}: {
-  label: string
-  text: string
-  t: (key: string) => string
-}) {
-  const [expanded, setExpanded] = useState(false)
-  const isLong = text.length > 50
-
-  return (
-    <div className="rounded-lg bg-white border border-gray-100 px-3 py-2.5 col-span-2">
-      <p className="text-[10px] font-medium uppercase tracking-wider text-gray-400 mb-0.5">
-        {label}
-      </p>
-      <p
-        className={`text-sm font-semibold text-gray-800 ${!expanded && isLong ? 'line-clamp-2' : ''}`}
-      >
-        {text}
-      </p>
-      {isLong && (
-        <button
-          type="button"
-          onClick={() => setExpanded(!expanded)}
-          className="flex items-center gap-0.5 text-[11px] text-blue-500 font-medium mt-1"
-        >
-          {expanded ? (
-            <>
-              {t('common.showLess')}
-              <ChevronUp className="h-3 w-3" />
-            </>
-          ) : (
-            <>
-              {t('common.showMore')}
-              <ChevronDown className="h-3 w-3" />
-            </>
-          )}
-        </button>
-      )}
-    </div>
-  )
-}
-
 function QuoteCard({
   quote,
   t
@@ -328,22 +361,52 @@ function QuoteCard({
             </p>
           </div>
 
-          {/* Product details — expandable, full width */}
-          {quote.data?.insured?.name && (
-            <ExpandableText
-              label={t('quotes.productDetails')}
-              text={quote.data.insured.name}
-              t={t}
-            />
+          {/* Product details */}
+          {getProductEntries(quote).length > 0 && (
+            <div className="rounded-lg bg-white border border-gray-100 px-3 py-2.5 col-span-2">
+              <p className="text-[10px] font-medium uppercase tracking-wider text-gray-400 mb-1">
+                {t('quotes.productDetails')}
+              </p>
+              <div className="space-y-0.5">
+                {getProductEntries(quote).map(([key, val]) => (
+                  <div key={key} className="flex gap-1.5 text-xs">
+                    <span className="text-gray-400 shrink-0">
+                      {t(`policies.product.${snakeToCamel(key)}`, {
+                        defaultValue: snakeToCamel(key)
+                          .replace(/([A-Z])/g, ' $1')
+                          .trim()
+                      })}
+                      :
+                    </span>
+                    <span className="font-medium text-gray-800">{val}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
           )}
 
-          {/* Insured details — expandable, full width */}
-          {quote.data?.insured?.cnp && (
-            <ExpandableText
-              label={t('quotes.insuredDetails')}
-              text={quote.data.insured.cnp}
-              t={t}
-            />
+          {/* Insured details */}
+          {getInsuredEntries(quote).length > 0 && (
+            <div className="rounded-lg bg-white border border-gray-100 px-3 py-2.5 col-span-2">
+              <p className="text-[10px] font-medium uppercase tracking-wider text-gray-400 mb-1">
+                {t('quotes.insuredDetails')}
+              </p>
+              <div className="space-y-0.5">
+                {getInsuredEntries(quote).map(([key, val]) => (
+                  <div key={key} className="flex gap-1.5 text-xs">
+                    <span className="text-gray-400 shrink-0">
+                      {t(`policies.insured.${snakeToCamel(key)}`, {
+                        defaultValue: snakeToCamel(key)
+                          .replace(/([A-Z])/g, ' $1')
+                          .trim()
+                      })}
+                      :
+                    </span>
+                    <span className="font-medium text-gray-800">{val}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
           )}
         </div>
 

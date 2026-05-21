@@ -213,11 +213,13 @@ export type InsuranceType =
   | 'other'
 
 export interface PolicyDocument {
-  id: string
+  fileId: string
+  fileType:
+    | 'policy_pdf'
+    | 'polita_locuinta_pad'
+    | 'polita_locuinta_facultativa'
+    | 'receipt'
   name: string
-  type: 'POLICY' | 'CERTIFICATE' | 'AMENDMENT' | 'OTHER'
-  url: string
-  size: number
 }
 
 export interface InsuredData {
@@ -257,13 +259,14 @@ export interface Policy {
   policySeries?: string | null
   policyNumber: string
   transactionId?: string | null
+  comboId?: string | null
   type: PolicyType
   status: PolicyStatus
   insurer?: string | null
   active: boolean
   quoteRef?: string | null
   documents?: PolicyDocument[]
-  insuranceType?: 'pad' | 'facultative' | 'pad_facultative' | null
+  insuranceType?: 'pad' | 'facultative' | null
   data?: {
     product?: Record<string, unknown>
     insured?: InsuredData

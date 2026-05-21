@@ -26,7 +26,9 @@ export const ENDPOINTS = {
   },
   POLICIES: {
     LIST: '/user/policies',
-    DETAIL: (id: string) => `/user/policies/${id}`
+    DETAIL: (id: string) => `/user/policies/${id}`,
+    DOWNLOAD_DOCUMENT: (id: string, fileId: string) =>
+      `/user/policies/${id}/documents/${fileId}`
   },
   SESSIONS: {
     LIST: '/user/sessions',

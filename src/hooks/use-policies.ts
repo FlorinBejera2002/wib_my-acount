@@ -1,7 +1,7 @@
 import { api } from '@/api/axios-client'
 import { ENDPOINTS } from '@/api/endpoints'
 import type { PaginatedResponse, Policy, TableParams } from '@/api/types'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 
 const fetchPolicies = async (
   params: TableParams
@@ -30,5 +30,32 @@ export function usePolicy(id: string) {
     queryKey: ['policies', id],
     queryFn: () => fetchPolicy(id),
     enabled: !!id
+  })
+}
+
+export function useDownloadPolicyDocument() {
+  return useMutation({
+    mutationFn: async ({
+      policyId,
+      fileId,
+      fileName
+    }: {
+      policyId: string
+      fileId: string
+      fileName: string
+    }) => {
+      const { data } = await api.get<Blob>(
+        ENDPOINTS.POLICIES.DOWNLOAD_DOCUMENT(policyId, fileId),
+        { responseType: 'blob' }
+      )
+      const url = URL.createObjectURL(data)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = fileName
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      URL.revokeObjectURL(url)
+    }
   })
 }

@@ -310,7 +310,19 @@
       "floor": "Floor",
       "builtYear": "Year built",
       "destination": "Destination",
-      "days": "Days"
+      "days": "Days",
+      "make": "Make",
+      "model": "Model",
+      "year": "Year",
+      "description": "Description",
+      "type": "Type",
+      "travellersCount": "No. travellers",
+      "purpose": "Purpose",
+      "vehicleType": "Vehicle type",
+      "transportRoute": "Transport route",
+      "insuredAmount": "Insured amount",
+      "insuranceType": "Insurance type",
+      "category": "Category"
     }
   },
   "quotes": {
@@ -356,9 +368,11 @@
     "title": "Preferences",
     "subtitle": "Configure language",
     "language": "Language",
-    "romanian": "Română",
+    "romanian": "Romanian",
     "english": "English",
-    "hungarian": "Magyar",
+    "hungarian": "Hungarian",
+    "french": "French",
+    "german": "German",
     "saving": "Saving...",
     "savePreferences": "Save preferences"
   },

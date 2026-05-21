@@ -2,7 +2,12 @@
   "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
   "files": {
     "maxSize": 50000,
-    "ignore": ["**/dist/**", "**/public/**"]
+    "ignore": [
+      "**/dist/**",
+      "**/public/**",
+      "src/api/openapi.json",
+      "src/api/generated-types.ts"
+    ]
   },
   "formatter": {
     "enabled": true,

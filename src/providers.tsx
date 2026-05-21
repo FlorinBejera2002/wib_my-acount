@@ -1,3 +1,4 @@
+import { TooltipProvider } from '@/components/ui/tooltip'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { RouterProvider } from 'react-router-dom'
@@ -18,16 +19,18 @@ const queryClient = new QueryClient({
 export function Providers() {
   return (
     <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-      <Toaster
-        position="top-right"
-        richColors={true}
-        closeButton={true}
-        toastOptions={{
-          duration: 4000
-        }}
-      />
-      <ReactQueryDevtools initialIsOpen={false} />
+      <TooltipProvider delayDuration={300}>
+        <RouterProvider router={router} />
+        <Toaster
+          position="top-right"
+          richColors={true}
+          closeButton={true}
+          toastOptions={{
+            duration: 4000
+          }}
+        />
+        <ReactQueryDevtools initialIsOpen={false} />
+      </TooltipProvider>
     </QueryClientProvider>
   )
 }

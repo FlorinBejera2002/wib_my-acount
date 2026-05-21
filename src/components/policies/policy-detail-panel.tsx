@@ -10,7 +10,7 @@ import { InsuranceTypeBadge } from '@/components/ui/insurance-type-badge'
 import { Separator } from '@/components/ui/separator'
 import { SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { Skeleton } from '@/components/ui/skeleton'
-import { usePolicy } from '@/hooks/use-policies'
+import { useDownloadPolicyDocument, usePolicy } from '@/hooks/use-policies'
 import { useCreateReminder } from '@/hooks/use-reminders'
 import { cn, formatCurrency, formatDate } from '@/lib/utils'
 import {
@@ -26,38 +26,15 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { PolicyStatusBadge } from './policy-status-badge'
 
-type ProductField = {
-  key: string
-  labelKey: string
-  mono?: boolean
-  suffix?: string
-}
-
-const VEHICLE_FIELDS: ProductField[] = [
-  { key: 'plate', labelKey: 'policies.product.plate', mono: true },
-  { key: 'vinMasked', labelKey: 'policies.product.vinMasked', mono: true }
-]
-
-const HOME_FIELDS: ProductField[] = [
-  { key: 'address', labelKey: 'policies.product.address' },
-  { key: 'type', labelKey: 'policies.product.propertyType' },
-  { key: 'areaSqm', labelKey: 'policies.product.areaSqm', suffix: ' mp' },
-  { key: 'floor', labelKey: 'policies.product.floor' },
-  { key: 'builtYear', labelKey: 'policies.product.builtYear' }
-]
-
-const PRODUCT_FIELDS: Record<string, ProductField[]> = {
-  rca: VEHICLE_FIELDS,
-  casco: VEHICLE_FIELDS,
-  casco_econom: VEHICLE_FIELDS,
-  casco_perfect_cover: VEHICLE_FIELDS,
-  cmr: VEHICLE_FIELDS,
-  breakdown: VEHICLE_FIELDS,
-  home: HOME_FIELDS,
-  travel: [
-    { key: 'destination', labelKey: 'policies.product.destination' },
-    { key: 'days', labelKey: 'policies.product.days' }
-  ]
+function getProductEntries(
+  product: Record<string, unknown>
+): [string, string][] {
+  return Object.entries(product)
+    .filter(
+      ([key, val]) =>
+        key !== 'system' && val !== null && val !== undefined && val !== ''
+    )
+    .map(([key, val]) => [key, String(val)])
 }
 
 const NOTIFY_OPTIONS = [
@@ -239,6 +216,8 @@ function ReminderDialog({
 export function PolicyDetailPanel({ policyId }: { policyId: string }) {
   const { t } = useTranslation()
   const { data: policy, isLoading, isError } = usePolicy(policyId)
+  const downloadDoc = useDownloadPolicyDocument()
+  const [downloadingId, setDownloadingId] = useState<string | null>(null)
 
   if (isLoading) {
     return (
@@ -319,7 +298,7 @@ export function PolicyDetailPanel({ policyId }: { policyId: string }) {
             <p className="text-[10px] font-medium uppercase tracking-wider text-gray-400 mb-0.5">
               {t('policies.insurancePremium')}
             </p>
-            <p className="text-sm font-semibold text-green-600 truncate">
+            <p className="text-sm font-semibold text-gray-900 truncate">
               {formatCurrency(policy.premium)}
             </p>
           </div>
@@ -337,37 +316,29 @@ export function PolicyDetailPanel({ policyId }: { policyId: string }) {
           </div>
         </div>
 
-        {/* Product fields (type-specific) */}
+        {/* Product fields — dynamic */}
         {(() => {
           const product = policy.data?.product
-          const fields = PRODUCT_FIELDS[policy.type] ?? []
-          if (!product || Array.isArray(product) || fields.length === 0)
-            return null
-          const productMap = product as Record<string, unknown>
-          return fields.map((field) => {
-            const value = productMap[field.key]
-            if (value === undefined || value === null) return null
-            return (
+          if (!product || Array.isArray(product)) return null
+          return getProductEntries(product as Record<string, unknown>).map(
+            ([key, val]) => (
               <div
-                key={field.key}
+                key={key}
                 className="flex items-center gap-3 px-4 py-3 border-b border-gray-100"
               >
                 <div className="flex-1 min-w-0">
                   <p className="text-[10px] font-medium uppercase tracking-wider text-gray-400 mb-0.5">
-                    {t(field.labelKey)}
+                    {t(`policies.product.${key}`, {
+                      defaultValue: key.replace(/([A-Z])/g, ' $1').trim()
+                    })}
                   </p>
-                  <p
-                    className={cn(
-                      'text-sm font-semibold text-gray-900 truncate',
-                      field.mono && 'font-mono'
-                    )}
-                  >
-                    {`${value}${field.suffix ?? ''}`}
+                  <p className="text-sm font-semibold text-gray-900 truncate">
+                    {val}
                   </p>
                 </div>
               </div>
             )
-          })
+          )
         })()}
 
         {/* Insured person */}
@@ -450,16 +421,26 @@ export function PolicyDetailPanel({ policyId }: { policyId: string }) {
         {policy.documents && policy.documents.length > 0 ? (
           <div className="space-y-2">
             {policy.documents.map((doc) => (
-              <a
-                key={doc.id}
-                href={doc.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-3 rounded-lg border border-gray-100 bg-gray-50/50 px-4 py-3 text-sm text-blue-600 transition-colors hover:bg-gray-50"
+              <button
+                key={doc.fileId}
+                type="button"
+                disabled={downloadingId === doc.fileId}
+                onClick={() => {
+                  setDownloadingId(doc.fileId)
+                  downloadDoc.mutate(
+                    {
+                      policyId: policy.id,
+                      fileId: doc.fileId,
+                      fileName: doc.name
+                    },
+                    { onSettled: () => setDownloadingId(null) }
+                  )
+                }}
+                className="flex w-full items-center gap-3 rounded-lg border border-gray-100 bg-gray-50/50 px-4 py-3 text-sm text-blue-600 transition-colors hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Download className="h-4 w-4 shrink-0" />
                 {doc.name}
-              </a>
+              </button>
             ))}
           </div>
         ) : (

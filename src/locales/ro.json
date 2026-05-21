@@ -318,7 +318,19 @@
       "floor": "Etaj",
       "builtYear": "Anul construcției",
       "destination": "Destinație",
-      "days": "Zile"
+      "days": "Zile",
+      "make": "Marcă",
+      "model": "Model",
+      "year": "An fabricație",
+      "description": "Descriere",
+      "type": "Tip",
+      "travellersCount": "Nr. călători",
+      "purpose": "Scop",
+      "vehicleType": "Tip vehicul",
+      "transportRoute": "Rută transport",
+      "insuredAmount": "Sumă asigurată",
+      "insuranceType": "Tip asigurare",
+      "category": "Categorie"
     }
   },
   "quotes": {
@@ -365,8 +377,10 @@
     "subtitle": "Configurează limba",
     "language": "Limbă",
     "romanian": "Română",
-    "english": "English",
-    "hungarian": "Magyar",
+    "english": "Engleză",
+    "hungarian": "Maghiară",
+    "french": "Franceză",
+    "german": "Germană",
     "saving": "Se salvează...",
     "savePreferences": "Salvează preferințele"
   },
