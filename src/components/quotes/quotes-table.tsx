@@ -96,10 +96,32 @@ function getInsuredEntries(quote: Quote): [string, string][] {
 function ProductDetailsCell({ quote }: { quote: Quote }) {
   const { t } = useTranslation()
   const entries = getProductEntries(quote)
+
   if (entries.length === 0) {
     return <span className="text-sm text-gray-400">—</span>
   }
-  const summary = entries.map(([, val]) => val).join(' · ')
+
+  const summary = entries
+    .map(([key, val]) => {
+      if (key === 'destination')
+        return t(`destination.${val}`, { defaultValue: val })
+      if (key === 'purpose') return t(`purpose.${val}`, { defaultValue: val })
+      if (key === 'vehicleType')
+        return t(`vehicleType.${val}`, { defaultValue: val })
+      if (val?.startsWith('malpraxis_'))
+        return t(`malpraxis.${val}`, { defaultValue: val })
+      if (key === 'type') {
+        const normalized = val?.toLowerCase().trim()
+        if (['apartamentbloc', 'apartment', 'apartament'].includes(normalized))
+          return t('policies.product.apartment', { defaultValue: 'Apartament' })
+        if (['casa', 'house', 'vila', 'vilă'].includes(normalized))
+          return t('policies.product.house', { defaultValue: 'Casă' })
+        return val
+      }
+      return val
+    })
+    .join(' · ')
+
   return (
     <Tooltip>
       <TooltipTrigger asChild={true}>
@@ -123,7 +145,38 @@ function ProductDetailsCell({ quote }: { quote: Quote }) {
                 })}
                 :
               </span>
-              <span className="font-medium">{val}</span>
+              <span className="font-medium">
+                {key === 'destination'
+                  ? t(`destination.${val}`, { defaultValue: val })
+                  : key === 'purpose'
+                    ? t(`purpose.${val}`, { defaultValue: val })
+                    : key === 'vehicleType'
+                      ? t(`vehicleType.${val}`, { defaultValue: val })
+                      : val?.startsWith('malpraxis_')
+                        ? t(`malpraxis.${val}`, { defaultValue: val })
+                        : key === 'type'
+                        ? (() => {
+                          const normalized = val?.toLowerCase().trim()
+                          if (
+                            [
+                              'apartamentbloc',
+                              'apartment',
+                              'apartament'
+                            ].includes(normalized)
+                          )
+                            return t('policies.product.apartment', {
+                              defaultValue: 'Apartament'
+                            })
+                          if (
+                            ['casa', 'house', 'vila', 'vilă'].includes(
+                              normalized
+                            )
+                          )
+                            return t('policies.product.house', { defaultValue: 'Casă' })
+                          return val
+                        })()
+                      : val}
+              </span>
             </div>
           ))}
         </div>
@@ -251,17 +304,17 @@ export function QuotesTable() {
       cell: ({ row }) => <InsuredDetailsCell quote={row.original} />
     },
     {
-      accessorKey: 'createdAt',
+      accessorKey: 'quoteStartDate',
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title={t('quotes.dateTime')} />
       ),
       cell: ({ row }) => (
         <div className="flex flex-col">
           <span className="text-sm text-gray-700">
-            {formatDate(row.original.createdAt)}
+            {formatDate(row.original.quoteStartDate ?? '')}
           </span>
           <span className="text-xs text-gray-400">
-            {formatDate(row.original.createdAt, 'HH:mm')}
+            {formatDate(row.original.quoteStartDate ?? '', 'HH:mm')}
           </span>
         </div>
       )
@@ -377,10 +430,10 @@ function QuoteCard({
               {t('quotes.dateTime')}
             </p>
             <p className="text-sm font-semibold text-gray-800">
-              {formatDate(quote.createdAt)}
+              {formatDate(quote.quoteStartDate ?? '')}
             </p>
             <p className="text-xs text-gray-400 mt-0.5">
-              {formatDate(quote.createdAt, 'HH:mm')}
+              {formatDate(quote.quoteStartDate ?? '', 'HH:mm')}
             </p>
           </div>
 
@@ -401,7 +454,17 @@ function QuoteCard({
                       })}
                       :
                     </span>
-                    <span className="font-medium text-gray-800">{val}</span>
+                    <span className="font-medium text-gray-800">
+                      {key === 'destination'
+                        ? t(`destination.${val}`, { defaultValue: val })
+                        : key === 'purpose'
+                          ? t(`purpose.${val}`, { defaultValue: val })
+                          : key === 'vehicleType'
+                            ? t(`vehicleType.${val}`, { defaultValue: val })
+                            : val?.startsWith('malpraxis_')
+                              ? t(`malpraxis.${val}`, { defaultValue: val })
+                              : val}
+                    </span>
                   </div>
                 ))}
               </div>

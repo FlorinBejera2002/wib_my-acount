@@ -46,24 +46,30 @@ function getLastNMonths(n: number): string[] {
 }
 
 function collectAllMonths(
-  items: Array<{ createdAt: string }> | undefined
+  items: Array<Record<string, unknown>> | undefined,
+  dateKey: string
 ): Set<string> {
   const set = new Set<string>()
   if (!items) return set
   for (const item of items) {
-    set.add(item.createdAt.slice(0, 7))
+    const val = item[dateKey]
+    if (typeof val === 'string' && val.length >= 7) set.add(val.slice(0, 7))
   }
   return set
 }
 
 function countByMonth(
-  items: Array<{ createdAt: string }> | undefined
+  items: Array<Record<string, unknown>> | undefined,
+  dateKey: string
 ): Record<string, number> {
   const counts: Record<string, number> = {}
   if (!items) return counts
   for (const item of items) {
-    const key = item.createdAt.slice(0, 7)
-    counts[key] = (counts[key] ?? 0) + 1
+    const val = item[dateKey]
+    if (typeof val === 'string' && val.length >= 7) {
+      const key = val.slice(0, 7)
+      counts[key] = (counts[key] ?? 0) + 1
+    }
   }
   return counts
 }
@@ -96,15 +102,15 @@ export function MonthlyActivityChart() {
   const isLoading = quotesLoading || policiesLoading
 
   const chartData = useMemo(() => {
-    const quoteCounts = countByMonth(quotesData?.data)
-    const policyCounts = countByMonth(policiesData?.data)
+    const quoteCounts = countByMonth(quotesData?.data as Array<Record<string, unknown>> | undefined, 'quoteStartDate')
+    const policyCounts = countByMonth(policiesData?.data as Array<Record<string, unknown>> | undefined, 'startDate')
 
     let months: string[]
 
     if (period === 'all') {
       const allKeys = new Set<string>()
-      for (const k of collectAllMonths(quotesData?.data)) allKeys.add(k)
-      for (const k of collectAllMonths(policiesData?.data)) allKeys.add(k)
+      for (const k of collectAllMonths(quotesData?.data as Array<Record<string, unknown>> | undefined, 'quoteStartDate')) allKeys.add(k)
+      for (const k of collectAllMonths(policiesData?.data as Array<Record<string, unknown>> | undefined, 'startDate')) allKeys.add(k)
       months = [...allKeys].sort()
       if (months.length === 0) months = getLastNMonths(6)
     } else {

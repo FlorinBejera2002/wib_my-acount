@@ -198,7 +198,6 @@ export type InsuranceType =
   | 'rca'
   | 'casco'
   | 'casco_econom'
-  | 'casco_perfect_cover'
   | 'pad'
   | 'home'
   | 'travel'

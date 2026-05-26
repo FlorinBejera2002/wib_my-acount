@@ -57,10 +57,33 @@ function getProductEntries(policy: Policy): [string, string][] {
 function ProductDetailsCell({ policy }: { policy: Policy }) {
   const { t } = useTranslation()
   const entries = getProductEntries(policy)
+
   if (entries.length === 0) {
-    return <span className="text-sm text-gray-400">—</span>
+    const insuredName = policy.data?.insured?.name
+    return <span className="text-sm text-gray-500">{insuredName ?? '—'}</span>
   }
-  const summary = entries.map(([, val]) => val).join(' · ')
+
+  const summary = entries
+    .map(([key, val]) => {
+      if (key === 'destination')
+        return t(`destination.${val}`, { defaultValue: val })
+      if (key === 'purpose') return t(`purpose.${val}`, { defaultValue: val })
+      if (key === 'vehicleType')
+        return t(`vehicleType.${val}`, { defaultValue: val })
+      if (val?.startsWith('malpraxis_'))
+        return t(`malpraxis.${val}`, { defaultValue: val })
+      if (key === 'type') {
+        const normalized = val?.toLowerCase().trim()
+        if (['apartamentbloc', 'apartment', 'apartament'].includes(normalized))
+          return t('policies.product.apartment', { defaultValue: 'Apartament' })
+        if (['casa', 'house', 'vila', 'vilă'].includes(normalized))
+          return t('policies.product.house', { defaultValue: 'Casă' })
+        return val
+      }
+      return val
+    })
+    .join(' · ')
+
   return (
     <Tooltip>
       <TooltipTrigger asChild={true}>
@@ -82,7 +105,26 @@ function ProductDetailsCell({ policy }: { policy: Policy }) {
                 })}
                 :
               </span>
-              <span className="font-medium">{val}</span>
+              <span className="font-medium">
+                {key === 'destination'
+                  ? t(`destination.${val}`, { defaultValue: val })
+                  : key === 'purpose'
+                    ? t(`purpose.${val}`, { defaultValue: val })
+                    : key === 'vehicleType'
+                      ? t(`vehicleType.${val}`, { defaultValue: val })
+                      : val?.startsWith('malpraxis_')
+                        ? t(`malpraxis.${val}`, { defaultValue: val })
+                        : key === 'type'
+                          ? (() => {
+                              const normalized = val?.toLowerCase().trim()
+                              if (['apartamentbloc', 'apartment', 'apartament'].includes(normalized))
+                                return t('policies.product.apartment', { defaultValue: 'Apartament' })
+                              if (['casa', 'house', 'vila', 'vilă'].includes(normalized))
+                                return t('policies.product.house', { defaultValue: 'Casă' })
+                              return val
+                            })()
+                          : val}
+              </span>
             </div>
           ))}
         </div>
@@ -112,10 +154,6 @@ const filterConfigs = [
       { labelKey: 'insuranceType.RCA', value: 'rca' },
       { labelKey: 'insuranceType.CASCO', value: 'casco' },
       { labelKey: 'insuranceType.CASCO_ECONOM', value: 'casco_econom' },
-      {
-        labelKey: 'insuranceType.CASCO_PERFECT_COVER',
-        value: 'casco_perfect_cover'
-      },
       { labelKey: 'insuranceType.HOME', value: 'home' },
       { labelKey: 'insuranceType.PAD', value: 'pad' },
       { labelKey: 'insuranceType.TRAVEL', value: 'travel' },
@@ -873,6 +911,18 @@ function PolicyCard({
 
         {/* Mini-cards grid */}
         <div className="grid grid-cols-2 gap-2 mt-3">
+          {/* Insured name fallback when no product fields */}
+          {getProductEntries(policy).length === 0 &&
+            policy.data?.insured?.name && (
+              <div className="rounded-lg bg-white border border-gray-100 px-3 py-2.5 col-span-2">
+                <p className="text-[10px] font-medium uppercase tracking-wider text-gray-400 mb-0.5">
+                  {t('policies.insuredName')}
+                </p>
+                <p className="text-sm font-semibold text-gray-800 truncate">
+                  {policy.data.insured.name}
+                </p>
+              </div>
+            )}
           {/* Product fields */}
           {getProductEntries(policy).map(([key, val]) => (
             <div
@@ -885,7 +935,11 @@ function PolicyCard({
                 })}
               </p>
               <p className="text-sm font-semibold text-gray-800 truncate">
-                {val}
+                {key === 'destination'
+                  ? t(`destination.${val}`, { defaultValue: val })
+                  : key === 'purpose'
+                    ? t(`purpose.${val}`, { defaultValue: val })
+                    : val}
               </p>
             </div>
           ))}

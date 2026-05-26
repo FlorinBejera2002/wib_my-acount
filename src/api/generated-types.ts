@@ -37,7 +37,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get RSA public key */
+        /**
+         * Get RSA public key
+         * @description Returns the RSA public key used for JWT signature verification. Used by the legacy Symfony 3.4 backend.
+         */
         get: operations["get_api_auth_public_key"];
         put?: never;
         post?: never;
@@ -56,7 +59,16 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Register a new account */
+        /**
+         * Register a new account
+         * @description Creates a new user account. If a matching legacy user is found by username, the account is automatically
+         *     linked and profile data (person, contact, address, company) is hydrated from the legacy system.
+         *
+         *     On success, returns tokens immediately (user is auto-logged-in).
+         *     Accepts both camelCase (`firstName`) and snake_case (`first_name`) for backward compatibility.
+         *
+         *     Rate limited: 10 registrations/hour per IP.
+         */
         post: operations["post_api_auth_register"];
         delete?: never;
         options?: never;
@@ -73,7 +85,15 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Complete login with 2FA code */
+        /**
+         * Complete login with 2FA code
+         * @description Second step of the login flow when 2FA is enabled. The client submits the pre-auth token
+         *     received from POST /auth/login along with the 6-digit TOTP or email OTP code.
+         *
+         *     On success, returns full `access_token` and `refresh_token`.
+         *
+         *     Rate limited: 5 attempts/5 minutes per IP.
+         */
         post: operations["post_api_auth_two_factor"];
         delete?: never;
         options?: never;
@@ -90,7 +110,14 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Refresh access token */
+        /**
+         * Refresh access token
+         * @description Exchanges a valid refresh token for a new access_token + refresh_token pair.
+         *     The old refresh token is consumed (single-use). If the token is invalid, expired,
+         *     or already revoked, returns 401.
+         *
+         *     Rate limited: 10 requests/minute per IP.
+         */
         post: operations["post_api_auth_refresh"];
         delete?: never;
         options?: never;
@@ -107,7 +134,10 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Logout and revoke session */
+        /**
+         * Logout and revoke session
+         * @description Revokes the current session's refresh token and session record. Requires a valid JWT.
+         */
         post: operations["post_api_auth_logout"];
         delete?: never;
         options?: never;
@@ -124,7 +154,13 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Request password reset OTP */
+        /**
+         * Request password reset OTP
+         * @description Sends a 6-digit OTP to the user's email address. Always returns success even if the email
+         *     is not registered (to prevent email enumeration).
+         *
+         *     Rate limited: 3 requests/hour per IP.
+         */
         post: operations["post_api_auth_forgot_password"];
         delete?: never;
         options?: never;
@@ -141,7 +177,13 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Verify password reset OTP */
+        /**
+         * Verify password reset OTP
+         * @description Validates the 6-digit OTP sent via email. On success, returns a one-time `reset_token`
+         *     that must be used with POST /auth/reset-password.
+         *
+         *     Rate limited: 5 attempts/15 minutes per IP.
+         */
         post: operations["post_api_auth_verify_reset_code"];
         delete?: never;
         options?: never;
@@ -158,7 +200,11 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Reset password with reset token */
+        /**
+         * Reset password with reset token
+         * @description Sets a new password using the reset token obtained from POST /auth/verify-reset-code.
+         *     Revokes all existing refresh tokens for the user (forces re-login on all devices).
+         */
         post: operations["post_api_auth_reset_password"];
         delete?: never;
         options?: never;
@@ -175,7 +221,12 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Enable two-factor authentication */
+        /**
+         * Enable two-factor authentication
+         * @description Initiates 2FA setup. For `method=totp`, returns a TOTP secret and provisioning URI (for QR code).
+         *     The client must then call POST /auth/2fa/confirm with a valid TOTP code to activate it.
+         *     For `method=email`, 2FA is enabled immediately using email-based OTP codes.
+         */
         post: operations["post_api_auth_two_factor_enable"];
         delete?: never;
         options?: never;
@@ -192,7 +243,10 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Confirm TOTP 2FA setup */
+        /**
+         * Confirm TOTP 2FA setup
+         * @description Verifies the first TOTP code to confirm the secret is set up correctly. After this call, 2FA is fully active.
+         */
         post: operations["post_api_auth_two_factor_confirm"];
         delete?: never;
         options?: never;
@@ -209,7 +263,13 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Resend 2FA email code */
+        /**
+         * Resend 2FA email code
+         * @description Resends the 2FA email OTP code during the login flow. Requires a valid pre_auth_token
+         *     and only works when the user's 2FA method is "email".
+         *
+         *     Rate limited: 3 requests/10 minutes per IP.
+         */
         post: operations["post_api_auth_two_factor_resend_code"];
         delete?: never;
         options?: never;
@@ -226,7 +286,10 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Disable two-factor authentication */
+        /**
+         * Disable two-factor authentication
+         * @description Disables 2FA for the authenticated user. Requires current password for confirmation.
+         */
         post: operations["post_api_auth_two_factor_disable"];
         delete?: never;
         options?: never;
@@ -241,7 +304,14 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get dashboard statistics */
+        /**
+         * Get dashboard statistics
+         * @description Returns aggregated counts and highlights for the authenticated user:
+         *     - Policy totals, active count, breakdown by type, and policies expiring within 30 days
+         *     - Quote totals and pending count
+         *     - Notification totals and unread count
+         *     - Upcoming reminders (next 7 days, not done) and total count
+         */
         get: operations["get_api_dashboard_stats"];
         put?: never;
         post?: never;
@@ -258,7 +328,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** List all notifications */
+        /**
+         * List all notifications
+         * @description Returns all notifications for the authenticated user, ordered by creation date (newest first).
+         */
         get: operations["get_api_notifications_list"];
         put?: never;
         post?: never;
@@ -281,7 +354,10 @@ export interface paths {
         delete?: never;
         options?: never;
         head?: never;
-        /** Mark notification as read */
+        /**
+         * Mark notification as read
+         * @description Marks a single notification as read.
+         */
         patch: operations["patch_api_notifications_mark_read"];
         trace?: never;
     };
@@ -298,7 +374,10 @@ export interface paths {
         delete?: never;
         options?: never;
         head?: never;
-        /** Mark all notifications as read */
+        /**
+         * Mark all notifications as read
+         * @description Marks all notifications for the authenticated user as read in a single operation.
+         */
         patch: operations["patch_api_notifications_mark_all_read"];
         trace?: never;
     };
@@ -312,7 +391,10 @@ export interface paths {
         get?: never;
         put?: never;
         post?: never;
-        /** Delete notification */
+        /**
+         * Delete notification
+         * @description Permanently deletes a single notification.
+         */
         delete: operations["delete_api_notifications_delete"];
         options?: never;
         head?: never;
@@ -326,7 +408,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** List policies */
+        /**
+         * List policies
+         * @description Returns a paginated list of the authenticated user's insurance policies. Supports filtering by status and type.
+         */
         get: operations["get_api_policies_list"];
         put?: never;
         post?: never;
@@ -343,7 +428,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get policy details */
+        /**
+         * Get policy details
+         * @description Returns full details for a single policy. Returns 404 if the policy doesn't exist or belongs to another user.
+         */
         get: operations["get_api_policies_detail"];
         put?: never;
         post?: never;
@@ -353,7 +441,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/user/policies/{id}/documents/{fileId}": {
+    "/api/user/policies/download/{transactionId}/{fileId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -361,10 +449,33 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Download policy document
-         * @description Downloads a policy PDF document. The fileId must match one of the policy's documents[].fileId values.
+         * Get policy document download URL
+         * @description Returns an encrypted download URL for a policy document.
+         *     The transactionId and fileId are available from the policy's transactionId and fileIds fields.
+         *     The fileId is one of the values from the policy's fileIds map (e.g. fileIds.policy_pdf).
+         *     The returned URL can be opened directly in the browser to download the PDF.
          */
         get: operations["get_api_policies_download_document"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/user/policies/sync-states": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List policy sync states
+         * @description Returns sync state records for the user's policies.
+         */
+        get: operations["get_api_policies_sync_states"];
         put?: never;
         post?: never;
         delete?: never;
@@ -380,7 +491,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** List quotes */
+        /**
+         * List quotes
+         * @description Returns a paginated list of the authenticated user's insurance quotes. Supports filtering by active state and type.
+         */
         get: operations["get_api_quotes_list"];
         put?: never;
         post?: never;
@@ -397,8 +511,51 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get quote details */
+        /**
+         * Get quote details
+         * @description Returns full details for a single quote. Returns 404 if the quote doesn't exist or belongs to another user.
+         */
         get: operations["get_api_quotes_detail"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/user/quotes/offer-url": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Get offer URL for a quote
+         * @description Requests the offer/results page URL from the legacy system. The quoteInputParamsId is available from the sync states endpoint.
+         */
+        post: operations["post_api_quotes_offer_url"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/user/quotes/sync-states": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List quote sync states
+         * @description Returns sync state records for the user's quotes. Each record contains quoteInputParamsId needed for the offer-url endpoint.
+         */
+        get: operations["get_api_quotes_sync_states"];
         put?: never;
         post?: never;
         delete?: never;
@@ -414,10 +571,16 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** List reminders */
+        /**
+         * List reminders
+         * @description Returns all reminders for the authenticated user.
+         */
         get: operations["get_api_reminders_list"];
         put?: never;
-        /** Create reminder */
+        /**
+         * Create reminder
+         * @description Creates a new reminder with a title, date, and optional note.
+         */
         post: operations["post_api_reminders_create"];
         delete?: never;
         options?: never;
@@ -433,10 +596,16 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        /** Update reminder */
+        /**
+         * Update reminder
+         * @description Updates one or more fields of an existing reminder. All fields are optional.
+         */
         put: operations["put_api_reminders_update"];
         post?: never;
-        /** Delete reminder */
+        /**
+         * Delete reminder
+         * @description Permanently deletes a reminder.
+         */
         delete: operations["delete_api_reminders_delete"];
         options?: never;
         head?: never;
@@ -450,11 +619,17 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** List active sessions */
+        /**
+         * List active sessions
+         * @description Returns all active sessions for the authenticated user. Each session includes a `current` flag indicating which session belongs to the current request.
+         */
         get: operations["get_api_sessions_list"];
         put?: never;
         post?: never;
-        /** Revoke all other sessions */
+        /**
+         * Revoke all other sessions
+         * @description Revokes all sessions except the current one (identified by the JWT session ID). Effectively logs out all other devices.
+         */
         delete: operations["delete_api_sessions_delete_all"];
         options?: never;
         head?: never;
@@ -471,7 +646,10 @@ export interface paths {
         get?: never;
         put?: never;
         post?: never;
-        /** Revoke a specific session */
+        /**
+         * Revoke a specific session
+         * @description Revokes a specific session and its associated refresh token. Cannot revoke the current session (use POST /auth/logout instead).
+         */
         delete: operations["delete_api_sessions_delete_one"];
         options?: never;
         head?: never;
@@ -485,7 +663,12 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Refresh sync */
+        /**
+         * Refresh sync
+         * @description Polls the legacy system for data changes since the last sync.
+         *     Intended to be called by the frontend every 10 minutes while the user is active.
+         *     Returns a summary of what changed (new/updated policies and quotes).
+         */
         get: operations["get_api_sync_refresh"];
         put?: never;
         post?: never;
@@ -502,14 +685,20 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get user profile */
+        /**
+         * Get user profile
+         * @description Returns the authenticated user's full profile. Sensitive fields (email, phone, lastName) are partially masked.
+         */
         get: operations["get_api_user_profile_get"];
         put?: never;
         post?: never;
         delete?: never;
         options?: never;
         head?: never;
-        /** Update user profile */
+        /**
+         * Update user profile
+         * @description Updates one or more profile fields. All fields are optional — only provided fields are changed.
+         */
         patch: operations["patch_api_user_profile_update"];
         trace?: never;
     };
@@ -526,7 +715,10 @@ export interface paths {
         delete?: never;
         options?: never;
         head?: never;
-        /** Update user preferences */
+        /**
+         * Update user preferences
+         * @description Updates language and/or notification preferences. All fields are optional.
+         */
         patch: operations["patch_api_user_preferences_update"];
         trace?: never;
     };
@@ -539,7 +731,11 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Change password */
+        /**
+         * Change password
+         * @description Changes the authenticated user's password. Requires the current password for verification.
+         *     On success, revokes all other sessions (keeps the current session alive via X-Refresh-Token header).
+         */
         post: operations["post_api_user_password_change"];
         delete?: never;
         options?: never;
@@ -556,7 +752,12 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Request account deletion */
+        /**
+         * Request account deletion
+         * @description Submits a request to delete the authenticated user's account. The account is NOT deleted
+         *     immediately — instead, a notification is sent to the backoffice support team who will
+         *     process the request manually. The user receives a confirmation email.
+         */
         post: operations["post_api_user_account_delete"];
         delete?: never;
         options?: never;
@@ -570,34 +771,43 @@ export interface components {
     schemas: {
         ErrorResponse: {
             error: {
-                /** @example VALIDATION_ERROR */
+                /**
+                 * @description Machine-readable error code
+                 * @example VALIDATION_ERROR
+                 */
                 code: string;
-                /** @example Validation failed. */
+                /**
+                 * @description Human-readable error message
+                 * @example Validation failed.
+                 */
                 message: string;
+                /**
+                 * @description Field-level validation errors (only for VALIDATION_ERROR)
+                 * @example {
+                 *       "email": [
+                 *         "This value is not a valid email address."
+                 *       ]
+                 *     }
+                 */
                 details?: {
                     [key: string]: string[];
                 };
             };
         };
-        PolicyDocument: {
-            /**
-             * @description Legacy file ObjectId — use in GET /user/policies/{id}/documents/{fileId}
-             * @example 6a0db693643c04561b15b255
-             */
-            fileId: string;
-            /**
-             * @description Document category
-             * @enum {string}
-             */
-            fileType: "policy_pdf" | "polita_locuinta_pad" | "polita_locuinta_facultativa" | "receipt";
-            /** @example Polita PAD_NLKS-547542.pdf */
-            name: string;
-        };
         PolicyResponse: {
+            /** @description Policy identifier */
             id: string;
+            /**
+             * @description Policy series prefix (e.g. POL, PAD, FAC)
+             * @example POL
+             */
             policySeries?: string | null;
             /** @example 2026-001234 */
             policyNumber: string;
+            /**
+             * @description Payment transaction reference
+             * @example abc123def456
+             */
             transactionId?: string | null;
             /**
              * @description Links home combo policies (pad + facultative) belonging to the same package
@@ -608,50 +818,146 @@ export interface components {
             type: "rca" | "casco" | "casco_econom" | "casco_perfect_cover" | "pad" | "home" | "travel" | "health" | "life" | "accidents" | "accidents_taxi" | "accidents_traveler" | "breakdown" | "cmr" | "rcp" | "other";
             /** @enum {string} */
             status: "active" | "expired" | "cancelled" | "pending";
+            /** @example Allianz Tiriac */
             insurer?: string | null;
+            /**
+             * @description Whether the policy is currently active
+             * @example true
+             */
             active: boolean;
+            /**
+             * @description Reference linking back to the originating quote
+             * @example RCAQ-501234
+             */
             quoteRef?: string | null;
-            documents?: components["schemas"]["PolicyDocument"][];
-            /** @enum {string|null} */
+            /**
+             * @description Map of file_type to file_id from policy_details.file_ids. Use with GET /user/policies/download/{transactionId}/{fileId}
+             * @example {
+             *       "policy_pdf": "6a0db693643c04561b15b255"
+             *     }
+             */
+            fileIds?: {
+                [key: string]: string;
+            };
+            /**
+             * @description Home/pad system only. pad=PAD obligatoriu, facultative=facultativa
+             * @enum {string|null}
+             */
             insuranceType?: "pad" | "facultative" | null;
+            /** @description Structured data with product details and insured person info */
             data?: {
+                /** @description System-specific product data (vehicle plate+vin for auto, address for home, destination+days for travel) */
                 product?: Record<string, never>;
                 insured?: {
+                    /** @example Ion Popescu */
                     name?: string;
+                    /**
+                     * @description Masked CNP (first 3 + last 2 visible)
+                     * @example 190********56
+                     */
                     cnp?: string | null;
                 };
             };
-            /** Format: float */
+            /**
+             * Format: float
+             * @example 920
+             */
             premium: number;
+            /** @example RON */
             currency: string;
-            /** Format: date-time */
+            /**
+             * Format: date-time
+             * @example 2026-01-01T00:00:00+00:00
+             */
             startDate: string;
-            /** Format: date-time */
+            /**
+             * Format: date-time
+             * @example 2027-01-01T00:00:00+00:00
+             */
             endDate: string;
+            /**
+             * @description Computed days until endDate (negative if expired)
+             * @example 333
+             */
             daysUntilExpiry: number;
             /** Format: date-time */
             createdAt: string;
             /** Format: date-time */
             updatedAt: string;
         };
+        QuoteSyncStateResponse: {
+            /**
+             * @description Legacy quote_input_params._id — use with POST /user/quotes/offer-url
+             * @example 6a0db36469ad58211a6f0c29
+             */
+            quoteInputParamsId?: string;
+            /** @description Middleware quote _id */
+            quoteId?: string | null;
+            quoteRef?: string | null;
+            quoteType?: string | null;
+            /** @enum {string} */
+            status?: "success" | "failed";
+            /** Format: date-time */
+            lastSyncAt?: string | null;
+        };
+        PolicySyncStateResponse: {
+            /** @description Legacy quote_input._id */
+            quoteInputId?: string;
+            /** @description Middleware policy _id */
+            policyId?: string | null;
+            policyNumber?: string | null;
+            policyType?: string | null;
+            /** @enum {string} */
+            status?: "success" | "failed";
+            /** Format: date-time */
+            lastSyncAt?: string | null;
+        };
         QuoteResponse: {
+            /** @description Quote identifier */
             id: string;
+            /**
+             * @description Legacy quote_input_params._id — use with POST /user/quotes/offer-url
+             * @example 6a0db36469ad58211a6f0c29
+             */
+            quoteInputParamsId?: string | null;
+            /**
+             * @description Unique quote reference
+             * @example RCAQ-501234
+             */
             quoteRef?: string | null;
             /** @enum {string} */
             type: "rca" | "casco" | "casco_econom" | "casco_perfect_cover" | "pad" | "home" | "travel" | "health" | "life" | "accidents" | "accidents_taxi" | "accidents_traveler" | "breakdown" | "cmr" | "rcp" | "other";
-            /** @enum {string|null} */
+            /**
+             * @description Home/pad system only. Derived from insurer_details insurance_type.
+             * @enum {string|null}
+             */
             insuranceType?: "pad" | "facultative" | null;
-            /** Format: date-time */
+            /**
+             * Format: date-time
+             * @description When the quote was created/requested
+             */
             quoteDate?: string | null;
-            /** Format: date-time */
+            /**
+             * Format: date-time
+             * @description Desired coverage start date
+             */
             quoteStartDate?: string | null;
+            /**
+             * @description Whether the quote is still a valid/active offer
+             * @example true
+             */
             active: boolean;
-            offerUrl?: string | null;
-            documents?: components["schemas"]["PolicyDocument"][];
+            /** @description Structured data with product details and insured person info */
             data?: {
+                /** @description System-specific product data (vehicle plate+vin for auto, address for home, destination+days for travel) */
                 product?: Record<string, never>;
                 insured?: {
+                    /** @example Ion Popescu */
                     name?: string;
+                    /**
+                     * @description Masked CNP (first 3 + last 2 visible)
+                     * @example 190********56
+                     */
                     cnp?: string | null;
                 };
             };
@@ -661,30 +967,52 @@ export interface components {
             updatedAt: string;
         };
         ReminderResponse: {
+            /** @description MongoDB ObjectId */
             id: string;
+            /** @example Renew RCA policy */
             title: string;
             note?: string | null;
             /** Format: date-time */
             remindAt: string;
+            /** @example false */
             isDone: boolean;
             /** Format: date-time */
             createdAt: string;
             /** Format: date-time */
             updatedAt: string;
         };
+        /** @description Full user profile (sensitive fields partially masked) */
         UserProfile: {
+            /** @description HMAC-SHA256 hash of user ID (opaque, consistent across requests) */
             id: string;
+            /** @example us***@example.com */
             email: string;
+            /** @example ionpopescu */
             username: string;
             parentUsername?: string | null;
+            /** @example Ion */
             firstName?: string | null;
+            /**
+             * @description Masked to initial
+             * @example P.
+             */
             lastName?: string | null;
+            /** @example Ion P. */
             fullName?: string | null;
+            /**
+             * @description Partially masked
+             * @example +40*****678
+             */
             phone?: string | null;
+            /** @example ro */
             country: string;
+            /** @description Legacy person sub-document */
             person?: Record<string, never>;
+            /** @description Legacy contact sub-document */
             contact?: Record<string, never>;
+            /** @description Legacy address sub-document */
             address?: Record<string, never>;
+            /** @description Legacy company sub-document */
             company?: Record<string, never>;
             twoFactorEnabled: boolean;
             /** @enum {string|null} */
@@ -857,6 +1185,7 @@ export interface operations {
                 content: {
                     "application/json": {
                         data?: {
+                            /** @description PEM-encoded RSA public key */
                             public_key?: string;
                             /** @example RS256 */
                             algorithm?: string;
@@ -876,21 +1205,34 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
-                    /** Format: email */
+                    /**
+                     * Format: email
+                     * @example newuser@example.com
+                     */
                     email: string;
-                    /** Format: password */
+                    /**
+                     * Format: password
+                     * @example securePass1
+                     */
                     password: string;
-                    /** Format: password */
+                    /**
+                     * Format: password
+                     * @description Optional password confirmation
+                     */
                     confirmPassword?: string;
+                    /** @example Ion */
                     firstName?: string;
+                    /** @example Popescu */
                     lastName?: string;
+                    /** @example +40712345678 */
                     phone?: string;
+                    /** @description Derived from email prefix if omitted */
                     username?: string;
                 };
             };
         };
         responses: {
-            /** @description Registration successful */
+            /** @description Registration successful — user is auto-logged-in */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -945,7 +1287,12 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
+                    /** @description Pre-auth JWT from login response */
                     pre_auth_token: string;
+                    /**
+                     * @description 6-digit TOTP or email OTP code
+                     * @example 123456
+                     */
                     totp_code: string;
                 };
             };
@@ -1006,12 +1353,13 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
+                    /** @description Opaque refresh token from login/previous refresh */
                     refresh_token: string;
                 };
             };
         };
         responses: {
-            /** @description Token refreshed */
+            /** @description Token refreshed successfully */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -1068,6 +1416,7 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
+                        /** @example Logged out successfully. */
                         message?: string;
                     };
                 };
@@ -1093,19 +1442,23 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
-                    /** Format: email */
+                    /**
+                     * Format: email
+                     * @example user@example.com
+                     */
                     email: string;
                 };
             };
         };
         responses: {
-            /** @description OTP sent */
+            /** @description OTP sent (or silently ignored if email not found) */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": {
+                        /** @example If an account exists for this email, a reset code has been sent. */
                         message?: string;
                     };
                 };
@@ -1140,20 +1493,28 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
-                    /** Format: email */
+                    /**
+                     * Format: email
+                     * @example user@example.com
+                     */
                     email: string;
+                    /**
+                     * @description 6-digit OTP from email
+                     * @example 123456
+                     */
                     code: string;
                 };
             };
         };
         responses: {
-            /** @description OTP verified */
+            /** @description OTP verified — reset token returned */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": {
+                        /** @description One-time reset token for POST /auth/reset-password */
                         reset_token: string;
                     };
                 };
@@ -1197,6 +1558,7 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
+                    /** @description Token from POST /auth/verify-reset-code */
                     reset_token: string;
                     /** Format: password */
                     new_password: string;
@@ -1211,6 +1573,7 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
+                        /** @example Password has been reset successfully. */
                         message?: string;
                     };
                 };
@@ -1245,7 +1608,11 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
-                    /** @enum {string} */
+                    /**
+                     * @description Defaults to "totp" if omitted
+                     * @example totp
+                     * @enum {string}
+                     */
                     method?: "totp" | "email";
                 };
             };
@@ -1258,9 +1625,12 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
+                        /** @description Base32-encoded TOTP secret */
                         secret: string;
+                        /** @description otpauth:// URI for QR code generation */
                         provisioningUri: string;
                     } | {
+                        /** @example Email two-factor authentication has been enabled. */
                         message?: string;
                     };
                 };
@@ -1295,6 +1665,7 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
+                    /** @example 123456 */
                     totp_code: string;
                 };
             };
@@ -1307,6 +1678,7 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
+                        /** @example Two-factor authentication has been enabled. */
                         message?: string;
                     };
                 };
@@ -1341,6 +1713,7 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
+                    /** @description Pre-auth JWT from login response */
                     pre_auth_token: string;
                 };
             };
@@ -1353,6 +1726,7 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
+                        /** @example A new verification code has been sent to your email. */
                         message?: string;
                     };
                 };
@@ -1387,7 +1761,10 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
-                    /** Format: password */
+                    /**
+                     * Format: password
+                     * @description Current account password
+                     */
                     password: string;
                 };
             };
@@ -1400,6 +1777,7 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
+                        /** @example Two-factor authentication has been disabled. */
                         message?: string;
                     };
                 };
@@ -1441,9 +1819,16 @@ export interface operations {
                 content: {
                     "application/json": {
                         policies?: {
+                            /** @example 5 */
                             total?: number;
+                            /** @example 3 */
                             active?: number;
+                            /**
+                             * @description Count per policy type
+                             * @example {"rca": 2, "casco": 1, "home": 2}
+                             */
                             byType?: Record<string, never>;
+                            /** @description Active policies expiring within 30 days */
                             expiringSoon?: {
                                 id?: string;
                                 policyNumber?: string;
@@ -1453,20 +1838,26 @@ export interface operations {
                             }[];
                         };
                         quotes?: {
+                            /** @example 8 */
                             total?: number;
+                            /** @example 2 */
                             pending?: number;
                         };
                         notifications?: {
+                            /** @example 3 */
                             unread?: number;
+                            /** @example 12 */
                             total?: number;
                         };
                         reminders?: {
+                            /** @description Reminders due within 7 days (not done) */
                             upcoming?: {
                                 id?: string;
                                 title?: string;
                                 /** Format: date-time */
                                 remindAt?: string;
                             }[];
+                            /** @example 4 */
                             total?: number;
                         };
                     };
@@ -1505,6 +1896,7 @@ export interface operations {
                             type?: "policy_expiry" | "quote_accepted" | "system" | "reminder";
                             title?: string;
                             body?: string;
+                            /** @description Additional type-specific metadata */
                             meta?: Record<string, never>;
                             isRead?: boolean;
                             /** Format: date-time */
@@ -1529,6 +1921,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
+                /** @description Notification MongoDB ObjectId */
                 id: string;
             };
             cookie?: never;
@@ -1543,7 +1936,14 @@ export interface operations {
                 content: {
                     "application/json": {
                         id?: string;
+                        type?: string;
+                        title?: string;
+                        body?: string;
+                        meta?: Record<string, never>;
+                        /** @example true */
                         isRead?: boolean;
+                        /** Format: date-time */
+                        createdAt?: string;
                     };
                 };
             };
@@ -1583,6 +1983,7 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
+                        /** @example All notifications marked as read. */
                         message?: string;
                     };
                 };
@@ -1603,6 +2004,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
+                /** @description Notification MongoDB ObjectId */
                 id: string;
             };
             cookie?: never;
@@ -1658,9 +2060,13 @@ export interface operations {
                 content: {
                     "application/json": {
                         data?: components["schemas"]["PolicyResponse"][];
+                        /** @example 42 */
                         total?: number;
+                        /** @example 1 */
                         page?: number;
+                        /** @example 20 */
                         limit?: number;
+                        /** @example 3 */
                         pages?: number;
                     };
                 };
@@ -1722,22 +2128,25 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description Policy MongoDB ObjectId */
-                id: string;
-                /** @description Document file ID from policy documents array */
+                /** @description Policy transaction ID */
+                transactionId: string;
+                /** @description File ID from policy fileIds map */
                 fileId: string;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description PDF file */
+            /** @description Download URL */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/pdf": unknown;
+                    "application/json": {
+                        /** @example https://www.asigurari.ro/app/broker/file/rjzLN2VjR7I... */
+                        downloadUrl?: string;
+                    };
                 };
             };
             /** @description Unauthorized */
@@ -1760,11 +2169,43 @@ export interface operations {
             };
         };
     };
+    get_api_policies_sync_states: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of policy sync states */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data?: components["schemas"]["PolicySyncStateResponse"][];
+                    };
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     get_api_quotes_list: {
         parameters: {
             query?: {
                 page?: number;
                 limit?: number;
+                /** @description Filter by active state (true/false) */
                 active?: boolean;
                 type?: "rca" | "casco" | "casco_econom" | "casco_perfect_cover" | "pad" | "home" | "travel" | "health" | "life" | "accidents" | "accidents_taxi" | "accidents_traveler" | "breakdown" | "cmr" | "rcp" | "other";
             };
@@ -1782,9 +2223,13 @@ export interface operations {
                 content: {
                     "application/json": {
                         data?: components["schemas"]["QuoteResponse"][];
+                        /** @example 15 */
                         total?: number;
+                        /** @example 1 */
                         page?: number;
+                        /** @example 20 */
                         limit?: number;
+                        /** @example 1 */
                         pages?: number;
                     };
                 };
@@ -1841,6 +2286,97 @@ export interface operations {
             };
         };
     };
+    post_api_quotes_offer_url: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * @description Legacy quoteInputParamsId
+                     * @example 6a0db36469ad58211a6f0c29
+                     */
+                    quote_input_params_id: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Offer URL */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example https://www.asigurari.ro/home/oferte/... */
+                        offerUrl?: string | null;
+                    };
+                };
+            };
+            /** @description Missing parameter */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Quote does not belong to user */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_api_quotes_sync_states: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of quote sync states */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data?: components["schemas"]["QuoteSyncStateResponse"][];
+                    };
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     get_api_reminders_list: {
         parameters: {
             query?: never;
@@ -1882,9 +2418,14 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
+                    /** @example Renew RCA policy */
                     title: string;
-                    /** Format: date-time */
+                    /**
+                     * Format: date-time
+                     * @example 2026-05-15T09:00:00+03:00
+                     */
                     remindAt: string;
+                    /** @example Policy #12345 expires */
                     note?: string | null;
                 };
             };
@@ -1924,6 +2465,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
+                /** @description Reminder MongoDB ObjectId */
                 id: string;
             };
             cookie?: never;
@@ -1983,6 +2525,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
+                /** @description Reminder MongoDB ObjectId */
                 id: string;
             };
             cookie?: never;
@@ -2033,13 +2576,16 @@ export interface operations {
                 content: {
                     "application/json": {
                         sessions?: {
+                            /** @description Session ID (MongoDB ObjectId) */
                             id?: string;
+                            /** @example 192.168.1.42 */
                             ip?: string;
                             userAgent?: string;
                             /** Format: date-time */
                             lastActivityAt?: string;
                             /** Format: date-time */
                             createdAt?: string;
+                            /** @description True if this is the requesting session */
                             current?: boolean;
                         }[];
                     };
@@ -2088,6 +2634,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
+                /** @description Session MongoDB ObjectId */
                 id: string;
             };
             cookie?: never;
@@ -2137,12 +2684,19 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
+                        /** @example true */
                         hasChanges?: boolean;
+                        /** @example 1 */
                         newPolicies?: number;
+                        /** @example 0 */
                         updatedPolicies?: number;
+                        /** @example 0 */
                         removedPolicies?: number;
+                        /** @example 2 */
                         newQuotes?: number;
+                        /** @example 0 */
                         updatedQuotes?: number;
+                        /** @example 0 */
                         removedQuotes?: number;
                         /** Format: date-time */
                         syncedAt?: string;
@@ -2175,7 +2729,54 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["UserProfile"];
+                    "application/json": {
+                        /** @description HMAC-SHA256 hashed user ID */
+                        id?: string;
+                        /**
+                         * @description Partially masked
+                         * @example us***@example.com
+                         */
+                        email?: string;
+                        /** @example ionpopescu */
+                        username?: string;
+                        parentUsername?: string | null;
+                        /** @example Ion */
+                        firstName?: string | null;
+                        /**
+                         * @description Masked to initial
+                         * @example P.
+                         */
+                        lastName?: string | null;
+                        /** @example Ion P. */
+                        fullName?: string | null;
+                        /**
+                         * @description Partially masked
+                         * @example +40*****678
+                         */
+                        phone?: string | null;
+                        /** @example ro */
+                        country?: string;
+                        /** @description Legacy person sub-document */
+                        person?: Record<string, never>;
+                        /** @description Legacy contact sub-document */
+                        contact?: Record<string, never>;
+                        /** @description Legacy address sub-document */
+                        address?: Record<string, never>;
+                        /** @description Legacy company sub-document */
+                        company?: Record<string, never>;
+                        twoFactorEnabled?: boolean;
+                        /** @enum {string|null} */
+                        twoFactorMethod?: "totp" | "email" | null;
+                        preferences?: {
+                            /** @enum {string} */
+                            language?: "ro" | "en" | "fr" | "de";
+                            notifications?: boolean;
+                        };
+                        /** @enum {string} */
+                        source?: "registration" | "legacy_sync";
+                        /** Format: date-time */
+                        createdAt?: string;
+                    };
                 };
             };
             /** @description Unauthorized */
@@ -2199,14 +2800,17 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
+                    /** @example Ion */
                     firstName?: string;
+                    /** @example Popescu */
                     lastName?: string;
+                    /** @example +40712345678 */
                     phone?: string;
                 };
             };
         };
         responses: {
-            /** @description Updated profile */
+            /** @description Updated profile (same shape as GET /user/profile) */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -2260,7 +2864,9 @@ export interface operations {
                 content: {
                     "application/json": {
                         preferences?: {
+                            /** @example ro */
                             language?: string;
+                            /** @example true */
                             notifications?: boolean;
                         };
                     };
@@ -2311,6 +2917,7 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
+                        /** @example Password updated successfully. */
                         message?: string;
                     };
                 };
@@ -2360,6 +2967,7 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
+                        /** @example Your account deletion request has been submitted. Our support team will contact you shortly. */
                         message?: string;
                     };
                 };

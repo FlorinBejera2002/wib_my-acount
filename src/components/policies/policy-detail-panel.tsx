@@ -46,7 +46,6 @@ const AUTO_EMAIL_DAYS: Record<string, number[]> = {
   rca: [60, 30, 10, 1],
   casco: [30, 10, 1],
   casco_econom: [30, 10, 1],
-  casco_perfect_cover: [30, 10, 1],
   home: [25, 5],
   pad: [25, 5],
   pad_facultative: [25, 5],
@@ -333,7 +332,24 @@ export function PolicyDetailPanel({ policyId }: { policyId: string }) {
                     })}
                   </p>
                   <p className="text-sm font-semibold text-gray-900 truncate">
-                    {val}
+                    {key === 'destination'
+                      ? t(`destination.${val}`, { defaultValue: val })
+                      : key === 'purpose'
+                        ? t(`purpose.${val}`, { defaultValue: val })
+                        : key === 'vehicleType'
+                          ? t(`vehicleType.${val}`, { defaultValue: val })
+                          : typeof val === 'string' && val.startsWith('malpraxis_')
+                            ? t(`malpraxis.${val}`, { defaultValue: val })
+                            : key === 'type'
+                              ? (() => {
+                                  const n = (val as string)?.toLowerCase().trim()
+                                  if (['apartamentbloc', 'apartment', 'apartament'].includes(n))
+                                    return t('policies.product.apartment', { defaultValue: 'Apartament' })
+                                  if (['casa', 'house', 'vila', 'vilă'].includes(n))
+                                    return t('policies.product.house', { defaultValue: 'Casă' })
+                                  return val as string
+                                })()
+                              : val as string}
                   </p>
                 </div>
               </div>
