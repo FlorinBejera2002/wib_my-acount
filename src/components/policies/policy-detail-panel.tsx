@@ -338,18 +338,37 @@ export function PolicyDetailPanel({ policyId }: { policyId: string }) {
                         ? t(`purpose.${val}`, { defaultValue: val })
                         : key === 'vehicleType'
                           ? t(`vehicleType.${val}`, { defaultValue: val })
-                          : typeof val === 'string' && val.startsWith('malpraxis_')
+                          : typeof val === 'string' &&
+                              val.startsWith('malpraxis_')
                             ? t(`malpraxis.${val}`, { defaultValue: val })
                             : key === 'type'
                               ? (() => {
-                                  const n = (val as string)?.toLowerCase().trim()
-                                  if (['apartamentbloc', 'apartment', 'apartament'].includes(n))
-                                    return t('policies.product.apartment', { defaultValue: 'Apartament' })
-                                  if (['casa', 'house', 'vila', 'vilă'].includes(n))
-                                    return t('policies.product.house', { defaultValue: 'Casă' })
+                                  const n = (val as string)
+                                    ?.toLowerCase()
+                                    .trim()
+                                  if (
+                                    [
+                                      'apartamentbloc',
+                                      'apartment',
+                                      'apartament'
+                                    ].includes(n)
+                                  )
+                                    return t('policies.product.apartment', {
+                                      defaultValue: 'Apartament'
+                                    })
+                                  if (
+                                    ['casa', 'house', 'vila', 'vilă'].includes(
+                                      n
+                                    )
+                                  )
+                                    return t('policies.product.house', {
+                                      defaultValue: 'Casă'
+                                    })
                                   return val as string
                                 })()
-                              : val as string}
+                              : key === 'areaSqm'
+                                ? `${val} m²`
+                                : (val as string)}
                   </p>
                 </div>
               </div>

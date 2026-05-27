@@ -87,6 +87,7 @@ function ProductDetailsCell({
           return t('policies.product.house', { defaultValue: 'Casă' })
         return val
       }
+      if (key === 'areaSqm') return `${val} m²`
       return val
     })
     .join(' · ')
@@ -152,7 +153,9 @@ function ProductDetailsCell({
                                 })
                               return val
                             })()
-                          : val}
+                          : key === 'areaSqm'
+                            ? `${val} m²`
+                            : val}
               </span>
             </div>
           ))}
@@ -1057,7 +1060,9 @@ function PolicyCard({
                   ? t(`destination.${val}`, { defaultValue: val })
                   : key === 'purpose'
                     ? t(`purpose.${val}`, { defaultValue: val })
-                    : val}
+                    : key === 'areaSqm'
+                      ? `${val} m²`
+                      : val}
               </p>
             </div>
           ))}

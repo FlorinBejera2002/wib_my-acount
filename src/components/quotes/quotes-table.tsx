@@ -118,6 +118,7 @@ function ProductDetailsCell({ quote }: { quote: Quote }) {
           return t('policies.product.house', { defaultValue: 'Casă' })
         return val
       }
+      if (key === 'areaSqm' || key === 'area_sqm') return `${val} m²`
       return val
     })
     .join(' · ')
@@ -132,7 +133,7 @@ function ProductDetailsCell({ quote }: { quote: Quote }) {
       <TooltipContent
         side="bottom"
         align="start"
-        className="bg-white text-gray-700 border border-gray-200 shadow-lg p-3 max-w-xs"
+        className="bg-white text-gray-700 border border-gray-200 shadow-lg p-3 max-w-md"
       >
         <div className="space-y-1">
           {entries.map(([key, val]) => (
@@ -155,27 +156,31 @@ function ProductDetailsCell({ quote }: { quote: Quote }) {
                       : val?.startsWith('malpraxis_')
                         ? t(`malpraxis.${val}`, { defaultValue: val })
                         : key === 'type'
-                        ? (() => {
-                          const normalized = val?.toLowerCase().trim()
-                          if (
-                            [
-                              'apartamentbloc',
-                              'apartment',
-                              'apartament'
-                            ].includes(normalized)
-                          )
-                            return t('policies.product.apartment', {
-                              defaultValue: 'Apartament'
-                            })
-                          if (
-                            ['casa', 'house', 'vila', 'vilă'].includes(
-                              normalized
-                            )
-                          )
-                            return t('policies.product.house', { defaultValue: 'Casă' })
-                          return val
-                        })()
-                      : val}
+                          ? (() => {
+                              const normalized = val?.toLowerCase().trim()
+                              if (
+                                [
+                                  'apartamentbloc',
+                                  'apartment',
+                                  'apartament'
+                                ].includes(normalized)
+                              )
+                                return t('policies.product.apartment', {
+                                  defaultValue: 'Apartament'
+                                })
+                              if (
+                                ['casa', 'house', 'vila', 'vilă'].includes(
+                                  normalized
+                                )
+                              )
+                                return t('policies.product.house', {
+                                  defaultValue: 'Casă'
+                                })
+                              return val
+                            })()
+                          : key === 'areaSqm' || key === 'area_sqm'
+                            ? `${val} m²`
+                            : val}
               </span>
             </div>
           ))}
@@ -403,10 +408,13 @@ function translateProductVal(
   val: string,
   t: (k: string, opts?: Record<string, unknown>) => string
 ): string {
-  if (key === 'destination') return t(`destination.${val}`, { defaultValue: val })
+  if (key === 'destination')
+    return t(`destination.${val}`, { defaultValue: val })
   if (key === 'purpose') return t(`purpose.${val}`, { defaultValue: val })
-  if (key === 'vehicleType') return t(`vehicleType.${val}`, { defaultValue: val })
-  if (val?.startsWith('malpraxis_')) return t(`malpraxis.${val}`, { defaultValue: val })
+  if (key === 'vehicleType')
+    return t(`vehicleType.${val}`, { defaultValue: val })
+  if (val?.startsWith('malpraxis_'))
+    return t(`malpraxis.${val}`, { defaultValue: val })
   if (key === 'type') {
     const n = val?.toLowerCase().trim()
     if (['apartamentbloc', 'apartment', 'apartament'].includes(n))
@@ -414,6 +422,7 @@ function translateProductVal(
     if (['casa', 'house', 'vila', 'vilă'].includes(n))
       return t('policies.product.house', { defaultValue: 'Casă' })
   }
+  if (key === 'areaSqm' || key === 'area_sqm') return `${val} m²`
   return val
 }
 
@@ -467,7 +476,9 @@ function QuoteCard({
             >
               <p className="text-[10px] font-medium uppercase tracking-wider text-gray-400 mb-0.5">
                 {t(`policies.product.${snakeToCamel(key)}`, {
-                  defaultValue: snakeToCamel(key).replace(/([A-Z])/g, ' $1').trim()
+                  defaultValue: snakeToCamel(key)
+                    .replace(/([A-Z])/g, ' $1')
+                    .trim()
                 })}
               </p>
               <p className="text-sm font-semibold text-gray-800 break-words">
@@ -484,10 +495,14 @@ function QuoteCard({
             >
               <p className="text-[10px] font-medium uppercase tracking-wider text-gray-400 mb-0.5">
                 {t(`policies.insured.${snakeToCamel(key)}`, {
-                  defaultValue: snakeToCamel(key).replace(/([A-Z])/g, ' $1').trim()
+                  defaultValue: snakeToCamel(key)
+                    .replace(/([A-Z])/g, ' $1')
+                    .trim()
                 })}
               </p>
-              <p className="text-sm font-semibold text-gray-800 break-words">{val}</p>
+              <p className="text-sm font-semibold text-gray-800 break-words">
+                {val}
+              </p>
             </div>
           ))}
         </div>
