@@ -398,6 +398,25 @@ export function QuotesTable() {
 /*  QuoteCard – mobile / tablet (< lg)                                   */
 /* ═══════════════════════════════════════════════════════════════════════ */
 
+function translateProductVal(
+  key: string,
+  val: string,
+  t: (k: string, opts?: Record<string, unknown>) => string
+): string {
+  if (key === 'destination') return t(`destination.${val}`, { defaultValue: val })
+  if (key === 'purpose') return t(`purpose.${val}`, { defaultValue: val })
+  if (key === 'vehicleType') return t(`vehicleType.${val}`, { defaultValue: val })
+  if (val?.startsWith('malpraxis_')) return t(`malpraxis.${val}`, { defaultValue: val })
+  if (key === 'type') {
+    const n = val?.toLowerCase().trim()
+    if (['apartamentbloc', 'apartment', 'apartament'].includes(n))
+      return t('policies.product.apartment', { defaultValue: 'Apartament' })
+    if (['casa', 'house', 'vila', 'vilă'].includes(n))
+      return t('policies.product.house', { defaultValue: 'Casă' })
+  }
+  return val
+}
+
 function QuoteCard({
   quote,
   t
@@ -405,6 +424,9 @@ function QuoteCard({
   quote: Quote
   t: (key: string, opts?: Record<string, unknown>) => string
 }) {
+  const productEntries = getProductEntries(quote)
+  const insuredEntries = getInsuredEntries(quote)
+
   return (
     <div className="rounded-xl border border-gray-200/80 bg-gray-50/50 shadow-[0_1px_4px_rgba(0,0,0,0.04)] overflow-hidden">
       {/* ── Header ── */}
@@ -437,68 +459,42 @@ function QuoteCard({
             </p>
           </div>
 
-          {/* Product details */}
-          {getProductEntries(quote).length > 0 && (
-            <div className="rounded-lg bg-white border border-gray-100 px-3 py-2.5 col-span-2">
-              <p className="text-[10px] font-medium uppercase tracking-wider text-gray-400 mb-1">
-                {t('quotes.productDetails')}
+          {/* Product fields — one mini-card per field */}
+          {productEntries.map(([key, val]) => (
+            <div
+              key={key}
+              className="rounded-lg bg-white border border-gray-100 px-3 py-2.5"
+            >
+              <p className="text-[10px] font-medium uppercase tracking-wider text-gray-400 mb-0.5">
+                {t(`policies.product.${snakeToCamel(key)}`, {
+                  defaultValue: snakeToCamel(key).replace(/([A-Z])/g, ' $1').trim()
+                })}
               </p>
-              <div className="space-y-0.5">
-                {getProductEntries(quote).map(([key, val]) => (
-                  <div key={key} className="flex gap-1.5 text-xs">
-                    <span className="text-gray-400 shrink-0">
-                      {t(`policies.product.${snakeToCamel(key)}`, {
-                        defaultValue: snakeToCamel(key)
-                          .replace(/([A-Z])/g, ' $1')
-                          .trim()
-                      })}
-                      :
-                    </span>
-                    <span className="font-medium text-gray-800">
-                      {key === 'destination'
-                        ? t(`destination.${val}`, { defaultValue: val })
-                        : key === 'purpose'
-                          ? t(`purpose.${val}`, { defaultValue: val })
-                          : key === 'vehicleType'
-                            ? t(`vehicleType.${val}`, { defaultValue: val })
-                            : val?.startsWith('malpraxis_')
-                              ? t(`malpraxis.${val}`, { defaultValue: val })
-                              : val}
-                    </span>
-                  </div>
-                ))}
-              </div>
+              <p className="text-sm font-semibold text-gray-800 break-words">
+                {translateProductVal(key, val, t)}
+              </p>
             </div>
-          )}
+          ))}
 
-          {/* Insured details */}
-          {getInsuredEntries(quote).length > 0 && (
-            <div className="rounded-lg bg-white border border-gray-100 px-3 py-2.5 col-span-2">
-              <p className="text-[10px] font-medium uppercase tracking-wider text-gray-400 mb-1">
-                {t('quotes.insuredDetails')}
+          {/* Insured fields — one mini-card per field */}
+          {insuredEntries.map(([key, val]) => (
+            <div
+              key={key}
+              className="rounded-lg bg-white border border-gray-100 px-3 py-2.5"
+            >
+              <p className="text-[10px] font-medium uppercase tracking-wider text-gray-400 mb-0.5">
+                {t(`policies.insured.${snakeToCamel(key)}`, {
+                  defaultValue: snakeToCamel(key).replace(/([A-Z])/g, ' $1').trim()
+                })}
               </p>
-              <div className="space-y-0.5">
-                {getInsuredEntries(quote).map(([key, val]) => (
-                  <div key={key} className="flex gap-1.5 text-xs">
-                    <span className="text-gray-400 shrink-0">
-                      {t(`policies.insured.${snakeToCamel(key)}`, {
-                        defaultValue: snakeToCamel(key)
-                          .replace(/([A-Z])/g, ' $1')
-                          .trim()
-                      })}
-                      :
-                    </span>
-                    <span className="font-medium text-gray-800">{val}</span>
-                  </div>
-                ))}
-              </div>
+              <p className="text-sm font-semibold text-gray-800 break-words">{val}</p>
             </div>
-          )}
+          ))}
         </div>
 
         {/* Offer link */}
         {quote.quoteInputParamsId && (
-          <div className="mt-4">
+          <div className="mt-3">
             <OfferUrlButton quote={quote} />
           </div>
         )}
