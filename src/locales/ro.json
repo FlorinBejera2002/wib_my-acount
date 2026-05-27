@@ -753,6 +753,7 @@
     "notifyBefore": "Reminder suplimentar",
     "reminderSuccess": "Reminder-ul a fost setat cu succes",
     "beforeExpiry": "înainte de expirare",
+    "pendingIssuance": "Polița este în proces de emitere",
     "product": {
       "plate": "Număr înmatriculare",
       "vinMasked": "Serie VIN",

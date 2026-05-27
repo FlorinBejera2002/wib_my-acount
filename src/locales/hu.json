@@ -745,6 +745,7 @@
     "notifyBefore": "További emlékeztető",
     "reminderSuccess": "Emlékeztető sikeresen beállítva",
     "beforeExpiry": "a lejárat előtt",
+    "pendingIssuance": "A kötvény kiállítás alatt áll",
     "product": {
       "plate": "Rendszám",
       "vinMasked": "Alvázszám",

@@ -745,6 +745,7 @@
     "notifyBefore": "Rappel supplémentaire",
     "reminderSuccess": "Rappel défini avec succès",
     "beforeExpiry": "avant expiration",
+    "pendingIssuance": "La police est en cours d'émission",
     "product": {
       "plate": "Plaque d'immatriculation",
       "vinMasked": "VIN",

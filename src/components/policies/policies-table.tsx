@@ -30,6 +30,7 @@ import {
   ChevronRight,
   Download,
   Inbox,
+  Loader2,
   X
 } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
@@ -54,7 +55,13 @@ function getProductEntries(policy: Policy): [string, string][] {
     .map(([key, val]) => [key, String(val)])
 }
 
-function ProductDetailsCell({ policy }: { policy: Policy }) {
+function ProductDetailsCell({
+  policy,
+  disabled
+}: {
+  policy: Policy
+  disabled?: boolean
+}) {
   const { t } = useTranslation()
   const entries = getProductEntries(policy)
 
@@ -83,6 +90,14 @@ function ProductDetailsCell({ policy }: { policy: Policy }) {
       return val
     })
     .join(' · ')
+
+  if (disabled) {
+    return (
+      <span className="text-sm text-gray-700 block max-w-[200px] truncate">
+        {summary}
+      </span>
+    )
+  }
 
   return (
     <Tooltip>
@@ -117,10 +132,24 @@ function ProductDetailsCell({ policy }: { policy: Policy }) {
                         : key === 'type'
                           ? (() => {
                               const normalized = val?.toLowerCase().trim()
-                              if (['apartamentbloc', 'apartment', 'apartament'].includes(normalized))
-                                return t('policies.product.apartment', { defaultValue: 'Apartament' })
-                              if (['casa', 'house', 'vila', 'vilă'].includes(normalized))
-                                return t('policies.product.house', { defaultValue: 'Casă' })
+                              if (
+                                [
+                                  'apartamentbloc',
+                                  'apartment',
+                                  'apartament'
+                                ].includes(normalized)
+                              )
+                                return t('policies.product.apartment', {
+                                  defaultValue: 'Apartament'
+                                })
+                              if (
+                                ['casa', 'house', 'vila', 'vilă'].includes(
+                                  normalized
+                                )
+                              )
+                                return t('policies.product.house', {
+                                  defaultValue: 'Casă'
+                                })
                               return val
                             })()
                           : val}
@@ -571,15 +600,28 @@ export function PoliciesTable() {
                   const days = computeDaysUntilExpiry(rep.endDate)
                   const isExpanded = expandedGroups.has(item.groupKey)
 
+                  const isGroupPending = item.totalPremium === 0
+
                   const rows = [
                     <TableRow
                       key={`group-${item.groupKey}`}
-                      className="cursor-pointer transition-colors hover:bg-gray-50/50"
-                      onClick={() => toggleGroup(item.groupKey)}
+                      className={cn(
+                        'transition-colors',
+                        isGroupPending
+                          ? 'opacity-60 cursor-default bg-gray-50/30'
+                          : 'cursor-pointer hover:bg-gray-50/50'
+                      )}
+                      onClick={
+                        isGroupPending
+                          ? () => toast.info(t('policies.pendingIssuance'))
+                          : () => toggleGroup(item.groupKey)
+                      }
                     >
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          {isExpanded ? (
+                          {isGroupPending ? (
+                            <Loader2 className="h-3.5 w-3.5 text-gray-400 animate-spin shrink-0" />
+                          ) : isExpanded ? (
                             <ChevronDown className="h-4 w-4 text-gray-400 shrink-0" />
                           ) : (
                             <ChevronRight className="h-4 w-4 text-gray-400 shrink-0" />
@@ -602,7 +644,10 @@ export function PoliciesTable() {
                         <HoverCell text={rep.insurer ?? '—'} />
                       </TableCell>
                       <TableCell>
-                        <ProductDetailsCell policy={rep} />
+                        <ProductDetailsCell
+                          policy={rep}
+                          disabled={isGroupPending}
+                        />
                       </TableCell>
                       <TableCell className="text-sm font-semibold text-gray-900">
                         {formatCurrency(item.totalPremium)}
@@ -652,17 +697,32 @@ export function PoliciesTable() {
 
                 const { policy } = item
                 const days = computeDaysUntilExpiry(policy.endDate)
+                const isPending = policy.premium === 0
 
                 return [
                   <TableRow
                     key={policy.id}
-                    className="cursor-pointer transition-colors hover:bg-gray-50/50"
-                    onClick={() => openPolicy(policy.id)}
+                    className={cn(
+                      'transition-colors',
+                      isPending
+                        ? 'opacity-60 cursor-default bg-gray-50/30'
+                        : 'cursor-pointer hover:bg-gray-50/50'
+                    )}
+                    onClick={
+                      isPending
+                        ? () => toast.info(t('policies.pendingIssuance'))
+                        : () => openPolicy(policy.id)
+                    }
                   >
                     <TableCell>
-                      <span className="font-medium text-gray-900">
-                        {policy.policyNumber}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        {isPending && (
+                          <Loader2 className="h-3.5 w-3.5 text-gray-400 animate-spin shrink-0" />
+                        )}
+                        <span className="font-medium text-gray-900">
+                          {policy.policyNumber}
+                        </span>
+                      </div>
                     </TableCell>
 
                     <TableCell>
@@ -676,7 +736,10 @@ export function PoliciesTable() {
                     </TableCell>
 
                     <TableCell>
-                      <ProductDetailsCell policy={policy} />
+                      <ProductDetailsCell
+                        policy={policy}
+                        disabled={isPending}
+                      />
                     </TableCell>
 
                     <TableCell className="text-sm text-gray-900">
@@ -764,16 +827,31 @@ function PackageCard({
   const rep = item.policies[0]
   if (!rep) return null
   const days = computeDaysUntilExpiry(rep.endDate)
+  const isGroupPending = item.totalPremium === 0
 
   return (
-    <div className="rounded-xl border border-gray-200/80 bg-gray-50/50 shadow-[0_1px_4px_rgba(0,0,0,0.04)] overflow-hidden">
+    <div
+      className={cn(
+        'rounded-xl border border-gray-200/80 bg-gray-50/50 shadow-[0_1px_4px_rgba(0,0,0,0.04)] overflow-hidden',
+        isGroupPending && 'opacity-60'
+      )}
+    >
       {/* ── Header ── */}
       <div
-        className="flex items-center justify-between gap-3 px-4 py-3 bg-gray-100/60 cursor-pointer"
-        onClick={onToggle}
+        className={cn(
+          'flex items-center justify-between gap-3 px-4 py-3 bg-gray-100/60',
+          isGroupPending ? 'cursor-default' : 'cursor-pointer'
+        )}
+        onClick={
+          isGroupPending
+            ? () => toast.info(t('policies.pendingIssuance'))
+            : onToggle
+        }
       >
         <div className="flex items-center gap-2 min-w-0">
-          {isExpanded ? (
+          {isGroupPending ? (
+            <Loader2 className="h-4 w-4 text-gray-400 animate-spin shrink-0" />
+          ) : isExpanded ? (
             <ChevronDown className="h-4 w-4 text-gray-400 shrink-0" />
           ) : (
             <ChevronRight className="h-4 w-4 text-gray-400 shrink-0" />
@@ -834,39 +912,51 @@ function PackageCard({
       {/* ── Sub-policies (expanded) ── */}
       {isExpanded && (
         <div className="border-t border-gray-100 divide-y divide-gray-100">
-          {item.policies.map((sub) => (
-            <div
-              key={sub.id}
-              className="px-4 py-3 cursor-pointer hover:bg-gray-50 transition-colors"
-              onClick={() => onNavigate(sub.id)}
-            >
-              <div className="flex items-start justify-between gap-2">
-                <div className="min-w-0">
-                  <p className="text-sm font-bold text-gray-900 truncate">
-                    {sub.policyNumber}
-                  </p>
-                  <p className="text-xs text-gray-500 truncate mt-0.5">
-                    {sub.insurer ?? '—'}
-                  </p>
+          {item.policies.map((sub) => {
+            const subPending = sub.premium === 0
+            return (
+              <div
+                key={sub.id}
+                className={cn(
+                  'px-4 py-3 transition-colors',
+                  subPending
+                    ? 'opacity-60 cursor-default'
+                    : 'cursor-pointer hover:bg-gray-50'
+                )}
+                onClick={
+                  subPending
+                    ? () => toast.info(t('policies.pendingIssuance'))
+                    : () => onNavigate(sub.id)
+                }
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <p className="text-sm font-bold text-gray-900 truncate">
+                      {sub.policyNumber}
+                    </p>
+                    <p className="text-xs text-gray-500 truncate mt-0.5">
+                      {sub.insurer ?? '—'}
+                    </p>
+                  </div>
+                  <div className="flex flex-col items-end gap-1 shrink-0">
+                    <InsuranceTypeBadge
+                      type={sub.insuranceType ?? sub.type}
+                      className="px-2 py-0.5 text-[11px] gap-1 [&_svg]:h-3 [&_svg]:w-3"
+                    />
+                    <span className="text-xs font-semibold text-gray-700">
+                      {formatCurrency(sub.premium)}
+                    </span>
+                  </div>
                 </div>
-                <div className="flex flex-col items-end gap-1 shrink-0">
-                  <InsuranceTypeBadge
-                    type={sub.insuranceType ?? sub.type}
-                    className="px-2 py-0.5 text-[11px] gap-1 [&_svg]:h-3 [&_svg]:w-3"
+                <div className="mt-2">
+                  <PdfButton
+                    transactionId={sub.transactionId}
+                    fileIds={sub.fileIds}
                   />
-                  <span className="text-xs font-semibold text-gray-700">
-                    {formatCurrency(sub.premium)}
-                  </span>
                 </div>
               </div>
-              <div className="mt-2">
-                <PdfButton
-                  transactionId={sub.transactionId}
-                  fileIds={sub.fileIds}
-                />
-              </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       )}
     </div>
@@ -888,21 +978,49 @@ function PolicyCard({
   onNavigate: () => void
   t: (key: string, opts?: Record<string, unknown>) => string
 }) {
+  const isPending = policy.premium === 0
   return (
-    <div className="rounded-xl border border-gray-200/80 bg-gray-50/50 shadow-[0_1px_4px_rgba(0,0,0,0.04)] overflow-hidden">
+    <div
+      className={cn(
+        'rounded-xl border border-gray-200/80 bg-gray-50/50 shadow-[0_1px_4px_rgba(0,0,0,0.04)] overflow-hidden',
+        isPending && 'opacity-60'
+      )}
+    >
       {/* ── Header ── */}
       <div
-        className="flex items-center justify-between gap-3 px-4 py-3 bg-gray-100/60 cursor-pointer"
-        onClick={onNavigate}
+        className={cn(
+          'flex items-center justify-between gap-3 px-4 py-3 bg-gray-100/60',
+          isPending ? 'cursor-default' : 'cursor-pointer'
+        )}
+        onClick={
+          isPending
+            ? () => toast.info(t('policies.pendingIssuance'))
+            : onNavigate
+        }
       >
-        <span className="font-bold text-gray-900 text-sm truncate">
-          {policy.policyNumber}
-        </span>
+        <div className="flex items-center gap-2 min-w-0">
+          {isPending && (
+            <Loader2 className="h-3.5 w-3.5 text-gray-400 animate-spin shrink-0" />
+          )}
+          <span className="font-bold text-gray-900 text-sm truncate">
+            {policy.policyNumber}
+          </span>
+        </div>
         <PolicyStatusBadge status={policy.status} />
       </div>
 
       {/* ── Body ── */}
-      <div className="cursor-pointer px-4 py-4" onClick={onNavigate}>
+      <div
+        className={cn(
+          'px-4 py-4',
+          isPending ? 'cursor-default' : 'cursor-pointer'
+        )}
+        onClick={
+          isPending
+            ? () => toast.info(t('policies.pendingIssuance'))
+            : onNavigate
+        }
+      >
         {/* Type badge */}
         <InsuranceTypeBadge
           type={policy.insuranceType ?? policy.type}
@@ -1052,45 +1170,62 @@ function SubTable({
         </TableRow>
       </TableHeader>
       <TableBody>
-        {policies.map((sub) => (
-          <TableRow
-            key={sub.id}
-            className="cursor-pointer hover:bg-gray-50/50"
-            onClick={() => onSelect(sub.id)}
-          >
-            <TableCell className="text-sm font-medium text-gray-900">
-              {sub.policyNumber}
-            </TableCell>
-            {isTravel ? (
-              <>
-                <TableCell className="text-sm font-medium text-gray-900">
-                  {sub.data?.insured?.name ?? '—'}
-                </TableCell>
-                <TableCell className="text-sm text-gray-700">
-                  {sub.data?.insured?.cnp ?? '—'}
-                </TableCell>
-              </>
-            ) : (
-              <>
-                <TableCell>
-                  <InsuranceTypeBadge type={sub.insuranceType ?? sub.type} />
-                </TableCell>
-                <TableCell className="text-sm text-gray-700">
-                  {sub.insurer ?? '—'}
-                </TableCell>
-              </>
-            )}
-            <TableCell className="text-sm text-gray-900">
-              {formatCurrency(sub.premium)}
-            </TableCell>
-            <TableCell>
-              <PdfButton
-                transactionId={sub.transactionId}
-                fileIds={sub.fileIds}
-              />
-            </TableCell>
-          </TableRow>
-        ))}
+        {policies.map((sub) => {
+          const subPending = sub.premium === 0
+          return (
+            <TableRow
+              key={sub.id}
+              className={cn(
+                'transition-colors',
+                subPending
+                  ? 'opacity-60 cursor-default bg-gray-50/30'
+                  : 'cursor-pointer hover:bg-gray-50/50'
+              )}
+              onClick={
+                subPending
+                  ? () => toast.info(t('policies.pendingIssuance'))
+                  : () => onSelect(sub.id)
+              }
+            >
+              <TableCell className="text-sm font-medium text-gray-900">
+                <div className="flex items-center gap-2">
+                  {subPending && (
+                    <Loader2 className="h-3.5 w-3.5 text-gray-400 animate-spin shrink-0" />
+                  )}
+                  {sub.policyNumber}
+                </div>
+              </TableCell>
+              {isTravel ? (
+                <>
+                  <TableCell className="text-sm font-medium text-gray-900">
+                    {sub.data?.insured?.name ?? '—'}
+                  </TableCell>
+                  <TableCell className="text-sm text-gray-700">
+                    {sub.data?.insured?.cnp ?? '—'}
+                  </TableCell>
+                </>
+              ) : (
+                <>
+                  <TableCell>
+                    <InsuranceTypeBadge type={sub.insuranceType ?? sub.type} />
+                  </TableCell>
+                  <TableCell className="text-sm text-gray-700">
+                    {sub.insurer ?? '—'}
+                  </TableCell>
+                </>
+              )}
+              <TableCell className="text-sm text-gray-900">
+                {formatCurrency(sub.premium)}
+              </TableCell>
+              <TableCell>
+                <PdfButton
+                  transactionId={sub.transactionId}
+                  fileIds={sub.fileIds}
+                />
+              </TableCell>
+            </TableRow>
+          )
+        })}
       </TableBody>
     </Table>
   )
