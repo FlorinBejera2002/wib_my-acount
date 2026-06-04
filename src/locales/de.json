@@ -1033,7 +1033,10 @@
     },
     "setup": {
       "methodTitle": "Zwei-Faktor-Authentifizierung aktivieren",
+      "methodTitleChange": "2FA-Methode ändern",
       "methodDescription": "Wählen Sie Ihre bevorzugte Methode zur Zwei-Faktor-Authentifizierung.",
+      "methodDescriptionChange": "Wählen Sie Ihre neue Methode zur Zwei-Faktor-Authentifizierung.",
+      "activeMethodBadge": "Aktiv",
       "methodTotp": "Authentifizierungs-App",
       "methodTotpDesc": "Google Authenticator, Authy, usw.",
       "methodEmail": "E-Mail",

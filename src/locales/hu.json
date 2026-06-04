@@ -1033,7 +1033,10 @@
     },
     "setup": {
       "methodTitle": "Kétlépcsős azonosítás engedélyezése",
+      "methodTitleChange": "2FA módszer módosítása",
       "methodDescription": "Válassza ki a kétlépcsős azonosítás kívánt módszerét.",
+      "methodDescriptionChange": "Válassza ki az új kétlépcsős azonosítási módszert.",
+      "activeMethodBadge": "Aktív",
       "methodTotp": "Hitelesítő alkalmazás",
       "methodTotpDesc": "Google Authenticator, Authy stb.",
       "methodEmail": "E-mail",

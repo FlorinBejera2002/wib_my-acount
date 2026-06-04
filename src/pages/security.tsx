@@ -82,7 +82,13 @@ function TwoFactorSection() {
         </CardContent>
       </Card>
 
-      <TwoFactorSetupDialog open={setupOpen} onOpenChange={setSetupOpen} />
+      <TwoFactorSetupDialog
+        open={setupOpen}
+        onOpenChange={setSetupOpen}
+        currentMethod={
+          twoFactorEnabled ? (twoFactorMethod as 'totp' | 'email') : null
+        }
+      />
       <TwoFactorDisableDialog
         open={disableOpen}
         onOpenChange={setDisableOpen}

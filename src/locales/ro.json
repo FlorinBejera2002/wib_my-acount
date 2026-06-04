@@ -1041,7 +1041,10 @@
     },
     "setup": {
       "methodTitle": "Activează autentificarea în doi pași",
+      "methodTitleChange": "Schimbă metoda 2FA",
       "methodDescription": "Alege metoda preferată de autentificare în doi pași.",
+      "methodDescriptionChange": "Alege noua metodă de autentificare în doi pași.",
+      "activeMethodBadge": "Activ",
       "methodTotp": "Aplicație de autentificare",
       "methodTotpDesc": "Google Authenticator, Authy etc.",
       "methodEmail": "Email",

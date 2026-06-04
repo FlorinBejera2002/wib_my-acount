@@ -10,6 +10,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { useConfirm2FA, useEnable2FA } from '@/hooks/use-two-factor'
 import {
+  BadgeCheck,
   CheckCircle2,
   Copy,
   Loader2,
@@ -28,15 +29,17 @@ type Method = 'totp' | 'email'
 interface TwoFactorSetupDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
+  currentMethod?: Method | null
 }
 
 export function TwoFactorSetupDialog({
   open,
-  onOpenChange
+  onOpenChange,
+  currentMethod
 }: TwoFactorSetupDialogProps) {
   const { t } = useTranslation()
   const [step, setStep] = useState<Step>('method')
-  const [method, setMethod] = useState<Method>('totp')
+  const [method, setMethod] = useState<Method | null>(null)
   const [secret, setSecret] = useState('')
   const [provisioningUri, setProvisioningUri] = useState('')
   const [code, setCode] = useState('')
@@ -47,12 +50,12 @@ export function TwoFactorSetupDialog({
   useEffect(() => {
     if (!open) {
       setStep('method')
-      setMethod('totp')
+      setMethod(currentMethod ? null : 'totp')
       setSecret('')
       setProvisioningUri('')
       setCode('')
     }
-  }, [open])
+  }, [open, currentMethod])
 
   useEffect(() => {
     if (code.length === 6 && step === 'confirm') {
@@ -61,6 +64,7 @@ export function TwoFactorSetupDialog({
   }, [code, step])
 
   const handleContinue = () => {
+    if (!method) return
     enable2FA.mutate(
       { method },
       {
@@ -105,58 +109,116 @@ export function TwoFactorSetupDialog({
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 <ShieldCheck className="h-5 w-5 text-primary" />
-                {t('twoFactor.setup.methodTitle')}
+                {currentMethod
+                  ? t('twoFactor.setup.methodTitleChange')
+                  : t('twoFactor.setup.methodTitle')}
               </DialogTitle>
               <DialogDescription>
-                {t('twoFactor.setup.methodDescription')}
+                {currentMethod
+                  ? t('twoFactor.setup.methodDescriptionChange')
+                  : t('twoFactor.setup.methodDescription')}
               </DialogDescription>
             </DialogHeader>
 
-            <div className="space-y-3 py-2">
-              <button
-                type="button"
-                onClick={() => setMethod('totp')}
-                className={`w-full flex items-center gap-3 rounded-lg border p-4 text-left transition-colors ${
-                  method === 'totp'
-                    ? 'border-primary bg-blue-50'
-                    : 'border-gray-200 hover:border-gray-300'
-                }`}
-              >
-                <Smartphone
-                  className={`h-5 w-5 shrink-0 ${method === 'totp' ? 'text-primary' : 'text-gray-400'}`}
-                />
-                <div>
-                  <p className="text-sm font-medium text-gray-900">
-                    {t('twoFactor.setup.methodTotp')}
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    {t('twoFactor.setup.methodTotpDesc')}
-                  </p>
-                </div>
-              </button>
+            {(() => {
+              const activeBadge = (
+                <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-2 py-0.5 text-xs font-semibold text-green-700 shrink-0">
+                  <BadgeCheck className="h-3 w-3" />
+                  {t('twoFactor.setup.activeMethodBadge')}
+                </span>
+              )
 
-              <button
-                type="button"
-                onClick={() => setMethod('email')}
-                className={`w-full flex items-center gap-3 rounded-lg border p-4 text-left transition-colors ${
-                  method === 'email'
-                    ? 'border-primary bg-blue-50'
-                    : 'border-gray-200 hover:border-gray-300'
-                }`}
-              >
-                <Mail
-                  className={`h-5 w-5 shrink-0 ${method === 'email' ? 'text-primary' : 'text-gray-400'}`}
-                />
-                <div>
-                  <p className="text-sm font-medium text-gray-900">
-                    {t('twoFactor.setup.methodEmail')}
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    {t('twoFactor.setup.methodEmailDesc')}
-                  </p>
-                </div>
-              </button>
-            </div>
+              const totpCard =
+                currentMethod === 'totp' ? (
+                  <div
+                    key="totp"
+                    className="w-full flex items-center gap-3 rounded-lg border-2 border-green-500 bg-green-50 p-4 cursor-default"
+                  >
+                    <Smartphone className="h-5 w-5 shrink-0 text-green-600" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-gray-900">
+                        {t('twoFactor.setup.methodTotp')}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {t('twoFactor.setup.methodTotpDesc')}
+                      </p>
+                    </div>
+                    {activeBadge}
+                  </div>
+                ) : (
+                  <button
+                    key="totp"
+                    type="button"
+                    onClick={() => setMethod('totp')}
+                    className={`w-full flex items-center gap-3 rounded-lg border p-4 text-left transition-colors ${
+                      method === 'totp'
+                        ? 'border-primary bg-blue-50'
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <Smartphone
+                      className={`h-5 w-5 shrink-0 ${method === 'totp' ? 'text-primary' : 'text-gray-400'}`}
+                    />
+                    <div>
+                      <p className="text-sm font-medium text-gray-900">
+                        {t('twoFactor.setup.methodTotp')}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {t('twoFactor.setup.methodTotpDesc')}
+                      </p>
+                    </div>
+                  </button>
+                )
+
+              const emailCard =
+                currentMethod === 'email' ? (
+                  <div
+                    key="email"
+                    className="w-full flex items-center gap-3 rounded-lg border-2 border-green-500 bg-green-50 p-4 cursor-default"
+                  >
+                    <Mail className="h-5 w-5 shrink-0 text-green-600" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-gray-900">
+                        {t('twoFactor.setup.methodEmail')}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {t('twoFactor.setup.methodEmailDesc')}
+                      </p>
+                    </div>
+                    {activeBadge}
+                  </div>
+                ) : (
+                  <button
+                    key="email"
+                    type="button"
+                    onClick={() => setMethod('email')}
+                    className={`w-full flex items-center gap-3 rounded-lg border p-4 text-left transition-colors ${
+                      method === 'email'
+                        ? 'border-primary bg-blue-50'
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <Mail
+                      className={`h-5 w-5 shrink-0 ${method === 'email' ? 'text-primary' : 'text-gray-400'}`}
+                    />
+                    <div>
+                      <p className="text-sm font-medium text-gray-900">
+                        {t('twoFactor.setup.methodEmail')}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {t('twoFactor.setup.methodEmailDesc')}
+                      </p>
+                    </div>
+                  </button>
+                )
+
+              const cards =
+                currentMethod === 'email'
+                  ? [emailCard, totpCard]
+                  : [totpCard, emailCard]
+
+              return <div className="space-y-3 py-2">{cards}</div>
+            })()}
 
             <DialogFooter>
               <Button
@@ -166,7 +228,7 @@ export function TwoFactorSetupDialog({
               >
                 {t('common.cancel')}
               </Button>
-              <Button onClick={handleContinue} disabled={isPending}>
+              <Button onClick={handleContinue} disabled={isPending || !method}>
                 {enable2FA.isPending ? (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 ) : null}
