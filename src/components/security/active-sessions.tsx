@@ -60,6 +60,7 @@ function parseUserAgent(ua: string | null | undefined): string {
   if (browser && os) return `${browser} — ${os}`
   if (browser) return browser
   if (os) return os
+  if (!ua) return '—'
   return ua.length > 40 ? `${ua.slice(0, 40)}…` : ua
 }
 
