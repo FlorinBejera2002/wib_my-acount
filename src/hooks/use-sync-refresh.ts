@@ -1,6 +1,7 @@
 import { api } from '@/api/axios-client'
 import { ENDPOINTS } from '@/api/endpoints'
 import { useAuthStore } from '@/stores/auth-store'
+import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useRef } from 'react'
 import { useUserActivity } from './use-user-activity'
 
@@ -10,6 +11,7 @@ const IDLE_THRESHOLD = 30 * 60 * 1000
 export function useSyncRefresh() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
   const isActive = useUserActivity(IDLE_THRESHOLD)
+  const queryClient = useQueryClient()
 
   // Refs so the interval callback always reads current values
   // without needing to recreate the interval on every change.
@@ -31,6 +33,10 @@ export function useSyncRefresh() {
       isPendingRef.current = true
       try {
         await api.get(ENDPOINTS.SYNC.REFRESH)
+        queryClient.invalidateQueries({ queryKey: ['policies'] })
+        queryClient.invalidateQueries({ queryKey: ['quotes'] })
+        queryClient.invalidateQueries({ queryKey: ['reminders'] })
+        queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] })
       } catch {
         // background task — errors are intentionally swallowed
       } finally {
@@ -41,5 +47,5 @@ export function useSyncRefresh() {
     sync()
     const id = setInterval(sync, SYNC_INTERVAL)
     return () => clearInterval(id)
-  }, [isAuthenticated])
+  }, [isAuthenticated, queryClient])
 }
