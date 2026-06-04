@@ -22,8 +22,8 @@ import { useTranslation } from 'react-i18next'
 
 const VISIBLE_COUNT = 5
 
-function getDeviceIcon(ua: string) {
-  const lower = ua.toLowerCase()
+function getDeviceIcon(ua: string | null | undefined) {
+  const lower = (ua ?? '').toLowerCase()
   if (
     lower.includes('iphone') ||
     lower.includes('android') ||
@@ -34,8 +34,8 @@ function getDeviceIcon(ua: string) {
   return Monitor
 }
 
-function parseUserAgent(ua: string): string {
-  const lower = ua.toLowerCase()
+function parseUserAgent(ua: string | null | undefined): string {
+  const lower = (ua ?? '').toLowerCase()
 
   let browser = ''
   if (lower.includes('edg')) browser = 'Edge'
