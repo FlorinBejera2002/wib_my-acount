@@ -9,6 +9,7 @@ import type {
 import i18n from '@/lib/i18n'
 import { useAuthStore } from '@/stores/auth-store'
 import { useMutation } from '@tanstack/react-query'
+import type { AxiosError } from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 
@@ -64,8 +65,14 @@ export function useVerifyTwoFactor() {
       toast.success(i18n.t('toast.loginSuccess'))
       setTimeout(() => navigate('/dashboard'), 500)
     },
-    onError: (error: Error) => {
-      toast.error(error.message || i18n.t('toast.codeInvalid'))
+    onError: (error: AxiosError<{ error?: { code?: string } }>) => {
+      const code = error.response?.data.error?.code
+      const message =
+        code === 'INVALID_TWO_FACTOR_CODE'
+          ? i18n.t('toast.codeInvalid')
+          : error.message || i18n.t('toast.codeInvalid')
+
+      toast.error(message)
     }
   })
 }
