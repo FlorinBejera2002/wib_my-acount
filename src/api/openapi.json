@@ -1650,8 +1650,8 @@
                 "tags": [
                     "Policies"
                 ],
-                "summary": "Get policy document download URL",
-                "description": "Returns an encrypted download URL for a policy document.\nThe transactionId and fileId are available from the policy's transactionId and fileIds fields.\nThe fileId is one of the values from the policy's fileIds map (e.g. fileIds.policy_pdf).\nThe returned URL can be opened directly in the browser to download the PDF.",
+                "summary": "Download policy document",
+                "description": "Proxies the policy document (PDF) from the legacy system through middleware.\nThe legacy download URL is never exposed to the client — middleware fetches the\nfile and streams it directly.\n\nThe transactionId and fileId are available from the policy's transactionId and fileIds fields.\nThe fileId is one of the values from the policy's fileIds map (e.g. fileIds.policy_pdf).\n\nSecurity: only the authenticated user who owns the policy can download the document.",
                 "operationId": "get_api_policies_download_document",
                 "parameters": [
                     {
@@ -1675,19 +1675,9 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Download URL",
+                        "description": "Document file (PDF)",
                         "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "downloadUrl": {
-                                            "type": "string",
-                                            "example": "https://www.asigurari.ro/app/broker/file/rjzLN2VjR7I..."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
+                            "application/pdf": {}
                         }
                     },
                     "401": {

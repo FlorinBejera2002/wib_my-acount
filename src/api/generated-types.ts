@@ -449,11 +449,15 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Get policy document download URL
-         * @description Returns an encrypted download URL for a policy document.
+         * Download policy document
+         * @description Proxies the policy document (PDF) from the legacy system through middleware.
+         *     The legacy download URL is never exposed to the client — middleware fetches the
+         *     file and streams it directly.
+         *
          *     The transactionId and fileId are available from the policy's transactionId and fileIds fields.
          *     The fileId is one of the values from the policy's fileIds map (e.g. fileIds.policy_pdf).
-         *     The returned URL can be opened directly in the browser to download the PDF.
+         *
+         *     Security: only the authenticated user who owns the policy can download the document.
          */
         get: operations["get_api_policies_download_document"];
         put?: never;
@@ -2137,16 +2141,13 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Download URL */
+            /** @description Document file (PDF) */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        /** @example https://www.asigurari.ro/app/broker/file/rjzLN2VjR7I... */
-                        downloadUrl?: string;
-                    };
+                    "application/pdf": unknown;
                 };
             };
             /** @description Unauthorized */

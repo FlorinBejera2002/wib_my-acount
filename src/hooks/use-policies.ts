@@ -42,10 +42,13 @@ export function useDownloadPolicyDocument() {
       transactionId: string
       fileId: string
     }) => {
-      const { data } = await api.get<{ downloadUrl: string }>(
-        ENDPOINTS.POLICIES.DOWNLOAD_DOCUMENT(transactionId, fileId)
+      const { data } = await api.get<Blob>(
+        ENDPOINTS.POLICIES.DOWNLOAD_DOCUMENT(transactionId, fileId),
+        { responseType: 'blob' }
       )
-      window.open(data.downloadUrl, '_blank', 'noopener,noreferrer')
+      const url = URL.createObjectURL(data)
+      window.open(url, '_blank', 'noopener,noreferrer')
+      setTimeout(() => URL.revokeObjectURL(url), 60000)
     }
   })
 }

@@ -65,6 +65,9 @@ const processQueue = (error: unknown, token: string | null = null) => {
 
 api.interceptors.response.use(
   (response) => {
+    if (response.config.responseType === 'blob') {
+      return response
+    }
     response.data = toCamelCase(response.data)
     return response
   },
