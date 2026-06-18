@@ -20,9 +20,11 @@ import {
   Lock,
   Mail
 } from 'lucide-react'
-import { useState } from 'react'
+import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, Navigate, useSearchParams } from 'react-router-dom'
+
+const RESET_TOKEN_KEY = 'pw_reset_token'
 
 type ResetStep = 'email' | 'verify-code' | 'new-password' | 'success'
 
@@ -65,11 +67,14 @@ export default function ForgotPasswordPage() {
     ? (stepParam as ResetStep)
     : 'email'
   const email = searchParams.get('email') || ''
-  const [resetToken, setResetToken] = useState('')
 
   const forgotPasswordMutation = useForgotPassword()
   const verifyResetCodeMutation = useVerifyResetCode()
   const resetPasswordMutation = useResetPassword()
+
+  const clearResetToken = useCallback(() => {
+    sessionStorage.removeItem(RESET_TOKEN_KEY)
+  }, [])
 
   if (isAuthenticated) {
     return <Navigate to="/dashboard" replace={true} />
@@ -91,7 +96,7 @@ export default function ForgotPasswordPage() {
       { email, code },
       {
         onSuccess: (response) => {
-          setResetToken(response.resetToken)
+          sessionStorage.setItem(RESET_TOKEN_KEY, response.resetToken)
           setSearchParams({ step: 'new-password', email }, { replace: true })
         }
       }
@@ -99,14 +104,19 @@ export default function ForgotPasswordPage() {
   }
 
   const handleResetPassword = (data: ResetPasswordFormValues) => {
+    const token = sessionStorage.getItem(RESET_TOKEN_KEY) ?? ''
     resetPasswordMutation.mutate(
       {
-        reset_token: resetToken,
+        reset_token: token,
         new_password: data.newPassword
       },
       {
         onSuccess: () => {
+          clearResetToken()
           setSearchParams({ step: 'success' }, { replace: true })
+        },
+        onError: () => {
+          clearResetToken()
         }
       }
     )

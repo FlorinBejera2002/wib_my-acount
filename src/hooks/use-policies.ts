@@ -46,9 +46,16 @@ export function useDownloadPolicyDocument() {
         ENDPOINTS.POLICIES.DOWNLOAD_DOCUMENT(transactionId, fileId),
         { responseType: 'blob' }
       )
-      const url = URL.createObjectURL(data)
-      window.open(url, '_blank', 'noopener,noreferrer')
-      setTimeout(() => URL.revokeObjectURL(url), 60000)
+      let url: string | undefined
+      try {
+        url = URL.createObjectURL(data)
+        window.open(url, '_blank', 'noopener,noreferrer')
+      } finally {
+        if (url) {
+          const blobUrl = url
+          setTimeout(() => URL.revokeObjectURL(blobUrl), 5000)
+        }
+      }
     }
   })
 }

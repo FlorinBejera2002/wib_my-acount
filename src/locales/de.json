@@ -517,7 +517,7 @@
     "firstNameMax": "Der Vorname darf maximal 50 Zeichen lang sein",
     "lastNameMin": "Der Nachname muss mindestens 2 Zeichen lang sein",
     "lastNameMax": "Der Nachname darf maximal 50 Zeichen lang sein",
-    "phoneFormat": "Die Telefonnummer muss im Format +40XXXXXXXXX sein",
+    "phoneRequired": "Die Telefonnummer ist erforderlich",
     "passwordMin": "Das Passwort muss mindestens 12 Zeichen lang sein",
     "passwordUppercase": "Das Passwort muss mindestens einen Großbuchstaben enthalten",
     "passwordLowercase": "Das Passwort muss mindestens einen Kleinbuchstaben enthalten",

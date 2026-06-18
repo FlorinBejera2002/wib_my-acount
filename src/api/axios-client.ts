@@ -28,7 +28,11 @@ const toCamelCase = (data: unknown): unknown => {
 
 function getCsrfToken(): string {
   const match = document.cookie.match(/(?:^|;\s*)csrf_token=([^;]*)/)
-  return match?.[1] ? decodeURIComponent(match[1]) : ''
+  const token = match?.[1] ? decodeURIComponent(match[1]) : ''
+  if (!token) {
+    throw new Error('CSRF token missing — cannot send mutating request')
+  }
+  return token
 }
 
 api.interceptors.request.use(

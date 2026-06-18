@@ -517,7 +517,7 @@
     "firstNameMax": "Prenumele nu poate depăși 50 de caractere",
     "lastNameMin": "Numele trebuie să aibă cel puțin 2 caractere",
     "lastNameMax": "Numele nu poate depăși 50 de caractere",
-    "phoneFormat": "Numărul de telefon trebuie să fie în format +40XXXXXXXXX",
+    "phoneRequired": "Numărul de telefon este obligatoriu",
     "passwordMin": "Parola trebuie să aibă cel puțin 12 caractere",
     "passwordUppercase": "Parola trebuie să conțină cel puțin o majusculă",
     "passwordLowercase": "Parola trebuie să conțină cel puțin o minusculă",

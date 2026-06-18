@@ -37,7 +37,7 @@ export const registerSchema = (t: TFunction) =>
         .string()
         .min(1, t('validation.emailRequired'))
         .email(t('validation.emailInvalid')),
-      phone: z.string().regex(/^\+40[0-9]{9}$/, t('validation.phoneFormat')),
+      phone: z.string().min(1, t('validation.phoneRequired')),
       password: z
         .string()
         .min(12, t('validation.passwordMin'))
@@ -125,7 +125,7 @@ export const updateProfileSchema = (t: TFunction) =>
       .string()
       .min(2, t('validation.lastNameMin'))
       .max(50, t('validation.lastNameMax')),
-    phone: z.string().regex(/^\+40[0-9]{9}$/, t('validation.phoneFormat'))
+    phone: z.string().min(1, t('validation.phoneRequired'))
   })
 
 export type UpdateProfileFormValues = z.infer<

@@ -517,7 +517,7 @@
     "firstNameMax": "A keresztnév nem haladhatja meg az 50 karaktert",
     "lastNameMin": "A vezetéknévnek legalább 2 karakter hosszúnak kell lennie",
     "lastNameMax": "A vezetéknév nem haladhatja meg az 50 karaktert",
-    "phoneFormat": "A telefonszámnak +40XXXXXXXXX formátumúnak kell lennie",
+    "phoneRequired": "A telefonszám megadása kötelező",
     "passwordMin": "A jelszónak legalább 12 karakter hosszúnak kell lennie",
     "passwordUppercase": "A jelszónak tartalmaznia kell legalább egy nagybetűt",
     "passwordLowercase": "A jelszónak tartalmaznia kell legalább egy kisbetűt",

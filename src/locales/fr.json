@@ -517,7 +517,7 @@
     "firstNameMax": "Le prénom ne peut pas dépasser 50 caractères",
     "lastNameMin": "Le nom doit comporter au moins 2 caractères",
     "lastNameMax": "Le nom ne peut pas dépasser 50 caractères",
-    "phoneFormat": "Le numéro de téléphone doit être au format +40XXXXXXXXX",
+    "phoneRequired": "Le numéro de téléphone est obligatoire",
     "passwordMin": "Le mot de passe doit comporter au moins 12 caractères",
     "passwordUppercase": "Le mot de passe doit contenir au moins une lettre majuscule",
     "passwordLowercase": "Le mot de passe doit contenir au moins une lettre minuscule",
