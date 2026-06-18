@@ -26,24 +26,25 @@ const toCamelCase = (data: unknown): unknown => {
   return result
 }
 
-function getCsrfToken(): string {
-  const match = document.cookie.match(/(?:^|;\s*)csrf_token=([^;]*)/)
-  const token = match?.[1] ? decodeURIComponent(match[1]) : ''
-  if (!token) {
-    throw new Error('CSRF token missing — cannot send mutating request')
-  }
-  return token
+let csrfToken = ''
+
+export function setCsrfToken(token: string) {
+  csrfToken = token
 }
 
-api.interceptors.request.use(
-  (config) => {
-    if (['post', 'put', 'patch', 'delete'].includes(config.method ?? '')) {
-      config.headers['X-CSRF-Token'] = getCsrfToken()
-    }
-    return config
-  },
-  (error: AxiosError) => Promise.reject(error)
-)
+export function clearCsrfToken() {
+  csrfToken = ''
+}
+
+api.interceptors.request.use((config) => {
+  if (
+    csrfToken &&
+    ['post', 'put', 'patch', 'delete'].includes(config.method ?? '')
+  ) {
+    config.headers['X-CSRF-Token'] = csrfToken
+  }
+  return config
+})
 
 let isRefreshing = false
 let failedQueue: Array<{
@@ -110,11 +111,13 @@ api.interceptors.response.use(
     isRefreshing = true
 
     try {
-      await api.post(ENDPOINTS.AUTH.REFRESH)
+      const { data: refreshData } = await api.post(ENDPOINTS.AUTH.REFRESH)
+      if (refreshData?.csrfToken) setCsrfToken(refreshData.csrfToken)
       processQueue(null)
       return api(originalRequest)
     } catch (refreshError) {
       processQueue(refreshError)
+      clearCsrfToken()
       useAuthStore.getState().logout()
       window.location.href = '/login'
       return Promise.reject(refreshError)

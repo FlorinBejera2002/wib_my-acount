@@ -1,4 +1,4 @@
-import { api } from '@/api/axios-client'
+import { api, clearCsrfToken, setCsrfToken } from '@/api/axios-client'
 import { ENDPOINTS } from '@/api/endpoints'
 import type {
   LoginRequest,
@@ -42,6 +42,7 @@ export function useLogin() {
   return useMutation({
     mutationFn: loginFn,
     onSuccess: (data) => {
+      if (data.csrfToken) setCsrfToken(data.csrfToken)
       if (!data.requires_2fa && data.user) {
         login(data.user)
         toast.success(i18n.t('toast.loginSuccess'))
@@ -61,6 +62,7 @@ export function useVerifyTwoFactor() {
   return useMutation({
     mutationFn: verifyTwoFactorFn,
     onSuccess: (data) => {
+      if (data.csrfToken) setCsrfToken(data.csrfToken)
       login(data.user)
       toast.success(i18n.t('toast.loginSuccess'))
       setTimeout(() => navigate('/dashboard'), 500)
@@ -84,6 +86,7 @@ export function useLogout() {
   return useMutation({
     mutationFn: logoutFn,
     onSuccess: () => {
+      clearCsrfToken()
       logout()
       navigate('/login')
     }

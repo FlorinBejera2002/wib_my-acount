@@ -60,8 +60,8 @@ export function useCreateReminder() {
       queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] })
       toast.success(i18n.t('toast.alertCreated'))
     },
-    onError: () => {
-      toast.error(i18n.t('toast.alertCreateError'))
+    onError: (error: Error) => {
+      toast.error(error.message || i18n.t('toast.alertCreateError'))
     }
   })
 }

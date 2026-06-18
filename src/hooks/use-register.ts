@@ -1,4 +1,4 @@
-import { api } from '@/api/axios-client'
+import { api, setCsrfToken } from '@/api/axios-client'
 import { ENDPOINTS } from '@/api/endpoints'
 import type { RegisterResponse } from '@/api/types'
 import i18n from '@/lib/i18n'
@@ -36,6 +36,7 @@ export function useRegister() {
   >({
     mutationFn: registerFn,
     onSuccess: (response) => {
+      if (response.csrfToken) setCsrfToken(response.csrfToken)
       login(response.user)
       toast.success(i18n.t('toast.accountCreated'))
       setTimeout(() => navigate('/dashboard'), 500)

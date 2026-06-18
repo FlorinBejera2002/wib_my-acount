@@ -55,6 +55,7 @@ export interface LoginResponse {
   user?: LoginUser
   preAuthToken?: string
   twoFactorMethod?: 'totp' | 'email'
+  csrfToken?: string
 }
 
 export interface TwoFactorRequest {
@@ -64,6 +65,7 @@ export interface TwoFactorRequest {
 
 export interface TwoFactorResponse {
   user: LoginUser
+  csrfToken?: string
 }
 
 export interface RegisterRequest {
@@ -78,6 +80,7 @@ export interface RegisterRequest {
 
 export interface RegisterResponse {
   user: LoginUser
+  csrfToken?: string
 }
 
 export interface ForgotPasswordRequest {
