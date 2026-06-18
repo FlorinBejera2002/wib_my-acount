@@ -65,12 +65,10 @@ export function PasswordStrength({ password }: PasswordStrengthProps) {
           />
         ))}
       </div>
-      <p
-        className="text-xs text-muted-foreground"
-        dangerouslySetInnerHTML={{
-          __html: t('security.passwordStrength.label', { label })
-        }}
-      />
+      <p className="text-xs text-muted-foreground">
+        {t('security.passwordStrength.label')}{' '}
+        <span className="font-semibold">{label}</span>
+      </p>
     </div>
   )
 }

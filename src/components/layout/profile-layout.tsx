@@ -36,9 +36,7 @@ export function ProfileLayout() {
                 <ProfileAvatar
                   firstName={profile.firstName ?? ''}
                   lastName={profile.lastName ?? ''}
-                  photoUrl={undefined}
                   size="lg"
-                  userId={profile.id}
                 />
               </div>
             ) : (

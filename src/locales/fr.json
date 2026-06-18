@@ -798,6 +798,7 @@
     "dateTime": "Date",
     "viewOffer": "Voir l'offre",
     "noOfferUrl": "L'offre n'est pas disponible pour le moment",
+    "invalidOfferUrl": "Lien d'offre invalide",
     "reset": "Réinitialiser",
     "notFound": "Devis non trouvé",
     "backToQuotes": "Retour aux devis",
@@ -870,7 +871,7 @@
       "fair": "Moyen",
       "good": "Bon",
       "strong": "Fort",
-      "label": "Force du mot de passe : <strong>{{label}}</strong>"
+      "label": "Force du mot de passe :"
     }
   },
   "settings": {

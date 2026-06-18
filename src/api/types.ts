@@ -52,34 +52,18 @@ export interface LoginRequest {
  */
 export interface LoginResponse {
   requires_2fa: boolean
-  // Present when requires_2fa === false
-  accessToken?: string
-  refreshToken?: string
   user?: LoginUser
-  // Present when requires_2fa === true
   preAuthToken?: string
   twoFactorMethod?: 'totp' | 'email'
 }
 
-// Request bodies use snake_case per backend contract
 export interface TwoFactorRequest {
   pre_auth_token: string
   totp_code: string
 }
 
 export interface TwoFactorResponse {
-  accessToken: string
-  refreshToken: string
   user: LoginUser
-}
-
-export interface RefreshTokenRequest {
-  refresh_token: string
-}
-
-export interface RefreshTokenResponse {
-  accessToken: string
-  refreshToken: string
 }
 
 export interface RegisterRequest {
@@ -93,8 +77,6 @@ export interface RegisterRequest {
 }
 
 export interface RegisterResponse {
-  accessToken: string
-  refreshToken: string
   user: LoginUser
 }
 

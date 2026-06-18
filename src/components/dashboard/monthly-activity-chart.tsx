@@ -102,15 +102,29 @@ export function MonthlyActivityChart() {
   const isLoading = quotesLoading || policiesLoading
 
   const chartData = useMemo(() => {
-    const quoteCounts = countByMonth(quotesData?.data as Array<Record<string, unknown>> | undefined, 'quoteStartDate')
-    const policyCounts = countByMonth(policiesData?.data as Array<Record<string, unknown>> | undefined, 'startDate')
+    const quoteCounts = countByMonth(
+      quotesData?.data as Array<Record<string, unknown>> | undefined,
+      'quoteStartDate'
+    )
+    const policyCounts = countByMonth(
+      policiesData?.data as Array<Record<string, unknown>> | undefined,
+      'startDate'
+    )
 
     let months: string[]
 
     if (period === 'all') {
       const allKeys = new Set<string>()
-      for (const k of collectAllMonths(quotesData?.data as Array<Record<string, unknown>> | undefined, 'quoteStartDate')) allKeys.add(k)
-      for (const k of collectAllMonths(policiesData?.data as Array<Record<string, unknown>> | undefined, 'startDate')) allKeys.add(k)
+      for (const k of collectAllMonths(
+        quotesData?.data as Array<Record<string, unknown>> | undefined,
+        'quoteStartDate'
+      ))
+        allKeys.add(k)
+      for (const k of collectAllMonths(
+        policiesData?.data as Array<Record<string, unknown>> | undefined,
+        'startDate'
+      ))
+        allKeys.add(k)
       months = [...allKeys].sort()
       if (months.length === 0) months = getLastNMonths(6)
     } else {

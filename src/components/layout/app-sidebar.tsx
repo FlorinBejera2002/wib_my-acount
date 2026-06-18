@@ -204,9 +204,7 @@ export function AppSidebar() {
                   (user && 'lastName' in user ? user.lastName : '') ||
                   ''
                 }
-                photoUrl={undefined}
                 size="sm"
-                userId={profile?.id}
               />
               <div className="flex flex-1 flex-col overflow-hidden text-left group-data-[collapsible=icon]:hidden">
                 <span className="truncate text-sm font-semibold text-gray-900">

@@ -798,6 +798,7 @@
     "dateTime": "Dátum",
     "viewOffer": "Ajánlat megtekintése",
     "noOfferUrl": "Az ajánlat jelenleg nem elérhető",
+    "invalidOfferUrl": "Érvénytelen ajánlati link",
     "reset": "Visszaállítás",
     "notFound": "Az ajánlat nem található",
     "backToQuotes": "Vissza az ajánlatokhoz",
@@ -870,7 +871,7 @@
       "fair": "Elfogadható",
       "good": "Jó",
       "strong": "Erős",
-      "label": "Jelszó erőssége: <strong>{{label}}</strong>"
+      "label": "Jelszó erőssége:"
     }
   },
   "settings": {

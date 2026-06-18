@@ -7,7 +7,12 @@ import type {
 } from '@/api/types'
 import i18n from '@/lib/i18n'
 import { useAuthStore } from '@/stores/auth-store'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import {
+  type UseQueryOptions,
+  useMutation,
+  useQuery,
+  useQueryClient
+} from '@tanstack/react-query'
 import { toast } from 'sonner'
 
 const fetchProfile = async (): Promise<UserProfile> => {
@@ -38,10 +43,16 @@ const deleteAccountFn = async (): Promise<void> => {
   await api.post(ENDPOINTS.USERS.DELETE_ACCOUNT)
 }
 
-export function useProfile() {
+export function useProfile(
+  options?: Omit<
+    UseQueryOptions<UserProfile, Error, UserProfile, ['profile']>,
+    'queryKey' | 'queryFn'
+  >
+) {
   return useQuery({
     queryKey: ['profile'],
-    queryFn: fetchProfile
+    queryFn: fetchProfile,
+    ...options
   })
 }
 

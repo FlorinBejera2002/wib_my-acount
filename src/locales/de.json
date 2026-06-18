@@ -798,6 +798,7 @@
     "dateTime": "Datum",
     "viewOffer": "Angebot anzeigen",
     "noOfferUrl": "Das Angebot ist derzeit nicht verfügbar",
+    "invalidOfferUrl": "Ungültiger Angebotslink",
     "reset": "Zurücksetzen",
     "notFound": "Angebot nicht gefunden",
     "backToQuotes": "Zurück zu den Angeboten",
@@ -870,7 +871,7 @@
       "fair": "Mittelmäßig",
       "good": "Gut",
       "strong": "Stark",
-      "label": "Passwortstärke: <strong>{{label}}</strong>"
+      "label": "Passwortstärke:"
     }
   },
   "settings": {

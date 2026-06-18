@@ -42,8 +42,8 @@ export function useLogin() {
   return useMutation({
     mutationFn: loginFn,
     onSuccess: (data) => {
-      if (!data.requires_2fa && data.accessToken && data.user) {
-        login(data.user, data.accessToken, data.refreshToken!)
+      if (!data.requires_2fa && data.user) {
+        login(data.user)
         toast.success(i18n.t('toast.loginSuccess'))
         setTimeout(() => navigate('/dashboard'), 500)
       }
@@ -61,7 +61,7 @@ export function useVerifyTwoFactor() {
   return useMutation({
     mutationFn: verifyTwoFactorFn,
     onSuccess: (data) => {
-      login(data.user, data.accessToken, data.refreshToken)
+      login(data.user)
       toast.success(i18n.t('toast.loginSuccess'))
       setTimeout(() => navigate('/dashboard'), 500)
     },

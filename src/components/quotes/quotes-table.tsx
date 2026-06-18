@@ -68,6 +68,19 @@ const quoteFormUrls: Record<string, string> = {
     'https://www.asigurari.ro/app/broker/cotatie/accidents_traveler/insured'
 }
 
+const ALLOWED_OFFER_HOSTS = new Set(['asigurari.ro', 'www.asigurari.ro'])
+
+function isAllowedOfferUrl(url: string): boolean {
+  try {
+    const parsed = new URL(url)
+    return (
+      parsed.protocol === 'https:' && ALLOWED_OFFER_HOSTS.has(parsed.hostname)
+    )
+  } catch {
+    return false
+  }
+}
+
 const snakeToCamel = (key: string) =>
   key.replace(/_([a-z])/g, (_, c: string) => c.toUpperCase())
 
@@ -246,11 +259,15 @@ function OfferUrlButton({ quote }: { quote: Quote }) {
       onClick={() => {
         getOfferUrl.mutate(quote.quoteInputParamsId!, {
           onSuccess: ({ offerUrl }) => {
-            if (offerUrl) {
-              window.open(offerUrl, '_blank', 'noopener,noreferrer')
-            } else {
+            if (!offerUrl) {
               toast.info(t('quotes.noOfferUrl'))
+              return
             }
+            if (!isAllowedOfferUrl(offerUrl)) {
+              toast.error(t('quotes.invalidOfferUrl'))
+              return
+            }
+            window.open(offerUrl, '_blank', 'noopener,noreferrer')
           }
         })
       }}

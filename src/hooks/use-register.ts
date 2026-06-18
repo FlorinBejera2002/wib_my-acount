@@ -36,7 +36,7 @@ export function useRegister() {
   >({
     mutationFn: registerFn,
     onSuccess: (response) => {
-      login(response.user, response.accessToken, response.refreshToken)
+      login(response.user)
       toast.success(i18n.t('toast.accountCreated'))
       setTimeout(() => navigate('/dashboard'), 500)
     },

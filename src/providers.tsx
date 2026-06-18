@@ -1,9 +1,17 @@
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { Suspense, lazy } from 'react'
 import { RouterProvider } from 'react-router-dom'
 import { Toaster } from 'sonner'
 import { router } from './router'
+
+const ReactQueryDevtools = import.meta.env.DEV
+  ? lazy(() =>
+      import('@tanstack/react-query-devtools').then((module) => ({
+        default: module.ReactQueryDevtools
+      }))
+    )
+  : null
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -29,7 +37,11 @@ export function Providers() {
             duration: 4000
           }}
         />
-        <ReactQueryDevtools initialIsOpen={false} />
+        {ReactQueryDevtools ? (
+          <Suspense fallback={null}>
+            <ReactQueryDevtools initialIsOpen={false} />
+          </Suspense>
+        ) : null}
       </TooltipProvider>
     </QueryClientProvider>
   )

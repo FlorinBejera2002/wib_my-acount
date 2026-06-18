@@ -798,6 +798,7 @@
     "dateTime": "Date",
     "viewOffer": "View offer",
     "noOfferUrl": "Offer not available at the moment",
+    "invalidOfferUrl": "Invalid offer link",
     "reset": "Reset",
     "notFound": "Quote not found",
     "backToQuotes": "Back to quotes",
@@ -870,7 +871,7 @@
       "fair": "Fair",
       "good": "Good",
       "strong": "Strong",
-      "label": "Password strength: <strong>{{label}}</strong>"
+      "label": "Password strength:"
     }
   },
   "settings": {

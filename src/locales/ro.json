@@ -806,6 +806,7 @@
     "dateTime": "Dată",
     "viewOffer": "Vezi oferta",
     "noOfferUrl": "Oferta nu este disponibilă momentan",
+    "invalidOfferUrl": "Link ofertă invalid",
     "reset": "Resetează",
     "notFound": "Cotația nu a fost găsită",
     "backToQuotes": "Înapoi la cotații",
@@ -878,7 +879,7 @@
       "fair": "Acceptabilă",
       "good": "Bună",
       "strong": "Puternică",
-      "label": "Putere parolă: <strong>{{label}}</strong>"
+      "label": "Putere parolă:"
     }
   },
   "settings": {
