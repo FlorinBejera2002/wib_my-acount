@@ -65,7 +65,8 @@ export default defineConfig(({ mode }) => {
         // are proxied to <target>/api/auth/login.
         '/api': {
           target: proxyTarget,
-          changeOrigin: true
+          changeOrigin: true,
+          cookieDomainRewrite: { '*': '' }
         }
       }
     }
