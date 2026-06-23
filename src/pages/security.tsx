@@ -121,7 +121,7 @@ export default function SecurityPage() {
       <div className="space-y-6">
         <ChangePasswordForm />
         <TwoFactorSection />
-        <DangerZone />
+        {/* <DangerZone /> */}
       </div>
       <ActiveSessions />
     </div>

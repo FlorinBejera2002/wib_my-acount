@@ -116,6 +116,12 @@ export interface paths {
          *     The old refresh token is consumed (single-use). If the token is invalid, expired,
          *     or already revoked, returns 401.
          *
+         *     **Preferred:** The refresh token is read from the HttpOnly `refresh_token` cookie
+         *     (set automatically by login/register/previous refresh).
+         *
+         *     **Backward compatible:** If no cookie is present, falls back to reading
+         *     `refresh_token` from the JSON request body.
+         *
          *     Rate limited: 10 requests/minute per IP.
          */
         post: operations["post_api_auth_refresh"];
@@ -449,15 +455,13 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Download policy document
-         * @description Proxies the policy document (PDF) from the legacy system through middleware.
-         *     The legacy download URL is never exposed to the client — middleware fetches the
-         *     file and streams it directly.
-         *
+         * Download policy document (proxy)
+         * @description Streams the policy document PDF through the middleware.
          *     The transactionId and fileId are available from the policy's transactionId and fileIds fields.
          *     The fileId is one of the values from the policy's fileIds map (e.g. fileIds.policy_pdf).
          *
-         *     Security: only the authenticated user who owns the policy can download the document.
+         *     The document is proxied through the middleware so that the legacy download URL is never
+         *     exposed to the client — only authenticated users can access documents.
          */
         get: operations["get_api_policies_download_document"];
         put?: never;
@@ -757,10 +761,19 @@ export interface paths {
         get?: never;
         put?: never;
         /**
-         * Request account deletion
-         * @description Submits a request to delete the authenticated user's account. The account is NOT deleted
-         *     immediately — instead, a notification is sent to the backoffice support team who will
-         *     process the request manually. The user receives a confirmation email.
+         * Delete account (GDPR)
+         * @description Deactivates the authenticated user's account (GDPR, scenario 5). Legacy data is NEVER
+         *     touched — the legacy DB is the regulatory system of record. The middleware calls the
+         *     READ-ONLY evaluation endpoint POST /api/middleware/delete-user-data to obtain a flag
+         *     describing what it may delete on its OWN side, then acts only on the middleware DB:
+         *       - quote sessions with NO backing policy (deletable) are removed;
+         *       - all policies and policy-backed quote sessions are left fully intact;
+         *       - the user record is KEPT and only marked inactive (active=false) — it is never
+         *         deleted and no personal data is anonymized.
+         *
+         *     Because the account is deactivated (not deleted), the user can no longer log in and all
+         *     sessions/refresh tokens are revoked. Fail-safe: any quote session the legacy side could
+         *     not evaluate is never deleted.
          */
         post: operations["post_api_user_account_delete"];
         delete?: never;
@@ -819,7 +832,7 @@ export interface components {
              */
             comboId?: string | null;
             /** @enum {string} */
-            type: "rca" | "casco" | "casco_econom" | "casco_perfect_cover" | "pad" | "home" | "travel" | "health" | "life" | "accidents" | "accidents_taxi" | "accidents_traveler" | "breakdown" | "cmr" | "rcp" | "other";
+            type: "rca" | "casco" | "casco_econom" | "pad" | "home" | "travel" | "health" | "life" | "accidents" | "accidents_taxi" | "accidents_traveler" | "breakdown" | "cmr" | "rcp" | "other";
             /** @enum {string} */
             status: "active" | "expired" | "cancelled" | "pending";
             /** @example Allianz Tiriac */
@@ -930,7 +943,7 @@ export interface components {
              */
             quoteRef?: string | null;
             /** @enum {string} */
-            type: "rca" | "casco" | "casco_econom" | "casco_perfect_cover" | "pad" | "home" | "travel" | "health" | "life" | "accidents" | "accidents_taxi" | "accidents_traveler" | "breakdown" | "cmr" | "rcp" | "other";
+            type: "rca" | "casco" | "casco_econom" | "pad" | "home" | "travel" | "health" | "life" | "accidents" | "accidents_taxi" | "accidents_traveler" | "breakdown" | "cmr" | "rcp" | "other";
             /**
              * @description Home/pad system only. Derived from insurer_details insurance_type.
              * @enum {string|null}
@@ -1034,9 +1047,6 @@ export interface components {
         TwoFactorVerifyRequest: {
             pre_auth_token: string;
             totp_code: string;
-        };
-        RefreshRequest: {
-            refresh_token: string;
         };
         ForgotPasswordRequest: {
             email: string;
@@ -1354,11 +1364,11 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody: {
+        requestBody?: {
             content: {
                 "application/json": {
-                    /** @description Opaque refresh token from login/previous refresh */
-                    refresh_token: string;
+                    /** @description Opaque refresh token (only needed if not using HttpOnly cookies) */
+                    refresh_token?: string;
                 };
             };
         };
@@ -2048,7 +2058,7 @@ export interface operations {
                 page?: number;
                 limit?: number;
                 status?: "active" | "expired" | "cancelled" | "pending";
-                type?: "rca" | "casco" | "casco_econom" | "casco_perfect_cover" | "pad" | "home" | "travel" | "health" | "life" | "accidents" | "accidents_taxi" | "accidents_traveler" | "breakdown" | "cmr" | "rcp" | "other";
+                type?: "rca" | "casco" | "casco_econom" | "pad" | "home" | "travel" | "health" | "life" | "accidents" | "accidents_taxi" | "accidents_traveler" | "breakdown" | "cmr" | "rcp" | "other";
             };
             header?: never;
             path?: never;
@@ -2141,7 +2151,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Document file (PDF) */
+            /** @description PDF document binary */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -2208,7 +2218,7 @@ export interface operations {
                 limit?: number;
                 /** @description Filter by active state (true/false) */
                 active?: boolean;
-                type?: "rca" | "casco" | "casco_econom" | "casco_perfect_cover" | "pad" | "home" | "travel" | "health" | "life" | "accidents" | "accidents_taxi" | "accidents_traveler" | "breakdown" | "cmr" | "rcp" | "other";
+                type?: "rca" | "casco" | "casco_econom" | "pad" | "home" | "travel" | "health" | "life" | "accidents" | "accidents_taxi" | "accidents_traveler" | "breakdown" | "cmr" | "rcp" | "other";
             };
             header?: never;
             path?: never;
@@ -2774,7 +2784,7 @@ export interface operations {
                             notifications?: boolean;
                         };
                         /** @enum {string} */
-                        source?: "registration" | "legacy_sync";
+                        source?: "registration";
                         /** Format: date-time */
                         createdAt?: string;
                     };
@@ -2961,20 +2971,46 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Deletion request submitted */
+            /** @description Account deactivated */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": {
-                        /** @example Your account deletion request has been submitted. Our support team will contact you shortly. */
+                        /** @example Your account has been deactivated. */
                         message?: string;
+                        /**
+                         * @description Account is now inactive; the user is logged out and cannot log in again
+                         * @example true
+                         */
+                        deactivated?: boolean;
+                        /**
+                         * @description Quote sessions (without a policy) removed from the middleware
+                         * @example 2
+                         */
+                        deletedCount?: number;
+                        /**
+                         * @description Policies kept intact per ASF requirements
+                         * @example 1
+                         */
+                        retainedCount?: number;
+                        /** @example true */
+                        hasIssuedPolicies?: boolean;
                     };
                 };
             };
             /** @description Unauthorized */
             401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Legacy platform unavailable */
+            502: {
                 headers: {
                     [name: string]: unknown;
                 };

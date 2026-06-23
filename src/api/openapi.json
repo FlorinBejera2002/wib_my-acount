@@ -2,7 +2,7 @@
     "openapi": "3.0.0",
     "info": {
         "title": "WIB Middleware API",
-        "description": "Backend API contract for the myAccount React SPA.\nThis middleware sits between the React frontend and the legacy Symfony 3.4 backend (asigurari.ro).\n\n## Authentication\n- **Login** returns either full tokens (access_token + refresh_token) or a pre_auth_token when 2FA is required.\n- **Access tokens** are short-lived RS256 JWTs (15 min). Send as `Authorization: Bearer <token>`.\n- **Refresh tokens** are opaque strings (7-day TTL). Send in the POST body to `/api/auth/refresh`.\n- **Pre-auth tokens** are short-lived JWTs (5 min, scope=pre_auth) used only for the 2FA verification step.\n\n## Naming Convention\n- **Request bodies**: snake_case for multi-word fields (e.g. `refresh_token`, `pre_auth_token`, `new_password`).\n- **Response bodies**: camelCase (e.g. `accessToken`, `policyNumber`, `createdAt`).\n- This is documented per-field in each schema. The frontend should follow these conventions exactly.\n\n## Error Format\nAll errors follow this structure:\n```json\n{\n  \"error\": {\n    \"code\": \"MACHINE_READABLE_CODE\",\n    \"message\": \"Human-readable description.\",\n    \"details\": { \"field\": [\"Validation message.\"] }\n  }\n}\n```\nThe `details` key is only present for `VALIDATION_ERROR` responses.\n\n## Rate Limiting\nSensitive endpoints are rate-limited per IP. When exceeded, a `429 TOO_MANY_REQUESTS` error is returned.\n\n## Error Codes Reference\n| Code | HTTP | Description |\n|------|------|-------------|\n| INVALID_CREDENTIALS | 401 | Wrong email or password |\n| INVALID_PASSWORD | 400 | Wrong current password (change/disable 2FA) |\n| INVALID_REFRESH_TOKEN | 401 | Expired or revoked refresh token |\n| INVALID_RESET_CODE | 400 | Wrong or expired OTP code |\n| INVALID_RESET_TOKEN | 400 | Wrong or expired reset token |\n| INVALID_TWO_FACTOR_CODE | 400 | Wrong TOTP/email OTP code |\n| TWO_FACTOR_REQUIRED | 200 | 2FA step needed (returns pre_auth_token) |\n| USER_ALREADY_EXISTS | 409 | Email or username already taken |\n| TOO_MANY_REQUESTS | 429 | Rate limit exceeded |\n| VALIDATION_ERROR | 422 | Request body validation failed (see details) |\n| SAME_PASSWORD | 422 | New password same as current |\n| INVALID_2FA_METHOD | 422 | Method must be \"totp\" or \"email\" |\n| INVALID_PRE_AUTH_TOKEN | 422 | Invalid or expired pre-auth token |\n| POLICY_NOT_FOUND | 404 | Policy not found or access denied |\n| QUOTE_NOT_FOUND | 404 | Quote not found or access denied |\n| NOTIFICATION_NOT_FOUND | 404 | Notification not found or access denied |\n| REMINDER_NOT_FOUND | 404 | Reminder not found or access denied |\n| SESSION_NOT_FOUND | 404 | Session not found or access denied |\n| UNAUTHORIZED | 401 | Missing or invalid JWT |\n| FORBIDDEN | 403 | Insufficient permissions |\n| NOT_FOUND | 404 | Route not found |\n",
+        "description": "Backend API contract for the myAccount React SPA.\nThis middleware sits between the React frontend and the legacy Symfony 3.4 backend (asigurari.ro).\n\n## Authentication\n- **Login** returns either full tokens (access_token + refresh_token) or a pre_auth_token when 2FA is required.\n- **Access tokens** are short-lived RS256 JWTs (15 min). Send as `Authorization: Bearer <token>`.\n- **Refresh tokens** are opaque strings (7-day TTL). Send in the POST body to `/api/auth/refresh`.\n- **Pre-auth tokens** are short-lived JWTs (5 min, scope=pre_auth) used only for the 2FA verification step.\n\n## Naming Convention\n- **Request bodies**: snake_case for multi-word fields (e.g. `refresh_token`, `pre_auth_token`, `new_password`).\n- **Response bodies**: camelCase (e.g. `accessToken`, `policyNumber`, `createdAt`).\n- This is documented per-field in each schema. The frontend should follow these conventions exactly.\n\n## Error Format\nAll errors follow this structure:\n```json\n{\n  \"error\": {\n    \"code\": \"MACHINE_READABLE_CODE\",\n    \"message\": \"Human-readable description.\",\n    \"details\": { \"field\": [\"Validation message.\"] }\n  }\n}\n```\nThe `details` key is only present for `VALIDATION_ERROR` responses.\n\n## Rate Limiting\nSensitive endpoints are rate-limited per IP. When exceeded, a `429 TOO_MANY_REQUESTS` error is returned.\n\n## Error Codes Reference\n| Code | HTTP | Description |\n|------|------|-------------|\n| INVALID_CREDENTIALS | 401 | Wrong email or password |\n| INVALID_PASSWORD | 400 | Wrong current password (change/disable 2FA) |\n| INVALID_REFRESH_TOKEN | 401 | Expired or revoked refresh token |\n| INVALID_RESET_CODE | 400 | Wrong or expired OTP code |\n| INVALID_RESET_TOKEN | 400 | Wrong or expired reset token |\n| INVALID_TWO_FACTOR_CODE | 400 | Wrong TOTP/email OTP code |\n| TWO_FACTOR_REQUIRED | 200 | 2FA step needed (returns pre_auth_token) |\n| USER_ALREADY_EXISTS | 409 | Email or username already taken |\n| ACCOUNT_LOCKED | 423 | Too many failed login attempts (30 min lockout) |\n| TOO_MANY_REQUESTS | 429 | Rate limit exceeded |\n| VALIDATION_ERROR | 422 | Request body validation failed (see details) |\n| SAME_PASSWORD | 422 | New password same as current |\n| INVALID_2FA_METHOD | 422 | Method must be \"totp\" or \"email\" |\n| INVALID_PRE_AUTH_TOKEN | 422 | Invalid or expired pre-auth token |\n| POLICY_NOT_FOUND | 404 | Policy not found or access denied |\n| QUOTE_NOT_FOUND | 404 | Quote not found or access denied |\n| NOTIFICATION_NOT_FOUND | 404 | Notification not found or access denied |\n| REMINDER_NOT_FOUND | 404 | Reminder not found or access denied |\n| SESSION_NOT_FOUND | 404 | Session not found or access denied |\n| UNAUTHORIZED | 401 | Missing or invalid JWT |\n| FORBIDDEN | 403 | Insufficient permissions |\n| NOT_FOUND | 404 | Route not found |\n",
         "contact": {
             "name": "WIB Development"
         },
@@ -418,19 +418,16 @@
                     "Auth"
                 ],
                 "summary": "Refresh access token",
-                "description": "Exchanges a valid refresh token for a new access_token + refresh_token pair.\nThe old refresh token is consumed (single-use). If the token is invalid, expired,\nor already revoked, returns 401.\n\nRate limited: 10 requests/minute per IP.",
+                "description": "Exchanges a valid refresh token for a new access_token + refresh_token pair.\nThe old refresh token is consumed (single-use). If the token is invalid, expired,\nor already revoked, returns 401.\n\n**Preferred:** The refresh token is read from the HttpOnly `refresh_token` cookie\n(set automatically by login/register/previous refresh).\n\n**Backward compatible:** If no cookie is present, falls back to reading\n`refresh_token` from the JSON request body.\n\nRate limited: 10 requests/minute per IP.",
                 "operationId": "post_api_auth_refresh",
                 "requestBody": {
-                    "required": true,
+                    "required": false,
                     "content": {
                         "application/json": {
                             "schema": {
-                                "required": [
-                                    "refresh_token"
-                                ],
                                 "properties": {
                                     "refresh_token": {
-                                        "description": "Opaque refresh token from login/previous refresh",
+                                        "description": "Opaque refresh token (only needed if not using HttpOnly cookies)",
                                         "type": "string"
                                     }
                                 },
@@ -1517,7 +1514,6 @@
                                 "rca",
                                 "casco",
                                 "casco_econom",
-                                "casco_perfect_cover",
                                 "pad",
                                 "home",
                                 "travel",
@@ -1602,7 +1598,8 @@
                         "description": "MongoDB ObjectId",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "type": "string",
+                            "pattern": "[a-f0-9]{24}"
                         }
                     }
                 ],
@@ -1650,8 +1647,8 @@
                 "tags": [
                     "Policies"
                 ],
-                "summary": "Download policy document",
-                "description": "Proxies the policy document (PDF) from the legacy system through middleware.\nThe legacy download URL is never exposed to the client — middleware fetches the\nfile and streams it directly.\n\nThe transactionId and fileId are available from the policy's transactionId and fileIds fields.\nThe fileId is one of the values from the policy's fileIds map (e.g. fileIds.policy_pdf).\n\nSecurity: only the authenticated user who owns the policy can download the document.",
+                "summary": "Download policy document (proxy)",
+                "description": "Streams the policy document PDF through the middleware.\nThe transactionId and fileId are available from the policy's transactionId and fileIds fields.\nThe fileId is one of the values from the policy's fileIds map (e.g. fileIds.policy_pdf).\n\nThe document is proxied through the middleware so that the legacy download URL is never\nexposed to the client \u2014 only authenticated users can access documents.",
                 "operationId": "get_api_policies_download_document",
                 "parameters": [
                     {
@@ -1675,7 +1672,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Document file (PDF)",
+                        "description": "PDF document binary",
                         "content": {
                             "application/pdf": {}
                         }
@@ -1802,7 +1799,6 @@
                                 "rca",
                                 "casco",
                                 "casco_econom",
-                                "casco_perfect_cover",
                                 "pad",
                                 "home",
                                 "travel",
@@ -1887,7 +1883,8 @@
                         "description": "MongoDB ObjectId",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "type": "string",
+                            "pattern": "[a-f0-9]{24}"
                         }
                     }
                 ],
@@ -2651,8 +2648,7 @@
                                         "source": {
                                             "type": "string",
                                             "enum": [
-                                                "registration",
-                                                "legacy_sync"
+                                                "registration"
                                             ]
                                         },
                                         "createdAt": {
@@ -2934,19 +2930,38 @@
                 "tags": [
                     "User"
                 ],
-                "summary": "Request account deletion",
-                "description": "Submits a request to delete the authenticated user's account. The account is NOT deleted\nimmediately \u2014 instead, a notification is sent to the backoffice support team who will\nprocess the request manually. The user receives a confirmation email.",
+                "summary": "Delete account (GDPR)",
+                "description": "Deactivates the authenticated user's account (GDPR, scenario 5). Legacy data is NEVER\ntouched \u2014 the legacy DB is the regulatory system of record. The middleware calls the\nREAD-ONLY evaluation endpoint POST /api/middleware/delete-user-data to obtain a flag\ndescribing what it may delete on its OWN side, then acts only on the middleware DB:\n  - quote sessions with NO backing policy (deletable) are removed;\n  - all policies and policy-backed quote sessions are left fully intact;\n  - the user record is KEPT and only marked inactive (active=false) \u2014 it is never\n    deleted and no personal data is anonymized.\n\nBecause the account is deactivated (not deleted), the user can no longer log in and all\nsessions/refresh tokens are revoked. Fail-safe: any quote session the legacy side could\nnot evaluate is never deleted.",
                 "operationId": "post_api_user_account_delete",
                 "responses": {
                     "200": {
-                        "description": "Deletion request submitted",
+                        "description": "Account deactivated",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "message": {
                                             "type": "string",
-                                            "example": "Your account deletion request has been submitted. Our support team will contact you shortly."
+                                            "example": "Your account has been deactivated."
+                                        },
+                                        "deactivated": {
+                                            "description": "Account is now inactive; the user is logged out and cannot log in again",
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "deletedCount": {
+                                            "description": "Quote sessions (without a policy) removed from the middleware",
+                                            "type": "integer",
+                                            "example": 2
+                                        },
+                                        "retainedCount": {
+                                            "description": "Policies kept intact per ASF requirements",
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "hasIssuedPolicies": {
+                                            "type": "boolean",
+                                            "example": true
                                         }
                                     },
                                     "type": "object"
@@ -2956,6 +2971,16 @@
                     },
                     "401": {
                         "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "502": {
+                        "description": "Legacy platform unavailable",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -3065,7 +3090,6 @@
                             "rca",
                             "casco",
                             "casco_econom",
-                            "casco_perfect_cover",
                             "pad",
                             "home",
                             "travel",
@@ -3284,7 +3308,6 @@
                             "rca",
                             "casco",
                             "casco_econom",
-                            "casco_perfect_cover",
                             "pad",
                             "home",
                             "travel",
@@ -3529,17 +3552,6 @@
                         "maxLength": 6,
                         "minLength": 6,
                         "pattern": "\\d{6}"
-                    }
-                },
-                "type": "object"
-            },
-            "RefreshRequest": {
-                "required": [
-                    "refresh_token"
-                ],
-                "properties": {
-                    "refresh_token": {
-                        "type": "string"
                     }
                 },
                 "type": "object"

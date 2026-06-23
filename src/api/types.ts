@@ -157,7 +157,7 @@ export interface UserProfile {
   twoFactorEnabled: boolean
   twoFactorMethod?: 'totp' | 'email' | null
   preferences: UserPreferences
-  source: 'registration' | 'legacy_sync'
+  source: 'registration'
   createdAt: string
 }
 
