@@ -6,10 +6,13 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
 const fetchSessions = async (): Promise<Session[]> => {
-  const { data } = await api.get<{ sessions: Session[] }>(
-    ENDPOINTS.SESSIONS.LIST
-  )
-  return data.sessions
+  const { data } = await api.get<{
+    sessions: (Omit<Session, 'ip'> & { ipAddress: string })[]
+  }>(ENDPOINTS.SESSIONS.LIST)
+  return data.sessions.map(({ ipAddress, ...rest }) => ({
+    ...rest,
+    ip: ipAddress
+  }))
 }
 
 const terminateSessionFn = async (id: string): Promise<void> => {
