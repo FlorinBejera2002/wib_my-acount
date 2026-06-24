@@ -2775,6 +2775,11 @@ export interface operations {
                         address?: Record<string, never>;
                         /** @description Legacy company sub-document */
                         company?: Record<string, never>;
+                        /**
+                         * @description Whether the account is active. False means the account has been deactivated (e.g. GDPR deletion request).
+                         * @example true
+                         */
+                        active?: boolean;
                         twoFactorEnabled?: boolean;
                         /** @enum {string|null} */
                         twoFactorMethod?: "totp" | "email" | null;

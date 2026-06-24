@@ -2617,6 +2617,11 @@
                                             "description": "Legacy company sub-document",
                                             "type": "object"
                                         },
+                                        "active": {
+                                            "description": "Whether the account is active. False means the account has been deactivated (e.g. GDPR deletion request).",
+                                            "type": "boolean",
+                                            "example": true
+                                        },
                                         "twoFactorEnabled": {
                                             "type": "boolean"
                                         },

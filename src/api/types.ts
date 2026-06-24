@@ -154,6 +154,7 @@ export interface UserProfile {
   contact?: Record<string, unknown>
   address?: Record<string, unknown>
   company?: Record<string, unknown>
+  active?: boolean
   twoFactorEnabled: boolean
   twoFactorMethod?: 'totp' | 'email' | null
   preferences: UserPreferences

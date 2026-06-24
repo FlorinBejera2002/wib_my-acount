@@ -1086,6 +1086,7 @@
     "alertDeleteError": "Error deleting alert",
     "deleteRequestSent": "Deletion request has been sent",
     "emailOrPasswordIncorrect": "Email address or password is incorrect",
+    "accountDeactivated": "This account has been deactivated. Please create a new account if you wish to log in.",
     "codeInvalid": "The entered code is not valid",
     "verificationCodeSent": "Verification code sent to email",
     "passwordResetSuccess": "Password has been reset successfully!",

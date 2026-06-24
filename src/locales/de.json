@@ -1086,6 +1086,7 @@
     "alertDeleteError": "Fehler beim Löschen des Alarms",
     "deleteRequestSent": "Löschanfrage wurde gesendet",
     "emailOrPasswordIncorrect": "E-Mail-Adresse oder Passwort ist falsch",
+    "accountDeactivated": "Dieses Konto wurde deaktiviert. Bitte erstellen Sie ein neues Konto, wenn Sie sich anmelden möchten.",
     "codeInvalid": "Der eingegebene Code ist ungültig",
     "verificationCodeSent": "Bestätigungscode per E-Mail gesendet",
     "passwordResetSuccess": "Passwort wurde erfolgreich zurückgesetzt!",

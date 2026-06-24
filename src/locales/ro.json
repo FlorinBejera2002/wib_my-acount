@@ -1094,6 +1094,7 @@
     "alertDeleteError": "Eroare la ștergerea alertei",
     "deleteRequestSent": "Cererea de ștergere a fost trimisă",
     "emailOrPasswordIncorrect": "Adresa de email sau parola este incorectă",
+    "accountDeactivated": "Acest cont a fost dezactivat. Vă rugăm să creați un cont nou dacă doriți să vă autentificați.",
     "codeInvalid": "Codul introdus nu este valid",
     "verificationCodeSent": "Codul de verificare a fost trimis pe email",
     "passwordResetSuccess": "Parola a fost resetată cu succes!",

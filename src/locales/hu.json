@@ -1086,6 +1086,7 @@
     "alertDeleteError": "Hiba a riasztás törlésekor",
     "deleteRequestSent": "A törlési kérelem elküldve",
     "emailOrPasswordIncorrect": "Az e-mail cím vagy a jelszó helytelen",
+    "accountDeactivated": "Ez a fiók deaktiválva lett. Kérjük, hozzon létre egy új fiókot, ha be szeretne jelentkezni.",
     "codeInvalid": "A megadott kód érvénytelen",
     "verificationCodeSent": "Ellenőrző kód elküldve e-mailben",
     "passwordResetSuccess": "A jelszó sikeresen visszaállítva!",

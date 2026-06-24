@@ -1086,6 +1086,7 @@
     "alertDeleteError": "Erreur lors de la suppression de l'alerte",
     "deleteRequestSent": "La demande de suppression a été envoyée",
     "emailOrPasswordIncorrect": "L'adresse e-mail ou le mot de passe est incorrect",
+    "accountDeactivated": "Ce compte a été désactivé. Veuillez créer un nouveau compte si vous souhaitez vous connecter.",
     "codeInvalid": "Le code entré n'est pas valide",
     "verificationCodeSent": "Code de vérification envoyé par e-mail",
     "passwordResetSuccess": "Le mot de passe a été réinitialisé avec succès !",

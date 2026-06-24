@@ -49,8 +49,13 @@ export function useLogin() {
         setTimeout(() => navigate('/dashboard'), 500)
       }
     },
-    onError: () => {
-      toast.error(i18n.t('toast.emailOrPasswordIncorrect'))
+    onError: (error: AxiosError<{ error?: { code?: string } }>) => {
+      const code = error.response?.data?.error?.code
+      if (code === 'ACCOUNT_DEACTIVATED') {
+        toast.error(i18n.t('toast.accountDeactivated'))
+      } else {
+        toast.error(i18n.t('toast.emailOrPasswordIncorrect'))
+      }
     }
   })
 }
